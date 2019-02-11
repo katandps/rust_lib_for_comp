@@ -1,0 +1,8 @@
+version: '3'
+services:
+  develop_rust:
+    container_name: develop_rust
+    build: ./app
+    tty: true
+    volumes:
+      - ./app:/usr/src/app
