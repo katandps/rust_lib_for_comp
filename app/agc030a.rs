@@ -59,5 +59,5 @@ fn main() {
     }
 
     let ans = std::cmp::min(c, a + b + 1) + b;
-    println!("{}",ans);
+    println!("{}", ans);
 }
