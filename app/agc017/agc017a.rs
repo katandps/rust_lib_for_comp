@@ -51,3 +51,15 @@ macro_rules! read_value {
         $next().parse::<$t>().expect("Parse error")
     };
 }
+
+fn main()
+{
+    let bb = 0;
+    input! {
+        n:usize,
+        p:usize,
+        v: [i32; n]
+    }
+    let c = n + p;
+    println!("{}", c);
+}

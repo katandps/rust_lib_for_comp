@@ -1,0 +1,9 @@
+[package]
+
+name = "hoge"
+version = "0.0.1"
+authors = ["katand <katandps@gmail.com>"]
+
+[[bin]]
+name = "aaa"
+path = "main.rs"

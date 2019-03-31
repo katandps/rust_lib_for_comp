@@ -1,1 +1,0 @@
-docker-compose exec -T develop_rust ./target/%1

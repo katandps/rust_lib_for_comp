@@ -1,1 +1,0 @@
-docker-compose exec -T develop_rust rustc %1.rs -o ./target/%1
