@@ -2,17 +2,17 @@
 
 # コンパイル
 
-```:bash
-docker-compose exec develop_rust rustc {filename}.rs
+```
+bin\compile.bat {project}
 ```
 
 # 実行
 
 ```
-docker-compose exec develop_rust filename
+bin\run.bat {project}
 ```
 
-# IntelliJ で必要な機能
+# IntelliJ で使用した機能
 
 ## Command Line Tool Support
-- `./bin` 以下のファイルに対してエイリアスをつけておく
+- `bin` 以下のファイルに対してエイリアスをつけておく
