@@ -3,9 +3,9 @@ use std::mem::swap;
 struct ModInv {}
 
 impl ModInv {
-    pub fn mod_inv(number: isize, modulo: isize) -> isize {
+    pub fn mod_inv(number: isize, modulo: usize) -> usize {
         let mut n = number;
-        let mut b = modulo;
+        let mut b = modulo as isize;
         let mut u: isize = 1;
         let mut v: isize = 0;
 
@@ -16,11 +16,11 @@ impl ModInv {
             u -= t * v;
             swap(&mut u, &mut v);
         }
-        u %= modulo;
+        u %= modulo as isize;
         if u < 0 {
-            u += modulo;
+            u += modulo as isize;
         }
-        u
+        u as usize
     }
 }
 
