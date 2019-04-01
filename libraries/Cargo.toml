@@ -15,3 +15,7 @@ path = "permutation.rs"
 [[bin]]
 name = "combination"
 path = "combination.rs"
+
+[[bin]]
+name = "modinv"
+path = "modinv.rs"

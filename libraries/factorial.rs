@@ -3,11 +3,12 @@ pub struct Factorial {
 }
 
 impl Factorial {
-    pub fn new(number: isize, modulo: usize) -> Self {
+    pub fn new(number: isize) -> Self {
+        const MODULO: usize = 1000000007;
         let mut stack: Vec<usize> = Vec::new();
         stack.push(1);
         for i in 1..(number + 1) as usize {
-            let k = stack[i - 1] * i % modulo;
+            let k = stack[i - 1] * i % MODULO;
             stack.push(k);
         }
 
@@ -26,8 +27,8 @@ mod tests {
     use super::*;
 
     #[test]
-    fn can_calc_factorial() {
-        let fact = Factorial::new(5, 1000000007);
+    fn can_calc() {
+        let fact = Factorial::new(5);
 
         assert_eq!(1, fact.get(0));
         assert_eq!(1, fact.get(1));
@@ -40,7 +41,7 @@ mod tests {
     #[test]
     #[should_panic]
     fn greater_than_number() {
-        let fact = Factorial::new(10, 1000000007);
+        let fact = Factorial::new(10);
         fact.get(11);
     }
 }
