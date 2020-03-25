@@ -8,17 +8,17 @@ impl Combination {
         let mut stack: Vec<usize> = Vec::new();
         stack.push(1);
         for i in 0..number {
-            let k = stack[i] * (number - i) * ModInv::mod_inv(i as isize + 1, MODULO) % MODULO;
+            let k = (stack[i] * (number - i) % MODULO) * ModInv::mod_inv(i as isize + 1, MODULO) % MODULO;
             stack.push(k);
         }
 
         Self {
-            stack,
+            stack: stack,
         }
     }
 
-    pub fn get(&self, number: isize) -> usize {
-        self.stack[number as usize]
+    pub fn get(&self, number: usize) -> usize {
+        self.stack[number]
     }
 }
 

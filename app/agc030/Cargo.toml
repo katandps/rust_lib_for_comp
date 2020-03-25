@@ -1,9 +1,0 @@
-[package]
-
-name = "agc030"
-version = "0.0.1"
-authors = ["katand <katandps@gmail.com>"]
-
-[[bin]]
-name = "a"
-path = "agc030a.rs"
