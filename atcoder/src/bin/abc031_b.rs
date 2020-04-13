@@ -38,4 +38,22 @@ fn vecint(n: i64) -> Vec<i64> {
     vec
 }
 
-fn main() {}
+fn main() {
+    let l = int();
+    let h = int();
+    let n = int();
+    let a = vecint(n);
+
+    for k in a {
+        println!(
+            "{}",
+            if k < l {
+                l - k
+            } else if h < k {
+                -1
+            } else {
+                0
+            }
+        )
+    }
+}

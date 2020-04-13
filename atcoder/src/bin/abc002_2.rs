@@ -14,28 +14,13 @@ fn read<T: FromStr>() -> T {
     s.parse::<T>().ok().unwrap()
 }
 
-fn string() -> String {
-    read()
-}
+fn main() {
+    let w: String = read();
+    let v: Vec<char> = w.chars().collect();
+    let a: String = v
+        .iter()
+        .filter(|c| **c != 'a' && **c != 'i' && **c != 'u' && **c != 'e' && **c != 'o')
+        .fold("".into(), |x, c| x + c.to_string().as_ref());
 
-fn int() -> i64 {
-    read()
+    println!("{}", a)
 }
-
-fn char() -> char {
-    read::<String>().pop().unwrap()
-}
-
-fn vecchar() -> Vec<char> {
-    string().chars().collect()
-}
-
-fn vecint(n: i64) -> Vec<i64> {
-    let mut vec = Vec::new();
-    for i in 0..n {
-        vec.push(int())
-    }
-    vec
-}
-
-fn main() {}

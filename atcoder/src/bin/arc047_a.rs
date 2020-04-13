@@ -38,4 +38,24 @@ fn vecint(n: i64) -> Vec<i64> {
     vec
 }
 
-fn main() {}
+fn main() {
+    let n = int();
+    let l = int();
+    let s = vecchar();
+
+    let mut cur = 1;
+    let mut crash = 0;
+    for c in s {
+        if c == '+' {
+            cur += 1;
+        }
+        if c == '-' {
+            cur -= 1;
+        }
+        if cur > l {
+            cur = 1;
+            crash += 1;
+        }
+    }
+    println!("{}", crash)
+}

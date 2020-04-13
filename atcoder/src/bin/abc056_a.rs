@@ -14,28 +14,10 @@ fn read<T: FromStr>() -> T {
     s.parse::<T>().ok().unwrap()
 }
 
-fn string() -> String {
-    read()
+fn main() {
+    let mut a: String = read();
+    let mut b: String = read();
+    let aa: bool = a.pop().unwrap() == 'H';
+    let bb: bool = b.pop().unwrap() == 'H';
+    println!("{}", if !aa ^ bb { "H" } else { "D" })
 }
-
-fn int() -> i64 {
-    read()
-}
-
-fn char() -> char {
-    read::<String>().pop().unwrap()
-}
-
-fn vecchar() -> Vec<char> {
-    string().chars().collect()
-}
-
-fn vecint(n: i64) -> Vec<i64> {
-    let mut vec = Vec::new();
-    for i in 0..n {
-        vec.push(int())
-    }
-    vec
-}
-
-fn main() {}

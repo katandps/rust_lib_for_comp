@@ -38,4 +38,15 @@ fn vecint(n: i64) -> Vec<i64> {
     vec
 }
 
-fn main() {}
+fn main() {
+    let mut n = vecint(4);
+    n.sort();
+    let vec = vec![1i64, 4i64, 7i64, 9i64];
+    for i in 0..4 {
+        if n[i] != vec[i] {
+            println!("NO");
+            return;
+        }
+    }
+    println!("YES")
+}

@@ -14,28 +14,10 @@ fn read<T: FromStr>() -> T {
     s.parse::<T>().ok().unwrap()
 }
 
-fn string() -> String {
-    read()
-}
+fn main() {
+    let r: i32 = read();
+    let d: i32 = read();
 
-fn int() -> i64 {
-    read()
+    let pi = std::f64::consts::PI;
+    println!("{}", pi * r as f64 * r as f64 * pi * 2f64 * d as f64)
 }
-
-fn char() -> char {
-    read::<String>().pop().unwrap()
-}
-
-fn vecchar() -> Vec<char> {
-    string().chars().collect()
-}
-
-fn vecint(n: i64) -> Vec<i64> {
-    let mut vec = Vec::new();
-    for i in 0..n {
-        vec.push(int())
-    }
-    vec
-}
-
-fn main() {}

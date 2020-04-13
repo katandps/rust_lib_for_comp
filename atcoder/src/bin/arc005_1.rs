@@ -38,4 +38,23 @@ fn vecint(n: i64) -> Vec<i64> {
     vec
 }
 
-fn main() {}
+fn main() {
+    let n = int();
+    let mut s = Vec::new();
+    for _ in 0..n {
+        s.push(string())
+    }
+    let mut count = 0;
+    for ss in s {
+        if ss == "TAKAHASHIKUN" || ss == "TAKAHASHIKUN." {
+            count += 1
+        }
+        if ss == "Takahashikun" || ss == "Takahashikun." {
+            count += 1
+        }
+        if ss == "takahashikun" || ss == "takahashikun." {
+            count += 1
+        }
+    }
+    println!("{}", count)
+}

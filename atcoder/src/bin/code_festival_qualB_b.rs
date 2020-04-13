@@ -38,4 +38,16 @@ fn vecint(n: i64) -> Vec<i64> {
     vec
 }
 
-fn main() {}
+fn main() {
+    let (n, k) = (int(), int());
+    let a = vecint(n);
+
+    let mut sum = 0;
+    for i in 0..n {
+        sum += a[i as usize];
+        if sum >= k {
+            println!("{}", i + 1);
+            return;
+        }
+    }
+}

@@ -30,12 +30,14 @@ fn vecchar() -> Vec<char> {
     string().chars().collect()
 }
 
-fn vecint(n: i64) -> Vec<i64> {
-    let mut vec = Vec::new();
-    for i in 0..n {
-        vec.push(int())
-    }
-    vec
+fn main() {
+    let a = vecchar();
+    let b = vecchar();
+    let c = vecchar();
+    println!(
+        "{}{}{}",
+        a[0].to_uppercase().next().unwrap(),
+        b[0].to_uppercase().next().unwrap(),
+        c[0].to_uppercase().next().unwrap()
+    )
 }
-
-fn main() {}

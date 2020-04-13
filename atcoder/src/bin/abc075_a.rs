@@ -38,4 +38,16 @@ fn vecint(n: i64) -> Vec<i64> {
     vec
 }
 
-fn main() {}
+fn main() {
+    let a = int();
+    let b = int();
+    let c = int();
+
+    if a == b {
+        println!("{}", c)
+    } else if b == c {
+        println!("{}", a)
+    } else {
+        println!("{}", b)
+    }
+}

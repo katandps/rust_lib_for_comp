@@ -1,4 +1,5 @@
 use std::cmp::*;
+use std::collections::HashSet;
 use std::io::*;
 use std::num::*;
 use std::str::*;
@@ -38,4 +39,13 @@ fn vecint(n: i64) -> Vec<i64> {
     vec
 }
 
-fn main() {}
+fn main() {
+    let a = int();
+    let b = int();
+    let c = int();
+    let mut set = HashSet::new();
+    set.insert(a);
+    set.insert(b);
+    set.insert(c);
+    println!("{}", set.len())
+}

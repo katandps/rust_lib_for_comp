@@ -38,4 +38,22 @@ fn vecint(n: i64) -> Vec<i64> {
     vec
 }
 
-fn main() {}
+fn main() {
+    let a = int();
+    let b = int();
+    let c = int();
+
+    if a > b && b > c {
+        println!("1\n2\n3")
+    } else if a > c && c > b {
+        println!("1\n3\n2")
+    } else if b > a && a > c {
+        println!("2\n1\n3")
+    } else if b > c && c > a {
+        println!("3\n1\n2")
+    } else if c > a && a > b {
+        println!("2\n3\n1")
+    } else if c > b && b > a {
+        println!("3\n2\n1")
+    }
+}

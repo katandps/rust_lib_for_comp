@@ -38,4 +38,7 @@ fn vecint(n: i64) -> Vec<i64> {
     vec
 }
 
-fn main() {}
+fn main() {
+    let s = vecchar();
+    println!("{}", s.iter().filter(|c| **c == '1').count())
+}

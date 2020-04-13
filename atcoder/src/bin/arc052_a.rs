@@ -14,28 +14,15 @@ fn read<T: FromStr>() -> T {
     s.parse::<T>().ok().unwrap()
 }
 
-fn string() -> String {
-    read()
+fn main() {
+    let s: String = read();
+    let v: Vec<char> = s.chars().collect();
+    let ans = v.iter().fold(0, |x, c| {
+        if c.is_numeric() {
+            x * 10 + *c as i32 - '0' as i32
+        } else {
+            x
+        }
+    });
+    println!("{}", ans)
 }
-
-fn int() -> i64 {
-    read()
-}
-
-fn char() -> char {
-    read::<String>().pop().unwrap()
-}
-
-fn vecchar() -> Vec<char> {
-    string().chars().collect()
-}
-
-fn vecint(n: i64) -> Vec<i64> {
-    let mut vec = Vec::new();
-    for i in 0..n {
-        vec.push(int())
-    }
-    vec
-}
-
-fn main() {}

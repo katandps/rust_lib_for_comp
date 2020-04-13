@@ -38,4 +38,16 @@ fn vecint(n: i64) -> Vec<i64> {
     vec
 }
 
-fn main() {}
+fn main() {
+    let n = int();
+    let mut a = vecint(n);
+    a.sort();
+    a.reverse();
+    let mut x = 0;
+    for i in 0..n {
+        if i % 2 == 0 {
+            x += a[i as usize]
+        }
+    }
+    println!("{}", x)
+}

@@ -30,12 +30,14 @@ fn vecchar() -> Vec<char> {
     string().chars().collect()
 }
 
-fn vecint(n: i64) -> Vec<i64> {
-    let mut vec = Vec::new();
-    for i in 0..n {
-        vec.push(int())
+fn main() {
+    let mut n = vecchar();
+    let k = n.pop().unwrap();
+    for i in 0..n.len() {
+        if n[i] != k {
+            println!("DIFFERENT");
+            return;
+        }
     }
-    vec
+    println!("SAME")
 }
-
-fn main() {}

@@ -14,28 +14,11 @@ fn read<T: FromStr>() -> T {
     s.parse::<T>().ok().unwrap()
 }
 
-fn string() -> String {
-    read()
+fn main() {
+    let mut i: i32 = read();
+    let h = i / 3600;
+    i = i % 3600;
+    let m = i / 60;
+    i = i % 60;
+    println!("{:>02}:{:>02}:{:>02}", h, m, i)
 }
-
-fn int() -> i64 {
-    read()
-}
-
-fn char() -> char {
-    read::<String>().pop().unwrap()
-}
-
-fn vecchar() -> Vec<char> {
-    string().chars().collect()
-}
-
-fn vecint(n: i64) -> Vec<i64> {
-    let mut vec = Vec::new();
-    for i in 0..n {
-        vec.push(int())
-    }
-    vec
-}
-
-fn main() {}

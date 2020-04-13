@@ -38,4 +38,8 @@ fn vecint(n: i64) -> Vec<i64> {
     vec
 }
 
-fn main() {}
+fn main() {
+    let w = int();
+    let h = int();
+    println!("{}", if w * 3 == h * 4 { "4:3" } else { "16:9" })
+}

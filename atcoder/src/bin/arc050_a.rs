@@ -14,28 +14,17 @@ fn read<T: FromStr>() -> T {
     s.parse::<T>().ok().unwrap()
 }
 
-fn string() -> String {
-    read()
+fn main() {
+    let S: String = read();
+    let s: String = read();
+    let C: char = S.chars().collect::<Vec<char>>()[0];
+    let c: char = s.chars().collect::<Vec<char>>()[0];
+    println!(
+        "{}",
+        if (C as i32 - 'A' as i32) == (c as i32 - 'a' as i32) {
+            "Yes"
+        } else {
+            "No"
+        }
+    )
 }
-
-fn int() -> i64 {
-    read()
-}
-
-fn char() -> char {
-    read::<String>().pop().unwrap()
-}
-
-fn vecchar() -> Vec<char> {
-    string().chars().collect()
-}
-
-fn vecint(n: i64) -> Vec<i64> {
-    let mut vec = Vec::new();
-    for i in 0..n {
-        vec.push(int())
-    }
-    vec
-}
-
-fn main() {}

@@ -38,4 +38,11 @@ fn vecint(n: i64) -> Vec<i64> {
     vec
 }
 
-fn main() {}
+fn main() {
+    let mut vec: Vec<String> = Vec::new();
+    for _ in 0..12 {
+        vec.push(string());
+    }
+
+    println!("{}", vec.iter().filter(|s| s.contains("r")).count())
+}
