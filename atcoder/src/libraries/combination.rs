@@ -1,50 +1,20 @@
+use crate::libraries::mod_int::mod_int::ModInt;
+
 pub struct Combination {
-    stack: Vec<usize>,
+    stack: Vec<ModInt<usize>>,
 }
 
 impl Combination {
     pub fn new(number: usize) -> Self {
-        const MODULO: usize = 1000000007;
-        let mut stack: Vec<usize> = Vec::new();
-        stack.push(1);
+        let mut stack = vec![ModInt::new(1)];
         for i in 0..number {
-            let k = (stack[i] * (number - i) % MODULO) * ModInv::mod_inv(i as isize + 1, MODULO) % MODULO;
-            stack.push(k);
+            stack.push(stack[i] * (number - i) / (i + 1));
         }
-
-        Self {
-            stack: stack,
-        }
+        Self { stack }
     }
 
-    pub fn get(&self, number: usize) -> usize {
+    pub fn get(&self, number: usize) -> ModInt<usize> {
         self.stack[number]
-    }
-}
-
-use std::mem::swap;
-
-struct ModInv {}
-
-impl ModInv {
-    pub fn mod_inv(number: isize, modulo: usize) -> usize {
-        let mut n = number;
-        let mut b = modulo as isize;
-        let mut u: isize = 1;
-        let mut v: isize = 0;
-
-        while b > 0 {
-            let t: isize = n / b;
-            n -= t * b;
-            swap(&mut n, &mut b);
-            u -= t * v;
-            swap(&mut u, &mut v);
-        }
-        u %= modulo as isize;
-        if u < 0 {
-            u += modulo as isize;
-        }
-        u as usize
     }
 }
 
@@ -56,12 +26,12 @@ mod tests {
     fn can_calc() {
         let five = Combination::new(5);
 
-        assert_eq!(1, five.get(0));
-        assert_eq!(5, five.get(1));
-        assert_eq!(10, five.get(2));
-        assert_eq!(10, five.get(3));
-        assert_eq!(5, five.get(4));
-        assert_eq!(1, five.get(5));
+        assert_eq!(1, five.get(0).v);
+        assert_eq!(5, five.get(1).v);
+        assert_eq!(10, five.get(2).v);
+        assert_eq!(10, five.get(3).v);
+        assert_eq!(5, five.get(4).v);
+        assert_eq!(1, five.get(5).v);
     }
 
     #[test]
