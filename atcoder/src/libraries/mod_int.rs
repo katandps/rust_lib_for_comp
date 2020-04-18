@@ -1,4 +1,5 @@
 pub mod mod_int {
+    use std::fmt;
     use std::ops::{Add, AddAssign, Div, DivAssign, Mul, MulAssign, Sub, SubAssign};
 
     type Num = usize;
@@ -126,6 +127,12 @@ pub mod mod_int {
     impl DivAssign<ModInt<Num>> for ModInt<Num> {
         fn div_assign(&mut self, rhs: ModInt<Num>) {
             *self = *self / rhs
+        }
+    }
+
+    impl fmt::Display for ModInt<Num> {
+        fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
+            write!(f, "{}", self.v)
         }
     }
 
