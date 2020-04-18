@@ -1,3 +1,4 @@
+mod libraries;
 mod template;
 
 #[cfg(test)]
