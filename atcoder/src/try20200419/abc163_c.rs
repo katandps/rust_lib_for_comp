@@ -1,3 +1,4 @@
+use im_rc::HashMap;
 use input::*;
 use std::cmp::*;
 use std::io::*;
@@ -45,5 +46,16 @@ mod input {
 }
 
 fn main() {
-    let M: usize = 1_000_000_007;
+    let n = int();
+    let a = vecint(n - 1);
+    let mut v = HashMap::new();
+    for i in 0..a.len() {
+        if !v.contains_key(&a[i]) {
+            v.insert(a[i], 0);
+        }
+        v[&a[i]] += 1;
+    }
+    for i in 1..=n {
+        println!("{}", v.get(&i).unwrap_or(&0))
+    }
 }

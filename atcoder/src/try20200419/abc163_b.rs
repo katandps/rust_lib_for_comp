@@ -45,5 +45,8 @@ mod input {
 }
 
 fn main() {
-    let M: usize = 1_000_000_007;
+    let (n, m) = (int(), int());
+    let a = vecint(m);
+    let sum = a.iter().sum::<i64>() as i64;
+    println!("{}", if n < sum { -1i64 } else { n - sum })
 }

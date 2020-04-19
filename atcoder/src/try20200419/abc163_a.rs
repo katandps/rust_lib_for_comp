@@ -1,5 +1,6 @@
 use input::*;
 use std::cmp::*;
+use std::f64::consts::PI;
 use std::io::*;
 use std::num::*;
 use std::str::*;
@@ -45,5 +46,6 @@ mod input {
 }
 
 fn main() {
-    let M: usize = 1_000_000_007;
+    let r = int() as f64;
+    println!("{}", r * 2.0 * PI)
 }
