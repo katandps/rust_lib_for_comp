@@ -1,26 +1,32 @@
-use crate::libraries::mod_int::mod_int::ModInt;
+use combination::Combination;
 
-pub struct Combination {
-    stack: Vec<ModInt<usize>>,
-}
+mod combination {
+    use super::mod_int::*;
 
-impl Combination {
-    pub fn new(number: usize) -> Self {
-        let mut stack = vec![ModInt::new(1)];
-        for i in 0..number {
-            stack.push(stack[i] * (number - i) / (i + 1));
+    pub struct Combination {
+        stack: Vec<ModInt<usize>>,
+    }
+
+    impl Combination {
+        pub fn new(number: usize) -> Self {
+            let mut stack = vec![ModInt::new(1)];
+            for i in 0..number {
+                let t = stack[i] * (number - i);
+                stack.push(t / (i + 1));
+            }
+            Combination { stack: stack }
         }
-        Self { stack }
-    }
 
-    pub fn get(&self, number: usize) -> ModInt<usize> {
-        self.stack[number]
+        pub fn get(&self, number: usize) -> ModInt<usize> {
+            self.stack[number]
+        }
     }
 }
 
+use crate::libraries::mod_int::mod_int;
 #[cfg(test)]
 mod tests {
-    use super::*;
+    use super::combination::*;
 
     #[test]
     fn can_calc() {

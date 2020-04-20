@@ -19,31 +19,45 @@ mod input {
             .unwrap()
     }
 
-    pub fn string() -> String {
+    pub fn str() -> String {
         read()
     }
 
-    pub fn int() -> i64 {
+    pub fn s() -> Vec<char> {
+        str().chars().collect()
+    }
+
+    pub fn i() -> i64 {
         read()
     }
 
-    pub fn char() -> char {
+    pub fn u() -> usize {
+        read()
+    }
+
+    pub fn f() -> f64 {
+        read()
+    }
+
+    pub fn c() -> char {
         read::<String>().pop().unwrap()
     }
 
-    pub fn vecchar() -> Vec<char> {
-        string().chars().collect()
+    pub fn iv(n: usize) -> Vec<i64> {
+        (0..n).map(|_| i()).collect()
     }
 
-    pub fn vecint(n: i64) -> Vec<i64> {
-        let mut vec = Vec::new();
-        for i in 0..n {
-            vec.push(int())
-        }
-        vec
+    pub fn uv(n: usize) -> Vec<usize> {
+        (0..n).map(|_| u()).collect()
+    }
+
+    pub fn fv(n: usize) -> Vec<f64> {
+        (0..n).map(|_| f()).collect()
+    }
+
+    pub fn cmap(h: usize) -> Vec<Vec<char>> {
+        (0..h).map(|_| s()).collect()
     }
 }
 
-fn main() {
-    let M: usize = 1_000_000_007;
-}
+fn main() {}

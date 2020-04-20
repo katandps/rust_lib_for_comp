@@ -1,4 +1,109 @@
-use mod_int::*;
+use input::*;
+use mod_int::ModInt;
+use std::cmp::*;
+use std::io::*;
+use std::num::*;
+use std::str::*;
+
+mod input {
+    use super::*;
+
+    pub fn read<T: FromStr>() -> T {
+        stdin()
+            .bytes()
+            .map(|c| c.unwrap() as char)
+            .skip_while(|c| c.is_whitespace())
+            .take_while(|c| !c.is_whitespace())
+            .collect::<String>()
+            .parse::<T>()
+            .ok()
+            .unwrap()
+    }
+
+    pub fn str() -> String {
+        read()
+    }
+
+    pub fn s() -> Vec<char> {
+        str().chars().collect()
+    }
+
+    pub fn i() -> i64 {
+        read()
+    }
+
+    pub fn u() -> usize {
+        read()
+    }
+
+    pub fn f() -> f64 {
+        read()
+    }
+
+    pub fn c() -> char {
+        read::<String>().pop().unwrap()
+    }
+
+    pub fn iv(n: usize) -> Vec<i64> {
+        (0..n).map(|_| i()).collect()
+    }
+
+    pub fn uv(n: usize) -> Vec<usize> {
+        (0..n).map(|_| u()).collect()
+    }
+
+    pub fn fv(n: usize) -> Vec<f64> {
+        (0..n).map(|_| f()).collect()
+    }
+
+    pub fn cmap(h: usize) -> Vec<Vec<char>> {
+        (0..h).map(|_| s()).collect()
+    }
+}
+
+fn main() {
+    let (n, k) = (u(), u());
+    let b = k;
+    let r = n - k;
+    let mut c = Vec::new();
+    for i in 0..n + 3 {
+        c.push(Combination::new(i))
+    }
+    for i in 1..(k + 1) {
+        if r < i - 1 {
+            println!("{}", 0);
+            continue;
+        }
+
+        println!("{}", c[n - k + 1].get(i) * c[k - 1].get(i - 1));
+    }
+}
+
+use combination::Combination;
+
+mod combination {
+    use super::mod_int::*;
+
+    pub struct Combination {
+        stack: Vec<ModInt<usize>>,
+    }
+
+    impl Combination {
+        pub fn new(number: usize) -> Self {
+            let mut stack = vec![ModInt::new(1)];
+            for i in 0..number {
+                let t = stack[i] * (number - i);
+                stack.push(t / (i + 1));
+            }
+            Combination { stack: stack }
+        }
+
+        pub fn get(&self, number: usize) -> ModInt<usize> {
+            self.stack[number]
+        }
+    }
+}
+
 pub mod mod_int {
     use std::fmt;
     use std::ops::{Add, AddAssign, Div, DivAssign, Mul, MulAssign, Sub, SubAssign};
@@ -170,142 +275,5 @@ pub mod mod_int {
         pub fn get(&self) -> Num {
             self.v
         }
-    }
-}
-
-#[cfg(test)]
-mod test {
-    use super::mod_int::*;
-    use rand::distributions::{Distribution, Uniform};
-
-    const MOD: usize = 1_000_000_007;
-
-    #[test]
-    fn random_add_sub() {
-        let between = Uniform::new_inclusive(0, MOD);
-        let mut rng = rand::thread_rng();
-        for _ in 0..1000 {
-            let x: usize = between
-                .sample_iter(&mut rng)
-                .take(1)
-                .collect::<Vec<usize>>()[0];
-            let y: usize = between
-                .sample_iter(&mut rng)
-                .take(1)
-                .collect::<Vec<usize>>()[0];
-
-            let mx = ModInt::new(x);
-            let my = ModInt::new(y);
-
-            assert_eq!((mx + my).v, (x + y) % MOD);
-            assert_eq!((mx + y).v, (x + y) % MOD);
-            assert_eq!((mx - my).v, (x + MOD - y) % MOD);
-            assert_eq!((mx - y).v, (x + MOD - y) % MOD);
-
-            let mut x = x;
-            let mut mx = mx;
-            x += y;
-            mx += my;
-            assert_eq!(mx.v, x % MOD);
-
-            mx += y;
-            x += y;
-            assert_eq!(mx.v, x % MOD);
-
-            mx -= my;
-            x = (x + MOD - y % MOD) % MOD;
-            assert_eq!(mx.v, x);
-
-            mx -= y;
-            x = (x + MOD - y % MOD) % MOD;
-            assert_eq!(mx.v, x);
-        }
-    }
-
-    #[test]
-    fn random_mul() {
-        let between = Uniform::new_inclusive(0, MOD);
-        let mut rng = rand::thread_rng();
-        for _ in 0..1000 {
-            let x: usize = between
-                .sample_iter(&mut rng)
-                .take(1)
-                .collect::<Vec<usize>>()[0];
-            let y: usize = between
-                .sample_iter(&mut rng)
-                .take(1)
-                .collect::<Vec<usize>>()[0];
-
-            let mx = ModInt::new(x);
-            let my = ModInt::new(y);
-
-            assert_eq!((mx * my).v, (x * y) % MOD);
-            assert_eq!((mx * y).v, (x * y) % MOD);
-        }
-    }
-
-    #[test]
-    fn zero_test() {
-        let a = ModInt::new(1_000_000_000);
-        let b = ModInt::new(7);
-        let c = a + b;
-        assert_eq!(c.v, 0);
-    }
-
-    #[test]
-    fn pow_test() {
-        let a = ModInt::new(3);
-        let a = a.pow(4);
-        assert_eq!(a.v, 81);
-    }
-
-    #[test]
-    fn div_test() {
-        for i in 1..100000 {
-            let mut a = ModInt::new(1);
-            a /= i;
-            a *= i;
-            assert_eq!(a.v, 1);
-        }
-    }
-
-    #[test]
-    fn edge_cases() {
-        let a = ModInt::new(MOD + 1);
-        assert_eq!(a.v, 1);
-
-        let a = ModInt::new(std::usize::MAX) + 1;
-        assert_eq!(a.v, 582344008);
-
-        let a = ModInt::new(std::usize::MAX) * 2;
-        assert_eq!(a.v, 164688007);
-
-        let a = ModInt::new(1_000_000_000) * std::usize::MAX;
-        assert_eq!(a.v, 923591986);
-
-        let mut a = ModInt::new(1_000_000_000);
-        a *= std::usize::MAX;
-        assert_eq!(a.v, 923591986);
-
-        let a = ModInt::new(1_000_000_000) + std::usize::MAX;
-        assert_eq!(a.v, 582344000);
-
-        let mut a = ModInt::new(1_000_000_000);
-        a += std::usize::MAX;
-        assert_eq!(a.v, 582344000);
-
-        let a = ModInt::new(1_000_000_000) - std::usize::MAX;
-        assert_eq!(a.v, 417655993);
-
-        let mut a = ModInt::new(1_000_000_000);
-        a -= std::usize::MAX;
-        assert_eq!(a.v, 417655993);
-
-        let a = ModInt::new(1_000_000_000) / std::usize::MAX;
-        assert_eq!(a.v, 605455209);
-
-        let mut a = ModInt::new(1_000_000_000);
-        a /= std::usize::MAX;
-        assert_eq!(a.v, 605455209);
     }
 }
