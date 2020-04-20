@@ -1,3 +1,101 @@
+use input::*;
+use mod_int::ModInt;
+use std::cmp::*;
+use std::io::*;
+use std::num::*;
+use std::str::*;
+
+mod input {
+    use super::*;
+
+    pub fn read<T: FromStr>() -> T {
+        stdin()
+            .bytes()
+            .map(|c| c.unwrap() as char)
+            .skip_while(|c| c.is_whitespace())
+            .take_while(|c| !c.is_whitespace())
+            .collect::<String>()
+            .parse::<T>()
+            .ok()
+            .unwrap()
+    }
+
+    pub fn string() -> String {
+        read()
+    }
+
+    pub fn int() -> i64 {
+        read()
+    }
+
+    pub fn char() -> char {
+        read::<String>().pop().unwrap()
+    }
+
+    pub fn vecchar() -> Vec<char> {
+        string().chars().collect()
+    }
+
+    pub fn vecint(n: i64) -> Vec<i64> {
+        let mut vec = Vec::new();
+        for i in 0..n {
+            vec.push(int())
+        }
+        vec
+    }
+}
+
+fn main() {
+    let (h, w, k) = (int() as usize, int() as usize, int() as usize);
+    let mut change = vec![vec![0; w]; w];
+    let mut pow = 1usize;
+    for _ in 0..w - 1 {
+        pow *= 2;
+    }
+    'pow: for i in 0..pow {
+        let mut set = w;
+        let mut l = i;
+        let mut v = vec![0; w];
+        for j in 0..w - 1 {
+            if j != 0 && l % 2 == 1 && set == j - 1 {
+                //dbg!("skip", i, set, j);
+                continue 'pow;
+            }
+            if l % 2 == 1 {
+                v[j] = 1;
+                set = j;
+            }
+            l = l >> 1;
+            //dbg!(&l);
+        }
+        for j in 0..w {
+            if j > 0 && v[j - 1] == 1 {
+                change[j][j - 1] += 1;
+                continue;
+            }
+            if j < w - 1 && v[j] == 1 {
+                change[j][j + 1] += 1;
+                continue;
+            }
+            change[j][j] += 1;
+        }
+        //dbg!(&change);
+    }
+
+    let mut ans = vec![vec![ModInt::new(0); w]; h + 1];
+    ans[0][0] = ModInt::new(1);
+    for i in 0..h {
+        for j in 0..w {
+            for k in 0..w {
+                let t = ans[i][k] * change[j][k] as usize;
+                ans[i + 1][j] += t;
+            }
+        }
+    }
+    //dbg!(&change, &ans);
+    println!("{}", ans[h][k - 1]);
+}
+
 pub mod mod_int {
     use std::fmt;
     use std::ops::{Add, AddAssign, Div, DivAssign, Mul, MulAssign, Sub, SubAssign};
@@ -161,146 +259,8 @@ pub mod mod_int {
             if v >= MOD {
                 ModInt { v: v % MOD }
             } else {
-                //                ModInt { v } // unstable in rust 1.15.1
                 ModInt { v: v }
             }
         }
-    }
-}
-
-#[cfg(test)]
-mod test {
-    use super::mod_int::*;
-    use rand::distributions::{Distribution, Uniform};
-
-    const MOD: usize = 1_000_000_007;
-
-    #[test]
-    fn random_add_sub() {
-        let between = Uniform::new_inclusive(0, MOD);
-        let mut rng = rand::thread_rng();
-        for _ in 0..1000 {
-            let x: usize = between
-                .sample_iter(&mut rng)
-                .take(1)
-                .collect::<Vec<usize>>()[0];
-            let y: usize = between
-                .sample_iter(&mut rng)
-                .take(1)
-                .collect::<Vec<usize>>()[0];
-
-            let mx = ModInt::new(x);
-            let my = ModInt::new(y);
-
-            assert_eq!((mx + my).v, (x + y) % MOD);
-            assert_eq!((mx + y).v, (x + y) % MOD);
-            assert_eq!((mx - my).v, (x + MOD - y) % MOD);
-            assert_eq!((mx - y).v, (x + MOD - y) % MOD);
-
-            let mut x = x;
-            let mut mx = mx;
-            x += y;
-            mx += my;
-            assert_eq!(mx.v, x % MOD);
-
-            mx += y;
-            x += y;
-            assert_eq!(mx.v, x % MOD);
-
-            mx -= my;
-            x = (x + MOD - y % MOD) % MOD;
-            assert_eq!(mx.v, x);
-
-            mx -= y;
-            x = (x + MOD - y % MOD) % MOD;
-            assert_eq!(mx.v, x);
-        }
-    }
-
-    #[test]
-    fn random_mul() {
-        let between = Uniform::new_inclusive(0, MOD);
-        let mut rng = rand::thread_rng();
-        for _ in 0..1000 {
-            let x: usize = between
-                .sample_iter(&mut rng)
-                .take(1)
-                .collect::<Vec<usize>>()[0];
-            let y: usize = between
-                .sample_iter(&mut rng)
-                .take(1)
-                .collect::<Vec<usize>>()[0];
-
-            let mx = ModInt::new(x);
-            let my = ModInt::new(y);
-
-            assert_eq!((mx * my).v, (x * y) % MOD);
-            assert_eq!((mx * y).v, (x * y) % MOD);
-        }
-    }
-
-    #[test]
-    fn zero_test() {
-        let a = ModInt::new(1_000_000_000);
-        let b = ModInt::new(7);
-        let c = a + b;
-        assert_eq!(c.v, 0);
-    }
-
-    #[test]
-    fn pow_test() {
-        let a = ModInt::new(3);
-        let a = a.pow(4);
-        assert_eq!(a.v, 81);
-    }
-
-    #[test]
-    fn div_test() {
-        for i in 1..100000 {
-            let mut a = ModInt::new(1);
-            a /= i;
-            a *= i;
-            assert_eq!(a.v, 1);
-        }
-    }
-
-    #[test]
-    fn edge_cases() {
-        let a = ModInt::new(MOD + 1);
-        assert_eq!(a.v, 1);
-
-        let a = ModInt::new(std::usize::MAX) + 1;
-        assert_eq!(a.v, 582344008);
-
-        let a = ModInt::new(std::usize::MAX) * 2;
-        assert_eq!(a.v, 164688007);
-
-        let a = ModInt::new(1_000_000_000) * std::usize::MAX;
-        assert_eq!(a.v, 923591986);
-
-        let mut a = ModInt::new(1_000_000_000);
-        a *= std::usize::MAX;
-        assert_eq!(a.v, 923591986);
-
-        let a = ModInt::new(1_000_000_000) + std::usize::MAX;
-        assert_eq!(a.v, 582344000);
-
-        let mut a = ModInt::new(1_000_000_000);
-        a += std::usize::MAX;
-        assert_eq!(a.v, 582344000);
-
-        let a = ModInt::new(1_000_000_000) - std::usize::MAX;
-        assert_eq!(a.v, 417655993);
-
-        let mut a = ModInt::new(1_000_000_000);
-        a -= std::usize::MAX;
-        assert_eq!(a.v, 417655993);
-
-        let a = ModInt::new(1_000_000_000) / std::usize::MAX;
-        assert_eq!(a.v, 605455209);
-
-        let mut a = ModInt::new(1_000_000_000);
-        a /= std::usize::MAX;
-        assert_eq!(a.v, 605455209);
     }
 }

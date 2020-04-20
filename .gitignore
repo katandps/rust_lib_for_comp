@@ -11,3 +11,5 @@
 
 # Development files
 .idea
+
+src/bin/*
