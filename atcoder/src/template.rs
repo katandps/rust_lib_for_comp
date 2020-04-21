@@ -1,10 +1,9 @@
-use input::*;
 use std::cmp::*;
 use std::io::*;
 use std::num::*;
 use std::str::*;
 
-mod input {
+mod i {
     use super::*;
 
     pub fn read<T: FromStr>() -> T {
