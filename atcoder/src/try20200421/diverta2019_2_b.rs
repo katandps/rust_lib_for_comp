@@ -1,8 +1,32 @@
 #[allow(dead_code)]
-fn main() {}
+fn main() {
+    let n = i::u();
+    let xy = i::iv2(n);
+    let mut map = HashMap::new();
+    for a in 0..n {
+        for b in 0..n {
+            if a == b {
+                continue;
+            }
+            // aからbへの遷移のhashを数える
+            let k = format!("{}, {}", xy[a].0 - xy[b].0, xy[a].1 - xy[b].1);
+            if !map.contains_key(&k) {
+                map.insert(k.clone(), 1);
+            } else {
+                *map.get_mut(&k).unwrap() += 1;
+            }
+        }
+    }
+    let mut ma = 0;
+    for m in map {
+        ma = max(ma, m.1)
+    }
+    println!("{}", n - ma);
+}
 
 #[allow(unused_imports)]
 use std::cmp::*;
+use std::collections::HashMap;
 #[allow(unused_imports)]
 use std::io::*;
 #[allow(unused_imports)]

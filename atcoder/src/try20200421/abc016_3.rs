@@ -1,16 +1,9 @@
-#[allow(dead_code)]
-fn main() {}
-
-#[allow(unused_imports)]
 use std::cmp::*;
-#[allow(unused_imports)]
+use std::collections::HashSet;
 use std::io::*;
-#[allow(unused_imports)]
 use std::num::*;
-#[allow(unused_imports)]
 use std::str::*;
 
-#[allow(dead_code)]
 mod i {
     use super::*;
 
@@ -54,10 +47,6 @@ mod i {
         (0..n).map(|_| i()).collect()
     }
 
-    pub fn iv2(n: usize) -> Vec<(i64, i64)> {
-        (0..n).map(|_| iv(2)).map(|a| (a[0], a[1])).collect()
-    }
-
     pub fn uv(n: usize) -> Vec<usize> {
         (0..n).map(|_| u()).collect()
     }
@@ -72,5 +61,32 @@ mod i {
 
     pub fn cmap(h: usize) -> Vec<Vec<char>> {
         (0..h).map(|_| s()).collect()
+    }
+}
+
+fn main() {
+    let (n, m) = (i::u(), i::u());
+    let ab = i::uv2(m);
+    let mut map = vec![HashSet::new(); n + 1];
+    for i in 0..m {
+        map[ab[i].0].insert(ab[i].1);
+        map[ab[i].1].insert(ab[i].0);
+    }
+
+    // 自分のID
+    for i in 1..(n + 1) {
+        let mut ans = HashSet::new();
+        // 友達
+        for j in &map[i] {
+            // 友達の友達
+            for k in &map[*j] {
+                if *k == i || map[i].contains(k) {
+                    continue;
+                } else {
+                    ans.insert(*k);
+                }
+            }
+        }
+        println!("{}", ans.len());
     }
 }

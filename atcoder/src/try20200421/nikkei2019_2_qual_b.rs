@@ -1,16 +1,8 @@
-#[allow(dead_code)]
-fn main() {}
-
-#[allow(unused_imports)]
 use std::cmp::*;
-#[allow(unused_imports)]
 use std::io::*;
-#[allow(unused_imports)]
 use std::num::*;
-#[allow(unused_imports)]
 use std::str::*;
 
-#[allow(dead_code)]
 mod i {
     use super::*;
 
@@ -54,16 +46,8 @@ mod i {
         (0..n).map(|_| i()).collect()
     }
 
-    pub fn iv2(n: usize) -> Vec<(i64, i64)> {
-        (0..n).map(|_| iv(2)).map(|a| (a[0], a[1])).collect()
-    }
-
     pub fn uv(n: usize) -> Vec<usize> {
         (0..n).map(|_| u()).collect()
-    }
-
-    pub fn uv2(n: usize) -> Vec<(usize, usize)> {
-        (0..n).map(|_| uv(2)).map(|a| (a[0], a[1])).collect()
     }
 
     pub fn fv(n: usize) -> Vec<f64> {
@@ -73,4 +57,36 @@ mod i {
     pub fn cmap(h: usize) -> Vec<Vec<char>> {
         (0..h).map(|_| s()).collect()
     }
+}
+
+fn main() {
+    let n = i::u();
+    let d = i::uv(n);
+
+    if d[0] != 0 {
+        println!("{}", 0);
+        return;
+    }
+
+    let mut count = vec![0; n + 1];
+    for i in d {
+        count[i] += 1;
+    }
+
+    if count[0] != 1 {
+        println!("{}", 0);
+        return;
+    }
+    let mut ans: u64 = 1;
+    let mut before: u64 = 1;
+    for i in 1..(n + 1) {
+        let current: u64 = count[i];
+        for _ in 0..current {
+            ans *= before;
+            ans %= 998244353;
+        }
+        before = current;
+    }
+    println!("{}", ans);
+    //dbg!(count);
 }

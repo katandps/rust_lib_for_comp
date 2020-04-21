@@ -1,16 +1,8 @@
-#[allow(dead_code)]
-fn main() {}
-
-#[allow(unused_imports)]
 use std::cmp::*;
-#[allow(unused_imports)]
 use std::io::*;
-#[allow(unused_imports)]
 use std::num::*;
-#[allow(unused_imports)]
 use std::str::*;
 
-#[allow(dead_code)]
 mod i {
     use super::*;
 
@@ -54,16 +46,8 @@ mod i {
         (0..n).map(|_| i()).collect()
     }
 
-    pub fn iv2(n: usize) -> Vec<(i64, i64)> {
-        (0..n).map(|_| iv(2)).map(|a| (a[0], a[1])).collect()
-    }
-
     pub fn uv(n: usize) -> Vec<usize> {
         (0..n).map(|_| u()).collect()
-    }
-
-    pub fn uv2(n: usize) -> Vec<(usize, usize)> {
-        (0..n).map(|_| uv(2)).map(|a| (a[0], a[1])).collect()
     }
 
     pub fn fv(n: usize) -> Vec<f64> {
@@ -73,4 +57,43 @@ mod i {
     pub fn cmap(h: usize) -> Vec<Vec<char>> {
         (0..h).map(|_| s()).collect()
     }
+}
+
+fn main() {
+    let t = i::u();
+    let n = i::u();
+    let a = i::uv(n);
+    let m = i::u();
+    let b = i::uv(m);
+
+    let mut aindex = n - 1;
+    let mut bindex = m - 1;
+    loop {
+        if a[aindex] > b[bindex] {
+            if aindex == 0 {
+                println!("{}", "no");
+                //   dbg!(aindex, bindex);
+                return;
+            }
+            aindex -= 1;
+            continue;
+        } else {
+            if a[aindex] + t < b[bindex] {
+                println!("{}", "no");
+                //   dbg!(aindex, bindex);
+                return;
+            }
+            if bindex == 0 {
+                break;
+            }
+            if aindex == 0 {
+                println!("{}", "no");
+                //   dbg!(aindex, bindex);
+                return;
+            }
+            aindex -= 1;
+            bindex -= 1;
+        }
+    }
+    println!("{}", "yes");
 }

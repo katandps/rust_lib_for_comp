@@ -1,5 +1,31 @@
 #[allow(dead_code)]
-fn main() {}
+fn main() {
+    let (n, k) = (i::u(), i::u());
+    let a = i::uv(n);
+
+    let mut sum = vec![0; n + 1];
+    for i in 0..n {
+        sum[i + 1] = sum[i] + a[i];
+    }
+    let mut right_index = 0;
+    let mut left_index = 0;
+    let mut ans = 0;
+    loop {
+        if right_index == n + 1 {
+            break;
+        }
+        if sum[right_index] - sum[left_index] >= k {
+            //dbg!(right_index, left_index);
+            ans += n + 1 - right_index;
+            left_index += 1;
+        } else {
+            //dbg!(right_index, left_index);
+            right_index += 1;
+        }
+    }
+    println!("{}", ans);
+    //dbg!(ans, sum);
+}
 
 #[allow(unused_imports)]
 use std::cmp::*;
@@ -54,16 +80,8 @@ mod i {
         (0..n).map(|_| i()).collect()
     }
 
-    pub fn iv2(n: usize) -> Vec<(i64, i64)> {
-        (0..n).map(|_| iv(2)).map(|a| (a[0], a[1])).collect()
-    }
-
     pub fn uv(n: usize) -> Vec<usize> {
         (0..n).map(|_| u()).collect()
-    }
-
-    pub fn uv2(n: usize) -> Vec<(usize, usize)> {
-        (0..n).map(|_| uv(2)).map(|a| (a[0], a[1])).collect()
     }
 
     pub fn fv(n: usize) -> Vec<f64> {

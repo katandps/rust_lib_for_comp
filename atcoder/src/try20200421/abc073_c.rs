@@ -1,16 +1,9 @@
-#[allow(dead_code)]
-fn main() {}
-
-#[allow(unused_imports)]
 use std::cmp::*;
-#[allow(unused_imports)]
+use std::collections::HashSet;
 use std::io::*;
-#[allow(unused_imports)]
 use std::num::*;
-#[allow(unused_imports)]
 use std::str::*;
 
-#[allow(dead_code)]
 mod i {
     use super::*;
 
@@ -54,16 +47,8 @@ mod i {
         (0..n).map(|_| i()).collect()
     }
 
-    pub fn iv2(n: usize) -> Vec<(i64, i64)> {
-        (0..n).map(|_| iv(2)).map(|a| (a[0], a[1])).collect()
-    }
-
     pub fn uv(n: usize) -> Vec<usize> {
         (0..n).map(|_| u()).collect()
-    }
-
-    pub fn uv2(n: usize) -> Vec<(usize, usize)> {
-        (0..n).map(|_| uv(2)).map(|a| (a[0], a[1])).collect()
     }
 
     pub fn fv(n: usize) -> Vec<f64> {
@@ -73,4 +58,18 @@ mod i {
     pub fn cmap(h: usize) -> Vec<Vec<char>> {
         (0..h).map(|_| s()).collect()
     }
+}
+
+fn main() {
+    let n = i::u();
+    let a = i::uv(n);
+    let mut set = HashSet::new();
+    for k in &a {
+        if set.contains(k) {
+            set.remove(k);
+        } else {
+            set.insert(k);
+        }
+    }
+    println!("{}", set.len());
 }

@@ -1,16 +1,8 @@
-#[allow(dead_code)]
-fn main() {}
-
-#[allow(unused_imports)]
 use std::cmp::*;
-#[allow(unused_imports)]
 use std::io::*;
-#[allow(unused_imports)]
 use std::num::*;
-#[allow(unused_imports)]
 use std::str::*;
 
-#[allow(dead_code)]
 mod i {
     use super::*;
 
@@ -54,16 +46,8 @@ mod i {
         (0..n).map(|_| i()).collect()
     }
 
-    pub fn iv2(n: usize) -> Vec<(i64, i64)> {
-        (0..n).map(|_| iv(2)).map(|a| (a[0], a[1])).collect()
-    }
-
     pub fn uv(n: usize) -> Vec<usize> {
         (0..n).map(|_| u()).collect()
-    }
-
-    pub fn uv2(n: usize) -> Vec<(usize, usize)> {
-        (0..n).map(|_| uv(2)).map(|a| (a[0], a[1])).collect()
     }
 
     pub fn fv(n: usize) -> Vec<f64> {
@@ -73,4 +57,31 @@ mod i {
     pub fn cmap(h: usize) -> Vec<Vec<char>> {
         (0..h).map(|_| s()).collect()
     }
+}
+
+fn main() {
+    let (n, p) = (i::u(), i::u());
+    let a = i::uv(n);
+    let odd = a.iter().filter(|k| *k % 2 == 1).count();
+    let even = a.iter().filter(|k| *k % 2 == 0).count();
+
+    let mut s = 1usize;
+    for _ in 0..even {
+        s *= 2;
+    }
+    let mut ans = 0;
+    //oddをi個選ぶ
+    for i in 0..(odd + 1) {
+        if i % 2 != p {
+            continue;
+        }
+        let mut combination = 1;
+        for j in 0..i {
+            combination *= odd - j;
+            combination /= j + 1
+        }
+        ans += combination * s;
+        //dbg!(ans, i, p);
+    }
+    println!("{}", ans);
 }

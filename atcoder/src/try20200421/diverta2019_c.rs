@@ -1,6 +1,51 @@
 #[allow(dead_code)]
-fn main() {}
+fn main() {
+    let n = i::u();
+    let s = i::cmap(n);
 
+    let native: usize = s
+        .iter()
+        .map(|s| {
+            let mut a = false;
+            let mut count: usize = 0;
+            for c in s {
+                if a && *c == 'B' {
+                    count += 1;
+                }
+                a = *c == 'A'
+            }
+            count
+        })
+        .sum();
+    let xa = s
+        .iter()
+        .filter(|s| s[0] != 'B' && s[s.len() - 1] == 'A')
+        .count();
+    let bx = s
+        .iter()
+        .filter(|s| s[0] == 'B' && s[s.len() - 1] != 'A')
+        .count();
+    let ba = s
+        .iter()
+        .filter(|s| s[0] == 'B' && s[s.len() - 1] == 'A')
+        .count();
+    println!(
+        "{}",
+        native
+            + match (xa, bx) {
+                (0, 0) =>
+                    if ba > 0 {
+                        ba - 1
+                    } else {
+                        0
+                    },
+                (a, b) => min(a + ba, b + ba),
+            }
+    );
+    //dbg!(native, xa, bx, ba);
+}
+
+use i::cmap;
 #[allow(unused_imports)]
 use std::cmp::*;
 #[allow(unused_imports)]

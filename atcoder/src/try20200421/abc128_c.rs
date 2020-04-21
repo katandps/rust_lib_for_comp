@@ -1,16 +1,8 @@
-#[allow(dead_code)]
-fn main() {}
-
-#[allow(unused_imports)]
 use std::cmp::*;
-#[allow(unused_imports)]
 use std::io::*;
-#[allow(unused_imports)]
 use std::num::*;
-#[allow(unused_imports)]
 use std::str::*;
 
-#[allow(dead_code)]
 mod i {
     use super::*;
 
@@ -54,16 +46,8 @@ mod i {
         (0..n).map(|_| i()).collect()
     }
 
-    pub fn iv2(n: usize) -> Vec<(i64, i64)> {
-        (0..n).map(|_| iv(2)).map(|a| (a[0], a[1])).collect()
-    }
-
     pub fn uv(n: usize) -> Vec<usize> {
         (0..n).map(|_| u()).collect()
-    }
-
-    pub fn uv2(n: usize) -> Vec<(usize, usize)> {
-        (0..n).map(|_| uv(2)).map(|a| (a[0], a[1])).collect()
     }
 
     pub fn fv(n: usize) -> Vec<f64> {
@@ -73,4 +57,47 @@ mod i {
     pub fn cmap(h: usize) -> Vec<Vec<char>> {
         (0..h).map(|_| s()).collect()
     }
+}
+
+fn main() {
+    let (n, m) = (i::u(), i::u());
+    let mut k = Vec::new();
+    let mut s = Vec::new();
+    for _ in 0..m {
+        let t = i::u();
+        k.push(t);
+        s.push(i::uv(t));
+    }
+    let p = i::uv(m);
+
+    let mut max = 1;
+    for _ in 0..n {
+        max *= 2;
+    }
+    let mut ans = 0;
+    let mut i = 0;
+    'case: while i < max {
+        let mut l = i;
+        let mut v = vec![false];
+        for _ in 0..n {
+            v.push(l % 2 == 0);
+            l = l >> 1;
+        }
+        i += 1;
+
+        for j in 0..m {
+            let mut count = 0;
+            for c in &s[j] {
+                if v[*c] {
+                    count += 1;
+                }
+            }
+            //dbg!(&v, count);
+            if count % 2 != p[j] {
+                continue 'case;
+            }
+        }
+        ans += 1;
+    }
+    println!("{}", ans);
 }
