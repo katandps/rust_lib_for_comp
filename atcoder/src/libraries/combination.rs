@@ -1,5 +1,7 @@
+#[allow(unused_imports)]
 use combination::Combination;
 
+#[allow(dead_code)]
 mod combination {
     use super::mod_int::*;
 

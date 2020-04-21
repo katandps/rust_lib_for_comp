@@ -1,8 +1,16 @@
+#[allow(dead_code)]
+fn main() {}
+
+#[allow(unused_imports)]
 use std::cmp::*;
+#[allow(unused_imports)]
 use std::io::*;
+#[allow(unused_imports)]
 use std::num::*;
+#[allow(unused_imports)]
 use std::str::*;
 
+#[allow(dead_code)]
 mod i {
     use super::*;
 
@@ -58,5 +66,3 @@ mod i {
         (0..h).map(|_| s()).collect()
     }
 }
-
-fn main() {}

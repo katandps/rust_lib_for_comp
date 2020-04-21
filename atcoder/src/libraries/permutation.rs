@@ -1,24 +1,29 @@
-pub struct Permutation {
-    stack: Vec<usize>,
-}
+#[allow(unused_imports)]
+use permutation::*;
 
-impl Permutation {
-    pub fn new(number: usize) -> Self {
-        const MODULO: usize = 1000000007;
-        let mut stack: Vec<usize> = Vec::new();
-        stack.push(1);
-        for i in 0..(number) {
-            let k = stack[i] * (number - i) % MODULO;
-            stack.push(k);
-        }
-
-        Self {
-            stack,
-        }
+#[allow(dead_code)]
+mod permutation {
+    pub struct Permutation {
+        stack: Vec<usize>,
     }
 
-    pub fn get(&self, number: isize) -> usize {
-        self.stack[number as usize]
+    #[allow(dead_code)]
+    impl Permutation {
+        pub fn new(number: usize) -> Self {
+            const MODULO: usize = 1000000007;
+            let mut stack: Vec<usize> = Vec::new();
+            stack.push(1);
+            for i in 0..(number) {
+                let k = stack[i] * (number - i) % MODULO;
+                stack.push(k);
+            }
+
+            Self { stack }
+        }
+
+        pub fn get(&self, number: isize) -> usize {
+            self.stack[number as usize]
+        }
     }
 }
 

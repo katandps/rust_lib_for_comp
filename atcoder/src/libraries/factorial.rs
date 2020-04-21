@@ -1,5 +1,7 @@
+#[allow(unused_imports)]
 use factorial::Factorial;
 
+#[allow(dead_code)]
 mod factorial {
     use super::mod_int::ModInt;
 

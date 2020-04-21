@@ -1,26 +1,32 @@
-use std::mem::swap;
+#[allow(unused_imports)]
+use mod_inv::*;
 
-struct ModInv {}
+#[allow(dead_code)]
+mod mod_inv {
+    use std::mem::swap;
 
-impl ModInv {
-    pub fn mod_inv(number: isize, modulo: usize) -> usize {
-        let mut n = number;
-        let mut b = modulo as isize;
-        let mut u: isize = 1;
-        let mut v: isize = 0;
+    pub(crate) struct ModInv {}
 
-        while b > 0 {
-            let t: isize = n / b;
-            n -= t * b;
-            swap(&mut n, &mut b);
-            u -= t * v;
-            swap(&mut u, &mut v);
+    impl ModInv {
+        pub fn mod_inv(number: isize, modulo: usize) -> usize {
+            let mut n = number;
+            let mut b = modulo as isize;
+            let mut u: isize = 1;
+            let mut v: isize = 0;
+
+            while b > 0 {
+                let t: isize = n / b;
+                n -= t * b;
+                swap(&mut n, &mut b);
+                u -= t * v;
+                swap(&mut u, &mut v);
+            }
+            u %= modulo as isize;
+            if u < 0 {
+                u += modulo as isize;
+            }
+            u as usize
         }
-        u %= modulo as isize;
-        if u < 0 {
-            u += modulo as isize;
-        }
-        u as usize
     }
 }
 
