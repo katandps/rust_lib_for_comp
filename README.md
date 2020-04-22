@@ -1,8 +1,16 @@
-# develop_rust
+# Rustで競技プログラミングのリポジトリ
 
-# コンテストの追加
+作成したライブラリ/解いた問題の集積所
 
-1. `app` 以下にコンテストフォルダを作る
-1. 回答するrustファイルを置く
-1. 対応するCargo.tomlを置く
-1. CLionのCargoの項目に追加する
+## 運用
+
+演習時は `atcoder/src/bin` 以下にソースを置く
+終わったら `atcoder` 以下に `try{yyyymmdd}` の名前でバイナリクレートを作り、bin以下に入れてコミットする
+
+ディレクトリ構造
+```
+try{yyyymmdd}
+  - src/
+    - bin/
+  - Cargo.toml
+```
