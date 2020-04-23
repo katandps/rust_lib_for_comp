@@ -1,3 +1,4 @@
+mod all_permutation;
 mod combination;
 mod factorial;
 mod mod_int;

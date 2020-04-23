@@ -4,6 +4,8 @@ fn main() {}
 #[allow(unused_imports)]
 use std::cmp::*;
 #[allow(unused_imports)]
+use std::collections::{HashMap, HashSet, VecDeque};
+#[allow(unused_imports)]
 use std::io::*;
 #[allow(unused_imports)]
 use std::num::*;

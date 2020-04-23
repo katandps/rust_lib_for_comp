@@ -15,14 +15,18 @@ mod union_find {
             for i in 1..(n + 1) {
                 parent[i] = i;
             }
-            UnionFind { parent, rank }
+            UnionFind {
+                parent: parent,
+                rank: rank,
+            }
         }
 
         pub fn root(&mut self, x: usize) -> usize {
             if self.parent[x] == x {
                 x
             } else {
-                self.parent[x] = self.root(self.parent[x]);
+                let p = self.parent[x];
+                self.parent[x] = self.root(p);
                 self.parent[x]
             }
         }
@@ -36,12 +40,15 @@ mod union_find {
         }
 
         pub fn unite(&mut self, x: usize, y: usize) {
-            let (x, y) = (self.root(x), self.root(y));
+            let mut x = self.root(x);
+            let mut y = self.root(y);
             if x == y {
                 return;
             }
             if self.rank(x) < self.rank(y) {
-                let (x, y) = (y, x);
+                let tmp = y;
+                y = x;
+                x = tmp;
             }
             if self.rank(x) == self.rank(y) {
                 self.rank[x] += 1;
