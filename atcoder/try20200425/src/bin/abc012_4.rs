@@ -1,5 +1,58 @@
 #[allow(dead_code)]
-fn main() {}
+fn main() {
+    let (n, m) = i::u2();
+    let abt = i::uv3(m);
+    let wf = warshall_floyd(
+        n,
+        m,
+        abt.iter().map(|t| t.0).collect(),
+        abt.iter().map(|t| t.1).collect(),
+        abt.iter().map(|t| t.2).collect(),
+    );
+
+    let mut min_dis = std::usize::MAX;
+    for i in 1..n + 1 {
+        let mut max_dis = 0;
+        for j in 1..n + 1 {
+            max_dis = max(max_dis, wf[i][j]);
+        }
+        min_dis = min(min_dis, max_dis);
+    }
+    println!("{}", min_dis);
+}
+
+#[allow(unused_imports)]
+use warshall_floyd::*;
+
+#[allow(dead_code)]
+mod warshall_floyd {
+    use std::cmp::min;
+
+    pub fn warshall_floyd(
+        vertex_n: usize,
+        edge_n: usize,
+        a: Vec<usize>,
+        b: Vec<usize>,
+        cost: Vec<usize>,
+    ) -> Vec<Vec<usize>> {
+        let mut ret = vec![vec![1_000_000_000usize; vertex_n + 1]; vertex_n + 1];
+        for i in 0..vertex_n + 1 {
+            ret[i][i] = 0;
+        }
+        for i in 0..edge_n {
+            ret[a[i]][b[i]] = min(ret[a[i]][b[i]], cost[i]);
+            ret[b[i]][a[i]] = min(ret[b[i]][a[i]], cost[i]); //有向グラフの場合はコメントアウト
+        }
+        for i in 0..vertex_n + 1 {
+            for j in 0..vertex_n + 1 {
+                for k in 0..vertex_n + 1 {
+                    ret[j][k] = min(ret[j][k], ret[j][i] + ret[i][k])
+                }
+            }
+        }
+        ret
+    }
+}
 
 #[allow(unused_imports)]
 use std::cmp::*;

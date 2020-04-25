@@ -1,5 +1,30 @@
 #[allow(dead_code)]
-fn main() {}
+fn main() {
+    let n = i::u();
+    let mut d = HashSet::new();
+    let mut l = 1;
+    while l * l <= n {
+        if n % l == 0 {
+            d.insert(l);
+            d.insert(n / l);
+        }
+        l += 1;
+    }
+    d.remove(&n);
+    let sum: usize = d.iter().sum();
+    println!(
+        "{}",
+        if sum == n {
+            "Perfect"
+        } else {
+            if sum > n {
+                "Abundant"
+            } else {
+                "Deficient"
+            }
+        }
+    );
+}
 
 #[allow(unused_imports)]
 use std::cmp::*;
@@ -44,14 +69,6 @@ mod i {
         read()
     }
 
-    pub fn u2() -> (usize, usize) {
-        (read(), read())
-    }
-
-    pub fn u3() -> (usize, usize, usize) {
-        (read(), read(), read())
-    }
-
     pub fn f() -> f64 {
         read()
     }
@@ -74,10 +91,6 @@ mod i {
 
     pub fn uv2(n: usize) -> Vec<(usize, usize)> {
         (0..n).map(|_| uv(2)).map(|a| (a[0], a[1])).collect()
-    }
-
-    pub fn uv3(n: usize) -> Vec<(usize, usize, usize)> {
-        (0..n).map(|_| uv(3)).map(|a| (a[0], a[1], a[2])).collect()
     }
 
     pub fn fv(n: usize) -> Vec<f64> {

@@ -1,5 +1,39 @@
 #[allow(dead_code)]
-fn main() {}
+fn main() {
+    let n = i::u();
+    let a = i::iv(n);
+    let mut ans = std::i32::MIN as i64;
+    let mut ao_max = std::i32::MIN as i64;
+    for t in 0..n {
+        let mut tk = std::i32::MIN as i64;
+        for ao in 0..n {
+            if t == ao {
+                continue;
+            }
+            let mut score = 0;
+            let mut ao_score = 0;
+            let l = min(t, ao);
+            let r = max(t, ao);
+            let m = r - l + 1;
+            for i in 0..m {
+                if i % 2 == 0 {
+                    score += a[l + i];
+                }
+                if i % 2 == 1 {
+                    ao_score += a[l + i];
+                }
+            }
+            //dbg!(ao_score, ao_max, score);
+            if ao_score > ao_max {
+                ao_max = ao_score;
+                tk = score;
+            }
+        }
+        ans = max(ans, tk);
+        ao_max = std::i32::MIN as i64;
+    }
+    println!("{}", ans);
+}
 
 #[allow(unused_imports)]
 use std::cmp::*;
@@ -44,14 +78,6 @@ mod i {
         read()
     }
 
-    pub fn u2() -> (usize, usize) {
-        (read(), read())
-    }
-
-    pub fn u3() -> (usize, usize, usize) {
-        (read(), read(), read())
-    }
-
     pub fn f() -> f64 {
         read()
     }
@@ -74,10 +100,6 @@ mod i {
 
     pub fn uv2(n: usize) -> Vec<(usize, usize)> {
         (0..n).map(|_| uv(2)).map(|a| (a[0], a[1])).collect()
-    }
-
-    pub fn uv3(n: usize) -> Vec<(usize, usize, usize)> {
-        (0..n).map(|_| uv(3)).map(|a| (a[0], a[1], a[2])).collect()
     }
 
     pub fn fv(n: usize) -> Vec<f64> {

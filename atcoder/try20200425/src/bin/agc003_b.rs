@@ -1,5 +1,21 @@
 #[allow(dead_code)]
-fn main() {}
+fn main() {
+    let n = i::u();
+    let mut a = i::uv(n);
+
+    let mut ans: usize = 0;
+    for i in 0..n - 1 {
+        if a[i] > 1 {
+            ans += a[i] / 2;
+            a[i] %= 2;
+        }
+        if a[i] == 1 && a[i + 1] > 1 {
+            ans += 1;
+            a[i + 1] -= 1;
+        }
+    }
+    println!("{}", ans + a[n - 1] / 2);
+}
 
 #[allow(unused_imports)]
 use std::cmp::*;
@@ -44,14 +60,6 @@ mod i {
         read()
     }
 
-    pub fn u2() -> (usize, usize) {
-        (read(), read())
-    }
-
-    pub fn u3() -> (usize, usize, usize) {
-        (read(), read(), read())
-    }
-
     pub fn f() -> f64 {
         read()
     }
@@ -74,10 +82,6 @@ mod i {
 
     pub fn uv2(n: usize) -> Vec<(usize, usize)> {
         (0..n).map(|_| uv(2)).map(|a| (a[0], a[1])).collect()
-    }
-
-    pub fn uv3(n: usize) -> Vec<(usize, usize, usize)> {
-        (0..n).map(|_| uv(3)).map(|a| (a[0], a[1], a[2])).collect()
     }
 
     pub fn fv(n: usize) -> Vec<f64> {

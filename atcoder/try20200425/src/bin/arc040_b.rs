@@ -1,5 +1,32 @@
 #[allow(dead_code)]
-fn main() {}
+fn main() {
+    let (n, r) = (i::u(), i::u());
+    let s = i::s();
+
+    let mut index = n - 1;
+    let mut max_index = 0;
+    let mut ans = 0;
+
+    loop {
+        if s[index] == 'o' {
+            if index == 0 {
+                break;
+            } else {
+                index -= 1;
+            }
+        } else {
+            if index < r {
+                ans += 1;
+                break;
+            } else {
+                index -= r;
+                max_index = max(max_index, index + 1);
+                ans += 1;
+            }
+        }
+    }
+    println!("{}", ans + max_index);
+}
 
 #[allow(unused_imports)]
 use std::cmp::*;
@@ -44,14 +71,6 @@ mod i {
         read()
     }
 
-    pub fn u2() -> (usize, usize) {
-        (read(), read())
-    }
-
-    pub fn u3() -> (usize, usize, usize) {
-        (read(), read(), read())
-    }
-
     pub fn f() -> f64 {
         read()
     }
@@ -74,10 +93,6 @@ mod i {
 
     pub fn uv2(n: usize) -> Vec<(usize, usize)> {
         (0..n).map(|_| uv(2)).map(|a| (a[0], a[1])).collect()
-    }
-
-    pub fn uv3(n: usize) -> Vec<(usize, usize, usize)> {
-        (0..n).map(|_| uv(3)).map(|a| (a[0], a[1], a[2])).collect()
     }
 
     pub fn fv(n: usize) -> Vec<f64> {
