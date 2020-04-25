@@ -1,6 +1,6 @@
-use im_rc::HashMap;
 use input::*;
 use std::cmp::*;
+use std::collections::HashMap;
 use std::io::*;
 use std::num::*;
 use std::str::*;
@@ -50,10 +50,7 @@ fn main() {
     let a = vecint(n - 1);
     let mut v = HashMap::new();
     for i in 0..a.len() {
-        if !v.contains_key(&a[i]) {
-            v.insert(a[i], 0);
-        }
-        v[&a[i]] += 1;
+        *v.entry(a[i]).or_insert(0) += 1;
     }
     for i in 1..=n {
         println!("{}", v.get(&i).unwrap_or(&0))

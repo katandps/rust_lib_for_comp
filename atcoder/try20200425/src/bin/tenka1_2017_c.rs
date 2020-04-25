@@ -1,6 +1,17 @@
 #[allow(dead_code)]
 fn main() {
-    //$CODE$
+    let n = i::i();
+    for x in 1..3501 {
+        for y in 1..3501 {
+            if 4 * x * y - n * y - n * x <= 0 {
+                continue;
+            }
+            if n * x * y % (4 * x * y - n * y - n * x) == 0 {
+                println!("{} {} {}", x, y, n * x * y / (4 * x * y - n * y - n * x));
+                return;
+            }
+        }
+    }
 }
 
 #[allow(unused_imports)]

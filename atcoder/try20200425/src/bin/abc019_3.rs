@@ -1,6 +1,22 @@
 #[allow(dead_code)]
 fn main() {
-    //$CODE$
+    let n = i::u();
+    let mut a = i::uv(n);
+    a.sort();
+    let mut set = HashSet::new();
+    let mut ans = n;
+    for mut k in a {
+        set.insert(k);
+        while k % 2 == 0 {
+            if set.contains(&(k / 2)) {
+                ans -= 1;
+                break;
+            }
+            k /= 2;
+        }
+    }
+    //dbg!(set);
+    println!("{}", ans);
 }
 
 #[allow(unused_imports)]

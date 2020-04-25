@@ -16,7 +16,7 @@ fn main() {
     let n: usize = read().unwrap();
     let mut a: Vec<i64> = Vec::new();
 
-    for i in 0..n {
+    for _i in 0..n {
         a.push(read().unwrap());
     }
 

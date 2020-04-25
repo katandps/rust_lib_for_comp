@@ -1,6 +1,39 @@
 #[allow(dead_code)]
 fn main() {
-    //$CODE$
+    let n = i::u();
+    let s = i::cmap(2);
+    let m = 1_000_000_007usize;
+    let mut tate = s[0][0] == s[1][0];
+    let mut ans = if tate { 3usize } else { 6usize };
+    let mut i = if tate { 1 } else { 2 };
+    if i >= n {
+        println!("{}", ans);
+        return;
+    }
+    loop {
+        if tate {
+            if s[0][i] == s[1][i] {
+                ans = ans * 2 % m;
+                i += 1;
+            } else {
+                ans = ans * 2 % m;
+                i += 2;
+                tate = false;
+            }
+        } else {
+            if s[0][i] == s[1][i] {
+                i += 1;
+                tate = true;
+            } else {
+                ans = ans * 3 % m;
+                i += 2;
+            }
+        }
+        if i >= n {
+            break;
+        }
+    }
+    println!("{}", ans);
 }
 
 #[allow(unused_imports)]
@@ -76,10 +109,6 @@ mod i {
 
     pub fn uv2(n: usize) -> Vec<(usize, usize)> {
         (0..n).map(|_| uv(2)).map(|a| (a[0], a[1])).collect()
-    }
-
-    pub fn uv3(n: usize) -> Vec<(usize, usize, usize)> {
-        (0..n).map(|_| uv(3)).map(|a| (a[0], a[1], a[2])).collect()
     }
 
     pub fn fv(n: usize) -> Vec<f64> {

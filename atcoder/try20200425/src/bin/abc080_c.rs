@@ -1,6 +1,46 @@
 #[allow(dead_code)]
 fn main() {
-    //$CODE$
+    let n = i::u();
+    let mut f = Vec::new();
+    for _ in 0..n {
+        f.push(i::uv(10));
+    }
+    let mut p = Vec::new();
+    for _ in 0..n {
+        p.push(i::iv(11));
+    }
+
+    let mut ans = std::i32::MIN as i64;
+
+    let case = (0..10).fold(1usize, |x, _| x * 2);
+    //0は店を営業していないので除外
+    for i in 1..case {
+        let mut l = i;
+        // joisinoの店が営業している時間帯
+        let open: Vec<bool> = (0..10)
+            .map(|_| {
+                let r = l % 2 == 1;
+                l >>= 1;
+                r
+            })
+            .collect();
+        // 各ショップと営業時間帯が一致する数
+        let match_open: Vec<usize> = f
+            .iter()
+            .map(|v| {
+                v.iter()
+                    .zip(open.clone())
+                    .filter(|fo| *fo.0 == 1 && fo.1)
+                    .count()
+            })
+            .collect();
+        let mut a = 0;
+        for j in 0..n {
+            a += p[j][match_open[j]];
+        }
+        ans = max(ans, a);
+    }
+    println!("{}", ans);
 }
 
 #[allow(unused_imports)]

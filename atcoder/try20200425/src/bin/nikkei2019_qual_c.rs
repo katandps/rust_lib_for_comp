@@ -1,6 +1,24 @@
 #[allow(dead_code)]
 fn main() {
-    //$CODE$
+    let n = i::u();
+    let ab = i::iv2(n);
+    let mut sum: Vec<i64> = ab.iter().map(|k| k.0 + k.1).collect();
+    let mut all_sum: i64 = ab.iter().map(|ab| ab.0).sum();
+    if n == 1 {
+        println!("{}", all_sum);
+        return;
+    }
+    sum.sort();
+    sum.reverse();
+    let mut i = 1;
+    loop {
+        all_sum -= sum[i];
+        i += 2;
+        if i >= n {
+            break;
+        }
+    }
+    println!("{}", all_sum);
 }
 
 #[allow(unused_imports)]

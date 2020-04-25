@@ -1,6 +1,25 @@
 #[allow(dead_code)]
 fn main() {
-    //$CODE$
+    let n = i::u();
+    let max_i = min(n, 200);
+
+    let mut ans = Vec::new();
+    for i in 0..max_i {
+        let x = n - i;
+        let s: usize = x
+            .to_string()
+            .chars()
+            .map(|c| c.to_string().parse::<usize>().ok().unwrap())
+            .sum();
+        if x + s == n {
+            ans.push(x);
+        }
+    }
+    ans.reverse();
+    println!("{}", ans.len());
+    for a in ans {
+        println!("{}", a);
+    }
 }
 
 #[allow(unused_imports)]

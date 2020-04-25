@@ -1,6 +1,4 @@
-use std::cmp::*;
 use std::io::*;
-use std::num::*;
 use std::str::*;
 
 fn read<T: FromStr>() -> T {
