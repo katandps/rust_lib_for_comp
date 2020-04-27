@@ -14,7 +14,7 @@ mod binary_search {
         ok
     }
 
-    fn is_ok(key: i32) -> bool {
+    fn is_ok(_key: i32) -> bool {
         return true;
     }
 }
