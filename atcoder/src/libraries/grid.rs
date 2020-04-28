@@ -1,0 +1,114 @@
+#[allow(unused_imports)]
+use grid::*;
+
+#[allow(dead_code)]
+mod grid {
+    #[derive(Debug)]
+    pub struct Grid<T> {
+        pub h: usize,
+        pub w: usize,
+        pub map: Vec<T>,
+    }
+
+    impl<T: Clone> Grid<T> {
+        pub fn new(h: usize, w: usize, map: Vec<Vec<T>>) -> Grid<T> {
+            let mut flat = Vec::new();
+            for r in map {
+                for c in r {
+                    flat.push(c);
+                }
+            }
+            Grid {
+                h: h,
+                w: w,
+                map: flat,
+            }
+        }
+        pub fn key(&self, x: usize, y: usize) -> usize {
+            y * self.w + x
+        }
+
+        pub fn xy(&self, k: usize) -> (usize, usize) {
+            (self.x(k), self.y(k))
+        }
+        pub fn x(&self, k: usize) -> usize {
+            k % self.w
+        }
+        pub fn y(&self, k: usize) -> usize {
+            k / self.w
+        }
+
+        pub fn get(&self, key: usize) -> &T {
+            &self.map[key]
+        }
+
+        pub fn set(&mut self, key: usize, value: T) {
+            self.map[key] = value;
+        }
+
+        pub fn left(&self, key: usize) -> Option<usize> {
+            if self.x(key) > 0 {
+                Some(key - 1)
+            } else {
+                None
+            }
+        }
+        pub fn right(&self, key: usize) -> Option<usize> {
+            if self.x(key) < self.w - 1 {
+                Some(key + 1)
+            } else {
+                None
+            }
+        }
+        pub fn up(&self, key: usize) -> Option<usize> {
+            if self.y(key) > 0 {
+                Some(key - self.w)
+            } else {
+                None
+            }
+        }
+        pub fn down(&self, key: usize) -> Option<usize> {
+            if self.y(key) < self.h - 1 {
+                Some(key + self.w)
+            } else {
+                None
+            }
+        }
+
+        pub fn neighbor(&self, key: usize) -> Vec<usize> {
+            vec![
+                self.up(key),
+                self.down(key),
+                self.left(key),
+                self.right(key),
+            ]
+            .iter()
+            .flat_map(|i| *i)
+            .collect()
+        }
+    }
+}
+
+#[cfg(test)]
+mod test {
+    use super::*;
+
+    #[test]
+    fn it_works() {
+        let grid = Grid::new(
+            3,
+            3,
+            vec![vec![10, 20, 30], vec![40, 50, 60], vec![70, 80, 90]],
+        );
+
+        let (x, y) = (1, 1);
+        let key = grid.key(x, y);
+        assert_eq!(grid.get(key), &50);
+        assert_eq!(grid.get(grid.left(key).unwrap()), &40);
+        assert_eq!(grid.get(grid.up(key).unwrap()), &20);
+        assert_eq!(grid.get(grid.right(key).unwrap()), &60);
+        assert_eq!(grid.get(grid.down(key).unwrap()), &80);
+
+        dbg!("{}", grid.neighbor(0));
+    }
+}

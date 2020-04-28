@@ -4,6 +4,7 @@ mod combination;
 mod factorial;
 mod geometric;
 mod greatest_common_divisor;
+mod grid;
 mod mod_int;
 mod mod_inv;
 mod permutation;
