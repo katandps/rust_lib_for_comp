@@ -7,6 +7,7 @@ mod grid {
     pub struct Grid<T> {
         pub h: usize,
         pub w: usize,
+        pub max: usize,
         pub map: Vec<T>,
     }
 
@@ -21,6 +22,7 @@ mod grid {
             Grid {
                 h: h,
                 w: w,
+                max: h * w,
                 map: flat,
             }
         }
@@ -46,45 +48,32 @@ mod grid {
             self.map[key] = value;
         }
 
-        pub fn left(&self, key: usize) -> Option<usize> {
+        pub fn neighbor(&self, key: usize) -> Vec<usize> {
+            let mut ret = Vec::new();
+            if self.x(key) + 1 < self.w {
+                ret.push(key + 1);
+            }
+            if self.y(key) + 1 < self.h {
+                ret.push(key + self.w);
+            }
             if self.x(key) > 0 {
-                Some(key - 1)
-            } else {
-                None
+                ret.push(key - 1);
             }
-        }
-        pub fn right(&self, key: usize) -> Option<usize> {
-            if self.x(key) < self.w - 1 {
-                Some(key + 1)
-            } else {
-                None
-            }
-        }
-        pub fn up(&self, key: usize) -> Option<usize> {
             if self.y(key) > 0 {
-                Some(key - self.w)
-            } else {
-                None
+                ret.push(key - self.w);
             }
-        }
-        pub fn down(&self, key: usize) -> Option<usize> {
-            if self.y(key) < self.h - 1 {
-                Some(key + self.w)
-            } else {
-                None
-            }
+            ret
         }
 
-        pub fn neighbor(&self, key: usize) -> Vec<usize> {
-            vec![
-                self.up(key),
-                self.down(key),
-                self.left(key),
-                self.right(key),
-            ]
-            .iter()
-            .flat_map(|i| *i)
-            .collect()
+        pub fn one_way(&self, key: usize) -> Vec<usize> {
+            let mut ret = Vec::new();
+            if self.x(key) + 1 < self.w {
+                ret.push(key + 1);
+            }
+            if self.y(key) + 1 < self.h {
+                ret.push(key + self.w);
+            }
+            ret
         }
     }
 }
