@@ -29,7 +29,6 @@ mod grid {
         pub fn key(&self, x: usize, y: usize) -> usize {
             y * self.w + x
         }
-
         pub fn xy(&self, k: usize) -> (usize, usize) {
             (self.x(k), self.y(k))
         }
@@ -39,15 +38,12 @@ mod grid {
         pub fn y(&self, k: usize) -> usize {
             k / self.w
         }
-
         pub fn get(&self, key: usize) -> &T {
             &self.map[key]
         }
-
         pub fn set(&mut self, key: usize, value: T) {
             self.map[key] = value;
         }
-
         pub fn neighbor(&self, key: usize) -> Vec<usize> {
             let mut ret = Vec::new();
             if self.x(key) + 1 < self.w {
@@ -64,7 +60,6 @@ mod grid {
             }
             ret
         }
-
         pub fn one_way(&self, key: usize) -> Vec<usize> {
             let mut ret = Vec::new();
             if self.x(key) + 1 < self.w {
@@ -93,11 +88,6 @@ mod test {
         let (x, y) = (1, 1);
         let key = grid.key(x, y);
         assert_eq!(grid.get(key), &50);
-        assert_eq!(grid.get(grid.left(key).unwrap()), &40);
-        assert_eq!(grid.get(grid.up(key).unwrap()), &20);
-        assert_eq!(grid.get(grid.right(key).unwrap()), &60);
-        assert_eq!(grid.get(grid.down(key).unwrap()), &80);
-
         dbg!("{}", grid.neighbor(0));
     }
 }

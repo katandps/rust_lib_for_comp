@@ -9,12 +9,9 @@ mod greatest_common_divisor {
         if a < b {
             swap(&mut b, &mut a);
         }
-        let mut c = 0;
         while b != 0 {
             a = a % b;
             swap(&mut a, &mut b);
-            c += 1;
-            println!("{}", c);
         }
         a
     }
