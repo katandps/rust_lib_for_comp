@@ -33,6 +33,7 @@ members = [
     "try20200506",
     "try20200510",
     "try20200515",
+    "try20200518",
 ]
 
 [dependencies]
