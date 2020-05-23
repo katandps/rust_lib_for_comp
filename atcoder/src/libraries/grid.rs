@@ -45,13 +45,7 @@ mod grid {
             self.map[key] = value;
         }
         pub fn neighbor(&self, key: usize) -> Vec<usize> {
-            let mut ret = Vec::new();
-            if self.x(key) + 1 < self.w {
-                ret.push(key + 1);
-            }
-            if self.y(key) + 1 < self.h {
-                ret.push(key + self.w);
-            }
+            let mut ret = self.one_way(key);
             if self.x(key) > 0 {
                 ret.push(key - 1);
             }
