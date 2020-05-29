@@ -29,15 +29,12 @@ mod i {
             .ok()
             .unwrap()
     }
-
     pub fn str() -> String {
         read()
     }
-
     pub fn s() -> Vec<char> {
         str().chars().collect()
     }
-
     pub fn i() -> i64 {
         read()
     }
@@ -52,6 +49,18 @@ mod i {
 
     pub fn u3() -> (usize, usize, usize) {
         (read(), read(), read())
+    }
+
+    pub fn u4() -> (usize, usize, usize, usize) {
+        (read(), read(), read(), read())
+    }
+
+    pub fn u5() -> (usize, usize, usize, usize, usize) {
+        (read(), read(), read(), read(), read())
+    }
+
+    pub fn u6() -> (usize, usize, usize, usize, usize, usize) {
+        (read(), read(), read(), read(), read(), read())
     }
 
     pub fn f() -> f64 {
@@ -70,6 +79,10 @@ mod i {
         (0..n).map(|_| iv(2)).map(|a| (a[0], a[1])).collect()
     }
 
+    pub fn iv3(n: usize) -> Vec<(i64, i64, i64)> {
+        (0..n).map(|_| iv(3)).map(|a| (a[0], a[1], a[2])).collect()
+    }
+
     pub fn uv(n: usize) -> Vec<usize> {
         (0..n).map(|_| u()).collect()
     }
@@ -80,6 +93,13 @@ mod i {
 
     pub fn uv3(n: usize) -> Vec<(usize, usize, usize)> {
         (0..n).map(|_| uv(3)).map(|a| (a[0], a[1], a[2])).collect()
+    }
+
+    pub fn uv4(n: usize) -> Vec<(usize, usize, usize, usize)> {
+        (0..n)
+            .map(|_| uv(4))
+            .map(|a| (a[0], a[1], a[2], a[3]))
+            .collect()
     }
 
     pub fn fv(n: usize) -> Vec<f64> {
