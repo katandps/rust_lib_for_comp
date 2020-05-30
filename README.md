@@ -4,13 +4,8 @@
 
 ## 運用
 
-演習時は `atcoder/src/bin` 以下にソースを置く
-終わったら `atcoder` 以下に `try{yyyymmdd}` の名前でバイナリクレートを作り、bin以下に入れてコミットする
+`atcoder/src/bin` 以下にあるファイルで問題を解く
+各問題について、`atcoder/sample`以下にあるテキストファイルが入力に相当する
+`bash atcoder/run.sh a` などとすると、サンプルの内容で実行できる
 
-ディレクトリ構造
-```
-try{yyyymmdd}
-  - src/
-    - bin/
-  - Cargo.toml
-```
+解き終わったら`atcoder/src/old/` にディレクトリを作ってソースファイルをコミットする
