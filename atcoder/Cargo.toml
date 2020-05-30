@@ -6,40 +6,6 @@ edition = "2018"
 
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
-[workspace]
-
-members = [
-    "old",
-    "try20200414",
-    "try20200415",
-    "try20200416",
-    "try20200417",
-    "try20200418",
-    "try20200419",
-    "try20200420",
-    "try20200421",
-    "try20200422",
-    "try20200423",
-    "try20200424",
-    "try20200425",
-    "try20200426",
-    "try20200427",
-    "try20200428",
-    "try20200429",
-    "try20200430",
-    "try20200502",
-    "try20200503",
-    "try20200504",
-    "try20200506",
-    "try20200510",
-    "try20200515",
-    "try20200518",
-    "try20200521",
-    "try20200522",
-    "try20200528",
-    "try20200529",
-]
-
 [dependencies]
 
 # 多バイト長整数、分数、複素数など
@@ -136,3 +102,4 @@ smallvec = "=1.1.0"
 [profile.release]
 lto = true
 panic = 'abort'
+
