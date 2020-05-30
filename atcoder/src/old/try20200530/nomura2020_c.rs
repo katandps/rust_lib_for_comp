@@ -1,12 +1,34 @@
 #[allow(dead_code)]
 fn main() {
-    //$CODE$
+    let n = i::u();
+    let a = i::uv(n + 1);
+    let sum = a.iter().sum();
+
+    //なるべく早くsumまで枝を広げる
+    let mut current_branch = 1;
+    let mut leaves = 0;
+    let mut ans = 0;
+    for k in a {
+        if current_branch - leaves < k {
+            println!("{}", -1);
+            return;
+        }
+        ans += current_branch - leaves;
+        leaves += k;
+        current_branch = min(sum, current_branch * 2 - leaves);
+        // dbg!(&ans, &leaves, &current_branch);
+    }
+    if sum > leaves {
+        println!("{}", -1);
+        return;
+    }
+    println!("{}", ans);
 }
 
 #[allow(unused_imports)]
 use std::cmp::*;
 #[allow(unused_imports)]
-use std::collections::{BTreeMap, BTreeSet, HashMap, HashSet, VecDeque};
+use std::collections::{HashMap, HashSet, VecDeque};
 #[allow(unused_imports)]
 use std::io::*;
 #[allow(unused_imports)]
@@ -29,12 +51,15 @@ mod i {
             .ok()
             .unwrap()
     }
+
     pub fn str() -> String {
         read()
     }
+
     pub fn s() -> Vec<char> {
         str().chars().collect()
     }
+
     pub fn i() -> i64 {
         read()
     }

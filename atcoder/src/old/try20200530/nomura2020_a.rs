@@ -1,12 +1,15 @@
 #[allow(dead_code)]
 fn main() {
-    //$CODE$
+    let (h1, m1, h2, m2, k) = i::u5();
+    let s1 = h1 * 60 + m1;
+    let s2 = h2 * 60 + m2;
+    println!("{}", s2 - s1 - k);
 }
 
 #[allow(unused_imports)]
 use std::cmp::*;
 #[allow(unused_imports)]
-use std::collections::{BTreeMap, BTreeSet, HashMap, HashSet, VecDeque};
+use std::collections::{HashMap, HashSet, VecDeque};
 #[allow(unused_imports)]
 use std::io::*;
 #[allow(unused_imports)]
@@ -29,12 +32,15 @@ mod i {
             .ok()
             .unwrap()
     }
+
     pub fn str() -> String {
         read()
     }
+
     pub fn s() -> Vec<char> {
         str().chars().collect()
     }
+
     pub fn i() -> i64 {
         read()
     }

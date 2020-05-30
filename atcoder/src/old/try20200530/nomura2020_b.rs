@@ -1,12 +1,16 @@
 #[allow(dead_code)]
 fn main() {
-    //$CODE$
+    let t = i::s();
+    for c in t {
+        print!("{}", if c == '?' { 'D' } else { c });
+    }
+    println!();
 }
 
 #[allow(unused_imports)]
 use std::cmp::*;
 #[allow(unused_imports)]
-use std::collections::{BTreeMap, BTreeSet, HashMap, HashSet, VecDeque};
+use std::collections::{HashMap, HashSet, VecDeque};
 #[allow(unused_imports)]
 use std::io::*;
 #[allow(unused_imports)]
@@ -29,12 +33,15 @@ mod i {
             .ok()
             .unwrap()
     }
+
     pub fn str() -> String {
         read()
     }
+
     pub fn s() -> Vec<char> {
         str().chars().collect()
     }
+
     pub fn i() -> i64 {
         read()
     }
