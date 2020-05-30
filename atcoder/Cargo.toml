@@ -103,3 +103,28 @@ smallvec = "=1.1.0"
 lto = true
 panic = 'abort'
 
+# ---------------------------------------------------------------------
+
+[[bin]]
+name = "a"
+path = "src/bin/a.rs"
+
+[[bin]]
+name = "b"
+path = "src/bin/b.rs"
+
+[[bin]]
+name = "c"
+path = "src/bin/c.rs"
+
+[[bin]]
+name = "d"
+path = "src/bin/d.rs"
+
+[[bin]]
+name = "e"
+path = "src/bin/e.rs"
+
+[[bin]]
+name = "f"
+path = "src/bin/f.rs"
