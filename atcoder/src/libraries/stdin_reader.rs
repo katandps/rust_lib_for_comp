@@ -1,20 +1,3 @@
-#[allow(dead_code)]
-fn main() {
-    let stdin = stdin();
-    let mut reader = StdinReader::new(stdin.lock());
-}
-
-#[allow(unused_imports)]
-use std::cmp::*;
-#[allow(unused_imports)]
-use std::collections::{BTreeMap, BTreeSet, HashMap, HashSet, VecDeque};
-#[allow(unused_imports)]
-use std::io::*;
-#[allow(unused_imports)]
-use std::num::*;
-#[allow(unused_imports)]
-use std::str::*;
-
 #[allow(unused_imports)]
 use stdin_reader::StdinReader;
 
@@ -148,6 +131,43 @@ mod stdin_reader {
         }
         pub fn cmap(&mut self, h: usize) -> Vec<Vec<char>> {
             (0..h).map(|_| self.s()).collect()
+        }
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+    use std::io::Cursor;
+
+    #[test]
+    fn basics() {
+        let cursor = Cursor::new(b"-123 456.7 Hello, world!\n");
+        let mut reader = StdinReader::new(cursor);
+
+        assert_eq!(-123, reader.i());
+        assert_eq!(456.7f64, reader.f());
+        assert_eq!("Hello,".to_string(), reader.str());
+        assert_eq!("world!".to_string(), reader.str());
+    }
+
+    #[test]
+    fn edge_cases() {
+        {
+            let cursor = Cursor::new(b"8\n");
+            let mut reader = StdinReader::new(cursor);
+            assert_eq!(8u32, reader.next());
+        }
+        {
+            let cursor = Cursor::new(b"\n9\n");
+            let mut reader = StdinReader::new(cursor);
+            assert_eq!(9i32, reader.next());
+        }
+        {
+            let cursor = Cursor::new(b"\n\n10\n11\n");
+            let mut reader = StdinReader::new(cursor);
+            assert_eq!(10u8, reader.next());
+            assert_eq!(11u8, reader.next());
         }
     }
 }
