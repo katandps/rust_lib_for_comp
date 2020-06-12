@@ -2,7 +2,12 @@
 fn main() {
     let stdin = stdin();
     let mut reader = StdinReader::new(stdin.lock());
-    //$CODE$
+    let n = reader.u();
+    let mut ans = 1usize;
+    for i in 1..(n + 1) {
+        ans = ans * i % 1_000_000_007;
+    }
+    println!("{}", ans);
 }
 
 #[allow(unused_imports)]

@@ -2,7 +2,67 @@
 fn main() {
     let stdin = stdin();
     let mut reader = StdinReader::new(stdin.lock());
-    //$CODE$
+    let (n, w) = reader.u2();
+    let vw = reader.uv2(n);
+
+    let mut w_max = 0;
+    let mut v_max = 0;
+    for &(v, w) in &vw {
+        w_max = max(w_max, w);
+        v_max = max(v_max, v);
+    }
+    // 重さが小さい
+    if w_max <= 1000 {
+        // dp[i][w] = v i番目まで選んだときに重さがwになる組み合わせの価値の最大値はv
+        let mut dp = vec![vec![0; 200001]; n + 1];
+        for i in 1..n + 1 {
+            let (v, w) = vw[i - 1];
+            for j in 0..200001 {
+                dp[i][j] = max(dp[i][j], dp[i - 1][j]);
+                if w + j > 200000 {
+                    continue;
+                }
+                dp[i][w + j] = max(dp[i][w + j], dp[i - 1][j] + v);
+            }
+        }
+        let mut ans = 0;
+        for k in 0..w + 1 {
+            ans = max(ans, dp[n][k]);
+        }
+        println!("{}", ans);
+
+        return;
+    }
+    // 価値が小さい
+    if v_max <= 1000 {
+        // dp[i][v] = w i番目まで選んだときに価値がvになる組み合わせの重さの最小値はw
+        let mut dp = vec![vec![std::usize::MAX; 200001]; n + 1];
+        dp[0][0] = 0usize;
+        for i in 1..n + 1 {
+            let (v, w) = vw[i - 1];
+            for j in 0..200001 {
+                dp[i][j] = min(dp[i][j], dp[i - 1][j]);
+                if v + j > 200000 {
+                    continue;
+                }
+                if dp[i - 1][j] == std::usize::MAX {
+                    continue;
+                }
+                dp[i][v + j] = min(dp[i][v + j], dp[i - 1][j] + w);
+            }
+        }
+        let mut ans = 0;
+        for i in 0..200001 {
+            if dp[n][i] <= w {
+                ans = max(ans, i);
+            }
+        }
+        println!("{}", ans);
+        return;
+    }
+
+    // nが小さい
+    // 未実装のため、部分点66点
 }
 
 #[allow(unused_imports)]

@@ -2,7 +2,25 @@
 fn main() {
     let stdin = stdin();
     let mut reader = StdinReader::new(stdin.lock());
-    //$CODE$
+    let s = reader.str();
+    let k = reader.u();
+
+    if k > s.len() {
+        println!("{}", 0);
+        return;
+    }
+    if k == s.len() {
+        println!("{}", 1);
+        return;
+    }
+    let mut pass = HashSet::new();
+    for i in 0..s.len() - k + 1 {
+        let begin = i;
+        let end = i + k;
+        pass.insert(&s[begin..end]);
+        //println!("{}", &s[begin..end]);
+    }
+    println!("{}", pass.len());
 }
 
 #[allow(unused_imports)]

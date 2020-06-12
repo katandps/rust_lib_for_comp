@@ -2,7 +2,26 @@
 fn main() {
     let stdin = stdin();
     let mut reader = StdinReader::new(stdin.lock());
-    //$CODE$
+    let (n, k) = reader.u2();
+    let s = reader.uv(n);
+
+    let mut p = 1;
+    let mut len = 0;
+    let mut q = VecDeque::new();
+    for s_i in s {
+        p *= s_i;
+        if p == 0 {
+            println!("{}", n);
+            return;
+        }
+        q.push_back(s_i);
+        while p > k && q.len() > 0 {
+            let b = q.pop_front().unwrap();
+            p /= b;
+        }
+        len = max(len, q.len());
+    }
+    println!("{}", len);
 }
 
 #[allow(unused_imports)]

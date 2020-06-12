@@ -2,7 +2,50 @@
 fn main() {
     let stdin = stdin();
     let mut reader = StdinReader::new(stdin.lock());
-    //$CODE$
+    let n = reader.u();
+    let s = reader.s();
+
+    let p = vec![
+        vec![true, true],
+        vec![true, false],
+        vec![false, true],
+        vec![false, false],
+    ];
+    for v in p {
+        match solve(&s, v) {
+            Some(t) => {
+                format(t);
+                return;
+            }
+            None => {}
+        }
+    }
+
+    println!("{}", -1);
+}
+
+fn solve(s: &Vec<char>, mut t: Vec<bool>) -> Option<Vec<bool>> {
+    for i in 0..s.len() {
+        // 2個前 xor (ox) xor (狼)
+        let p = t[i] ^ !(s[(i + 1) % s.len()] == 'o') ^ !t[i + 1];
+        t.push(p);
+    }
+
+    if t[0] != t[s.len()] || t[1] != t[s.len() + 1] {
+        None
+    } else {
+        //format(t.clone());
+        t.remove(s.len() + 1);
+        t.remove(s.len());
+        Some(t)
+    }
+}
+
+fn format(v: Vec<bool>) {
+    for b in v {
+        print!("{}", if b { "S" } else { "W" });
+    }
+    println!();
 }
 
 #[allow(unused_imports)]

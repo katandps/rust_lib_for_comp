@@ -2,20 +2,49 @@
 fn main() {
     let stdin = stdin();
     let mut reader = StdinReader::new(stdin.lock());
-    //$CODE$
+    let s = reader.s();
+    let t: Vec<char> = "AKIHABARA".chars().collect();
+    let mut t_index = 0;
+    for c in s {
+        if t_index >= t.len() {
+            println!("{}", "NO");
+            return;
+        }
+        if c == t[t_index] {
+            t_index += 1;
+            continue;
+        }
+        if t[t_index] == 'A' {
+            t_index += 1;
+            if t_index >= t.len() {
+                println!("{}", "NO");
+                return;
+            }
+            if c == t[t_index] {
+                t_index += 1;
+                continue;
+            }
+        }
+        println!("{}", "NO");
+        return;
+    }
+    if t_index < 8 {
+        println!("{}", "NO");
+        return;
+    }
+    println!("{}", "YES");
 }
 
 #[allow(unused_imports)]
 use std::cmp::*;
 #[allow(unused_imports)]
-use std::collections::{BTreeMap, BTreeSet, HashMap, HashSet, VecDeque};
+use std::collections::{HashMap, HashSet, VecDeque};
 #[allow(unused_imports)]
 use std::io::*;
 #[allow(unused_imports)]
 use std::num::*;
 #[allow(unused_imports)]
 use std::str::*;
-
 #[allow(unused_imports)]
 use stdin_reader::StdinReader;
 

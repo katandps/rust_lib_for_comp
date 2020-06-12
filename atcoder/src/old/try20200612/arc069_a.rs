@@ -2,7 +2,14 @@
 fn main() {
     let stdin = stdin();
     let mut reader = StdinReader::new(stdin.lock());
-    //$CODE$
+    let (n, m) = reader.u2();
+    if 2 * n >= m {
+        println!("{}", m / 2);
+        return;
+    }
+    let mut ans = n;
+    let m = m - 2 * n;
+    println!("{}", ans + m / 4);
 }
 
 #[allow(unused_imports)]

@@ -2,7 +2,15 @@
 fn main() {
     let stdin = stdin();
     let mut reader = StdinReader::new(stdin.lock());
-    //$CODE$
+    let (a, b, n) = reader.u3();
+    let mut k = n;
+    loop {
+        if k % a == 0 && k % b == 0 {
+            println!("{}", k);
+            return;
+        }
+        k += 1;
+    }
 }
 
 #[allow(unused_imports)]
