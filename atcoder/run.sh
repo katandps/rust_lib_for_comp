@@ -10,8 +10,7 @@ if [ $# -ne 1 ]; then
 fi
 
 NUM=$1
-
-echo "cargo build --release --bin $NUM"
-cargo build --release --bin $NUM
-echo "time ./target/release/$NUM < sample/$NUM.txt"
-time ./target/release/$NUM < sample/$NUM.txt
+echo "cargo build --color=always --package atcoder --bin $NUM"
+cargo build --color=always --package atcoder --bin $NUM
+echo "time -p ./target/debug/$NUM < sample/$NUM.txt"
+RUST_BACKTRACE=1 time -p ./target/debug/$NUM < sample/$NUM.txt

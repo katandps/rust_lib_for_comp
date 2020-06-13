@@ -3,6 +3,7 @@ fn main() {
     let stdin = stdin();
     let mut reader = StdinReader::new(stdin.lock());
     //$CODE$
+    let _ = reader.u();
 }
 
 #[allow(unused_imports)]
@@ -15,7 +16,6 @@ use std::io::*;
 use std::num::*;
 #[allow(unused_imports)]
 use std::str::*;
-
 #[allow(unused_imports)]
 use stdin_reader::StdinReader;
 
@@ -49,6 +49,9 @@ mod stdin_reader {
             }
             let mut start = None;
             loop {
+                if self.pos == self.buf.len() {
+                    break;
+                }
                 match (self.buf[self.pos], start.is_some()) {
                     (b' ', true) | (b'\n', true) => break,
                     (_, true) | (b' ', false) => self.pos += 1,

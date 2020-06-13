@@ -31,6 +31,9 @@ mod stdin_reader {
             }
             let mut start = None;
             loop {
+                if self.pos == self.buf.len() {
+                    break;
+                }
                 match (self.buf[self.pos], start.is_some()) {
                     (b' ', true) | (b'\n', true) => break,
                     (_, true) | (b' ', false) => self.pos += 1,
