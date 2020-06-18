@@ -1,6 +1,7 @@
 mod all_permutation;
 mod binary_search;
 mod combination;
+mod dinitz;
 mod factorial;
 mod geometric;
 mod greatest_common_divisor;
