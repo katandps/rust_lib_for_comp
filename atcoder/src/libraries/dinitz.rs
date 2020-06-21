@@ -8,6 +8,7 @@ mod dinitz {
         pub cap: i64,
     }
 
+    ///最大フロー問題をO(V^2E)で解くライブラリ
     pub struct Dinitz {
         g: Vec<Vec<Edge>>,
         level: Vec<i32>,
@@ -27,6 +28,7 @@ mod dinitz {
             }
         }
 
+        ///辺と、最大流量を設定する
         pub fn add_edge(&mut self, from: usize, to: usize, cap: i64) {
             let to_len = self.g[to].len();
             let from_len = self.g[from].len();
@@ -91,6 +93,7 @@ mod dinitz {
             }
         }
 
+        ///最大フロー問題をDinitzを使って解く O(V^2 E)
         pub fn max_flow(&mut self, s: usize, t: usize) -> i64 {
             let v = self.level.len();
             let mut flow: i64 = 0;
