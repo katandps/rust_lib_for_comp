@@ -2,8 +2,14 @@
 fn main() {
     let stdin = stdin();
     let mut reader = StdinReader::new(stdin.lock());
-    //$CODE$
-    let _ = reader.u();
+    let n = reader.u();
+    let mut l = 1;
+    let mut ans = 0;
+    while l * l <= n {
+        ans = l * l;
+        l += 1;
+    }
+    println!("{}", ans);
 }
 
 #[allow(unused_imports)]

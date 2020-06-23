@@ -2,8 +2,13 @@
 fn main() {
     let stdin = stdin();
     let mut reader = StdinReader::new(stdin.lock());
-    //$CODE$
-    let _ = reader.u();
+    let (w, a, b) = reader.u3();
+    let (a, b) = (min(a, b), max(a, b));
+    if a + w > b {
+        println!("{}", 0);
+        return;
+    }
+    println!("{}", b - a - w);
 }
 
 #[allow(unused_imports)]

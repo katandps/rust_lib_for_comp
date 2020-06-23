@@ -2,8 +2,17 @@
 fn main() {
     let stdin = stdin();
     let mut reader = StdinReader::new(stdin.lock());
-    //$CODE$
-    let _ = reader.u();
+    let (n, m) = reader.u2();
+    let ab = reader.uv2(m);
+
+    let mut ans = vec![Vec::new(); n + 1];
+    for (a, b) in ab {
+        ans[a].push(b);
+        ans[b].push(b);
+    }
+    for i in 1..=n {
+        println!("{}", ans[i].len());
+    }
 }
 
 #[allow(unused_imports)]

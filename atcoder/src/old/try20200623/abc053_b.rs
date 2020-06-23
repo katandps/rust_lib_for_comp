@@ -2,8 +2,19 @@
 fn main() {
     let stdin = stdin();
     let mut reader = StdinReader::new(stdin.lock());
-    //$CODE$
-    let _ = reader.u();
+    let s = reader.s();
+    let mut first_a = s.len();
+    let mut last_z = 0;
+    for i in 0..s.len() {
+        let rev = s.len() - i - 1;
+        if first_a == s.len() && s[i] == 'A' {
+            first_a = i;
+        }
+        if last_z == 0 && s[rev] == 'Z' {
+            last_z = rev;
+        }
+    }
+    println!("{}", last_z - first_a + 1);
 }
 
 #[allow(unused_imports)]

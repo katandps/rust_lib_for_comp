@@ -2,8 +2,16 @@
 fn main() {
     let stdin = stdin();
     let mut reader = StdinReader::new(stdin.lock());
-    //$CODE$
-    let _ = reader.u();
+    let n = reader.u();
+    let t = reader.uv(n);
+    let m = reader.u();
+    let px = reader.uv2(m);
+
+    let sum: usize = t.iter().sum();
+
+    for (p, x) in px {
+        println!("{}", sum - t[p - 1] + x);
+    }
 }
 
 #[allow(unused_imports)]

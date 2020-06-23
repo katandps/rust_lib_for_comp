@@ -2,8 +2,10 @@
 fn main() {
     let stdin = stdin();
     let mut reader = StdinReader::new(stdin.lock());
-    //$CODE$
-    let _ = reader.u();
+    let n = reader.u();
+    let mut a = reader.uv(n);
+    a.sort();
+    println!("{}", a[n - 1] - a[0]);
 }
 
 #[allow(unused_imports)]

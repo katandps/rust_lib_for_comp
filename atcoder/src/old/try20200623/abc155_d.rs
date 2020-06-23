@@ -2,14 +2,137 @@
 fn main() {
     let stdin = stdin();
     let mut reader = StdinReader::new(stdin.lock());
-    //$CODE$
-    let _ = reader.u();
+    let (n, k) = reader.u2();
+    let a = reader.iv(n);
+    let ms = a
+        .iter()
+        .filter(|&&x| x < 0)
+        .cloned()
+        .sorted()
+        .rev()
+        .collect::<Vec<_>>();
+    let ps = a
+        .iter()
+        .filter(|&&x| x > 0)
+        .cloned()
+        .sorted()
+        .collect::<Vec<_>>();
+    let plus = ps.len();
+    let minus = ms.len();
+    let zero = n - plus - minus;
+    let res_minus = plus * minus;
+    let res_zero = if zero > 0 {
+        zero * (plus + minus) + zero * (zero - 1) / 2
+    } else {
+        0
+    };
+
+    //    dbg!(res_minus, res_zero, res_plus);
+    if k <= res_minus {
+        // k番目の値を探す
+        let k = res_minus - k + 1;
+        //1から10^18までの数のうち、積がこの値以下になるものがk個未満になる最大の値を二分探索で探す
+        let mut ng: i64 = -1;
+        let mut ok = 1_000_000_000_000_000_001;
+
+        let count = |ms: &Vec<i64>, ps: &Vec<i64>, m: i64| -> usize {
+            let mut count = 0;
+            for &m_i in ms {
+                let mut ng = -1;
+                let mut ok = ps.len() as i32;
+                while (ok - ng).abs() > 1 {
+                    let mid = (ok + ng) / 2;
+                    if -ps[mid as usize] * m_i >= m {
+                        ok = mid
+                    } else {
+                        ng = mid
+                    }
+                }
+                count += ok as usize;
+            }
+            //dbg!(&m, &count);
+            count
+        };
+        while (ok - ng).abs() > 1 {
+            let mid = (ok + ng) / 2;
+            if count(&ms, &ps, mid) >= k {
+                ok = mid
+            } else {
+                ng = mid
+            }
+        }
+        println!("{}", -ok + 1);
+        // dbg!(ms, ps, k);
+        return;
+    } else if k <= res_minus + res_zero {
+        println!("{}", 0);
+        return;
+    }
+    let k = k - res_minus - res_zero;
+    //1から10^18までの数のうち、積がこの値以下になるものがk個未満になる最大の値を二分探索で探す
+    let mut ng: i64 = -1;
+    let mut ok = 1_000_000_000_000_000_001;
+
+    let count = |ms: &Vec<i64>, ps: &Vec<i64>, m: i64| -> usize {
+        let mut count = 0;
+        if ms.len() > 0 {
+            for i in 0..ms.len() - 1 {
+                let mut ng = i;
+                let mut ok = ms.len();
+                while ok - ng > 1 {
+                    let mid = (ok + ng) / 2;
+                    if ms[mid] * ms[i] > m {
+                        ok = mid
+                    } else {
+                        ng = mid
+                    }
+                }
+                count += ok - i - 1;
+            }
+        }
+        if ps.len() > 0 {
+            for i in 0..ps.len() - 1 {
+                let mut ng = i;
+                let mut ok = ps.len();
+                while ok - ng > 1 {
+                    let mid = (ok + ng) / 2;
+                    if ps[mid] * ps[i] > m {
+                        ok = mid
+                    } else {
+                        ng = mid
+                    }
+                }
+                count += ok - i - 1;
+                // dbg!(ok, i);
+            }
+        }
+        // dbg!(&m, &count);
+        count
+    };
+
+    while (ok - ng).abs() > 1 {
+        let mid = (ok + ng) / 2;
+        if count(&ms, &ps, mid) >= k {
+            ok = mid
+        } else {
+            ng = mid
+        }
+    }
+    println!("{}", ok);
+    // dbg!(ps, ms, k);
 }
 
-#[allow(unused_imports)]
 use itertools::Itertools;
 #[allow(unused_imports)]
-use std::{cmp::*, collections::*, io::*, num::*, str::*};
+use std::cmp::*;
+#[allow(unused_imports)]
+use std::collections::{BTreeMap, BTreeSet, HashMap, HashSet, VecDeque};
+#[allow(unused_imports)]
+use std::io::*;
+#[allow(unused_imports)]
+use std::num::*;
+#[allow(unused_imports)]
+use std::str::*;
 #[allow(unused_imports)]
 use stdin_reader::StdinReader;
 

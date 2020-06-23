@@ -2,8 +2,12 @@
 fn main() {
     let stdin = stdin();
     let mut reader = StdinReader::new(stdin.lock());
-    //$CODE$
-    let _ = reader.u();
+    let (x1, y1) = reader.i2();
+    let (x2, y2) = reader.i2();
+
+    let (x3, y3) = (x2 - y2 + y1, y2 + x2 - x1);
+    let (x4, y4) = (x3 - y3 + y2, y3 + x3 - x2);
+    println!("{} {} {} {}", x3, y3, x4, y4);
 }
 
 #[allow(unused_imports)]

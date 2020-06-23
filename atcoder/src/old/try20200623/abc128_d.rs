@@ -2,8 +2,58 @@
 fn main() {
     let stdin = stdin();
     let mut reader = StdinReader::new(stdin.lock());
-    //$CODE$
-    let _ = reader.u();
+    let (n, k) = reader.u2();
+    let v = reader.iv(n).iter().cloned().collect::<VecDeque<i64>>();
+
+    let l_max = min(k, n);
+    let mut ans = 0;
+    for left in 0..=l_max {
+        let r_max = l_max - left;
+        for right in 0..=r_max {
+            let k_left = k - left - right;
+            let mut vc = v.clone();
+
+            let mut plus = BTreeMap::new();
+            let mut minus = BTreeMap::new();
+
+            for _ in 0..left {
+                let c = vc.pop_front().unwrap();
+                if c >= 0 {
+                    *plus.entry(c).or_insert(0) += 1;
+                } else {
+                    *minus.entry(Reverse(-c)).or_insert(0) += 1;
+                }
+            }
+
+            for _ in 0..right {
+                let c = vc.pop_back().unwrap();
+                if c >= 0 {
+                    *plus.entry(c).or_insert(0) += 1;
+                } else {
+                    *minus.entry(Reverse(-c)).or_insert(0) += 1;
+                }
+            }
+
+            let mut sum: i64 = plus.iter().map(|(a, c)| a * c).sum::<i64>()
+                - minus.iter().map(|(a, c)| a.0 * c).sum::<i64>();
+            let remove = min(minus.len(), k_left);
+            let mut minus_it = minus.iter();
+            let mut rest = 0;
+            let mut cur = 0;
+            for _ in 0..remove {
+                if rest == 0 {
+                    let (&a, &c) = minus_it.next().unwrap();
+                    rest = c;
+                    cur = a.0;
+                }
+                sum += cur;
+                rest -= 1;
+            }
+            ans = max(ans, sum);
+            //dbg!(left, right, k_left, plus, minus, sum, ans);
+        }
+    }
+    println!("{}", ans);
 }
 
 #[allow(unused_imports)]

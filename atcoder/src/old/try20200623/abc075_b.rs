@@ -2,8 +2,50 @@
 fn main() {
     let stdin = stdin();
     let mut reader = StdinReader::new(stdin.lock());
-    //$CODE$
-    let _ = reader.u();
+    let (h, w) = reader.u2();
+    let s = reader.cmap(h);
+
+    let mut ss = Vec::new();
+    ss.push(itertools::repeat_n(false, w + 2).collect());
+    for i in 0..h {
+        let mut v = vec![false];
+        for &c in &s[i] {
+            v.push(c == '#');
+        }
+        v.push(false);
+        ss.push(v);
+    }
+    ss.push(itertools::repeat_n(false, w + 2).collect());
+
+    let mut ans = vec![vec!['#'; w + 2]; h + 2];
+    for i in 1..=h {
+        for j in 1..=w {
+            if ss[i][j] {
+                continue;
+            }
+            let a = vec![
+                ss[i - 1][j - 1],
+                ss[i - 1][j],
+                ss[i - 1][j + 1],
+                ss[i][j - 1],
+                ss[i][j + 1],
+                ss[i + 1][j - 1],
+                ss[i + 1][j],
+                ss[i + 1][j + 1],
+            ]
+            .iter()
+            .filter(|&&b| b)
+            .count();
+            ans[i][j] = a.to_string().chars().next().unwrap();
+        }
+    }
+
+    for i in 1..=h {
+        for j in 1..=w {
+            print!("{}", ans[i][j]);
+        }
+        println!();
+    }
 }
 
 #[allow(unused_imports)]

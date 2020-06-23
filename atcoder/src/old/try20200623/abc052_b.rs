@@ -2,8 +2,23 @@
 fn main() {
     let stdin = stdin();
     let mut reader = StdinReader::new(stdin.lock());
-    //$CODE$
-    let _ = reader.u();
+    let n = reader.u();
+    let s = reader.s();
+    let mut x = 0;
+    let mut ans = 0;
+    for i in 0..n {
+        match s[i] {
+            'I' => {
+                x += 1;
+            }
+            'D' => {
+                x -= 1;
+            }
+            _ => unreachable!(),
+        }
+        ans = max(ans, x);
+    }
+    println!("{}", ans);
 }
 
 #[allow(unused_imports)]
