@@ -6,6 +6,7 @@ mod factorial;
 mod geometric;
 mod greatest_common_divisor;
 mod grid;
+mod lowest_common_ancestor;
 mod lucas_theorem;
 mod mod_int;
 mod mod_inv;
