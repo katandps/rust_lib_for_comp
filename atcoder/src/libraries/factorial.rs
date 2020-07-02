@@ -21,12 +21,35 @@ mod factorial {
             Factorial { stack: stack }
         }
 
-        pub fn get(&self, number: usize) -> ModInt<usize> {
+        /// 階乗 n!
+        pub fn fact(&self, number: usize) -> ModInt<usize> {
             self.stack[number]
+        }
+
+        /// 順列 nPk
+        pub fn npk(&self, n: usize, k: usize) -> ModInt<usize> {
+            if k > n {
+                ModInt::new(0)
+            } else {
+                self.stack[n] / self.stack[n - k]
+            }
+        }
+
+        /// 組み合わせ nCk
+        pub fn nck(&self, n: usize, k: usize) -> ModInt<usize> {
+            if k > n {
+                ModInt::new(0)
+            } else {
+                self.npk(n, k) / self.stack[k]
+            }
+        }
+
+        ///重複組合せ nHk
+        pub fn nhk(&self, n: usize, k: usize) -> ModInt<usize> {
+            self.stack[n + k - 1] / self.stack[k] / self.stack[n - 1]
         }
     }
 }
-
 use crate::libraries::mod_int::mod_int;
 
 #[cfg(test)]
