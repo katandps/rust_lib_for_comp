@@ -1,4 +1,5 @@
 mod all_permutation;
+mod binary_indexed_tree;
 mod binary_search;
 mod combination;
 mod dinitz;
