@@ -15,9 +15,7 @@ use stdin_reader::StdinReader;
 
 #[allow(dead_code)]
 mod stdin_reader {
-    use std::fmt::Debug;
-    use std::io::*;
-    use std::str::*;
+    use std::{fmt::Debug, io::*, str::*};
 
     pub struct StdinReader<R: BufRead> {
         reader: R,
@@ -27,14 +25,11 @@ mod stdin_reader {
     }
 
     impl<R: BufRead> StdinReader<R> {
-        pub fn new(r: R) -> StdinReader<R> {
-            StdinReader {
-                reader: r,
-                buf: Vec::new(),
-                pos: 0,
-            }
+        pub fn new(reader: R) -> StdinReader<R> {
+            let (buf, pos) = (Vec::new(), 0);
+            StdinReader { reader, buf, pos }
         }
-        pub fn next<T: FromStr>(&mut self) -> T
+        pub fn n<T: FromStr>(&mut self) -> T
         where
             T::Err: Debug,
         {
@@ -42,10 +37,7 @@ mod stdin_reader {
                 self._read_next_line();
             }
             let mut start = None;
-            loop {
-                if self.pos == self.buf.len() {
-                    break;
-                }
+            while self.pos != self.buf.len() {
                 match (self.buf[self.pos], start.is_some()) {
                     (b' ', true) | (b'\n', true) => break,
                     (_, true) | (b' ', false) => self.pos += 1,
@@ -66,59 +58,46 @@ mod stdin_reader {
         }
 
         pub fn str(&mut self) -> String {
-            self.next()
+            self.n()
         }
         pub fn s(&mut self) -> Vec<char> {
-            self.next::<String>().chars().collect()
+            self.n::<String>().chars().collect()
         }
         pub fn i(&mut self) -> i64 {
-            self.next()
+            self.n()
         }
         pub fn i2(&mut self) -> (i64, i64) {
-            (self.next(), self.next())
+            (self.n(), self.n())
         }
         pub fn i3(&mut self) -> (i64, i64, i64) {
-            (self.next(), self.next(), self.next())
+            (self.n(), self.n(), self.n())
         }
         pub fn u(&mut self) -> usize {
-            self.next()
+            self.n()
         }
         pub fn u2(&mut self) -> (usize, usize) {
-            (self.next(), self.next())
+            (self.n(), self.n())
         }
         pub fn u3(&mut self) -> (usize, usize, usize) {
-            (self.next(), self.next(), self.next())
+            (self.n(), self.n(), self.n())
         }
         pub fn u4(&mut self) -> (usize, usize, usize, usize) {
-            (self.next(), self.next(), self.next(), self.next())
+            (self.n(), self.n(), self.n(), self.n())
         }
         pub fn u5(&mut self) -> (usize, usize, usize, usize, usize) {
-            (
-                self.next(),
-                self.next(),
-                self.next(),
-                self.next(),
-                self.next(),
-            )
+            (self.n(), self.n(), self.n(), self.n(), self.n())
         }
         pub fn u6(&mut self) -> (usize, usize, usize, usize, usize, usize) {
-            (
-                self.next(),
-                self.next(),
-                self.next(),
-                self.next(),
-                self.next(),
-                self.next(),
-            )
+            (self.n(), self.n(), self.n(), self.n(), self.n(), self.n())
         }
         pub fn f(&mut self) -> f64 {
-            self.next()
+            self.n()
         }
         pub fn f2(&mut self) -> (f64, f64) {
-            (self.next(), self.next())
+            (self.n(), self.n())
         }
         pub fn c(&mut self) -> char {
-            self.next::<String>().pop().unwrap()
+            self.n::<String>().pop().unwrap()
         }
         pub fn iv(&mut self, n: usize) -> Vec<i64> {
             (0..n).map(|_| self.i()).collect()
