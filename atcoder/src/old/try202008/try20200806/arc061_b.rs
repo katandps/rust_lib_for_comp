@@ -5,9 +5,39 @@ fn main() {
 }
 
 pub fn solve<R: BufRead>(mut reader: StdinReader<R>) {
-    //$CODE$//
-    let n = reader.u();
-    println!("{}", n);
+    let (h, w, n) = reader.u3();
+    let ab = reader.uv2(n);
+
+    let mut map = HashMap::new();
+    for (a, b) in ab {
+        for x in 0..3 {
+            if a + x < 3 {
+                continue;
+            }
+            if a + x > h {
+                continue;
+            }
+            for y in 0..3 {
+                if b + y < 3 {
+                    continue;
+                }
+                if b + y > w {
+                    continue;
+                }
+                *map.entry((a + x, b + y)).or_insert(0) += 1;
+            }
+        }
+    }
+
+    let all = (h - 2) * (w - 2);
+    let mut c = vec![0; 10];
+    for (_, count) in map {
+        c[count] += 1;
+    }
+    println!("{}", all - c.iter().sum::<usize>());
+    for i in 1..=9 {
+        println!("{}", c[i]);
+    }
 }
 
 #[allow(unused_imports)]

@@ -1,13 +1,28 @@
 #[allow(dead_code)]
 fn main() {
     let stdin = stdin();
-    solve(StdinReader::new(stdin.lock()));
-}
-
-pub fn solve<R: BufRead>(mut reader: StdinReader<R>) {
-    //$CODE$//
+    let mut reader = StdinReader::new(stdin.lock());
     let n = reader.u();
-    println!("{}", n);
+    let a = reader.uv(n);
+
+    let mut index_map = vec![0; n + 1];
+    for i in 0..n {
+        index_map[a[i]] = i + 1;
+    }
+
+    let mut set = BTreeSet::new();
+    set.insert(0);
+    set.insert(n + 1);
+
+    let mut ans = 0;
+    for i in 1..=n {
+        let index = index_map[i];
+        let l = set.range(..index).last().unwrap();
+        let r = set.range((index + 1)..).next().unwrap();
+        ans += (index - l) * (r - index) * i;
+        set.insert(index);
+    }
+    println!("{}", ans);
 }
 
 #[allow(unused_imports)]
@@ -18,7 +33,7 @@ use std::{cmp::*, collections::*, io::*, num::*, str::*};
 use stdin_reader::StdinReader;
 
 #[allow(dead_code)]
-pub mod stdin_reader {
+mod stdin_reader {
     use std::{fmt::Debug, io::*, str::*};
 
     pub struct StdinReader<R: BufRead> {
@@ -33,7 +48,6 @@ pub mod stdin_reader {
             let (buf, pos) = (Vec::new(), 0);
             StdinReader { reader, buf, pos }
         }
-
         pub fn n<T: FromStr>(&mut self) -> T
         where
             T::Err: Debug,
@@ -50,10 +64,8 @@ pub mod stdin_reader {
                     (_, false) => start = Some(self.pos),
                 }
             }
-            match start {
-                Some(s) => from_utf8(&self.buf[s..self.pos]).unwrap().parse().unwrap(),
-                None => panic!("入力された数を超えた読み込みが発生しています"),
-            }
+            let target = &self.buf[start.unwrap()..self.pos];
+            from_utf8(target).unwrap().parse().unwrap()
         }
 
         fn _read_next_line(&mut self) {

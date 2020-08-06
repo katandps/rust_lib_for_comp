@@ -5,9 +5,50 @@ fn main() {
 }
 
 pub fn solve<R: BufRead>(mut reader: StdinReader<R>) {
-    //$CODE$//
-    let n = reader.u();
-    println!("{}", n);
+    let s = reader.s();
+    let n = s.len();
+
+    let mut v = vec![0; n];
+    let mut rr = true;
+    let mut start = 0;
+    let mut l = 0;
+    for i in 0..n {
+        if rr && s[i] == 'R' {
+            continue;
+        }
+        if rr && s[i] == 'L' {
+            l = i;
+            rr = false;
+            continue;
+        }
+        if !rr && s[i] == 'L' {
+            continue;
+        }
+        if !rr && s[i] == 'R' {
+            v[l - 1] = (i - start) / 2;
+            v[l] = (i - start) / 2;
+            if (i - start) % 2 == 1 {
+                if (l - start) % 2 == 0 {
+                    v[l] += 1;
+                } else {
+                    v[l - 1] += 1;
+                }
+            }
+            start = i;
+            rr = true;
+        }
+    }
+    v[l - 1] = (n - start) / 2;
+    v[l] = (n - start) / 2;
+    if (n - start) % 2 == 1 {
+        if (l - start) % 2 == 0 {
+            v[l] += 1;
+        } else {
+            v[l - 1] += 1;
+        }
+    }
+
+    println!("{}", v.iter().join(" "));
 }
 
 #[allow(unused_imports)]

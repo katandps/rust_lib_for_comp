@@ -5,9 +5,55 @@ fn main() {
 }
 
 pub fn solve<R: BufRead>(mut reader: StdinReader<R>) {
-    //$CODE$//
-    let n = reader.u();
-    println!("{}", n);
+    let (n, m) = reader.u2();
+    let abc = reader.uv3(m);
+
+    let mut g = vec![Vec::new(); n + 1];
+
+    for (a, b, c) in abc {
+        g[a].push((b, c));
+        g[b].push((a, c));
+    }
+
+    let mut dist = vec![vec![std::usize::MAX; n + 1]; n + 1];
+    let mut root = vec![vec![HashSet::new(); n + 1]; n + 1];
+    for i in 1..=n {
+        let mut q = VecDeque::new();
+        q.push_back(i);
+        dist[i][i] = 0;
+        while q.len() > 0 {
+            let from = q.pop_front().unwrap();
+            for &(to, d) in &g[from] {
+                if dist[i][to] < dist[i][from] + d {
+                    continue;
+                }
+                root[i][to] = if dist[i][to] == dist[i][from] + d {
+                    let mut s = root[i][to].clone();
+                    for &a in &root[i][from] {
+                        s.insert(a);
+                    }
+                    s.insert((min(from, to), max(from, to)));
+                    s
+                } else {
+                    let mut s = root[i][from].clone();
+                    s.insert((min(from, to), max(from, to)));
+                    s
+                };
+                dist[i][to] = dist[i][from] + d;
+                q.push_back(to);
+            }
+        }
+    }
+    let mut set = HashSet::new();
+    for i in 0..=n {
+        for j in 0..=n {
+            for r in &root[i][j] {
+                set.insert(r);
+            }
+        }
+    }
+    println!("{}", m - set.len());
+    // dbg!(dist, root, g);
 }
 
 #[allow(unused_imports)]

@@ -5,9 +5,36 @@ fn main() {
 }
 
 pub fn solve<R: BufRead>(mut reader: StdinReader<R>) {
-    //$CODE$//
-    let n = reader.u();
-    println!("{}", n);
+    let (x, y, a, b, c) = reader.u5();
+    let mut p = reader.uv(a);
+    let mut q = reader.uv(b);
+    let mut r = reader.uv(c);
+    p.sort();
+    q.sort();
+    r.sort();
+    p.reverse();
+    q.reverse();
+    r.reverse();
+    let p: Vec<_> = p.iter().take(x).collect();
+    let q: Vec<_> = q.iter().take(y).collect();
+
+    let mut pq = Vec::new();
+    for p in p {
+        pq.push(*p);
+    }
+    for q in q {
+        pq.push(*q);
+    }
+    for r in r {
+        pq.push(r);
+    }
+    pq.sort();
+    pq.reverse();
+    let mut sum = 0;
+    for i in 0..(x + y) {
+        sum += pq[i];
+    }
+    println!("{}", sum);
 }
 
 #[allow(unused_imports)]

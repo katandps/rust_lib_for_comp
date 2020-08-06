@@ -1,15 +1,3 @@
-mod a;
-mod b;
-mod c;
-mod d;
-mod e;
-mod f;
-
-use std::env;
-use std::fs::File;
-use std::io::BufReader;
-use std::path::PathBuf;
-
 fn main() {
     let mut path = env::current_dir().unwrap();
     path.push("sample");
@@ -69,3 +57,15 @@ fn f(mut path: PathBuf) {
     let f = File::open(path).unwrap();
     solve(StdinReader::new(BufReader::new(f)));
 }
+
+mod a;
+mod b;
+mod c;
+mod d;
+mod e;
+mod f;
+
+use std::env;
+use std::fs::File;
+use std::io::BufReader;
+use std::path::PathBuf;

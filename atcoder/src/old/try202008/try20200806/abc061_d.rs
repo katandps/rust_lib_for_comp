@@ -5,9 +5,38 @@ fn main() {
 }
 
 pub fn solve<R: BufRead>(mut reader: StdinReader<R>) {
-    //$CODE$//
-    let n = reader.u();
-    println!("{}", n);
+    let (n, m) = reader.u2();
+    let abc: Vec<_> = (0..m)
+        .map(|_| (reader.u(), reader.u(), reader.i()))
+        .collect();
+
+    let mut dist = vec![std::i64::MIN / 10; n + 1];
+    dist[1] = 0;
+
+    for _ in 0..n - 1 {
+        for i in 0..m {
+            dist[abc[i].1] = max(dist[abc[i].1], dist[abc[i].0] + abc[i].2);
+        }
+    }
+
+    let mut posi = vec![false; n + 1];
+    for _ in 0..n - 1 {
+        for i in 0..m {
+            if dist[abc[i].1] < dist[abc[i].0] + abc[i].2 {
+                dist[abc[i].1] = dist[abc[i].0] + abc[i].2;
+                posi[abc[i].1] = true;
+            }
+
+            if posi[abc[i].0] {
+                posi[abc[i].1] = true;
+            }
+        }
+    }
+    if posi[n] {
+        println!("{}", "inf");
+    } else {
+        println!("{}", dist[n]);
+    }
 }
 
 #[allow(unused_imports)]
