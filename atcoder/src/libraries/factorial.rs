@@ -60,18 +60,18 @@ mod tests {
     fn can_calc() {
         let fact = Factorial::new(5);
 
-        assert_eq!(1, fact.get(0).v);
-        assert_eq!(1, fact.get(1).v);
-        assert_eq!(2, fact.get(2).v);
-        assert_eq!(6, fact.get(3).v);
-        assert_eq!(24, fact.get(4).v);
-        assert_eq!(120, fact.get(5).v);
+        assert_eq!(1, fact.fact(0).v);
+        assert_eq!(1, fact.fact(1).v);
+        assert_eq!(2, fact.fact(2).v);
+        assert_eq!(6, fact.fact(3).v);
+        assert_eq!(24, fact.fact(4).v);
+        assert_eq!(120, fact.fact(5).v);
     }
 
     #[test]
     #[should_panic]
     fn greater_than_number() {
         let fact = Factorial::new(10);
-        fact.get(11);
+        fact.fact(11);
     }
 }

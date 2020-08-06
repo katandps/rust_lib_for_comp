@@ -162,12 +162,8 @@ pub mod mod_int {
         }
 
         pub fn new(v: Num) -> ModInt<Num> {
-            if v >= MOD {
-                ModInt { v: v % MOD }
-            } else {
-                //                ModInt { v } // unstable in rust 1.15.1
-                ModInt { v: v }
-            }
+            let v = if v >= MOD { v % MOD } else { v };
+            ModInt { v }
         }
 
         pub fn get(&self) -> Num {
