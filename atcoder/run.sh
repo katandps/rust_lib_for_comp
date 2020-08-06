@@ -7,6 +7,7 @@ cd $DIR
 if [ $# -ne 1 ]; then
   echo "問題番号を指定してください"
   echo "example: \$bash run.sh a"
+  exit 1
 fi
 
 NUM=$1

@@ -1,9 +1,12 @@
 #[allow(dead_code)]
 fn main() {
     let stdin = stdin();
-    let mut reader = StdinReader::new(stdin.lock());
-    //$CODE$
-    let _ = reader.u();
+    solve(StdinReader::new(stdin.lock()));
+}
+
+pub fn solve<R: BufRead>(mut reader: StdinReader<R>) {
+    let n = reader.u();
+    println!("{}", n);
 }
 
 #[allow(unused_imports)]
@@ -14,7 +17,7 @@ use std::{cmp::*, collections::*, io::*, num::*, str::*};
 use stdin_reader::StdinReader;
 
 #[allow(dead_code)]
-mod stdin_reader {
+pub mod stdin_reader {
     use std::{fmt::Debug, io::*, str::*};
 
     pub struct StdinReader<R: BufRead> {
@@ -29,6 +32,7 @@ mod stdin_reader {
             let (buf, pos) = (Vec::new(), 0);
             StdinReader { reader, buf, pos }
         }
+
         pub fn n<T: FromStr>(&mut self) -> T
         where
             T::Err: Debug,
@@ -45,8 +49,10 @@ mod stdin_reader {
                     (_, false) => start = Some(self.pos),
                 }
             }
-            let target = &self.buf[start.unwrap()..self.pos];
-            from_utf8(target).unwrap().parse().unwrap()
+            match start {
+                Some(s) => from_utf8(&self.buf[s..self.pos]).unwrap().parse().unwrap(),
+                None => panic!("入力された数を超えた読み込みが発生しています"),
+            }
         }
 
         fn _read_next_line(&mut self) {

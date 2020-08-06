@@ -13,5 +13,4 @@
 .idea
 
 # Trying files
-/atcoder/src/bin/*.rs
 /atcoder/sample/*.txt
