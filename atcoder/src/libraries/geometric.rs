@@ -7,7 +7,7 @@ mod geometric {
     use std::fmt;
     use std::ops::{Add, AddAssign, Div, DivAssign, Mul, MulAssign, Sub, SubAssign};
 
-    #[derive(Copy, Clone)]
+    #[derive(Copy, Clone, PartialEq)]
     pub struct Point {
         pub x: f64,
         pub y: f64,
@@ -128,6 +128,12 @@ mod geometric {
         }
     }
 
+    impl fmt::Debug for Point {
+        fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
+            write!(f, "Point: (x: {}, y: {})", self.x, self.y)
+        }
+    }
+
     impl Line {
         pub fn new(p: Point, q: Point) -> Line {
             Line { p1: p, p2: q }
@@ -144,6 +150,44 @@ mod geometric {
                 None
             } else {
                 Some(l.p1 + (l.p2 - l.p1) * Point::cross(m.p2 - m.p1, m.p2 - l.p1) / d)
+            }
+        }
+
+        pub fn cross_points_as_segment(l: Self, m: Self) -> Option<Point> {
+            let p = Self::cross_points(l, m);
+            match p {
+                Some(p) => {
+                    if (p - l.p1).abs() + (l.p2 - p).abs() - (l.p2 - l.p1).abs() < f64::EPSILON
+                        && (p - m.p1).abs() + (m.p2 - p).abs() - (m.p2 - m.p1).abs() < f64::EPSILON
+                    {
+                        Some(p)
+                    } else {
+                        None
+                    }
+                }
+                _ => None,
+            }
+        }
+
+        /// xを与えたときのyの値を求める
+        pub fn y(self, x: f64) -> Option<f64> {
+            if (self.p1.x - self.p2.x).abs() < f64::EPSILON {
+                None
+            } else {
+                Some(
+                    self.p1.y + (self.p2.y - self.p1.y) / (self.p2.x - self.p1.x) * (x - self.p1.x),
+                )
+            }
+        }
+
+        /// yを与えたときのxの値を求める
+        pub fn x(self, y: f64) -> Option<f64> {
+            if (self.p1.y - self.p2.y).abs() < f64::EPSILON {
+                None
+            } else {
+                Some(
+                    self.p1.x + (self.p2.x - self.p1.x) / (self.p2.y - self.p1.y) * (y - self.p1.y),
+                )
             }
         }
 
@@ -184,6 +228,44 @@ mod test {
     }
 
     #[test]
+    fn cross_point_as_segment() {
+        let l1 = Line::new(Point::new(0.0, 0.0), Point::new(5.0, 5.0));
+        let l2 = Line::new(Point::new(0.0, 0.0), Point::new(2.49, 2.49));
+        let l3 = Line::new(Point::new(2.51, 2.51), Point::new(5.0, 5.0));
+        let l4 = Line::new(Point::new(5.0, 5.0), Point::new(2.51, 2.51));
+        let m = Line::new(Point::new(0.0, 5.0), Point::new(5.0, 0.0));
+
+        assert_eq!(
+            Some(Point::new(2.5, 2.5)),
+            Line::cross_points_as_segment(l1, m)
+        );
+        assert_eq!(
+            Some(Point::new(2.5, 2.5)),
+            Line::cross_points_as_segment(m, l1)
+        );
+        assert_eq!(None, Line::cross_points_as_segment(l2, m));
+        assert_eq!(None, Line::cross_points_as_segment(m, l2));
+        assert_eq!(None, Line::cross_points_as_segment(m, l3));
+        assert_eq!(None, Line::cross_points_as_segment(l3, m));
+        assert_eq!(None, Line::cross_points_as_segment(l4, m));
+        assert_eq!(None, Line::cross_points_as_segment(m, l4));
+
+        let l1 = Line::new(Point::new(0.0, 0.0), Point::new(5.0, 0.0));
+        let m1 = Line::new(Point::new(2.5, 0.01), Point::new(2.5, 1.0));
+        let m2 = Line::new(Point::new(2.5, 0.0), Point::new(2.5, 1.0));
+        let m3 = Line::new(Point::new(2.5, -0.01), Point::new(2.5, 1.0));
+        assert_eq!(None, Line::cross_points_as_segment(l1, m1));
+        assert_eq!(
+            Some(Point::new(2.5, 0.0)),
+            Line::cross_points_as_segment(l1, m2)
+        );
+        assert_eq!(
+            Some(Point::new(2.5, 0.0)),
+            Line::cross_points_as_segment(l1, m3)
+        );
+    }
+
+    #[test]
     fn distance() {
         let l = Line::new(Point::new(0.0, 0.0), Point::new(5.0, 5.0));
         let p = Point::new(5.0, 0.0);
@@ -208,5 +290,14 @@ mod test {
         let cc = Point::circumcenter(p1, p2, p3).unwrap();
         assert_eq!(cc.x, 2.0);
         assert_eq!(cc.y, 2.0f64 / 3.0f64.sqrt());
+    }
+
+    #[test]
+    fn xy() {
+        let p1 = Point::new(0.0, 0.0);
+        let p2 = Point::new(5.0, 10.0);
+        let line = Line::new(p1, p2);
+        assert_eq!(line.x(2.0), Some(1.0));
+        assert_eq!(line.y(1.0), Some(2.0));
     }
 }
