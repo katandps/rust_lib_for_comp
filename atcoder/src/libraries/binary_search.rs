@@ -1,8 +1,8 @@
 #[allow(dead_code)]
 mod binary_search {
-    fn search() -> i32 {
-        let mut ng: i32 = -1;
-        let mut ok: i32 = 100;
+    fn search() -> isize {
+        let mut ng: isize = -1;
+        let mut ok: isize = 100;
         while (ok - ng).abs() > 1 {
             let mid = (ok + ng) / 2;
             if is_ok(mid) {
@@ -14,7 +14,7 @@ mod binary_search {
         ok
     }
 
-    fn is_ok(_key: i32) -> bool {
+    fn is_ok(_key: isize) -> bool {
         return true;
     }
 }
