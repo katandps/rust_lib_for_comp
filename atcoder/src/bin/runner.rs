@@ -1,7 +1,7 @@
 fn main() {
     let mut path = env::current_dir().unwrap();
     path.push("sample");
-    a(path);
+    f(path);
 }
 
 #[allow(dead_code)]
