@@ -1,7 +1,50 @@
-fn main() {
-    let mut path = env::current_dir().unwrap();
-    path.push("sample");
-    f(path);
+fn main() {}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn a_run() {
+        let mut path = env::current_dir().unwrap();
+        path.push("sample");
+        a(path);
+    }
+
+    #[test]
+    fn b_run() {
+        let mut path = env::current_dir().unwrap();
+        path.push("sample");
+        b(path);
+    }
+
+    #[test]
+    fn c_run() {
+        let mut path = env::current_dir().unwrap();
+        path.push("sample");
+        c(path);
+    }
+
+    #[test]
+    fn d_run() {
+        let mut path = env::current_dir().unwrap();
+        path.push("sample");
+        d(path);
+    }
+
+    #[test]
+    fn e_run() {
+        let mut path = env::current_dir().unwrap();
+        path.push("sample");
+        e(path);
+    }
+
+    #[test]
+    fn f_run() {
+        let mut path = env::current_dir().unwrap();
+        path.push("sample");
+        f(path);
+    }
 }
 
 #[allow(dead_code)]
