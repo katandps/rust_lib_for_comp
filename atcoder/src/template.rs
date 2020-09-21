@@ -15,7 +15,7 @@ use itertools::Itertools;
 #[allow(unused_imports)]
 use std::{cmp::*, collections::*, io::*, num::*, str::*};
 #[allow(unused_imports)]
-use stdin_reader::StdinReader;
+pub use stdin_reader::StdinReader;
 
 #[allow(dead_code)]
 pub mod stdin_reader {
