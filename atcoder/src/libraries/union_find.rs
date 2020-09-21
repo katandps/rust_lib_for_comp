@@ -15,10 +15,7 @@ mod union_find {
             for i in 1..(n + 1) {
                 parent[i] = i;
             }
-            UnionFind {
-                parent: parent,
-                rank: rank,
-            }
+            UnionFind { parent, rank }
         }
 
         pub fn root(&mut self, x: usize) -> usize {

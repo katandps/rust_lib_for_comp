@@ -22,7 +22,7 @@ mod dinitz {
                 g.push(Vec::new());
             }
             Dinitz {
-                g: g,
+                g,
                 level: vec![0; v],
                 iter: vec![0; v],
             }
@@ -33,9 +33,9 @@ mod dinitz {
             let to_len = self.g[to].len();
             let from_len = self.g[from].len();
             self.g[from].push(Edge {
-                to: to,
+                to,
                 rev: to_len,
-                cap: cap,
+                cap,
             });
             self.g[to].push(Edge {
                 to: from,

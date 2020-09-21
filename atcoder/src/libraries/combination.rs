@@ -16,7 +16,7 @@ mod combination {
                 let t = stack[i] * (number - i);
                 stack.push(t / (i + 1));
             }
-            Combination { stack: stack }
+            Combination { stack }
         }
 
         pub fn get(&self, number: usize) -> ModInt<usize> {

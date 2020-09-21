@@ -21,7 +21,7 @@ mod geometric {
 
     impl Point {
         pub fn new(x: f64, y: f64) -> Point {
-            Point { x: x, y: y }
+            Point { x, y }
         }
 
         /// 原点を軸にradian回転させる
