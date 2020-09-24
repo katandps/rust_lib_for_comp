@@ -1,6 +1,7 @@
 mod all_permutation;
 mod binary_indexed_tree;
 mod binary_search;
+mod chinese_remainder_theorem;
 mod combination;
 mod dinitz;
 mod factorial;
