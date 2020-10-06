@@ -4,6 +4,12 @@ use sieve_of_eratosthenes::*;
 #[allow(dead_code)]
 mod sieve_of_eratosthenes {
     pub fn primes(m: usize) -> Vec<usize> {
+        if m < 2 {
+            return Vec::new();
+        }
+        if m == 2 {
+            return vec![2];
+        }
         let mut b = vec![false; m + 1];
         let mut ret = vec![2, 3];
         let mut i = 5;
