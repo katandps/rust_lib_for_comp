@@ -5,9 +5,26 @@ fn main() {
 }
 
 pub fn solve<R: BufRead>(mut reader: StdinReader<R>) {
-    //$CODE$//
-    let n = reader.u();
-    println!("{}", n);
+    let (na, nb) = reader.u2();
+    let a = reader.uv(na);
+    let b = reader.uv(nb);
+
+    let sa = a.iter().collect::<HashSet<_>>();
+    let sb = b.iter().collect::<HashSet<_>>();
+
+    let mut s = HashSet::new();
+    let mut t = HashSet::new();
+    for sai in sa {
+        if sb.contains(sai) {
+            s.insert(sai);
+        }
+        t.insert(sai);
+    }
+    for sbi in sb {
+        t.insert(sbi);
+    }
+
+    println!("{}", s.len() as f64 / t.len() as f64);
 }
 
 #[allow(unused_imports)]
@@ -78,9 +95,6 @@ pub mod stdin_reader {
         }
         pub fn i3(&mut self) -> (i64, i64, i64) {
             (self.n(), self.n(), self.n())
-        }
-        pub fn i4(&mut self) -> (i64, i64, i64, i64) {
-            (self.n(), self.n(), self.n(), self.n())
         }
         pub fn u(&mut self) -> usize {
             self.n()

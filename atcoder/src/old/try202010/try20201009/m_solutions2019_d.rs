@@ -5,9 +5,46 @@ fn main() {
 }
 
 pub fn solve<R: BufRead>(mut reader: StdinReader<R>) {
-    //$CODE$//
     let n = reader.u();
-    println!("{}", n);
+    let ab = reader.uv2(n - 1);
+    let mut c = reader.uv(n);
+    c.sort();
+    c.reverse();
+    let mut g = vec![Vec::new(); n + 1];
+    for &(a, b) in &ab {
+        g[a].push(b);
+        g[b].push(a);
+    }
+
+    if n == 1 {
+        println!("{}", 0);
+        return;
+    }
+    let mut ans = vec![0; n + 1];
+    let mut sum = c[1];
+    let mut it = c.iter();
+    ans[ab[0].0] = *it.next().unwrap();
+    ans[ab[0].1] = *it.next().unwrap();
+    let mut q = VecDeque::new();
+    q.push_back(ab[0].0);
+    q.push_back(ab[0].1);
+    let mut memo = HashSet::new();
+    memo.insert(ab[0].0);
+    memo.insert(ab[0].1);
+    while q.len() > 0 {
+        let cur = q.pop_front().unwrap();
+        for &to in &g[cur] {
+            if memo.contains(&to) {
+                continue;
+            }
+            ans[to] = *it.next().unwrap();
+            sum += ans[to];
+            memo.insert(to);
+            q.push_back(to);
+        }
+    }
+    println!("{}", sum);
+    println!("{}", ans[1..].iter().join(" "));
 }
 
 #[allow(unused_imports)]
@@ -78,9 +115,6 @@ pub mod stdin_reader {
         }
         pub fn i3(&mut self) -> (i64, i64, i64) {
             (self.n(), self.n(), self.n())
-        }
-        pub fn i4(&mut self) -> (i64, i64, i64, i64) {
-            (self.n(), self.n(), self.n(), self.n())
         }
         pub fn u(&mut self) -> usize {
             self.n()
