@@ -5,9 +5,27 @@ fn main() {
 }
 
 pub fn solve<R: BufRead>(mut reader: StdinReader<R>) {
-    //$CODE$//
-    let n = reader.u();
-    println!("{}", n);
+    let (n, t) = reader.u2();
+    let ab = reader.uv2(n);
+
+    let sum = ab.iter().fold(0, |x, (a, _b)| x + *a);
+    let mut diff = ab.iter().map(|(a, b)| *a - *b).collect_vec();
+    diff.sort();
+    diff.reverse();
+    if sum <= t {
+        println!("{}", 0);
+        return;
+    }
+    let mut rest = sum - t;
+
+    for i in 0..n {
+        if rest <= diff[i] {
+            println!("{}", i + 1);
+            return;
+        }
+        rest -= diff[i];
+    }
+    println!("{}", -1);
 }
 
 #[allow(unused_imports)]
@@ -38,13 +56,6 @@ pub mod stdin_reader {
         where
             T::Err: Debug,
         {
-            self.n_op().unwrap()
-        }
-
-        pub fn n_op<T: FromStr>(&mut self) -> Option<T>
-        where
-            T::Err: Debug,
-        {
             if self.buf.is_empty() {
                 self._read_next_line();
             }
@@ -57,13 +68,18 @@ pub mod stdin_reader {
                     (_, false) => start = Some(self.pos),
                 }
             }
-            start.map(|s| from_utf8(&self.buf[s..self.pos]).unwrap().parse().unwrap())
+            match start {
+                Some(s) => from_utf8(&self.buf[s..self.pos]).unwrap().parse().unwrap(),
+                None => panic!("入力された数を超えた読み込みが発生しています"),
+            }
         }
 
         fn _read_next_line(&mut self) {
             self.pos = 0;
             self.buf.clear();
-            self.reader.read_until(b'\n', &mut self.buf).unwrap();
+            if self.reader.read_until(b'\n', &mut self.buf).unwrap() == 0 {
+                panic!("Reached EOF");
+            }
         }
 
         pub fn str(&mut self) -> String {

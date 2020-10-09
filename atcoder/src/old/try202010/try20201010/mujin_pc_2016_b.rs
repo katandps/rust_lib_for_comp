@@ -5,9 +5,22 @@ fn main() {
 }
 
 pub fn solve<R: BufRead>(mut reader: StdinReader<R>) {
-    //$CODE$//
-    let n = reader.u();
-    println!("{}", n);
+    let mut l = reader.uv(3);
+    l.sort();
+    let sum = l[0] + l[1] + l[2];
+
+    if sum - l[2] >= l[2] {
+        let sum = sum as f64;
+        println!("{}", sum * sum * std::f64::consts::PI);
+        return;
+    }
+
+    let sum = sum as f64;
+    let m = 2.0 * l[2] as f64 - sum;
+    println!(
+        "{}",
+        sum * sum * std::f64::consts::PI - m * m * std::f64::consts::PI
+    );
 }
 
 #[allow(unused_imports)]
@@ -38,13 +51,6 @@ pub mod stdin_reader {
         where
             T::Err: Debug,
         {
-            self.n_op().unwrap()
-        }
-
-        pub fn n_op<T: FromStr>(&mut self) -> Option<T>
-        where
-            T::Err: Debug,
-        {
             if self.buf.is_empty() {
                 self._read_next_line();
             }
@@ -57,13 +63,18 @@ pub mod stdin_reader {
                     (_, false) => start = Some(self.pos),
                 }
             }
-            start.map(|s| from_utf8(&self.buf[s..self.pos]).unwrap().parse().unwrap())
+            match start {
+                Some(s) => from_utf8(&self.buf[s..self.pos]).unwrap().parse().unwrap(),
+                None => panic!("入力された数を超えた読み込みが発生しています"),
+            }
         }
 
         fn _read_next_line(&mut self) {
             self.pos = 0;
             self.buf.clear();
-            self.reader.read_until(b'\n', &mut self.buf).unwrap();
+            if self.reader.read_until(b'\n', &mut self.buf).unwrap() == 0 {
+                panic!("Reached EOF");
+            }
         }
 
         pub fn str(&mut self) -> String {

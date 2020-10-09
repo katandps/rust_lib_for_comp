@@ -5,9 +5,42 @@ fn main() {
 }
 
 pub fn solve<R: BufRead>(mut reader: StdinReader<R>) {
-    //$CODE$//
-    let n = reader.u();
-    println!("{}", n);
+    let mut ans = HashSet::new();
+    loop {
+        if let Some(s) = reader.n_op::<String>() {
+            let a = s.chars().collect_vec();
+            let mut v = Vec::new();
+            let mut buf = Vec::new();
+            let mut take = false;
+            for i in 0..a.len() {
+                if a[i] == '@' {
+                    take = true;
+                    if buf.len() > 0 {
+                        v.push(buf.clone());
+                    }
+                    buf = Vec::new();
+                } else {
+                    if take {
+                        buf.push(a[i]);
+                    }
+                }
+            }
+            if buf.len() > 0 {
+                v.push(buf.clone());
+            }
+
+            for vi in v {
+                ans.insert(vi.iter().join(""));
+            }
+        } else {
+            break;
+        }
+    }
+    let mut ans = ans.iter().collect_vec();
+    ans.sort();
+    for a in ans {
+        println!("{}", a);
+    }
 }
 
 #[allow(unused_imports)]
