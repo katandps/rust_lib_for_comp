@@ -2,32 +2,32 @@
 mod tests {
     #[test]
     fn a_run() {
-        a::solve(a::StdinReader::new(std::io::BufReader::new(file("a"))));
+        a::solve(a::Reader::new(std::io::BufReader::new(file("a"))));
     }
 
     #[test]
     fn b_run() {
-        b::solve(b::StdinReader::new(std::io::BufReader::new(file("b"))));
+        b::solve(b::Reader::new(std::io::BufReader::new(file("b"))));
     }
 
     #[test]
     fn c_run() {
-        c::solve(c::StdinReader::new(std::io::BufReader::new(file("c"))));
+        c::solve(c::Reader::new(std::io::BufReader::new(file("c"))));
     }
 
     #[test]
     fn d_run() {
-        d::solve(d::StdinReader::new(std::io::BufReader::new(file("d"))));
+        d::solve(d::Reader::new(std::io::BufReader::new(file("d"))));
     }
 
     #[test]
     fn e_run() {
-        e::solve(e::StdinReader::new(std::io::BufReader::new(file("e"))));
+        e::solve(e::Reader::new(std::io::BufReader::new(file("e"))));
     }
 
     #[test]
     fn f_run() {
-        f::solve(f::StdinReader::new(std::io::BufReader::new(file("f"))));
+        f::solve(f::Reader::new(std::io::BufReader::new(file("f"))));
     }
 
     use super::*;
