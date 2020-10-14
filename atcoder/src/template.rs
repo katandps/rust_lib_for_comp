@@ -10,13 +10,12 @@ pub fn solve<R: BufRead>(mut reader: Reader<R>) {
     println!("{}", n);
 }
 
+pub use reader::*;
 #[allow(unused_imports)]
 use {
     itertools::Itertools,
     std::{cmp::*, collections::*, io::*, num::*, str::*},
 };
-
-pub use reader::*;
 
 #[allow(dead_code)]
 pub mod reader {
@@ -30,10 +29,40 @@ pub mod reader {
         pos: usize,
     }
 
+    macro_rules! prim_method {
+        ($name:ident: $T: ty) => {
+            #[allow(missing_docs)]
+            pub fn $name(&mut self) -> $T {
+                self.n::<$T>()
+            }
+        };
+        ($name:ident) => {
+            prim_method!($name: $name);
+        }
+    }
+    macro_rules! prim_methods {
+        ($name:ident: $T:ty; $($rest:tt)*) => {
+            prim_method!($name:$T);
+            prim_methods!($($rest)*);
+        };
+        ($name:ident; $($rest:tt)*) => {
+            prim_method!($name);
+            prim_methods!($($rest)*);
+        };
+        () => ()
+    }
+
     impl<R: BufRead> Reader<R> {
         pub fn new(reader: R) -> Reader<R> {
             let (buf, pos) = (Vec::new(), 0);
             Reader { reader, buf, pos }
+        }
+        prim_methods! {
+            u: usize; i: isize; f: f64; str: String; c: char;
+            u8; u16; u32; u64; u128; usize;
+            i8; i16; i32; i64; i128; isize;
+            f32; f64;
+            char; string: String;
         }
 
         pub fn n<T: FromStr>(&mut self) -> T

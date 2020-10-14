@@ -12,10 +12,40 @@ pub mod reader {
         pos: usize,
     }
 
+    macro_rules! prim_method {
+        ($name:ident: $T: ty) => {
+            #[allow(missing_docs)]
+            pub fn $name(&mut self) -> $T {
+                self.n::<$T>()
+            }
+        };
+        ($name:ident) => {
+            prim_method!($name: $name);
+        }
+    }
+    macro_rules! prim_methods {
+        ($name:ident: $T:ty; $($rest:tt)*) => {
+            prim_method!($name:$T);
+            prim_methods!($($rest)*);
+        };
+        ($name:ident; $($rest:tt)*) => {
+            prim_method!($name);
+            prim_methods!($($rest)*);
+        };
+        () => ()
+    }
+
     impl<R: BufRead> Reader<R> {
         pub fn new(reader: R) -> Reader<R> {
             let (buf, pos) = (Vec::new(), 0);
             Reader { reader, buf, pos }
+        }
+        prim_methods! {
+            u: usize; i: isize; f: f64; str: String; c: char;
+            u8; u16; u32; u64; u128; usize;
+            i8; i16; i32; i64; i128; isize;
+            f32; f64;
+            char; string: String;
         }
 
         pub fn n<T: FromStr>(&mut self) -> T
@@ -132,13 +162,14 @@ mod tests {
 
     #[test]
     fn basics() {
-        let cursor = Cursor::new(b"-123 456.7 Hello, world!\n");
+        let cursor = Cursor::new(b"-123 456.7 12345 Hello, world!\n");
         let mut reader = Reader::new(cursor);
 
-        assert_eq!(-123, reader.n());
-        assert_eq!(456.7f64, reader.n());
-        assert_eq!("Hello,".to_string(), reader.n::<String>());
-        assert_eq!("world!".to_string(), reader.n::<String>());
+        assert_eq!(-123, reader.i());
+        assert_eq!(456.7, reader.f());
+        assert_eq!(12345, reader.u());
+        assert_eq!("Hello,".to_string(), reader.str());
+        assert_eq!("world!".to_string(), reader.str());
 
         let cursor = Cursor::new(b"123 456 789 012 345 678\n");
         let mut reader = Reader::new(cursor);
