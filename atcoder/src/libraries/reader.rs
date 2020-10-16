@@ -94,12 +94,12 @@ pub mod reader {
             cuu: (char, usize, usize);
         }
         vec_methods! {
-            vu: u: usize;
-            vuu: uu: (usize, usize);
-            vuuu: uuu: (usize, usize, usize);
-            vi: i: i64;
-            vii: ii: (i64, i64);
-            vcuu: cuu: (char, usize, usize);
+            uv: u: usize;
+            uv2: uu: (usize, usize);
+            uv3: uuu: (usize, usize, usize);
+            iv: i: i64;
+            iv2: ii: (i64, i64);
+            vq: cuu: (char, usize, usize);
         }
 
         pub fn n<T: FromStr>(&mut self) -> T
