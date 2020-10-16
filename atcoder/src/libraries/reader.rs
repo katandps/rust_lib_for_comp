@@ -14,7 +14,6 @@ pub mod reader {
 
     macro_rules! prim_method {
         ($name:ident: $T: ty) => {
-            #[allow(missing_docs)]
             pub fn $name(&mut self) -> $T {
                 self.n::<$T>()
             }
@@ -35,17 +34,72 @@ pub mod reader {
         () => ()
     }
 
+    macro_rules! replace_expr {
+        ($_t:tt $sub:expr) => {
+            $sub
+        };
+    }
+    macro_rules! tuple_method {
+        ($name: ident: ($($T:ident),+)) => {
+            pub fn $name(&mut self) -> ($($T),+) {
+                ($(replace_expr!($T self.n())),+)
+            }
+        }
+    }
+    macro_rules! tuple_methods {
+        ($name:ident: ($($T:ident),+); $($rest:tt)*) => {
+            tuple_method!($name:($($T),+));
+            tuple_methods!($($rest)*);
+        };
+        () => ()
+    }
+    macro_rules! vec_method {
+        ($name: ident: $method:ident: ($($T:ty),+)) => {
+            pub fn $name(&mut self, n: usize) -> Vec<($($T),+)> {
+                (0..n).map(|_|self.$method()).collect_vec()
+            }
+        };
+        ($name: ident: $method:ident: $T:ty ) => {
+            pub fn $name(&mut self, n: usize) -> Vec<$T> {
+                (0..n).map(|_|self.$method()).collect_vec()
+            }
+        }
+    }
+    macro_rules! vec_methods {
+        ($name:ident: $method:ident: ($($T:ty),+); $($rest:tt)*) => {
+            vec_method!($name:$method:($($T),+));
+            vec_methods!($($rest)*);
+        };
+        ($name:ident: $method:ident: $T:ty; $($rest:tt)*) => {
+            vec_method!($name:$method:$T);
+            vec_methods!($($rest)*);
+        };
+        () => ()
+    }
     impl<R: BufRead> Reader<R> {
         pub fn new(reader: R) -> Reader<R> {
             let (buf, pos) = (Vec::new(), 0);
             Reader { reader, buf, pos }
         }
         prim_methods! {
-            u: usize; i: isize; f: f64; str: String; c: char;
-            u8; u16; u32; u64; u128; usize;
-            i8; i16; i32; i64; i128; isize;
-            f32; f64;
-            char; string: String;
+            u: usize; i: i64; f: f64; str: String; c: char; string: String;
+            u8; u16; u32; u64; u128; usize; i8; i16; i32; i64; i128; isize; f32; f64; char;
+        }
+        tuple_methods! {
+            uu: (usize, usize);
+            ii: (i64, i64);
+            uuu: (usize, usize, usize);
+            uii: (usize, i64, i64);
+            uuuu: (usize, usize, usize, usize);
+            cuu: (char, usize, usize);
+        }
+        vec_methods! {
+            vu: u: usize;
+            vuu: uu: (usize, usize);
+            vuuu: uuu: (usize, usize, usize);
+            vi: i: i64;
+            vii: ii: (i64, i64);
+            vcuu: cuu: (char, usize, usize);
         }
 
         pub fn n<T: FromStr>(&mut self) -> T
@@ -53,58 +107,6 @@ pub mod reader {
             T::Err: Debug,
         {
             self.n_op().unwrap()
-        }
-
-        pub fn v<T: FromStr>(&mut self, n: usize) -> Vec<T>
-        where
-            T::Err: Debug,
-        {
-            (0..n).map(|_| self.n()).collect()
-        }
-        pub fn v2<T: FromStr, U: FromStr>(&mut self, n: usize) -> Vec<(T, U)>
-        where
-            T::Err: Debug,
-            U::Err: Debug,
-        {
-            (0..n).map(|_| (self.n(), self.n())).collect()
-        }
-        pub fn v3<T: FromStr, U: FromStr, V: FromStr>(&mut self, n: usize) -> Vec<(T, U, V)>
-        where
-            T::Err: Debug,
-            U::Err: Debug,
-            V::Err: Debug,
-        {
-            (0..n).map(|_| (self.n(), self.n(), self.n())).collect()
-        }
-        pub fn v4<T: FromStr, U: FromStr, V: FromStr, W: FromStr>(
-            &mut self,
-            n: usize,
-        ) -> Vec<(T, U, V, W)>
-        where
-            T::Err: Debug,
-            U::Err: Debug,
-            V::Err: Debug,
-            W::Err: Debug,
-        {
-            (0..n)
-                .map(|_| (self.n(), self.n(), self.n(), self.n()))
-                .collect()
-        }
-
-        pub fn v5<T: FromStr, U: FromStr, V: FromStr, W: FromStr, X: FromStr>(
-            &mut self,
-            n: usize,
-        ) -> Vec<(T, U, V, W, X)>
-        where
-            T::Err: Debug,
-            U::Err: Debug,
-            V::Err: Debug,
-            W::Err: Debug,
-            X::Err: Debug,
-        {
-            (0..n)
-                .map(|_| (self.n(), self.n(), self.n(), self.n(), self.n()))
-                .collect()
         }
 
         pub fn n_op<T: FromStr>(&mut self) -> Option<T>
@@ -145,11 +147,8 @@ pub mod reader {
                 .collect()
         }
         /// h*w行列を取得する
-        pub fn matrix<T: FromStr>(&mut self, h: usize, w: usize) -> Vec<Vec<T>>
-        where
-            T::Err: Debug,
-        {
-            (0..h).map(|_| self.v(w)).collect()
+        pub fn matrix(&mut self, h: usize, w: usize) -> Vec<Vec<i64>> {
+            (0..h).map(|_| self.vi(w)).collect()
         }
     }
 }
@@ -174,7 +173,7 @@ mod tests {
         let cursor = Cursor::new(b"123 456 789 012 345 678\n");
         let mut reader = Reader::new(cursor);
 
-        assert_eq!(vec![123, 456, 789, 12, 345, 678], reader.v(6));
+        assert_eq!(vec![123, 456, 789, 12, 345, 678], reader.vu(6));
     }
 
     #[test]
