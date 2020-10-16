@@ -8,24 +8,23 @@ pub fn solve<R: BufRead>(mut reader: Reader<R>) {
     let (n, m) = reader.uu();
     let uvl = reader.uv3(m);
 
-    let mut a = Vec::new();
-    let mut b = Vec::new();
-    let mut c = Vec::new();
     let mut p = HashMap::new();
-    for (u, v, l) in uvl {
-        if u == 1 || v == 1 {
-            p.insert(u, l);
+    for &(u, v, l) in &uvl {
+        if u == 1 {
             p.insert(v, l);
-            continue;
         }
-        a.push(u);
-        b.push(v);
-        c.push(l);
+        if v == 1 {
+            p.insert(u, l);
+        }
     }
 
-    p.remove(&1);
+    let e = uvl
+        .iter()
+        .cloned()
+        .filter(|&(u, v, _)| u != 1 && v != 1)
+        .collect_vec();
 
-    let dist = warshall_floyd(n + 1, a.len(), a, b, c);
+    let dist = warshall_floyd(n, &e);
 
     if p.len() < 2 {
         println!("{}", -1);
@@ -55,20 +54,21 @@ use warshall_floyd::*;
 mod warshall_floyd {
     use std::cmp::min;
 
-    pub fn warshall_floyd(
-        vertex_n: usize,
-        edge_n: usize,
-        a: Vec<usize>,
-        b: Vec<usize>,
-        cost: Vec<usize>,
-    ) -> Vec<Vec<usize>> {
+    type COST = usize;
+    type EDGE = (usize, usize, COST);
+
+    ///
+    /// 辺の情報からWarshallFloyd法により全点間最小コストを計算する
+    /// 計算量 O(N^3)
+    ///
+    pub fn warshall_floyd(vertex_n: usize, edges: &Vec<EDGE>) -> Vec<Vec<COST>> {
         let mut ret = vec![vec![1_000_000_000usize; vertex_n + 1]; vertex_n + 1];
         for i in 0..vertex_n + 1 {
             ret[i][i] = 0;
         }
-        for i in 0..edge_n {
-            ret[a[i]][b[i]] = min(ret[a[i]][b[i]], cost[i]);
-            ret[b[i]][a[i]] = min(ret[b[i]][a[i]], cost[i]); //有向グラフの場合はコメントアウト
+        for &(a, b, cost) in edges {
+            ret[a][b] = min(ret[a][b], cost);
+            ret[b][a] = min(ret[b][a], cost); //有向グラフの場合はコメントアウト
         }
         for i in 0..vertex_n + 1 {
             for j in 0..vertex_n + 1 {
