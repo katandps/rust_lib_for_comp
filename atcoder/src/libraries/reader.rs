@@ -173,7 +173,7 @@ mod tests {
         let cursor = Cursor::new(b"123 456 789 012 345 678\n");
         let mut reader = Reader::new(cursor);
 
-        assert_eq!(vec![123, 456, 789, 12, 345, 678], reader.vu(6));
+        assert_eq!(vec![123, 456, 789, 12, 345, 678], reader.uv(6));
     }
 
     #[test]
