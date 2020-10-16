@@ -148,7 +148,7 @@ pub mod reader {
         }
         /// h*w行列を取得する
         pub fn matrix(&mut self, h: usize, w: usize) -> Vec<Vec<i64>> {
-            (0..h).map(|_| self.vi(w)).collect()
+            (0..h).map(|_| self.iv(w)).collect()
         }
     }
 }

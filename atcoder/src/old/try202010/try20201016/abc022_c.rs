@@ -5,9 +5,80 @@ fn main() {
 }
 
 pub fn solve<R: BufRead>(mut reader: Reader<R>) {
-    //$END$//
-    let n = reader.u();
-    println!("{}", n);
+    let (n, m) = reader.uu();
+    let uvl = reader.uv3(m);
+
+    let mut a = Vec::new();
+    let mut b = Vec::new();
+    let mut c = Vec::new();
+    let mut p = HashMap::new();
+    for (u, v, l) in uvl {
+        if u == 1 || v == 1 {
+            p.insert(u, l);
+            p.insert(v, l);
+            continue;
+        }
+        a.push(u);
+        b.push(v);
+        c.push(l);
+    }
+
+    p.remove(&1);
+
+    let dist = warshall_floyd(n + 1, a.len(), a, b, c);
+
+    if p.len() < 2 {
+        println!("{}", -1);
+        return;
+    }
+
+    let mut ans = 1_000_000_000usize;
+    for (&from, &from_cost) in &p {
+        for (&to, &to_cost) in &p {
+            if from == to {
+                continue;
+            }
+            ans = min(ans, dist[from][to] + from_cost + to_cost);
+        }
+    }
+    if ans == 1_000_000_000usize {
+        println!("{}", -1);
+    } else {
+        println!("{}", ans);
+    }
+}
+
+#[allow(unused_imports)]
+use warshall_floyd::*;
+
+#[allow(dead_code)]
+mod warshall_floyd {
+    use std::cmp::min;
+
+    pub fn warshall_floyd(
+        vertex_n: usize,
+        edge_n: usize,
+        a: Vec<usize>,
+        b: Vec<usize>,
+        cost: Vec<usize>,
+    ) -> Vec<Vec<usize>> {
+        let mut ret = vec![vec![1_000_000_000usize; vertex_n + 1]; vertex_n + 1];
+        for i in 0..vertex_n + 1 {
+            ret[i][i] = 0;
+        }
+        for i in 0..edge_n {
+            ret[a[i]][b[i]] = min(ret[a[i]][b[i]], cost[i]);
+            ret[b[i]][a[i]] = min(ret[b[i]][a[i]], cost[i]); //有向グラフの場合はコメントアウト
+        }
+        for i in 0..vertex_n + 1 {
+            for j in 0..vertex_n + 1 {
+                for k in 0..vertex_n + 1 {
+                    ret[j][k] = min(ret[j][k], ret[j][i] + ret[i][k])
+                }
+            }
+        }
+        ret
+    }
 }
 
 pub use reader::*;
