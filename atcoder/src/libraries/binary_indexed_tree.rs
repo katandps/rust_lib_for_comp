@@ -5,9 +5,10 @@ use binary_indexed_tree::*;
 mod binary_indexed_tree {
     pub struct BinaryIndexedTree {
         n: usize,
-        bit: Vec<i32>,
+        bit: Vec<VALUE>,
     }
 
+    type VALUE = i64;
     impl BinaryIndexedTree {
         pub fn new(n: usize) -> BinaryIndexedTree {
             BinaryIndexedTree {
@@ -16,7 +17,7 @@ mod binary_indexed_tree {
             }
         }
 
-        pub fn add(&mut self, i: usize, x: i32) {
+        pub fn add(&mut self, i: usize, x: VALUE) {
             let mut idx = i as i32;
             while idx < self.n as i32 {
                 self.bit[idx as usize] += x;
@@ -24,7 +25,7 @@ mod binary_indexed_tree {
             }
         }
 
-        pub fn sum(&self, i: usize) -> i32 {
+        pub fn sum(&self, i: usize) -> VALUE {
             let mut ret = 0;
             let mut idx = i as i32;
             while idx > 0 {
