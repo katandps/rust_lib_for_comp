@@ -5,6 +5,7 @@ mod chinese_remainder_theorem;
 mod combination;
 mod dinitz;
 mod factorial;
+mod floor_sum;
 mod geometric;
 mod graph;
 mod greatest_common_divisor;
