@@ -3,6 +3,7 @@ use binary_indexed_tree::*;
 
 #[allow(dead_code)]
 mod binary_indexed_tree {
+    #[derive(Clone)]
     pub struct BinaryIndexedTree {
         n: usize,
         bit: Vec<VALUE>,
@@ -11,9 +12,13 @@ mod binary_indexed_tree {
     type VALUE = i64;
     impl BinaryIndexedTree {
         pub fn new(n: usize) -> BinaryIndexedTree {
+            let mut p = 1;
+            while p <= n {
+                p <<= 1;
+            }
             BinaryIndexedTree {
                 n: n + 1,
-                bit: vec![0; 1000000],
+                bit: vec![0; p],
             }
         }
 
@@ -33,6 +38,42 @@ mod binary_indexed_tree {
                 idx -= idx & -idx;
             }
             ret
+        }
+    }
+
+    impl std::fmt::Debug for BinaryIndexedTree {
+        fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+            use itertools::*;
+            let v = (1..self.n).map(|i| self.sum(i) - self.sum(i - 1)).join(" ");
+            write!(f, "{}", v)
+        }
+    }
+}
+
+#[cfg(test)]
+mod test {
+    use super::*;
+    use rand::Rng;
+
+    #[test]
+    fn test() {
+        const LEN: usize = 1000;
+        let mut v = vec![0; LEN];
+        let mut bit = BinaryIndexedTree::new(LEN);
+
+        for _ in 0..1000 {
+            let left = rand::thread_rng().gen_range(1, LEN);
+            let right = rand::thread_rng().gen_range(left, LEN);
+
+            for i in left..=right {
+                v[i] += 1;
+            }
+            bit.add(left, 1);
+            bit.add(right + 1, -1);
+        }
+
+        for i in 0..LEN {
+            assert_eq!(v[i], bit.sum(i));
         }
     }
 }
