@@ -54,24 +54,24 @@ pub mod reader {
         () => ()
     }
     macro_rules! vec_method {
-        ($name: ident: $method:ident: ($($T:ty),+)) => {
+        ($name: ident: ($($T:ty),+)) => {
             pub fn $name(&mut self, n: usize) -> Vec<($($T),+)> {
-                (0..n).map(|_|self.$method()).collect_vec()
+                (0..n).map(|_|($(replace_expr!($T self.n())),+)).collect_vec()
             }
         };
-        ($name: ident: $method:ident: $T:ty ) => {
+        ($name: ident: $T:ty) => {
             pub fn $name(&mut self, n: usize) -> Vec<$T> {
-                (0..n).map(|_|self.$method()).collect_vec()
+                (0..n).map(|_|self.n()).collect_vec()
             }
-        }
+        };
     }
     macro_rules! vec_methods {
-        ($name:ident: $method:ident: ($($T:ty),+); $($rest:tt)*) => {
-            vec_method!($name:$method:($($T),+));
+        ($name:ident: ($($T:ty),+); $($rest:tt)*) => {
+            vec_method!($name:($($T),+));
             vec_methods!($($rest)*);
         };
-        ($name:ident: $method:ident: $T:ty; $($rest:tt)*) => {
-            vec_method!($name:$method:$T);
+        ($name:ident: $T:ty; $($rest:tt)*) => {
+            vec_method!($name:$T);
             vec_methods!($($rest)*);
         };
         () => ()
@@ -94,12 +94,13 @@ pub mod reader {
             cuu: (char, usize, usize);
         }
         vec_methods! {
-            uv: u: usize;
-            uv2: uu: (usize, usize);
-            uv3: uuu: (usize, usize, usize);
-            iv: i: i64;
-            iv2: ii: (i64, i64);
-            vq: cuu: (char, usize, usize);
+            uv: usize;
+            uv2: (usize, usize);
+            uv3: (usize, usize, usize);
+            iv: i64;
+            iv2: (i64, i64);
+            iv3: (i64, i64, i64);
+            vq: (char, usize, usize);
         }
 
         pub fn n<T: FromStr>(&mut self) -> T

@@ -5,9 +5,32 @@ fn main() {
 }
 
 pub fn solve<R: BufRead>(mut reader: Reader<R>) {
-    //$END$//
     let n = reader.u();
-    println!("{}", n);
+    let a = reader.uv(n);
+
+    // keep[x] = 最後に選んだのがxになる列の個数
+    let mut keep = BTreeMap::new();
+    for ai in a {
+        let max = keep.range(..ai).rev().next();
+        match max {
+            Some((&max, &count)) => {
+                if count == 1 {
+                    keep.remove(&max);
+                } else {
+                    *keep.entry(max).or_insert(0) -= 1;
+                }
+                *keep.entry(ai).or_insert(0) += 1;
+            }
+            _ => *keep.entry(ai).or_insert(0) += 1,
+        }
+    }
+    let mut ans = 0;
+    for (_, count) in keep {
+        if count > 0 {
+            ans += count;
+        }
+    }
+    println!("{}", ans);
 }
 
 pub use reader::*;

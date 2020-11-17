@@ -5,9 +5,40 @@ fn main() {
 }
 
 pub fn solve<R: BufRead>(mut reader: Reader<R>) {
-    //$END$//
-    let n = reader.u();
-    println!("{}", n);
+    let (n, q) = reader.uu();
+    let stx = reader.iv3(n);
+    let d = reader.iv(q);
+
+    let mut stops = BTreeSet::new();
+    let mut tasks = BTreeMap::new();
+
+    for (s, t, x) in stx {
+        tasks.entry(s - x).or_insert(BTreeSet::new()).insert(x);
+        tasks.entry(t - x).or_insert(BTreeSet::new()).insert(-x);
+    }
+
+    for d in d {
+        while !tasks.is_empty() {
+            let (key, t) = tasks.iter().next().unwrap();
+            if key > &d {
+                break;
+            }
+            for &task in t {
+                if task >= 0 {
+                    stops.insert(task);
+                } else {
+                    stops.remove(&-task);
+                }
+            }
+            let k = key.clone();
+            tasks.remove(&k);
+        }
+        if stops.is_empty() {
+            println!("{}", -1);
+        } else {
+            println!("{}", stops.iter().next().unwrap());
+        }
+    }
 }
 
 pub use reader::*;
@@ -71,24 +102,24 @@ pub mod reader {
         () => ()
     }
     macro_rules! vec_method {
-        ($name: ident: ($($T:ty),+)) => {
+        ($name: ident: $method:ident: ($($T:ty),+)) => {
             pub fn $name(&mut self, n: usize) -> Vec<($($T),+)> {
-                (0..n).map(|_|($(replace_expr!($T self.n())),+)).collect_vec()
+                (0..n).map(|_|self.$method()).collect_vec()
             }
         };
-        ($name: ident: $T:ty) => {
+        ($name: ident: $method:ident: $T:ty ) => {
             pub fn $name(&mut self, n: usize) -> Vec<$T> {
-                (0..n).map(|_|self.n()).collect_vec()
+                (0..n).map(|_|self.$method()).collect_vec()
             }
-        };
+        }
     }
     macro_rules! vec_methods {
-        ($name:ident: ($($T:ty),+); $($rest:tt)*) => {
-            vec_method!($name:($($T),+));
+        ($name:ident: $method:ident: ($($T:ty),+); $($rest:tt)*) => {
+            vec_method!($name:$method:($($T),+));
             vec_methods!($($rest)*);
         };
-        ($name:ident: $T:ty; $($rest:tt)*) => {
-            vec_method!($name:$T);
+        ($name:ident: $method:ident: $T:ty; $($rest:tt)*) => {
+            vec_method!($name:$method:$T);
             vec_methods!($($rest)*);
         };
         () => ()
@@ -106,18 +137,19 @@ pub mod reader {
             uu: (usize, usize);
             ii: (i64, i64);
             uuu: (usize, usize, usize);
+            iii: (i64, i64, i64);
             uii: (usize, i64, i64);
             uuuu: (usize, usize, usize, usize);
             cuu: (char, usize, usize);
         }
         vec_methods! {
-            uv: usize;
-            uv2: (usize, usize);
-            uv3: (usize, usize, usize);
-            iv: i64;
-            iv2: (i64, i64);
-            iv3: (i64, i64, i64);
-            vq: (char, usize, usize);
+            uv: u: usize;
+            uv2: uu: (usize, usize);
+            uv3: uuu: (usize, usize, usize);
+            iv: i: i64;
+            iv2: ii: (i64, i64);
+            iv3: iii: (i64, i64, i64);
+            vq: cuu: (char, usize, usize);
         }
 
         pub fn n<T: FromStr>(&mut self) -> T

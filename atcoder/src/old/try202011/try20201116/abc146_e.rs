@@ -5,9 +5,36 @@ fn main() {
 }
 
 pub fn solve<R: BufRead>(mut reader: Reader<R>) {
-    //$END$//
-    let n = reader.u();
-    println!("{}", n);
+    let (n, k) = reader.uu();
+    let a = reader.uv(n);
+
+    let mut sum = vec![0];
+    for i in 0..n {
+        sum.push((sum[i] + a[i] - 1) % k);
+    }
+
+    let mut m = HashMap::new();
+    for i in 0..=n {
+        m.entry(sum[i]).or_insert(Vec::new()).push(i);
+    }
+
+    let mut ans = 0;
+    for (_, v) in m {
+        if v.len() < 2 {
+            continue;
+        }
+        let mut left = 0;
+        let mut right = 0;
+        while left < v.len() {
+            // leftを維持しつつできるだけrightを右にすすめる
+            while right + 1 < v.len() && v[right + 1] < k + v[left] {
+                right += 1;
+            }
+            ans += right - left;
+            left += 1;
+        }
+    }
+    println!("{}", ans);
 }
 
 pub use reader::*;
