@@ -12,19 +12,15 @@ mod grid {
     }
 
     impl<T: Clone> Grid<T> {
-        pub fn new(h: usize, w: usize, map: Vec<Vec<T>>) -> Grid<T> {
-            let mut flat = Vec::new();
-            for r in map {
+        pub fn new(h: usize, w: usize, input: Vec<Vec<T>>) -> Grid<T> {
+            let mut map = Vec::new();
+            for r in input {
                 for c in r {
-                    flat.push(c);
+                    map.push(c);
                 }
             }
-            Grid {
-                h: h,
-                w: w,
-                max: h * w,
-                map: flat,
-            }
+            let max = h * w;
+            Grid { h, w, max, map }
         }
         pub fn key(&self, x: usize, y: usize) -> usize {
             y * self.w + x
