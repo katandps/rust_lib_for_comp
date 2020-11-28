@@ -17,6 +17,7 @@ mod mod_inv;
 mod permutation;
 mod prim;
 mod reader;
+mod rps;
 mod sieve_of_eratosthenes;
 mod union_find;
 mod warshall_floyd;

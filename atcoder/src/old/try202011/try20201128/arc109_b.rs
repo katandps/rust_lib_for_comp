@@ -1,4 +1,38 @@
+#[allow(dead_code)]
+fn main() {
+    let stdin = stdin();
+    solve(Reader::new(stdin.lock()));
+}
+
+pub fn solve<R: BufRead>(mut reader: Reader<R>) {
+    let n = reader.u();
+
+    if n <= 2 {
+        println!("{}", 1);
+        return;
+    }
+
+    let k = (n + 1) as i128;
+    let mut ng: i128 = n as i128;
+    let mut ok: i128 = 0;
+    while (ok - ng).abs() > 1 {
+        let mid = (ok + ng) / 2;
+        if mid * (mid + 1) <= k * 2 {
+            ok = mid
+        } else {
+            ng = mid
+        }
+    }
+    // 1本使ってok本作れるから、ok-1本節約
+    println!("{}", n - ok as usize + 1);
+}
+
 pub use reader::*;
+#[allow(unused_imports)]
+use {
+    itertools::Itertools,
+    std::{cmp::*, collections::*, io::*, num::*, str::*},
+};
 
 #[allow(dead_code)]
 pub mod reader {
@@ -143,78 +177,6 @@ pub mod reader {
         /// h*w行列を取得する
         pub fn matrix(&mut self, h: usize, w: usize) -> Vec<Vec<i64>> {
             (0..h).map(|_| self.iv(w)).collect()
-        }
-    }
-}
-
-#[cfg(test)]
-mod tests {
-    use super::*;
-    use itertools::Itertools;
-    use std::io::Cursor;
-
-    #[test]
-    fn basics() {
-        let cursor = Cursor::new(b"-123 456.7 12345 Hello, world!\n");
-        let mut reader = Reader::new(cursor);
-
-        assert_eq!(-123, reader.i());
-        assert_eq!(456.7, reader.f());
-        assert_eq!(12345, reader.u());
-        assert_eq!("Hello,".to_string(), reader.str());
-        assert_eq!("world!".to_string(), reader.str());
-
-        let cursor = Cursor::new(b"123 456 789 012 345 678\n");
-        let mut reader = Reader::new(cursor);
-
-        assert_eq!(vec![123, 456, 789, 12, 345, 678], reader.uv(6));
-    }
-
-    #[test]
-    fn edge_cases() {
-        {
-            let cursor = Cursor::new(b"8\n");
-            let mut reader = Reader::new(cursor);
-            assert_eq!(8u32, reader.n());
-        }
-        {
-            let cursor = Cursor::new(b"\n9\n");
-            let mut reader = Reader::new(cursor);
-            assert_eq!(9i32, reader.n());
-        }
-        {
-            let cursor = Cursor::new(b"\n\n10\n11\n");
-            let mut reader = Reader::new(cursor);
-            assert_eq!(10u8, reader.n());
-            assert_eq!(11u8, reader.n());
-        }
-    }
-
-    #[test]
-    fn map() {
-        {
-            let data = vec!["...#..", ".###..", "....##", ""];
-            let cursor = Cursor::new(data.iter().join("\n"));
-            let mut reader = Reader::new(cursor);
-            let res = reader.char_map(3);
-            for i in 0..3 {
-                let v = data[i].chars().collect_vec();
-                for j in 0..6 {
-                    assert_eq!(v[j], res[i][j]);
-                }
-            }
-        }
-        {
-            let data = vec!["S..#..", ".###..", "...G##", ""];
-            let cursor = Cursor::new(data.iter().join("\n"));
-            let mut reader = Reader::new(cursor);
-            let res = reader.bool_map(3, '#');
-            for i in 0..3 {
-                let v = data[i].chars().collect_vec();
-                for j in 0..6 {
-                    assert_eq!(v[j] != '#', res[i][j]);
-                }
-            }
         }
     }
 }

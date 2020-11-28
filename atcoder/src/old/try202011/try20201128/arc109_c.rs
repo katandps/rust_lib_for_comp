@@ -1,4 +1,126 @@
+#[allow(dead_code)]
+fn main() {
+    let stdin = stdin();
+    solve(Reader::new(stdin.lock()));
+}
+
+pub fn solve<R: BufRead>(mut reader: Reader<R>) {
+    let (n, k) = (reader.u128(), reader.u32());
+    let s = reader.s().iter().map(|c| c.into()).collect::<Vec<RPS>>();
+
+    let mut p = 0;
+    let mut len = 1;
+    // 幅2^pのトーナメントの開始位置のindex % n, 勝者
+    let mut map = HashMap::new();
+    const WIDTH: u32 = 5;
+    while k > p + WIDTH {
+        let before = len;
+        len *= 2u128.pow(WIDTH);
+        p += WIDTH;
+        for i in 0..n {
+            map.insert((i, len), search(i, i + len, &s, &map, before));
+        }
+    }
+    println!("{}", search(0, 2u128.pow(k), &s, &map, len));
+}
+
+fn search(
+    left: u128,
+    right: u128,
+    s: &Vec<RPS>,
+    map: &HashMap<(u128, u128), RPS>,
+    before: u128,
+) -> RPS {
+    if right - left == before {
+        match map.get(&(left % s.len() as u128, before)) {
+            Some(c) => *c,
+            _ => s[(left % s.len() as u128) as usize],
+        }
+    } else {
+        let center = left + (right - left) / 2;
+        let (l, r) = (
+            search(left, center, s, map, before),
+            search(center, right, s, map, before),
+        );
+        l.battle(r)
+    }
+}
+
+#[allow(unused_imports)]
+use rps::*;
+
+///じゃんけん
+#[allow(dead_code)]
+mod rps {
+    #[derive(Copy, Clone, Debug, Eq, PartialEq)]
+    pub enum RPS {
+        Rock,
+        Paper,
+        Scissors,
+    }
+
+    impl RPS {
+        pub fn battle(self, rhs: Self) -> RPS {
+            use RPS::*;
+            match (self, rhs) {
+                (Rock, Rock) => Rock,
+                (Rock, Paper) => Paper,
+                (Rock, Scissors) => Rock,
+                (Paper, Rock) => Paper,
+                (Paper, Paper) => Paper,
+                (Paper, Scissors) => Scissors,
+                (Scissors, Rock) => Rock,
+                (Scissors, Paper) => Scissors,
+                (Scissors, Scissors) => Scissors,
+            }
+        }
+    }
+
+    use std::fmt;
+
+    impl fmt::Display for RPS {
+        fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+            let c: char = (*self).into();
+            write!(f, "{}", c)
+        }
+    }
+
+    impl From<char> for RPS {
+        fn from(c: char) -> Self {
+            use RPS::*;
+            match c {
+                'R' => Rock,
+                'P' => Paper,
+                'S' => Scissors,
+                c => panic!(format!("変換できません: {}", c)),
+            }
+        }
+    }
+
+    impl From<&char> for RPS {
+        fn from(c: &char) -> Self {
+            Self::from(*c)
+        }
+    }
+
+    impl From<RPS> for char {
+        fn from(rps: RPS) -> Self {
+            use RPS::*;
+            match rps {
+                Rock => 'R',
+                Paper => 'P',
+                Scissors => 'S',
+            }
+        }
+    }
+}
+
 pub use reader::*;
+#[allow(unused_imports)]
+use {
+    itertools::Itertools,
+    std::{cmp::*, collections::*, io::*, num::*, str::*},
+};
 
 #[allow(dead_code)]
 pub mod reader {
@@ -143,78 +265,6 @@ pub mod reader {
         /// h*w行列を取得する
         pub fn matrix(&mut self, h: usize, w: usize) -> Vec<Vec<i64>> {
             (0..h).map(|_| self.iv(w)).collect()
-        }
-    }
-}
-
-#[cfg(test)]
-mod tests {
-    use super::*;
-    use itertools::Itertools;
-    use std::io::Cursor;
-
-    #[test]
-    fn basics() {
-        let cursor = Cursor::new(b"-123 456.7 12345 Hello, world!\n");
-        let mut reader = Reader::new(cursor);
-
-        assert_eq!(-123, reader.i());
-        assert_eq!(456.7, reader.f());
-        assert_eq!(12345, reader.u());
-        assert_eq!("Hello,".to_string(), reader.str());
-        assert_eq!("world!".to_string(), reader.str());
-
-        let cursor = Cursor::new(b"123 456 789 012 345 678\n");
-        let mut reader = Reader::new(cursor);
-
-        assert_eq!(vec![123, 456, 789, 12, 345, 678], reader.uv(6));
-    }
-
-    #[test]
-    fn edge_cases() {
-        {
-            let cursor = Cursor::new(b"8\n");
-            let mut reader = Reader::new(cursor);
-            assert_eq!(8u32, reader.n());
-        }
-        {
-            let cursor = Cursor::new(b"\n9\n");
-            let mut reader = Reader::new(cursor);
-            assert_eq!(9i32, reader.n());
-        }
-        {
-            let cursor = Cursor::new(b"\n\n10\n11\n");
-            let mut reader = Reader::new(cursor);
-            assert_eq!(10u8, reader.n());
-            assert_eq!(11u8, reader.n());
-        }
-    }
-
-    #[test]
-    fn map() {
-        {
-            let data = vec!["...#..", ".###..", "....##", ""];
-            let cursor = Cursor::new(data.iter().join("\n"));
-            let mut reader = Reader::new(cursor);
-            let res = reader.char_map(3);
-            for i in 0..3 {
-                let v = data[i].chars().collect_vec();
-                for j in 0..6 {
-                    assert_eq!(v[j], res[i][j]);
-                }
-            }
-        }
-        {
-            let data = vec!["S..#..", ".###..", "...G##", ""];
-            let cursor = Cursor::new(data.iter().join("\n"));
-            let mut reader = Reader::new(cursor);
-            let res = reader.bool_map(3, '#');
-            for i in 0..3 {
-                let v = data[i].chars().collect_vec();
-                for j in 0..6 {
-                    assert_eq!(v[j] != '#', res[i][j]);
-                }
-            }
         }
     }
 }

@@ -1,4 +1,54 @@
+#[allow(dead_code)]
+fn main() {
+    let stdin = stdin();
+    solve(Reader::new(stdin.lock()));
+}
+
+pub fn solve<R: BufRead>(mut reader: Reader<R>) {
+    let (a, b, x, y) = reader.u4();
+
+    // 0~99 = a 100~199 = b
+    let mut graph = vec![Vec::new(); 200];
+    for i in 0..100 {
+        graph[i].push((100 + i, x));
+        graph[100 + i].push((i, x));
+    }
+    for i in 0..99 {
+        graph[i + 1].push((100 + i, x));
+        graph[100 + i].push((i + 1, x));
+    }
+    for i in 0..99 {
+        graph[i].push((i + 1, y));
+        graph[i + 1].push((i, y));
+        graph[100 + i + 1].push((100 + i, y));
+        graph[100 + i].push((100 + i + 1, y));
+    }
+
+    let mut q = VecDeque::new();
+    q.push_back(a - 1);
+
+    let mut dist = vec![100000000; 200];
+    dist[a - 1] = 0;
+
+    while !q.is_empty() {
+        let from = q.pop_front().unwrap();
+
+        for &(to, cost) in &graph[from] {
+            if dist[to] > dist[from] + cost {
+                dist[to] = dist[from] + cost;
+                q.push_back(to);
+            }
+        }
+    }
+    println!("{}", dist[100 + b - 1]);
+}
+
 pub use reader::*;
+#[allow(unused_imports)]
+use {
+    itertools::Itertools,
+    std::{cmp::*, collections::*, io::*, num::*, str::*},
+};
 
 #[allow(dead_code)]
 pub mod reader {
@@ -143,78 +193,6 @@ pub mod reader {
         /// h*w行列を取得する
         pub fn matrix(&mut self, h: usize, w: usize) -> Vec<Vec<i64>> {
             (0..h).map(|_| self.iv(w)).collect()
-        }
-    }
-}
-
-#[cfg(test)]
-mod tests {
-    use super::*;
-    use itertools::Itertools;
-    use std::io::Cursor;
-
-    #[test]
-    fn basics() {
-        let cursor = Cursor::new(b"-123 456.7 12345 Hello, world!\n");
-        let mut reader = Reader::new(cursor);
-
-        assert_eq!(-123, reader.i());
-        assert_eq!(456.7, reader.f());
-        assert_eq!(12345, reader.u());
-        assert_eq!("Hello,".to_string(), reader.str());
-        assert_eq!("world!".to_string(), reader.str());
-
-        let cursor = Cursor::new(b"123 456 789 012 345 678\n");
-        let mut reader = Reader::new(cursor);
-
-        assert_eq!(vec![123, 456, 789, 12, 345, 678], reader.uv(6));
-    }
-
-    #[test]
-    fn edge_cases() {
-        {
-            let cursor = Cursor::new(b"8\n");
-            let mut reader = Reader::new(cursor);
-            assert_eq!(8u32, reader.n());
-        }
-        {
-            let cursor = Cursor::new(b"\n9\n");
-            let mut reader = Reader::new(cursor);
-            assert_eq!(9i32, reader.n());
-        }
-        {
-            let cursor = Cursor::new(b"\n\n10\n11\n");
-            let mut reader = Reader::new(cursor);
-            assert_eq!(10u8, reader.n());
-            assert_eq!(11u8, reader.n());
-        }
-    }
-
-    #[test]
-    fn map() {
-        {
-            let data = vec!["...#..", ".###..", "....##", ""];
-            let cursor = Cursor::new(data.iter().join("\n"));
-            let mut reader = Reader::new(cursor);
-            let res = reader.char_map(3);
-            for i in 0..3 {
-                let v = data[i].chars().collect_vec();
-                for j in 0..6 {
-                    assert_eq!(v[j], res[i][j]);
-                }
-            }
-        }
-        {
-            let data = vec!["S..#..", ".###..", "...G##", ""];
-            let cursor = Cursor::new(data.iter().join("\n"));
-            let mut reader = Reader::new(cursor);
-            let res = reader.bool_map(3, '#');
-            for i in 0..3 {
-                let v = data[i].chars().collect_vec();
-                for j in 0..6 {
-                    assert_eq!(v[j] != '#', res[i][j]);
-                }
-            }
         }
     }
 }

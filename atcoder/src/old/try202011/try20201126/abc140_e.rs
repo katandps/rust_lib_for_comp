@@ -1,4 +1,49 @@
+#[allow(dead_code)]
+fn main() {
+    let stdin = stdin();
+    solve(Reader::new(stdin.lock()));
+}
+
+pub fn solve<R: BufRead>(mut reader: Reader<R>) {
+    let n = reader.u();
+    let a = reader.iv(n);
+
+    let mut set = BTreeSet::new();
+    set.insert(-1);
+    set.insert(n as i64);
+
+    let mut pos = vec![0; n + 1];
+    for i in 0..n {
+        pos[a[i] as usize] = i;
+    }
+
+    let n = n as i64;
+    let mut ans = 0;
+    // 大きい数字から見る
+    for i in (1..=n).rev() {
+        let p = pos[i as usize] as i64;
+        let left1 = set.range(..p).rev().next().unwrap();
+        let right1 = set.range((p + 1)..).next().unwrap();
+
+        if left1 != &-1 {
+            let left2 = set.range(..left1).rev().next().unwrap();
+            ans += i * (right1 - p) * (left1 - left2);
+        }
+        if right1 != &(n as i64) {
+            let right2 = set.range((right1 + 1)..).next().unwrap();
+            ans += i * (p - left1) * (right2 - right1);
+        }
+        set.insert(p as i64);
+    }
+    println!("{}", ans);
+}
+
 pub use reader::*;
+#[allow(unused_imports)]
+use {
+    itertools::Itertools,
+    std::{cmp::*, collections::*, io::*, num::*, str::*},
+};
 
 #[allow(dead_code)]
 pub mod reader {
@@ -86,13 +131,20 @@ pub mod reader {
             u8; u16; u32; u64; u128; usize; i8; i16; i32; i64; i128; isize; f32; f64; char;
         }
         tuple_methods! {
-            u2: (usize, usize); u3: (usize, usize, usize); u4: (usize, usize, usize, usize);
-            i2: (i64, i64); i3: (i64, i64, i64); i4: (i64, i64, i64, i64);
+            uu: (usize, usize);
+            ii: (i64, i64);
+            uuu: (usize, usize, usize);
+            uii: (usize, i64, i64);
+            uuuu: (usize, usize, usize, usize);
             cuu: (char, usize, usize);
         }
         vec_methods! {
-            uv: usize; uv2: (usize, usize); uv3: (usize, usize, usize);
-            iv: i64; iv2: (i64, i64); iv3: (i64, i64, i64);
+            uv: usize;
+            uv2: (usize, usize);
+            uv3: (usize, usize, usize);
+            iv: i64;
+            iv2: (i64, i64);
+            iv3: (i64, i64, i64);
             vq: (char, usize, usize);
         }
 
@@ -143,78 +195,6 @@ pub mod reader {
         /// h*w行列を取得する
         pub fn matrix(&mut self, h: usize, w: usize) -> Vec<Vec<i64>> {
             (0..h).map(|_| self.iv(w)).collect()
-        }
-    }
-}
-
-#[cfg(test)]
-mod tests {
-    use super::*;
-    use itertools::Itertools;
-    use std::io::Cursor;
-
-    #[test]
-    fn basics() {
-        let cursor = Cursor::new(b"-123 456.7 12345 Hello, world!\n");
-        let mut reader = Reader::new(cursor);
-
-        assert_eq!(-123, reader.i());
-        assert_eq!(456.7, reader.f());
-        assert_eq!(12345, reader.u());
-        assert_eq!("Hello,".to_string(), reader.str());
-        assert_eq!("world!".to_string(), reader.str());
-
-        let cursor = Cursor::new(b"123 456 789 012 345 678\n");
-        let mut reader = Reader::new(cursor);
-
-        assert_eq!(vec![123, 456, 789, 12, 345, 678], reader.uv(6));
-    }
-
-    #[test]
-    fn edge_cases() {
-        {
-            let cursor = Cursor::new(b"8\n");
-            let mut reader = Reader::new(cursor);
-            assert_eq!(8u32, reader.n());
-        }
-        {
-            let cursor = Cursor::new(b"\n9\n");
-            let mut reader = Reader::new(cursor);
-            assert_eq!(9i32, reader.n());
-        }
-        {
-            let cursor = Cursor::new(b"\n\n10\n11\n");
-            let mut reader = Reader::new(cursor);
-            assert_eq!(10u8, reader.n());
-            assert_eq!(11u8, reader.n());
-        }
-    }
-
-    #[test]
-    fn map() {
-        {
-            let data = vec!["...#..", ".###..", "....##", ""];
-            let cursor = Cursor::new(data.iter().join("\n"));
-            let mut reader = Reader::new(cursor);
-            let res = reader.char_map(3);
-            for i in 0..3 {
-                let v = data[i].chars().collect_vec();
-                for j in 0..6 {
-                    assert_eq!(v[j], res[i][j]);
-                }
-            }
-        }
-        {
-            let data = vec!["S..#..", ".###..", "...G##", ""];
-            let cursor = Cursor::new(data.iter().join("\n"));
-            let mut reader = Reader::new(cursor);
-            let res = reader.bool_map(3, '#');
-            for i in 0..3 {
-                let v = data[i].chars().collect_vec();
-                for j in 0..6 {
-                    assert_eq!(v[j] != '#', res[i][j]);
-                }
-            }
         }
     }
 }

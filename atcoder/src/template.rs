@@ -103,20 +103,13 @@ pub mod reader {
             u8; u16; u32; u64; u128; usize; i8; i16; i32; i64; i128; isize; f32; f64; char;
         }
         tuple_methods! {
-            uu: (usize, usize);
-            ii: (i64, i64);
-            uuu: (usize, usize, usize);
-            uii: (usize, i64, i64);
-            uuuu: (usize, usize, usize, usize);
+            u2: (usize, usize); u3: (usize, usize, usize); u4: (usize, usize, usize, usize);
+            i2: (i64, i64); i3: (i64, i64, i64); i4: (i64, i64, i64, i64);
             cuu: (char, usize, usize);
         }
         vec_methods! {
-            uv: usize;
-            uv2: (usize, usize);
-            uv3: (usize, usize, usize);
-            iv: i64;
-            iv2: (i64, i64);
-            iv3: (i64, i64, i64);
+            uv: usize; uv2: (usize, usize); uv3: (usize, usize, usize);
+            iv: i64; iv2: (i64, i64); iv3: (i64, i64, i64);
             vq: (char, usize, usize);
         }
 
