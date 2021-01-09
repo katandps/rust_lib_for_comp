@@ -14,6 +14,7 @@ mod lowest_common_ancestor;
 mod lucas_theorem;
 mod mod_int;
 mod mod_inv;
+mod mod_pow;
 mod permutation;
 mod prim;
 mod reader;
