@@ -12,14 +12,9 @@ mod binary_indexed_tree {
     type VALUE = i64;
     impl BinaryIndexedTree {
         pub fn new(n: usize) -> BinaryIndexedTree {
-            let mut p = 1;
-            while p <= n {
-                p <<= 1;
-            }
-            BinaryIndexedTree {
-                n: n + 1,
-                bit: vec![0; p],
-            }
+            let n = n + 1;
+            let bit = vec![0; n + 1];
+            BinaryIndexedTree { n, bit }
         }
 
         /// add x to i
@@ -42,6 +37,11 @@ mod binary_indexed_tree {
                 idx -= idx & -idx;
             }
             ret
+        }
+
+        /// sum of [a, b)
+        pub fn sum_ab(&self, a: usize, b: usize) -> VALUE {
+            self.sum(b) - self.sum(a)
         }
     }
 
@@ -96,5 +96,7 @@ mod test {
         for i in 0..LEN {
             assert_eq!(v[i], bit.sum(i));
         }
+
+        dbg!(bit);
     }
 }
