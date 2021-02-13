@@ -20,6 +20,7 @@ mod prim;
 mod reader;
 mod rps;
 mod sieve_of_eratosthenes;
+mod sqrt;
 mod union_find;
 mod warshall_floyd;
 mod z_algorithm;
