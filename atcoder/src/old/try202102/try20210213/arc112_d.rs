@@ -5,16 +5,194 @@ fn main() {
 }
 
 pub fn solve<R: BufRead>(mut reader: Reader<R>) {
-    //$END$//
-    let n = reader.u();
-    println!("{}", n);
+    let (h, w) = reader.u2();
+    let mut map = reader.bool_map(h, '.');
+    map[0][0] = true;
+    map[0][w - 1] = true;
+    map[h - 1][0] = true;
+    map[h - 1][w - 1] = true;
+
+    let grid = Grid::new(h, w, map);
+
+    let mut y_grand = vec![Vec::new(); h];
+    let mut x_grand = vec![Vec::new(); w];
+    let mut point_list = Vec::new();
+    let mut x_done = vec![false; w];
+    let mut y_done = vec![false; h];
+
+    for x in 0..w {
+        for y in 0..h {
+            if *grid.get(grid.key(x, y)) {
+                y_grand[y].push(x);
+                x_grand[x].push(y);
+                point_list.push(grid.key(x, y));
+                x_done[x] = true;
+                y_done[y] = true;
+            }
+        }
+    }
+    let mut uf = UnionFind::new(h * w);
+    for x in 0..w {
+        if x_grand[x].len() < 2 {
+            continue;
+        }
+        let y1 = x_grand[x][0];
+        for &y in &x_grand[x] {
+            uf.unite(grid.key(x, y), grid.key(x, y1));
+        }
+    }
+    for y in 0..h {
+        if y_grand[y].len() < 2 {
+            continue;
+        }
+        let x1 = y_grand[y][0];
+        for &x in &y_grand[y] {
+            uf.unite(grid.key(x, y), grid.key(x1, y));
+        }
+    }
+
+    // dbg!(&point_list, &x_done, &y_done);
+    let mut ans = min(
+        x_done.iter().filter(|&&b| !b).count(),
+        y_done.iter().filter(|&&b| !b).count(),
+    );
+    let mut root = HashSet::new();
+    for p in point_list {
+        root.insert(uf.root(p));
+    }
+    ans += root.len() - 1;
+    println!("{}", ans);
+}
+
+#[allow(unused_imports)]
+use union_find::*;
+
+#[allow(dead_code)]
+mod union_find {
+    pub struct UnionFind {
+        parent: Vec<usize>,
+        rank: Vec<usize>,
+    }
+
+    impl UnionFind {
+        pub fn new(n: usize) -> UnionFind {
+            let mut parent = vec![0; n + 1];
+            let rank = vec![0; n + 1];
+            for i in 1..(n + 1) {
+                parent[i] = i;
+            }
+            UnionFind {
+                parent: parent,
+                rank: rank,
+            }
+        }
+
+        pub fn root(&mut self, x: usize) -> usize {
+            if self.parent[x] == x {
+                x
+            } else {
+                let p = self.parent[x];
+                self.parent[x] = self.root(p);
+                self.parent[x]
+            }
+        }
+
+        pub fn rank(&self, x: usize) -> usize {
+            self.rank[x]
+        }
+
+        pub fn same(&mut self, x: usize, y: usize) -> bool {
+            self.root(x) == self.root(y)
+        }
+
+        pub fn unite(&mut self, x: usize, y: usize) {
+            let mut x = self.root(x);
+            let mut y = self.root(y);
+            if x == y {
+                return;
+            }
+            if self.rank(x) < self.rank(y) {
+                let tmp = y;
+                y = x;
+                x = tmp;
+            }
+            if self.rank(x) == self.rank(y) {
+                self.rank[x] += 1;
+            }
+            self.parent[x] = y;
+        }
+    }
+}
+
+#[allow(unused_imports)]
+use grid::*;
+
+#[allow(dead_code)]
+mod grid {
+    #[derive(Debug)]
+    pub struct Grid<T> {
+        pub h: usize,
+        pub w: usize,
+        pub max: usize,
+        pub map: Vec<T>,
+    }
+
+    impl<T: Clone> Grid<T> {
+        pub fn new(h: usize, w: usize, input: Vec<Vec<T>>) -> Grid<T> {
+            let mut map = Vec::new();
+            for r in input {
+                for c in r {
+                    map.push(c);
+                }
+            }
+            let max = h * w;
+            Grid { h, w, max, map }
+        }
+        pub fn key(&self, x: usize, y: usize) -> usize {
+            y * self.w + x
+        }
+        pub fn xy(&self, k: usize) -> (usize, usize) {
+            (self.x(k), self.y(k))
+        }
+        pub fn x(&self, k: usize) -> usize {
+            k % self.w
+        }
+        pub fn y(&self, k: usize) -> usize {
+            k / self.w
+        }
+        pub fn get(&self, key: usize) -> &T {
+            &self.map[key]
+        }
+        pub fn set(&mut self, key: usize, value: T) {
+            self.map[key] = value;
+        }
+        pub fn neighbor(&self, key: usize) -> Vec<usize> {
+            let mut ret = self.one_way(key);
+            if self.x(key) > 0 {
+                ret.push(key - 1);
+            }
+            if self.y(key) > 0 {
+                ret.push(key - self.w);
+            }
+            ret
+        }
+        pub fn one_way(&self, key: usize) -> Vec<usize> {
+            let mut ret = Vec::new();
+            if self.x(key) + 1 < self.w {
+                ret.push(key + 1);
+            }
+            if self.y(key) + 1 < self.h {
+                ret.push(key + self.w);
+            }
+            ret
+        }
+    }
 }
 
 pub use reader::*;
 #[allow(unused_imports)]
 use {
     itertools::Itertools,
-    num::Integer,
     std::{cmp::*, collections::*, io::*, num::*, str::*},
 };
 

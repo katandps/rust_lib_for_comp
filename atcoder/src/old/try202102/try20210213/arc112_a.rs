@@ -5,16 +5,22 @@ fn main() {
 }
 
 pub fn solve<R: BufRead>(mut reader: Reader<R>) {
-    //$END$//
-    let n = reader.u();
-    println!("{}", n);
+    let t = reader.u();
+    for _ in 0..t {
+        let (l, r) = reader.i2();
+        if r < 2 * l {
+            println!("0");
+            continue;
+        }
+
+        println!("{}", (r - 2 * l + 1) * (r - 2 * l + 2) / 2);
+    }
 }
 
 pub use reader::*;
 #[allow(unused_imports)]
 use {
     itertools::Itertools,
-    num::Integer,
     std::{cmp::*, collections::*, io::*, num::*, str::*},
 };
 

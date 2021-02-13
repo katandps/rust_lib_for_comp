@@ -5,9 +5,53 @@ fn main() {
 }
 
 pub fn solve<R: BufRead>(mut reader: Reader<R>) {
-    //$END$//
     let n = reader.u();
-    println!("{}", n);
+    let p = reader.uv(n - 1);
+
+    let mut g = vec![HashSet::new(); n + 1];
+    for i in 0..n - 1 {
+        g[p[i]].insert(i + 2);
+    }
+    println!("{}", (calc(1, &g).0 + n as i32) / 2);
+}
+
+/// return value is (Gain of coins, Num of Children)
+fn calc(root: usize, g: &Vec<HashSet<usize>>) -> (i32, i32) {
+    let r = match g[root].len() {
+        0 => (1, 1),
+        _ => {
+            let branches = &g[root].iter().map(|child| calc(*child, g)).collect_vec();
+            let mut even = Vec::new();
+            let mut odd = Vec::new();
+            let mut children = 0;
+            for &(co, ch) in branches {
+                if ch & 1 == 0 {
+                    even.push(co);
+                } else {
+                    odd.push(co);
+                }
+                children += ch;
+            }
+            let mut res = 0;
+            odd.sort();
+            let mut even_sum = 0;
+            for &e in &even {
+                if e < 0 {
+                    res += e;
+                } else {
+                    even_sum += e;
+                }
+            }
+            let mut hand = 1;
+            for i in 0..odd.len() {
+                res += odd[i] * hand;
+                hand *= -1;
+            }
+            res += even_sum * hand;
+            (res + 1, children + 1)
+        }
+    };
+    r
 }
 
 pub use reader::*;

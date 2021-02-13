@@ -5,16 +5,43 @@ fn main() {
 }
 
 pub fn solve<R: BufRead>(mut reader: Reader<R>) {
-    //$END$//
-    let n = reader.u();
-    println!("{}", n);
+    let (b, c) = reader.i2();
+    if c == 1 {
+        if b == 0 {
+            println!("1");
+        } else {
+            println!("2");
+        }
+        return;
+    }
+
+    // c >= 2
+    if b == 0 {
+        let mut ans = 1;
+
+        // minus
+        let m = c / 2;
+        ans += 2 * m - if c % 2 == 1 { 0 } else { 1 };
+        println!("{}", ans);
+    } else {
+        let mut ans = 2; // +-
+
+        // big abs
+        ans += c - 1 + if b > 0 { -1 } else { 0 };
+
+        // small abs
+        ans += min(
+            c - 1 + if b < 0 { -1 } else { 0 },
+            if b == 0 { 0 } else { (b.abs() - 1) * 2 + 1 },
+        );
+        println!("{}", ans);
+    }
 }
 
 pub use reader::*;
 #[allow(unused_imports)]
 use {
     itertools::Itertools,
-    num::Integer,
     std::{cmp::*, collections::*, io::*, num::*, str::*},
 };
 
