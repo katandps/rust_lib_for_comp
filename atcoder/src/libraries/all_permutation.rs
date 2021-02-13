@@ -3,29 +3,29 @@ use all_permutation::*;
 
 #[allow(dead_code)]
 mod all_permutation {
-    pub struct AllPermutation<T> {
-        v: Vec<Vec<T>>,
+    pub struct AllPermutation {
+        v: Vec<Vec<usize>>,
     }
 
-    impl<T: Eq + Clone> AllPermutation<T> {
-        pub fn new(v: Vec<T>) -> AllPermutation<T> {
+    impl AllPermutation {
+        pub fn new(n: usize) -> Self {
             let mut p = AllPermutation { v: Vec::new() };
-            p.permutate(v, Vec::new());
+            p.permutate((0..n).collect(), Vec::with_capacity(n));
             p
         }
 
-        fn permutate(&mut self, rest: Vec<T>, mut current: Vec<T>) {
+        fn permutate(&mut self, rest: Vec<usize>, mut current: Vec<usize>) {
             if rest.len() == 1 {
-                current.push(rest[0].clone());
-                self.v.push(current.clone());
+                current.push(rest[0]);
+                self.v.push(current);
             } else {
                 if rest.len() == 2 {
                     let mut next = current.clone();
-                    next.push(rest[0].clone());
-                    next.push(rest[1].clone());
+                    next.push(rest[0]);
+                    next.push(rest[1]);
                     self.v.push(next);
-                    current.push(rest[1].clone());
-                    current.push(rest[0].clone());
+                    current.push(rest[1]);
+                    current.push(rest[0]);
                     self.v.push(current);
                 } else {
                     for rest_i in 0..rest.len() {
@@ -38,7 +38,7 @@ mod all_permutation {
             }
         }
 
-        pub fn get(&self) -> &Vec<Vec<T>> {
+        pub fn get(&self) -> &Vec<Vec<usize>> {
             &self.v
         }
     }
@@ -50,17 +50,17 @@ mod test {
 
     #[test]
     fn it_works() {
-        let p = AllPermutation::new(vec![1, 2, 3]);
+        let p = AllPermutation::new(3);
         let result = p.get();
         assert_eq!(result.len(), 6);
-        assert_eq!(result[0], vec![1, 2, 3]);
-        assert_eq!(result[1], vec![1, 3, 2]);
-        assert_eq!(result[2], vec![2, 1, 3]);
-        assert_eq!(result[3], vec![2, 3, 1]);
-        assert_eq!(result[4], vec![3, 1, 2]);
-        assert_eq!(result[5], vec![3, 2, 1]);
+        assert_eq!(result[0], vec![0, 1, 2]);
+        assert_eq!(result[1], vec![0, 2, 1]);
+        assert_eq!(result[2], vec![1, 0, 2]);
+        assert_eq!(result[3], vec![1, 2, 0]);
+        assert_eq!(result[4], vec![2, 0, 1]);
+        assert_eq!(result[5], vec![2, 1, 0]);
 
-        let p2 = AllPermutation::new(vec![0; 9]);
+        let p2 = AllPermutation::new(9);
         assert_eq!(p2.get().len(), 362880);
     }
 }
