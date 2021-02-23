@@ -5,9 +5,37 @@ fn main() {
 }
 
 pub fn solve<R: BufRead>(mut reader: Reader<R>) {
-    //$END$//
-    let n = reader.u();
-    println!("{}", n);
+    let k = reader.i();
+
+    let mut ans = 0;
+    for a in 1..=k {
+        let m = k / a;
+        let s = sqrt(m);
+        for b in 1.. {
+            if m / b < s {
+                break;
+            };
+            ans += m / b - s;
+        }
+        for c in 1..=s {
+            ans += m / c;
+        }
+    }
+    println!("{}", ans);
+}
+
+fn sqrt(a: i64) -> i64 {
+    let mut ng = std::i32::MAX as i64 / 2;
+    let mut ok = -1;
+    while (ok - ng).abs() > 1 {
+        let mid = (ok + ng) / 2;
+        if mid * mid <= a {
+            ok = mid;
+        } else {
+            ng = mid;
+        }
+    }
+    ok
 }
 
 pub use reader::*;

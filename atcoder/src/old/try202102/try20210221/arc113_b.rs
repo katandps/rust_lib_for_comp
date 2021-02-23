@@ -5,9 +5,28 @@ fn main() {
 }
 
 pub fn solve<R: BufRead>(mut reader: Reader<R>) {
-    //$END$//
-    let n = reader.u();
-    println!("{}", n);
+    let (a, b, c) = reader.u3();
+
+    let mut k = 1;
+    if c < 30 {
+        for _ in 0..c {
+            k = k * b % 12;
+        }
+    } else {
+        for _ in 0..(c - 1) % 12 + 13 {
+            k = k * b % 12;
+        }
+    }
+
+    let mut ans = 1;
+    if k == 0 {
+        k += 12;
+    }
+    for _ in 0..k {
+        ans = ans * (a % 10) % 10;
+    }
+    dbg!(k);
+    println!("{}", ans);
 }
 
 pub use reader::*;

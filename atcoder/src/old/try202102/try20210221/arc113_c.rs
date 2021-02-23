@@ -5,9 +5,28 @@ fn main() {
 }
 
 pub fn solve<R: BufRead>(mut reader: Reader<R>) {
-    //$END$//
-    let n = reader.u();
-    println!("{}", n);
+    let s = reader.s();
+
+    let n = s.len();
+    let mut count = HashMap::new();
+    let mut ans = 0usize;
+    for i in (0..n).rev() {
+        *count.entry(s[i]).or_insert(0) += 1;
+        if i < n - 1 {
+            if s[i] == s[i + 1] {
+                for c in 'a' as u8..='z' as u8 {
+                    let c = c as char;
+                    if c != s[i] {
+                        let cc = count.get(&c).cloned().unwrap_or(0);
+                        ans += cc;
+                        *count.entry(s[i]).or_insert(0) += cc;
+                        count.remove(&c);
+                    }
+                }
+            }
+        }
+    }
+    println!("{}", ans);
 }
 
 pub use reader::*;
