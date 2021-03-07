@@ -5,6 +5,8 @@ use floor_sum::*;
 mod floor_sum {
     type NUM = i64;
 
+    /// y = (Ax + B)/M (0 <= x <= N) の下にある格子点の数を求める
+    /// O(log(max(A,M))
     pub fn floor_sum(n: NUM, m: NUM, mut a: NUM, mut b: NUM) -> NUM {
         let mut ans = 0;
         if a >= m {

@@ -1,3 +1,4 @@
+#[allow(dead_code)]
 fn sqrt(a: isize) -> isize {
     let mut ng = std::i32::MAX as isize / 2;
     let mut ok = -1;

@@ -139,16 +139,14 @@ pub mod mod_int {
     }
 
     impl ModInt<Num> {
-        pub fn pow(self, e: Num) -> ModInt<Num> {
+        pub fn pow(mut self, mut e: Num) -> ModInt<Num> {
             let mut result = Self::new(1);
-            let mut cur = self;
-            let mut e = e;
             while e > 0 {
                 if e & 1 == 1 {
-                    result *= cur;
+                    result *= self.0;
                 }
                 e >>= 1;
-                cur *= cur;
+                self *= self.0;
             }
             result
         }
@@ -157,6 +155,18 @@ pub mod mod_int {
         }
         pub fn get(&self) -> Num {
             self.0
+        }
+    }
+
+    impl From<Num> for ModInt<Num> {
+        fn from(i: i64) -> Self {
+            Self::new(i)
+        }
+    }
+
+    impl From<ModInt<Num>> for Num {
+        fn from(m: ModInt<i64>) -> Self {
+            m.0
         }
     }
 }
