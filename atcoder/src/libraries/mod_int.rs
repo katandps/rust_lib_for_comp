@@ -3,170 +3,218 @@ use mod_int::*;
 
 #[allow(dead_code)]
 pub mod mod_int {
-    use std::fmt;
+    use std::marker::PhantomData;
     use std::ops::*;
 
-    type Num = i64;
-
-    const MOD: Num = 1_000_000_007;
-
-    #[derive(Copy, Clone)]
-    pub struct ModInt<T: Clone + Copy>(T);
-
-    impl Add<Num> for ModInt<Num> {
-        type Output = ModInt<Num>;
-        fn add(self, rhs: Num) -> ModInt<Num> {
-            ModInt::new(self.get() + rhs.rem_euclid(MOD))
-        }
+    pub trait Mod: Copy + Clone + std::fmt::Debug {
+        fn get() -> i64;
     }
-    impl Add<ModInt<Num>> for ModInt<Num> {
-        type Output = ModInt<Num>;
-        fn add(self, rhs: ModInt<Num>) -> ModInt<Num> {
-            self + rhs.get()
-        }
-    }
-    impl AddAssign<Num> for ModInt<Num> {
-        fn add_assign(&mut self, other: Num) {
-            *self = *self + other
-        }
-    }
-    impl AddAssign<ModInt<Num>> for ModInt<Num> {
-        fn add_assign(&mut self, other: ModInt<Num>) {
-            *self = *self + other
+
+    pub type Mi = ModInt<Mod1e9p7>;
+
+    #[derive(Copy, Clone, Eq, PartialEq, Debug)]
+    pub struct Mod1e9p7;
+
+    #[derive(Copy, Clone, Eq, PartialEq, Debug)]
+    pub struct Mod1e9p9;
+
+    #[derive(Copy, Clone, Eq, PartialEq, Debug)]
+    pub struct Mod998244353;
+
+    impl Mod for Mod1e9p7 {
+        fn get() -> i64 {
+            1_000_000_007
         }
     }
 
-    impl Sub<Num> for ModInt<Num> {
-        type Output = ModInt<Num>;
-        fn sub(self, rhs: Num) -> ModInt<Num> {
-            ModInt::new(self.get() - rhs.rem_euclid(MOD))
+    impl Mod for Mod1e9p9 {
+        fn get() -> i64 {
+            1_000_000_009
         }
     }
 
-    impl Sub<ModInt<Num>> for ModInt<Num> {
-        type Output = ModInt<Num>;
-        fn sub(self, rhs: ModInt<Num>) -> ModInt<Num> {
-            self - rhs.get()
+    impl Mod for Mod998244353 {
+        fn get() -> i64 {
+            998_244_353
         }
     }
 
-    impl Neg for ModInt<Num> {
-        type Output = ModInt<Num>;
-        fn neg(self) -> ModInt<Num> {
-            Self::new(-self.get())
-        }
+    #[derive(Copy, Clone, Eq, PartialEq)]
+    pub struct ModInt<M: Mod> {
+        n: i64,
+        _p: PhantomData<M>,
     }
 
-    impl SubAssign<Num> for ModInt<Num> {
-        fn sub_assign(&mut self, other: Num) {
-            *self = *self - other
+    impl<M: Mod> ModInt<M> {
+        pub fn new(n: i64) -> Self {
+            Self {
+                n: n.rem_euclid(M::get()),
+                _p: PhantomData,
+            }
         }
-    }
 
-    impl SubAssign<ModInt<Num>> for ModInt<Num> {
-        fn sub_assign(&mut self, other: ModInt<Num>) {
-            *self = *self - other
-        }
-    }
-    impl Mul<Num> for ModInt<Num> {
-        type Output = ModInt<Num>;
-        fn mul(self, rhs: Num) -> ModInt<Num> {
-            ModInt::new(self.get() * (rhs % MOD))
-        }
-    }
-    impl Mul<ModInt<Num>> for ModInt<Num> {
-        type Output = ModInt<Num>;
-        fn mul(self, rhs: ModInt<Num>) -> ModInt<Num> {
-            self * rhs.get()
-        }
-    }
-    impl MulAssign<Num> for ModInt<Num> {
-        fn mul_assign(&mut self, rhs: Num) {
-            *self = *self * rhs
-        }
-    }
-    impl MulAssign<ModInt<Num>> for ModInt<Num> {
-        fn mul_assign(&mut self, rhs: ModInt<Num>) {
-            *self = *self * rhs
-        }
-    }
-    impl Div<Num> for ModInt<Num> {
-        type Output = ModInt<Num>;
-        fn div(self, rhs: Num) -> ModInt<Num> {
-            self * ModInt::new(rhs).pow(MOD - 2)
-        }
-    }
-    impl Div<ModInt<Num>> for ModInt<Num> {
-        type Output = ModInt<Num>;
-        fn div(self, rhs: ModInt<Num>) -> ModInt<Num> {
-            self / rhs.get()
-        }
-    }
-    impl DivAssign<Num> for ModInt<Num> {
-        fn div_assign(&mut self, rhs: Num) {
-            *self = *self / rhs
-        }
-    }
-    impl DivAssign<ModInt<Num>> for ModInt<Num> {
-        fn div_assign(&mut self, rhs: ModInt<Num>) {
-            *self = *self / rhs
-        }
-    }
-
-    impl fmt::Display for ModInt<Num> {
-        fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
-            write!(f, "{}", self.get())
-        }
-    }
-
-    impl fmt::Debug for ModInt<Num> {
-        fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
-            write!(f, "{}", self.get())
-        }
-    }
-
-    impl Deref for ModInt<Num> {
-        type Target = i64;
-        fn deref(&self) -> &Self::Target {
-            &self.0
-        }
-    }
-
-    impl DerefMut for ModInt<Num> {
-        fn deref_mut(&mut self) -> &mut Self::Target {
-            &mut self.0
-        }
-    }
-
-    impl ModInt<Num> {
-        pub fn pow(mut self, mut e: Num) -> ModInt<Num> {
+        pub fn pow(mut self, mut e: i64) -> ModInt<M> {
             let mut result = Self::new(1);
             while e > 0 {
                 if e & 1 == 1 {
-                    result *= self.0;
+                    result *= self.n;
                 }
                 e >>= 1;
-                self *= self.0;
+                self *= self.n;
             }
             result
         }
-        pub fn new(v: Num) -> ModInt<Num> {
-            ModInt(v.rem_euclid(MOD))
-        }
-        pub fn get(&self) -> Num {
-            self.0
+
+        pub fn get(&self) -> i64 {
+            self.n
         }
     }
 
-    impl From<Num> for ModInt<Num> {
+    impl<M: Mod> Add<i64> for ModInt<M> {
+        type Output = Self;
+        fn add(self, rhs: i64) -> Self {
+            ModInt::new(self.n + rhs.rem_euclid(M::get()))
+        }
+    }
+
+    impl<M: Mod> Add<ModInt<M>> for ModInt<M> {
+        type Output = Self;
+        fn add(self, rhs: Self) -> Self {
+            self + rhs.n
+        }
+    }
+
+    impl<M: Mod> AddAssign<i64> for ModInt<M> {
+        fn add_assign(&mut self, rhs: i64) {
+            *self = *self + rhs
+        }
+    }
+
+    impl<M: Mod> AddAssign<ModInt<M>> for ModInt<M> {
+        fn add_assign(&mut self, rhs: Self) {
+            *self = *self + rhs
+        }
+    }
+
+    impl<M: Mod> Neg for ModInt<M> {
+        type Output = Self;
+        fn neg(self) -> Self {
+            Self::new(-self.n)
+        }
+    }
+
+    impl<M: Mod> Sub<i64> for ModInt<M> {
+        type Output = Self;
+        fn sub(self, rhs: i64) -> Self {
+            ModInt::new(self.n - rhs.rem_euclid(M::get()))
+        }
+    }
+
+    impl<M: Mod> Sub<ModInt<M>> for ModInt<M> {
+        type Output = Self;
+        fn sub(self, rhs: Self) -> Self {
+            self - rhs.n
+        }
+    }
+
+    impl<M: Mod> SubAssign<i64> for ModInt<M> {
+        fn sub_assign(&mut self, rhs: i64) {
+            *self = *self - rhs
+        }
+    }
+
+    impl<M: Mod> SubAssign<ModInt<M>> for ModInt<M> {
+        fn sub_assign(&mut self, rhs: Self) {
+            *self = *self - rhs
+        }
+    }
+
+    impl<M: Mod> Mul<i64> for ModInt<M> {
+        type Output = Self;
+        fn mul(self, rhs: i64) -> Self {
+            ModInt::new(self.n * (rhs % M::get()))
+        }
+    }
+
+    impl<M: Mod> Mul<ModInt<M>> for ModInt<M> {
+        type Output = Self;
+        fn mul(self, rhs: Self) -> Self {
+            self * rhs.n
+        }
+    }
+
+    impl<M: Mod> MulAssign<i64> for ModInt<M> {
+        fn mul_assign(&mut self, rhs: i64) {
+            *self = *self * rhs
+        }
+    }
+
+    impl<M: Mod> MulAssign<ModInt<M>> for ModInt<M> {
+        fn mul_assign(&mut self, rhs: Self) {
+            *self = *self * rhs
+        }
+    }
+
+    impl<M: Mod> Div<i64> for ModInt<M> {
+        type Output = Self;
+        fn div(self, rhs: i64) -> Self {
+            self * ModInt::new(rhs).pow(M::get() - 2)
+        }
+    }
+
+    impl<M: Mod> Div<ModInt<M>> for ModInt<M> {
+        type Output = Self;
+        fn div(self, rhs: Self) -> Self {
+            self / rhs.n
+        }
+    }
+
+    impl<M: Mod> DivAssign<i64> for ModInt<M> {
+        fn div_assign(&mut self, rhs: i64) {
+            *self = *self / rhs
+        }
+    }
+
+    impl<M: Mod> DivAssign<ModInt<M>> for ModInt<M> {
+        fn div_assign(&mut self, rhs: Self) {
+            *self = *self / rhs
+        }
+    }
+
+    impl<M: Mod> std::fmt::Display for ModInt<M> {
+        fn fmt(&self, f: &mut std::fmt::Formatter) -> std::fmt::Result {
+            write!(f, "{}", self.n)
+        }
+    }
+
+    impl<M: Mod> std::fmt::Debug for ModInt<M> {
+        fn fmt(&self, f: &mut std::fmt::Formatter) -> std::fmt::Result {
+            write!(f, "{}", self.n)
+        }
+    }
+
+    impl<M: Mod> Deref for ModInt<M> {
+        type Target = i64;
+        fn deref(&self) -> &Self::Target {
+            &self.n
+        }
+    }
+
+    impl<M: Mod> DerefMut for ModInt<M> {
+        fn deref_mut(&mut self) -> &mut Self::Target {
+            &mut self.n
+        }
+    }
+
+    impl<M: Mod> From<i64> for ModInt<M> {
         fn from(i: i64) -> Self {
             Self::new(i)
         }
     }
 
-    impl From<ModInt<Num>> for Num {
-        fn from(m: ModInt<i64>) -> Self {
-            m.0
+    impl<M: Mod> From<ModInt<M>> for i64 {
+        fn from(m: ModInt<M>) -> Self {
+            m.n
         }
     }
 }
@@ -180,10 +228,7 @@ mod test {
 
     #[test]
     fn neg_test() {
-        assert_eq!(
-            (ModInt::new(0) - 1_000_000).get(),
-            (ModInt::new(-1_000_000)).get()
-        );
+        assert_eq!((Mi::new(0) - 1_000_000).get(), (Mi::new(-1_000_000)).get());
     }
 
     #[test]
@@ -194,8 +239,8 @@ mod test {
             let x: i64 = between.sample_iter(&mut rng).take(1).collect::<Vec<i64>>()[0];
             let y: i64 = between.sample_iter(&mut rng).take(1).collect::<Vec<i64>>()[0];
 
-            let mx = ModInt::new(x);
-            let my = ModInt::new(y);
+            let mx = Mi::new(x);
+            let my = Mi::new(y);
 
             assert_eq!((mx + my).get(), (x + y) % MOD);
             assert_eq!((mx + y).get(), (x + y) % MOD);
@@ -230,8 +275,8 @@ mod test {
             let x: i64 = between.sample_iter(&mut rng).take(1).collect::<Vec<i64>>()[0];
             let y: i64 = between.sample_iter(&mut rng).take(1).collect::<Vec<i64>>()[0];
 
-            let mx = ModInt::new(x);
-            let my = ModInt::new(y);
+            let mx = Mi::new(x);
+            let my = Mi::new(y);
 
             assert_eq!((mx * my).get(), (x * y) % MOD);
             assert_eq!((mx * y).get(), (x * y) % MOD);
@@ -240,15 +285,15 @@ mod test {
 
     #[test]
     fn zero_test() {
-        let a = ModInt::new(1_000_000_000);
-        let b = ModInt::new(7);
+        let a = Mi::new(1_000_000_000);
+        let b = Mi::new(7);
         let c = a + b;
         assert_eq!(c.get(), 0);
     }
 
     #[test]
     fn pow_test() {
-        let a = ModInt::new(3);
+        let a = Mi::new(3);
         let a = a.pow(4);
         assert_eq!(a.get(), 81);
     }
@@ -256,7 +301,7 @@ mod test {
     #[test]
     fn div_test() {
         for i in 1..100000 {
-            let mut a = ModInt::new(1);
+            let mut a = Mi::new(1);
             a /= i;
             a *= i;
             assert_eq!(a.get(), 1);
@@ -265,38 +310,29 @@ mod test {
 
     #[test]
     fn edge_cases() {
-        assert_eq!((ModInt::new(MOD + 1)).get(), 1);
-        assert_eq!((ModInt::new(std::i64::MAX) + 1).get(), 291172004);
+        assert_eq!((Mi::new(MOD + 1)).get(), 1);
+        assert_eq!((Mi::new(std::i64::MAX) + 1).get(), 291172004);
+        assert_eq!((Mi::new(1_000_000_000) * std::i64::MAX).get(), 961796000);
+        assert_eq!((Mi::new(1_000_000_000) + std::i64::MAX).get(), 291171996);
+        assert_eq!((Mi::new(1_000_000_000) - std::i64::MAX).get(), 708827997);
         assert_eq!(
-            (ModInt::new(1_000_000_000) * std::i64::MAX).get(),
-            961796000
-        );
-        assert_eq!(
-            (ModInt::new(1_000_000_000) + std::i64::MAX).get(),
-            291171996
-        );
-        assert_eq!(
-            (ModInt::new(1_000_000_000) - std::i64::MAX).get(),
-            708827997
-        );
-        assert_eq!(
-            (ModInt::new(1_000_000_000) / std::i64::MAX * std::i64::MAX).get(),
+            (Mi::new(1_000_000_000) / std::i64::MAX * std::i64::MAX).get(),
             1_000_000_000
         );
 
-        let mut a = ModInt::new(1_000_000_000);
+        let mut a = Mi::new(1_000_000_000);
         a *= std::i64::MAX;
         assert_eq!(a.get(), 961796000);
 
-        let mut a = ModInt::new(1_000_000_000);
+        let mut a = Mi::new(1_000_000_000);
         a += std::i64::MAX;
         assert_eq!(a.get(), 291171996);
 
-        let mut a = ModInt::new(1_000_000_000);
+        let mut a = Mi::new(1_000_000_000);
         a -= std::i64::MAX;
         assert_eq!(a.get(), 708827997);
 
-        let mut a = ModInt::new(1_000_000_000);
+        let mut a = Mi::new(1_000_000_000);
         a /= std::i64::MAX;
         assert_eq!((a * std::i64::MAX).get(), 1_000_000_000);
     }
