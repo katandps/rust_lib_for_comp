@@ -219,6 +219,8 @@ pub mod mod_int {
     }
 }
 
+////////////////////////////////////////////////////////
+
 #[cfg(test)]
 mod test {
     use super::mod_int::*;

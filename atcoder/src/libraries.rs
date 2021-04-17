@@ -12,6 +12,7 @@ mod greatest_common_divisor;
 mod grid;
 mod lowest_common_ancestor;
 mod lucas_theorem;
+mod matrix;
 mod mod_int;
 mod mod_inv;
 mod mod_pow;
