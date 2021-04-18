@@ -1,14 +1,15 @@
 #[allow(unused_imports)]
 use matrix::*;
-use std::convert::TryInto;
 
 #[allow(dead_code)]
 mod matrix {
-    use super::Mi;
-    use std::fmt::Formatter;
+    use super::*;
+    use itertools::Itertools;
+    use std::convert::TryInto;
+    use std::fmt::*;
     use std::ops::*;
 
-    #[derive(Clone)]
+    #[derive(Clone, Eq, PartialEq)]
     pub struct Matrix {
         buf: Vec<Vec<Mi>>,
     }
@@ -25,6 +26,7 @@ mod matrix {
     }
 
     impl Matrix {
+        /// (y, x)
         fn size(&self) -> (usize, usize) {
             if self.buf.len() == 0 {
                 (0, 0)
@@ -33,58 +35,23 @@ mod matrix {
             }
         }
 
-        pub fn minor_determinant(&self, x: usize, y: usize) -> Option<Mi> {
+        /// y行目、x列目を除いた 余因子行列を計算する
+        /// x, y は 0-indexed
+        pub fn sub_matrix(&self, x: usize, y: usize) -> Self {
             let (n, m) = self.size();
-            let mut submatrix = Matrix {
-                buf: vec![vec![Mi::new(0); m - 1]; n - 1],
-            };
-            for yi in 0..n {
-                if yi == y {
-                    break;
-                }
-                for xi in 0..m {
-                    if xi == x {
-                        break;
-                    }
-                    submatrix.add_x_y(self.buf[yi][xi].get(), xi, yi);
+            let mut sub = vec![vec![Mi::new(0); m - 1]; n - 1];
+            for yi in (0..n).filter(|&yi| yi != y) {
+                for xi in (0..m).filter(|&xi| xi != x) {
+                    sub[yi - if yi < y { 0 } else { 1 }][xi - if xi < x { 0 } else { 1 }] =
+                        self.buf[yi][xi];
                 }
             }
-            for yi in (0..n).rev() {
-                if yi == y {
-                    break;
-                }
-                for xi in 0..m {
-                    if xi == x {
-                        break;
-                    }
-                    submatrix.add_x_y(self.buf[yi][xi].get(), xi, yi - 1);
-                }
-            }
-            for yi in 0..n {
-                if yi == y {
-                    break;
-                }
-                for xi in (0..m).rev() {
-                    if xi == x {
-                        break;
-                    }
-                    submatrix.add_x_y(self.buf[yi][xi].get(), xi - 1, yi);
-                }
-            }
-            for yi in (0..n).rev() {
-                if yi == y {
-                    break;
-                }
-                for xi in (0..m).rev() {
-                    if xi == x {
-                        break;
-                    }
-                    submatrix.add_x_y(self.buf[yi][xi].get(), xi - 1, yi - 1);
-                }
-            }
-            submatrix.determinant()
+            Matrix { buf: sub }
         }
 
+        /// 行列式detを計算する
+        /// 平方行列でない場合はNoneを返す
+        /// 計算量は O(size^3)
         pub fn determinant(&self) -> Option<Mi> {
             let (n, m) = self.size();
             let zero = Mi::new(0);
@@ -153,8 +120,38 @@ mod matrix {
         }
     }
 
-    use itertools::Itertools;
-    use std::fmt::*;
+    impl Mul<i64> for Matrix {
+        type Output = Self;
+        fn mul(mut self, rhs: i64) -> Self {
+            let (n, m) = self.size();
+            for i in 0..n {
+                for j in 0..m {
+                    self.buf[i][j] *= rhs;
+                }
+            }
+            self
+        }
+    }
+
+    impl Mul<Matrix> for Matrix {
+        type Output = Option<Matrix>;
+        fn mul(self, rhs: Matrix) -> Option<Matrix> {
+            let (self_y, self_x) = self.size();
+            let (rhs_y, rhs_x) = rhs.size();
+            if self_x != rhs_y {
+                return None;
+            }
+            let mut buf = vec![vec![Mi::new(0); rhs_x]; self_y];
+            for i in 0..self_y {
+                for j in 0..rhs_x {
+                    for k in 0..self_x {
+                        buf[i][j] += self.buf[i][k] * rhs.buf[k][j];
+                    }
+                }
+            }
+            Some(buf.try_into().unwrap())
+        }
+    }
 
     impl Debug for Matrix {
         fn fmt(&self, f: &mut Formatter<'_>) -> Result {
@@ -173,6 +170,7 @@ use crate::libraries::mod_int::mod_int::*;
 #[cfg(test)]
 mod test {
     use super::*;
+    use std::convert::TryInto;
 
     #[test]
     fn test() {
@@ -187,6 +185,24 @@ mod test {
             vec![Mi::new(12), Mi::new(13), Mi::new(14), Mi::new(15)],
         ];
         let matrix: Matrix = data.try_into().unwrap();
-        assert_eq!(matrix.minor_determinant(2, 3), Some(Mi::new(0)));
+        let sub_matrix = matrix.sub_matrix(2, 3);
+        let expect_sub_matrix: Matrix = vec![
+            vec![Mi::new(0), Mi::new(1), Mi::new(3)],
+            vec![Mi::new(4), Mi::new(5), Mi::new(7)],
+            vec![Mi::new(8), Mi::new(9), Mi::new(11)],
+        ]
+        .try_into()
+        .unwrap();
+        assert_eq!(sub_matrix, expect_sub_matrix);
+        assert_eq!(sub_matrix.determinant(), Some(Mi::new(0)));
+
+        let lhs: Matrix = vec![vec![Mi::new(1), Mi::new(2), Mi::new(3)]]
+            .try_into()
+            .unwrap();
+        let rhs: Matrix = vec![vec![Mi::new(4)], vec![Mi::new(5)], vec![Mi::new(6)]]
+            .try_into()
+            .unwrap();
+        let expect: Matrix = vec![vec![Mi::new(32)]].try_into().unwrap();
+        assert_eq!(lhs * rhs, Some(expect));
     }
 }
