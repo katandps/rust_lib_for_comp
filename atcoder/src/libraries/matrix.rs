@@ -26,6 +26,14 @@ mod matrix {
     }
 
     impl Matrix {
+        fn identity_matrix(n: usize) -> Self {
+            let mut buf = vec![vec![Mi::new(0); n]; n];
+            for i in 0..n {
+                buf[i][i] += 1;
+            }
+            Matrix { buf }
+        }
+
         /// (y, x)
         fn size(&self) -> (usize, usize) {
             if self.buf.len() == 0 {
@@ -84,8 +92,20 @@ mod matrix {
             Some(res)
         }
 
-        pub fn add_x_y(&mut self, value: i64, x: usize, y: usize) {
-            self.buf[y][x] += value;
+        pub fn pow(mut self, mut e: i64) -> Option<Self> {
+            let (n, m) = self.size();
+            if n != m {
+                return None;
+            }
+            let mut result = Self::identity_matrix(n);
+            while e > 0 {
+                if e & 1 == 1 {
+                    result = (result * self.clone()).unwrap();
+                }
+                e >>= 1;
+                self = (self.clone() * self).unwrap();
+            }
+            Some(result)
         }
     }
 
@@ -136,8 +156,7 @@ mod matrix {
     impl Mul<Matrix> for Matrix {
         type Output = Option<Matrix>;
         fn mul(self, rhs: Matrix) -> Option<Matrix> {
-            let (self_y, self_x) = self.size();
-            let (rhs_y, rhs_x) = rhs.size();
+            let ((self_y, self_x), (rhs_y, rhs_x)) = (self.size(), rhs.size());
             if self_x != rhs_y {
                 return None;
             }
