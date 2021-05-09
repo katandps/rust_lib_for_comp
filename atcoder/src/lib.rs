@@ -1,5 +1,9 @@
-mod libraries;
-mod solver;
+mod a;
+mod b;
+mod c;
+mod d;
+mod e;
+mod f;
 mod template;
 
 #[cfg(test)]
@@ -8,37 +12,37 @@ mod tests {
 
     #[test]
     fn a_run() {
-        use crate::solver::a::*;
+        use crate::a::*;
         solve(Reader::new(BufReader::new(file("a"))));
     }
 
     #[test]
     fn b_run() {
-        use crate::solver::b::*;
+        use crate::b::*;
         solve(Reader::new(BufReader::new(file("b"))));
     }
 
     #[test]
     fn c_run() {
-        use crate::solver::c::*;
+        use crate::c::*;
         solve(Reader::new(BufReader::new(file("c"))));
     }
 
     #[test]
     fn d_run() {
-        use crate::solver::d::*;
+        use crate::d::*;
         solve(Reader::new(BufReader::new(file("d"))));
     }
 
     #[test]
     fn e_run() {
-        use crate::solver::e::*;
+        use crate::e::*;
         solve(Reader::new(BufReader::new(file("e"))));
     }
 
     #[test]
     fn f_run() {
-        use crate::solver::f::*;
+        use crate::f::*;
         solve(Reader::new(BufReader::new(file("f"))));
     }
 

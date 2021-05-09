@@ -1,4 +1,5 @@
 [workspace]
 members = [
-    "atcoder"
+    "atcoder",
+    "atcoder_lib",
 ]
