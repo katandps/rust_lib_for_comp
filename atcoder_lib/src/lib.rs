@@ -17,7 +17,6 @@ pub mod mod_int;
 pub mod mod_inv;
 pub mod mod_pow;
 pub mod mod_val_table;
-pub mod prim;
 pub mod reader;
 pub mod rps;
 pub mod sieve_of_eratosthenes;
