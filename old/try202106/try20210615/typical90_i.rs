@@ -1,3 +1,55 @@
+#[allow(dead_code)]
+fn main() {
+    let stdin = stdin();
+    solve(Reader::new(stdin.lock()));
+}
+
+pub fn solve<R: BufRead>(mut reader: Reader<R>) {
+    let n = reader.u();
+    let xy = reader.iv2(n);
+
+    let mut ans = 0.0;
+    for b in 0..n {
+        let bi = Point::new(xy[b].0 as f64, xy[b].1 as f64);
+        let mut declinations = Vec::new();
+        for i in 0..n {
+            if i == b {
+                continue;
+            }
+
+            let ai = Point::new(xy[i].0 as f64, xy[i].1 as f64);
+            let p = ai - bi;
+            declinations.push(p.declination().unwrap() * 180.0 / std::f64::consts::PI);
+        }
+        declinations.sort_by(|a, b| a.partial_cmp(&b).unwrap());
+        for i in 0..declinations.len() {
+            let mut ok = declinations.len() as i32 - 1;
+            let mut ng = 0;
+            while (ok - ng).abs() > 1 {
+                let mid = (ok + ng) / 2;
+                if declinations[mid as usize] > (declinations[i] + 180.0) % 360.0 {
+                    ok = mid;
+                } else {
+                    ng = mid;
+                }
+            }
+            let a = *partial_min(
+                &(declinations[ok as usize] - declinations[i]).abs(),
+                &(360.0 - (declinations[ok as usize] - declinations[i]).abs()),
+            )
+            .unwrap();
+            let b = *partial_min(
+                &(declinations[ng as usize] - declinations[i]).abs(),
+                &(360.0 - (declinations[ng as usize] - declinations[i]).abs()),
+            )
+            .unwrap();
+            ans = *partial_max(&ans, &a).unwrap();
+            ans = *partial_max(&ans, &b).unwrap();
+        }
+    }
+    println!("{}", ans);
+}
+
 #[allow(unused_imports)]
 use geometric::*;
 
@@ -233,91 +285,52 @@ mod geometric {
     }
 }
 
-#[cfg(test)]
-mod test {
-    use super::*;
+use nalgebra::{partial_max, partial_min};
+pub use reader::*;
+#[allow(unused_imports)]
+use {
+    itertools::Itertools,
+    num::Integer,
+    std::{cmp::*, collections::*, io::*, num::*, str::*},
+};
 
-    #[test]
-    fn cross_point() {
-        let l1 = Line::new(Point::new(0.0, 0.0), Point::new(5.0, 5.0));
-        let l2 = Line::new(Point::new(0.0, 5.0), Point::new(5.0, 0.0));
+#[allow(dead_code)]
+#[rustfmt::skip]
+pub mod reader {
+    #[allow(unused_imports)]
+    use itertools::Itertools;
+    use std::{fmt::Debug, io::*, str::*};
 
-        let cp = Line::cross_points(l1, l2).unwrap();
-        assert_eq!(cp.x, 2.5);
-        assert_eq!(cp.y, 2.5);
+    pub struct Reader<R: BufRead> {
+        reader: R,
+        buf: Vec<u8>,
+        pos: usize,
+    }  macro_rules! prim_method { ($name:ident: $T: ty) => { pub fn $name(&mut self) -> $T { self.n::<$T>() } }; ($name:ident) => { prim_method!($name: $name); }; } macro_rules! prim_methods { ($name:ident: $T:ty; $($rest:tt)*) => { prim_method!($name:$T); prim_methods!($($rest)*); }; ($name:ident; $($rest:tt)*) => { prim_method!($name); prim_methods!($($rest)*); }; () => () }  macro_rules! replace_expr { ($_t:tt $sub:expr) => { $sub }; } macro_rules! tuple_method { ($name: ident: ($($T:ident),+)) => { pub fn $name(&mut self) -> ($($T),+) { ($(replace_expr!($T self.n())),+) } } } macro_rules! tuple_methods { ($name:ident: ($($T:ident),+); $($rest:tt)*) => { tuple_method!($name:($($T),+)); tuple_methods!($($rest)*); }; () => () } macro_rules! vec_method { ($name: ident: ($($T:ty),+)) => { pub fn $name(&mut self, n: usize) -> Vec<($($T),+)> { (0..n).map(|_|($(replace_expr!($T self.n())),+)).collect_vec() } }; ($name: ident: $T:ty) => { pub fn $name(&mut self, n: usize) -> Vec<$T> { (0..n).map(|_|self.n()).collect_vec() } }; } macro_rules! vec_methods { ($name:ident: ($($T:ty),+); $($rest:tt)*) => { vec_method!($name:($($T),+)); vec_methods!($($rest)*); }; ($name:ident: $T:ty; $($rest:tt)*) => { vec_method!($name:$T); vec_methods!($($rest)*); }; () => () } impl<R: BufRead> Reader<R> {
+    pub fn new(reader: R) -> Reader<R> {
+        let (buf, pos) = (Vec::new(), 0);
+        Reader { reader, buf, pos }
+    } prim_methods! { u: usize; i: i64; f: f64; str: String; c: char; string: String; u8; u16; u32; u64; u128; usize; i8; i16; i32; i64; i128; isize; f32; f64; char; } tuple_methods! { u2: (usize, usize); u3: (usize, usize, usize); u4: (usize, usize, usize, usize); i2: (i64, i64); i3: (i64, i64, i64); i4: (i64, i64, i64, i64); cuu: (char, usize, usize); } vec_methods! { uv: usize; uv2: (usize, usize); uv3: (usize, usize, usize); iv: i64; iv2: (i64, i64); iv3: (i64, i64, i64); vq: (char, usize, usize); }  pub fn n<T: FromStr>(&mut self) -> T where T::Err: Debug, { self.n_op().unwrap() }
+    pub fn n_op<T: FromStr>(&mut self) -> Option<T> where T::Err: Debug, {
+        if self.buf.is_empty() { self._read_next_line(); }
+        let mut start = None;
+        while self.pos != self.buf.len() {
+            match (self.buf[self.pos], start.is_some()) {
+                (b' ', true) | (b'\n', true) => break,
+                (_, true) | (b' ', false) => self.pos += 1,
+                (b'\n', false) => self._read_next_line(),
+                (_, false) => start = Some(self.pos),
+            }
+        }
+        start.map(|s| from_utf8(&self.buf[s..self.pos]).unwrap().parse().unwrap())
     }
-
-    #[test]
-    fn cross_point_as_segment() {
-        let l1 = Line::new(Point::new(0.0, 0.0), Point::new(5.0, 5.0));
-        let l2 = Line::new(Point::new(0.0, 0.0), Point::new(2.49, 2.49));
-        let l3 = Line::new(Point::new(2.51, 2.51), Point::new(5.0, 5.0));
-        let l4 = Line::new(Point::new(5.0, 5.0), Point::new(2.51, 2.51));
-        let m = Line::new(Point::new(0.0, 5.0), Point::new(5.0, 0.0));
-
-        assert_eq!(
-            Some(Point::new(2.5, 2.5)),
-            Line::cross_points_as_segment(l1, m)
-        );
-        assert_eq!(
-            Some(Point::new(2.5, 2.5)),
-            Line::cross_points_as_segment(m, l1)
-        );
-        assert_eq!(None, Line::cross_points_as_segment(l2, m));
-        assert_eq!(None, Line::cross_points_as_segment(m, l2));
-        assert_eq!(None, Line::cross_points_as_segment(m, l3));
-        assert_eq!(None, Line::cross_points_as_segment(l3, m));
-        assert_eq!(None, Line::cross_points_as_segment(l4, m));
-        assert_eq!(None, Line::cross_points_as_segment(m, l4));
-
-        let l1 = Line::new(Point::new(0.0, 0.0), Point::new(5.0, 0.0));
-        let m1 = Line::new(Point::new(2.5, 0.01), Point::new(2.5, 1.0));
-        let m2 = Line::new(Point::new(2.5, 0.0), Point::new(2.5, 1.0));
-        let m3 = Line::new(Point::new(2.5, -0.01), Point::new(2.5, 1.0));
-        assert_eq!(None, Line::cross_points_as_segment(l1, m1));
-        assert_eq!(
-            Some(Point::new(2.5, 0.0)),
-            Line::cross_points_as_segment(l1, m2)
-        );
-        assert_eq!(
-            Some(Point::new(2.5, 0.0)),
-            Line::cross_points_as_segment(l1, m3)
-        );
+    fn _read_next_line(&mut self) {
+        self.pos = 0;
+        self.buf.clear();
+        self.reader.read_until(b'\n', &mut self.buf).unwrap();
     }
-
-    #[test]
-    fn distance() {
-        let l = Line::new(Point::new(0.0, 0.0), Point::new(5.0, 5.0));
-        let p = Point::new(5.0, 0.0);
-
-        let d = l.distance(p);
-        assert_eq!(d, (2.5f64 * 2.5 + 2.5 * 2.5).sqrt());
-
-        let l = Line::new(Point::new(0.0, 0.0), Point::new(5.0, 0.0));
-        let p = Point::new(3.0, 2.0);
-        assert_eq!(l.distance(p), 2.0);
-
-        let l = Line::new(Point::new(0.0, 0.0), Point::new(0.0, 5.0));
-        let p = Point::new(3.0, 2.0);
-        assert_eq!(l.distance(p), 3.0);
-    }
-
-    #[test]
-    fn circumcenter() {
-        let p1 = Point::new(0.0, 0.0);
-        let p2 = Point::new(4.0, 0.0);
-        let p3 = Point::new(2.0, 2.0 * 3.0f64.sqrt());
-        let cc = Point::circumcenter(p1, p2, p3).unwrap();
-        assert_eq!(cc.x, 2.0);
-        assert_eq!(cc.y, 2.0f64 / 3.0f64.sqrt());
-    }
-
-    #[test]
-    fn xy() {
-        let p1 = Point::new(0.0, 0.0);
-        let p2 = Point::new(5.0, 10.0);
-        let line = Line::new(p1, p2);
-        assert_eq!(line.x(2.0), Some(1.0));
-        assert_eq!(line.y(1.0), Some(2.0));
-    }
+    pub fn s(&mut self) -> Vec<char> { self.n::<String>().chars().collect() }
+    pub fn char_map(&mut self, h: usize) -> Vec<Vec<char>> { (0..h).map(|_| self.s()).collect() }
+    pub fn bool_map(&mut self, h: usize, ng: char) -> Vec<Vec<bool>> { self.char_map(h).iter().map(|v| v.iter().map(|&c| c != ng).collect()).collect() }
+    pub fn matrix(&mut self, h: usize, w: usize) -> Vec<Vec<i64>> { (0..h).map(|_| self.iv(w)).collect() }
+}
 }
