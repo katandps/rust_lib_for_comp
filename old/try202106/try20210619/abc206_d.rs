@@ -5,9 +5,85 @@ fn main() {
 }
 
 pub fn solve<R: BufRead>(mut reader: Reader<R>) {
-    //$END$//
     let n = reader.u();
-    println!("{}", n);
+    let a = reader.uv(n);
+
+    let mut uf = UnionFind::new(200001);
+    let mut memo = HashSet::new();
+    for i in 0..n / 2 {
+        if a[i] != a[n - 1 - i] {
+            memo.insert(a[i]);
+            memo.insert(a[n - 1 - i]);
+            uf.unite(a[i], a[n - 1 - i]);
+        }
+    }
+
+    let mut s = HashMap::new();
+    for m in memo {
+        *s.entry(uf.root(m)).or_insert(0) += 1;
+    }
+    let mut ans = 0;
+    for (_, c) in s {
+        ans += c - 1;
+    }
+    println!("{}", ans);
+}
+
+#[allow(unused_imports)]
+use union_find::*;
+
+#[allow(dead_code)]
+mod union_find {
+    pub struct UnionFind {
+        parent: Vec<usize>,
+        rank: Vec<usize>,
+    }
+
+    impl UnionFind {
+        pub fn new(n: usize) -> UnionFind {
+            let mut parent = vec![0; n + 1];
+            let rank = vec![0; n + 1];
+            for i in 1..(n + 1) {
+                parent[i] = i;
+            }
+            UnionFind { parent, rank }
+        }
+
+        pub fn root(&mut self, x: usize) -> usize {
+            if self.parent[x] == x {
+                x
+            } else {
+                let p = self.parent[x];
+                self.parent[x] = self.root(p);
+                self.parent[x]
+            }
+        }
+
+        pub fn rank(&self, x: usize) -> usize {
+            self.rank[x]
+        }
+
+        pub fn same(&mut self, x: usize, y: usize) -> bool {
+            self.root(x) == self.root(y)
+        }
+
+        pub fn unite(&mut self, x: usize, y: usize) {
+            let mut x = self.root(x);
+            let mut y = self.root(y);
+            if x == y {
+                return;
+            }
+            if self.rank(x) < self.rank(y) {
+                let tmp = y;
+                y = x;
+                x = tmp;
+            }
+            if self.rank(x) == self.rank(y) {
+                self.rank[x] += 1;
+            }
+            self.parent[x] = y;
+        }
+    }
 }
 
 pub use reader::*;
@@ -57,21 +133,4 @@ pub mod reader {
     pub fn bool_map(&mut self, h: usize, ng: char) -> Vec<Vec<bool>> { self.char_map(h).iter().map(|v| v.iter().map(|&c| c != ng).collect()).collect() }
     pub fn matrix(&mut self, h: usize, w: usize) -> Vec<Vec<i64>> { (0..h).map(|_| self.iv(w)).collect() }
 }
-}
-
-#[allow(unused_macros)]
-macro_rules! chmin {($base:expr, $($cmps:expr),+ $(,)*) => {{let cmp_min = min!($($cmps),+);if $base > cmp_min {$base = cmp_min;true} else {false}}};}
-#[allow(unused_macros)]
-macro_rules! chmax {($base:expr, $($cmps:expr),+ $(,)*) => {{let cmp_max = max!($($cmps),+);if $base < cmp_max {$base = cmp_max;true} else {false}}};}
-#[allow(unused_macros)]
-macro_rules! min {
-    ($a:expr $(,)*) => {{$a}};
-    ($a:expr, $b:expr $(,)*) => {{if $a > $b {$b} else {$a}}};
-    ($a:expr, $($rest:expr),+ $(,)*) => {{let b = min!($($rest),+);if $a > b {b} else {$a}}};
-}
-#[allow(unused_macros)]
-macro_rules! max {
-    ($a:expr $(,)*) => {{$a}};
-    ($a:expr, $b:expr $(,)*) => {{if $a > $b {$a} else {$b}}};
-    ($a:expr, $($rest:expr),+ $(,)*) => {{let b = max!($($rest),+);if $a > b {$a} else {b}}};
 }

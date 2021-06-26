@@ -13,6 +13,7 @@ pub mod grid;
 pub mod lowest_common_ancestor;
 pub mod lucas_theorem;
 pub mod matrix;
+pub mod min_max;
 pub mod mod_int;
 pub mod mod_inv;
 pub mod mod_pow;
