@@ -4,6 +4,8 @@ mod c;
 mod d;
 mod e;
 mod f;
+mod g;
+mod h;
 mod template;
 
 #[cfg(test)]
@@ -44,6 +46,18 @@ mod tests {
     fn f_run() {
         use crate::f::*;
         solve(Reader::new(BufReader::new(file("f"))));
+    }
+
+    #[test]
+    fn g_run() {
+        use crate::g::*;
+        solve(Reader::new(BufReader::new(file("g"))));
+    }
+
+    #[test]
+    fn h_run() {
+        use crate::h::*;
+        solve(Reader::new(BufReader::new(file("h"))));
     }
 
     fn file(alphabet: &str) -> std::fs::File {
