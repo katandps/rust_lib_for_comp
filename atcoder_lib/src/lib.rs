@@ -10,6 +10,7 @@ pub mod geometric;
 pub mod graph;
 pub mod greatest_common_divisor;
 pub mod grid;
+pub mod longest_increasing_subsequence;
 pub mod lowest_common_ancestor;
 pub mod lucas_theorem;
 pub mod matrix;
