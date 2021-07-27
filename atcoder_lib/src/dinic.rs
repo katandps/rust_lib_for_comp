@@ -1,5 +1,5 @@
 #[allow(dead_code)]
-mod dinitz {
+mod dinic {
     use std::collections::VecDeque;
 
     struct Edge {
@@ -9,19 +9,19 @@ mod dinitz {
     }
 
     ///最大フロー問題をO(V^2E)で解くライブラリ
-    pub struct Dinitz {
+    pub struct Dinic {
         g: Vec<Vec<Edge>>,
         level: Vec<i32>,
         iter: Vec<usize>,
     }
 
-    impl Dinitz {
-        pub fn new(v: usize) -> Dinitz {
+    impl Dinic {
+        pub fn new(v: usize) -> Dinic {
             let mut g: Vec<Vec<Edge>> = Vec::new();
             for _ in 0..v {
                 g.push(Vec::new());
             }
-            Dinitz {
+            Dinic {
                 g,
                 level: vec![0; v],
                 iter: vec![0; v],
@@ -93,7 +93,7 @@ mod dinitz {
             }
         }
 
-        ///最大フロー問題をDinitzを使って解く O(V^2 E)
+        ///最大フロー問題を Dinic's Algorithm を使って解く O(V^2 E)
         pub fn max_flow(&mut self, s: usize, t: usize) -> i64 {
             let v = self.level.len();
             let mut flow: i64 = 0;
@@ -116,4 +116,4 @@ mod dinitz {
 }
 
 #[allow(unused_imports)]
-use dinitz::*;
+use dinic::*;
