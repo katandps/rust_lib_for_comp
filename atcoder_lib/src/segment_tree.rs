@@ -1,63 +1,66 @@
-#[allow_unused_import]
+#[allow(unused_imports)]
 use segment_tree::*;
 
-#[allow_dead_code]
+#[allow(dead_code)]
 pub mod segment_tree {
+    use std::fmt::Debug;
 
     /// 最小値を求めるセグメント木
-    pub struct SegmentTree {
+    #[derive(Clone, Debug)]
+    pub struct SegmentTree<M> {
         n: usize,
-        node: Vec<VALUE>,
+        node: Vec<M>,
     }
 
-    type VALUE = i64;
-    const INF: VALUE = std::i64::MAX;
+    pub trait Monoid: Debug + Clone + Copy {
+        // 0元
+        fn ident() -> Self;
+        fn op(&self, rhs: &Self) -> Self;
+    }
 
-    impl SegmentTree {
-        pub fn new(v: &Vec<VALUE>) -> Self {
+    impl<M: Monoid> SegmentTree<M> {
+        pub fn new(v: &Vec<M>) -> Self {
             let size = v.len();
             let mut n = 1;
-            while n < sz {
+            while n < size {
                 n *= 2
             }
-            let mut node = vec![INF; 2 * n - 1];
+            let mut node = vec![M::ident(); 2 * n - 1];
             for i in 0..size {
                 node[i + n - 1] = v[i]
             }
             for i in (0..n - 1).rev() {
-                // 最小値
-                node[i] = std::cmp::min(node[2 * i + 1], node[2 * i + 2])
+                node[i] = node[2 * i + 1].op(&node[2 * i + 2]);
             }
             Self { n, node }
         }
 
-        fn update(&mut self, mut index: usize, val: VALUE) {
+        /// index の値をvalに更新する
+        pub fn set(&mut self, mut index: usize, val: M) {
             index += self.n - 1;
-            self.node[x] = val;
+            self.node[index] = val;
 
             while index > 0 {
                 index = (index - 1) / 2;
-                node[x] = std::cmp::min(node[2 * index + 1], node[2 * index + 2])
+                self.node[index] = self.node[2 * index + 1].op(&self.node[2 * index + 2]);
             }
         }
 
-        fn get_min(
-            &self,
-            a: usize,
-            b: usize,
-            k: Option<usize>,
-            l: Option<usize>,
-            r: Option<usize>,
-        ) -> VALUE {
+        /// get for [a, b)
+        pub fn get(&self, a: usize, b: usize) -> M {
+            self.g(a, b, None, None, None)
+        }
+
+        fn g(&self, a: usize, b: usize, k: Option<usize>, l: Option<usize>, r: Option<usize>) -> M {
             let (k, l, r) = (k.unwrap_or(0), l.unwrap_or(0), r.unwrap_or(self.n));
             if r <= a || b <= l {
-                INF
+                M::ident()
             } else if a <= l && r <= b {
                 self.node[k]
             } else {
-                let vl = get_min(a, b, 2 * k + 1, l, (l + r) / 2);
-                let vr = get_min(a, b, 2 * k + 2, (l + r) / 2, r);
-                std::cmp::min(vl, vr)
+                let vl = self.g(a, b, Some(2 * k + 1), Some(l), Some((l + r) / 2));
+                let vr = self.g(a, b, Some(2 * k + 2), Some((l + r) / 2), Some(r));
+                vl.op(&vr)
             }
         }
     }
