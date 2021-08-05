@@ -130,6 +130,12 @@ pub mod reader {
         pub fn s(&mut self) -> Vec<char> {
             self.n::<String>().chars().collect()
         }
+        pub fn digits(&mut self) -> Vec<i64> {
+            self.n::<String>()
+                .chars()
+                .map(|c| (c as u8 - b'0') as i64)
+                .collect()
+        }
         pub fn char_map(&mut self, h: usize) -> Vec<Vec<char>> {
             (0..h).map(|_| self.s()).collect()
         }
@@ -216,5 +222,13 @@ mod tests {
                 }
             }
         }
+    }
+
+    #[test]
+    fn digits() {
+        let cursor = Cursor::new("123456\n");
+        let mut reader = Reader::new(cursor);
+        let res = reader.digits();
+        assert_eq!(res, vec![1, 2, 3, 4, 5, 6]);
     }
 }
