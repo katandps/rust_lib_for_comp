@@ -3,6 +3,7 @@ pub use reader::*;
 use {
     itertools::Itertools,
     num::Integer,
+    std::convert::TryInto,
     std::{cmp::*, collections::*, io::*, num::*, str::*},
 };
 

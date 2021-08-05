@@ -6,12 +6,12 @@ mod matrix {
     use super::*;
     use itertools::Itertools;
     use std::convert::TryInto;
-    use std::fmt::*;
-    use std::ops::*;
+    use std::fmt;
+    use std::ops;
 
     #[derive(Clone, Eq, PartialEq)]
     pub struct Matrix {
-        buf: Vec<Vec<Mi>>,
+        pub buf: Vec<Vec<Mi>>,
     }
 
     impl std::convert::TryFrom<Vec<Vec<Mi>>> for Matrix {
@@ -109,7 +109,7 @@ mod matrix {
         }
     }
 
-    impl Add<Matrix> for Matrix {
+    impl ops::Add<Matrix> for Matrix {
         type Output = Self;
         fn add(mut self, rhs: Self) -> Self {
             for i in 0..self.buf.len() {
@@ -121,7 +121,7 @@ mod matrix {
         }
     }
 
-    impl Neg for Matrix {
+    impl ops::Neg for Matrix {
         type Output = Self;
         fn neg(mut self) -> Self {
             for i in 0..self.buf.len() {
@@ -133,14 +133,14 @@ mod matrix {
         }
     }
 
-    impl Sub<Matrix> for Matrix {
+    impl ops::Sub<Matrix> for Matrix {
         type Output = Self;
         fn sub(self, rhs: Self) -> Self {
             self + (-rhs)
         }
     }
 
-    impl Mul<i64> for Matrix {
+    impl ops::Mul<i64> for Matrix {
         type Output = Self;
         fn mul(mut self, rhs: i64) -> Self {
             let (n, m) = self.size();
@@ -153,7 +153,7 @@ mod matrix {
         }
     }
 
-    impl Mul<Matrix> for Matrix {
+    impl ops::Mul<Matrix> for Matrix {
         type Output = Option<Matrix>;
         fn mul(self, rhs: Matrix) -> Option<Matrix> {
             let ((self_y, self_x), (rhs_y, rhs_x)) = (self.size(), rhs.size());
@@ -172,8 +172,8 @@ mod matrix {
         }
     }
 
-    impl Debug for Matrix {
-        fn fmt(&self, f: &mut Formatter<'_>) -> Result {
+    impl fmt::Debug for Matrix {
+        fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
             write!(
                 f,
                 "{}",
