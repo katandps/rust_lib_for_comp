@@ -35,7 +35,93 @@ fn main() {
 }
 
 pub fn solve<R: BufRead>(mut reader: Reader<R>) {
-    //$END$//
     let n = reader.u();
-    println!("{}", n);
+    let s = reader.s();
+
+    // dp[i][less] = i番目まで見て最後の要素より小さい要素がless個ある場合の数
+    let mut dp = vec![vec![0; n]; n + 1];
+    for less in 0..n {
+        dp[0][less] = 1;
+    }
+    for i in 1..n {
+        let mut bit = BinaryIndexedTree::new(n + 1);
+        for less in 0..=n - i {
+            bit.add(less + 1, dp[i - 1][less]);
+        }
+        match s[i - 1] {
+            '<' => {
+                for less in 0..n - i {
+                    dp[i][less] = bit.sum(less + 1);
+                }
+            }
+            '>' => {
+                for less in 0..n - i {
+                    dp[i][less] = bit.sum_ab(less + 1, n);
+                }
+            }
+            _ => unreachable!(),
+        }
+    }
+    println!("{}", dp[n - 1][0]);
+}
+
+#[allow(unused_imports)]
+use binary_indexed_tree::*;
+
+#[allow(dead_code)]
+mod binary_indexed_tree {
+
+    const MOD: i64 = 1_000_000_007;
+
+    #[derive(Clone)]
+    pub struct BinaryIndexedTree {
+        n: usize,
+        bit: Vec<VALUE>,
+    }
+
+    type VALUE = i64;
+    impl BinaryIndexedTree {
+        pub fn new(n: usize) -> BinaryIndexedTree {
+            let n = n + 1;
+            let bit = vec![0; n + 1];
+            BinaryIndexedTree { n, bit }
+        }
+
+        /// add x to i
+        pub fn add(&mut self, i: usize, x: VALUE) {
+            let i = i + 1; //0-indexed
+            let mut idx = i as i32;
+            while idx < self.n as i32 {
+                self.bit[idx as usize] += x;
+                self.bit[idx as usize] %= MOD;
+                idx += idx & -idx;
+            }
+        }
+
+        /// sum of [0, i)
+        pub fn sum(&self, i: usize) -> VALUE {
+            let i = i + 1;
+            let mut ret = 0;
+            let mut idx = i as i32;
+            while idx > 0 {
+                ret += self.bit[idx as usize];
+                ret %= MOD;
+                idx -= idx & -idx;
+            }
+            ret
+        }
+
+        /// sum of [a, b)
+        pub fn sum_ab(&self, a: usize, b: usize) -> VALUE {
+            (MOD + self.sum(b) - self.sum(a)) % MOD
+        }
+    }
+
+    impl std::fmt::Debug for BinaryIndexedTree {
+        fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+            use itertools::*;
+            let v = (1..self.n).map(|i| self.sum(i) - self.sum(i - 1)).join(" ");
+            write!(f, "{}", v)
+        }
+    }
 }

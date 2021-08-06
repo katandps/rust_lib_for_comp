@@ -35,7 +35,23 @@ fn main() {
 }
 
 pub fn solve<R: BufRead>(mut reader: Reader<R>) {
-    //$END$//
+    let (ax, ay, bx, by) = reader.i4();
     let n = reader.u();
-    println!("{}", n);
+    let xy = reader.iv2(n);
+
+    let mut c = 0;
+    for i in 0..n {
+        let p1 = xy[i];
+        let p2 = xy[(i + 1) % n];
+
+        let s = (ax - bx) * (p1.1 - ay) - (ay - by) * (p1.0 - ax);
+        let t = (ax - bx) * (p2.1 - ay) - (ay - by) * (p2.0 - ax);
+
+        let s2 = (p1.0 - p2.0) * (ay - p1.1) - (p1.1 - p2.1) * (ax - p1.0);
+        let t2 = (p1.0 - p2.0) * (by - p1.1) - (p1.1 - p2.1) * (bx - p1.0);
+        if s * t < 0 && s2 * t2 < 0 {
+            c += 1;
+        }
+    }
+    println!("{}", c / 2 + 1);
 }

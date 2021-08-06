@@ -233,6 +233,8 @@ mod geometric {
     }
 }
 
+///////////////////////////////////////////////
+
 #[cfg(test)]
 mod test {
     use super::*;
