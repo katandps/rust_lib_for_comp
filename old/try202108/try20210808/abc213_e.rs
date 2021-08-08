@@ -3,7 +3,6 @@ pub use reader::*;
 use {
     itertools::Itertools,
     num::Integer,
-    proconio::fastout,
     std::convert::TryInto,
     std::{cmp::*, collections::*, io::*, num::*, str::*},
 };
@@ -35,9 +34,152 @@ fn main() {
     solve(Reader::new(stdin.lock()));
 }
 
-#[fastout]
 pub fn solve<R: BufRead>(mut reader: Reader<R>) {
-    //$END$//
-    let n = reader.u();
-    println!("{}", n);
+    let (h, w) = reader.u2();
+    let s = reader.bool_map(h, '#');
+
+    // let (h, w) = (500, 500);
+    // let mut s = Vec::new();
+    // for _ in 0..h {
+    //     s.push(vec![false; w]);
+    // }
+    // s[0][0] = true;
+    // s[h - 1][w - 1] = true;
+
+    let grid = Grid::new(h, w, s);
+    const INF: i64 = 1 << 62;
+    let mut dist = vec![INF; h * w];
+    dist[0] = 0;
+
+    let mut q = VecDeque::new();
+    let mut dq = VecDeque::new();
+    q.push_front(0);
+    for _ in 0.. {
+        // walk
+        if q.is_empty() {
+            break;
+        }
+        while let Some(from) = q.pop_front() {
+            let (x, y) = grid.xy(from);
+            for dx in 0..3 {
+                for dy in 0..3 {
+                    if (dx as i64 - 1).abs() + (dy as i64 - 1).abs() < 2
+                        && x + dx >= 1
+                        && x + dx < grid.w + 1
+                        && y + dy >= 1
+                        && y + dy < grid.h + 1
+                    {
+                        let to = grid.key(x + dx - 1, y + dy - 1);
+                        if dist[to] <= dist[from] {
+                            continue;
+                        }
+                        if !*grid.get(to) {
+                            dq.push_back(from);
+                        } else {
+                            dist[to] = dist[from];
+                            q.push_back(to);
+                        }
+                    }
+                }
+            }
+        }
+
+        // destroy
+        while let Some(from) = dq.pop_front() {
+            let (x, y) = grid.xy(from);
+            for dx in 0..5 {
+                for dy in 0..5 {
+                    if (dx as i64 - 2).abs() + (dy as i64 - 2).abs() < 4
+                        && x + dx >= 2
+                        && x + dx < grid.w + 2
+                        && y + dy >= 2
+                        && y + dy < grid.h + 2
+                    {
+                        let to = grid.key(x + dx - 2, y + dy - 2);
+                        if dist[to] <= dist[from] + 1 {
+                            continue;
+                        }
+                        dist[to] = dist[from] + 1;
+
+                        q.push_back(to);
+                    }
+                }
+            }
+        }
+    }
+
+    println!("{}", dist[h * w - 1]);
+    // for y in 0..h {
+    //     for x in 0..w {
+    //         print!("{}", dist[grid.key(x, y)]);
+    //     }
+    //     println!();
+    // }
+    // dbg!(dist, q, dq);
+}
+
+#[allow(unused_imports)]
+use grid::*;
+
+#[allow(dead_code)]
+mod grid {
+    #[derive(Debug)]
+    pub struct Grid<T> {
+        pub h: usize,
+        pub w: usize,
+        pub max: usize,
+        pub map: Vec<T>,
+    }
+
+    impl<T: Clone> Grid<T> {
+        pub fn new(h: usize, w: usize, input: Vec<Vec<T>>) -> Grid<T> {
+            let mut map = Vec::new();
+            for r in input {
+                for c in r {
+                    map.push(c);
+                }
+            }
+            let max = h * w;
+            Grid { h, w, max, map }
+        }
+        pub fn key(&self, x: usize, y: usize) -> usize {
+            y * self.w + x
+        }
+        pub fn xy(&self, k: usize) -> (usize, usize) {
+            (self.x(k), self.y(k))
+        }
+        pub fn x(&self, k: usize) -> usize {
+            k % self.w
+        }
+        pub fn y(&self, k: usize) -> usize {
+            k / self.w
+        }
+        pub fn get(&self, key: usize) -> &T {
+            &self.map[key]
+        }
+        pub fn set(&mut self, key: usize, value: T) {
+            self.map[key] = value;
+        }
+        pub fn neighbor(&self, key: usize) -> Vec<usize> {
+            let mut ret = self.one_way(key);
+            if self.x(key) > 0 {
+                ret.push(key - 1);
+            }
+            if self.y(key) > 0 {
+                ret.push(key - self.w);
+            }
+            ret
+        }
+
+        pub fn one_way(&self, key: usize) -> Vec<usize> {
+            let mut ret = Vec::new();
+            if self.x(key) + 1 < self.w {
+                ret.push(key + 1);
+            }
+            if self.y(key) + 1 < self.h {
+                ret.push(key + self.w);
+            }
+            ret
+        }
+    }
 }

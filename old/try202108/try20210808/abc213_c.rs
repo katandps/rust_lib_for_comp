@@ -4,6 +4,7 @@ use {
     itertools::Itertools,
     num::Integer,
     proconio::fastout,
+    proconio::input,
     std::convert::TryInto,
     std::{cmp::*, collections::*, io::*, num::*, str::*},
 };
@@ -37,7 +38,21 @@ fn main() {
 
 #[fastout]
 pub fn solve<R: BufRead>(mut reader: Reader<R>) {
-    //$END$//
-    let n = reader.u();
-    println!("{}", n);
+    let (_h, _w, n) = reader.u3();
+    let ab = reader.iv2(n);
+
+    let mut a = ab.iter().map(|(a, _)| *a).collect_vec();
+    let mut b = ab.iter().map(|(_, b)| *b).collect_vec();
+    a.sort();
+    a.dedup();
+    b.sort();
+    b.dedup();
+
+    for (ai, bi) in &ab {
+        println!(
+            "{} {}",
+            a.binary_search(ai).unwrap() + 1,
+            b.binary_search(bi).unwrap() + 1
+        );
+    }
 }

@@ -3,7 +3,6 @@ pub use reader::*;
 use {
     itertools::Itertools,
     num::Integer,
-    proconio::fastout,
     std::convert::TryInto,
     std::{cmp::*, collections::*, io::*, num::*, str::*},
 };
@@ -35,9 +34,7 @@ fn main() {
     solve(Reader::new(stdin.lock()));
 }
 
-#[fastout]
 pub fn solve<R: BufRead>(mut reader: Reader<R>) {
-    //$END$//
-    let n = reader.u();
-    println!("{}", n);
+    let (a, b) = reader.u2();
+    println!("{}", a ^ b);
 }

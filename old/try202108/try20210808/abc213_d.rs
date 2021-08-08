@@ -3,7 +3,6 @@ pub use reader::*;
 use {
     itertools::Itertools,
     num::Integer,
-    proconio::fastout,
     std::convert::TryInto,
     std::{cmp::*, collections::*, io::*, num::*, str::*},
 };
@@ -35,9 +34,24 @@ fn main() {
     solve(Reader::new(stdin.lock()));
 }
 
-#[fastout]
 pub fn solve<R: BufRead>(mut reader: Reader<R>) {
-    //$END$//
     let n = reader.u();
-    println!("{}", n);
+    let ab = reader.uv2(n - 1);
+    let mut g = vec![BTreeSet::new(); n + 1];
+    for (a, b) in ab {
+        g[a].insert(b);
+        g[b].insert(a);
+    }
+    f(1, 0, &g);
+}
+
+fn f(cur: usize, before: usize, g: &Vec<BTreeSet<usize>>) {
+    println!("{}", cur);
+    for &to in &g[cur] {
+        if before == to {
+            continue;
+        }
+        f(to, cur, g);
+        println!("{}", cur);
+    }
 }
