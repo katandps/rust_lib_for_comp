@@ -1,3 +1,4 @@
+pub mod algebra;
 pub mod all_combination;
 pub mod all_permutation;
 pub mod binary_indexed_tree;
