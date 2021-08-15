@@ -1,0 +1,174 @@
+pub use reader::*;
+#[allow(unused_imports)]
+use {
+    itertools::Itertools,
+    num::Integer,
+    proconio::fastout,
+    std::convert::TryInto,
+    std::{cmp::*, collections::*, io::*, num::*, str::*},
+};
+
+#[allow(unused_macros)]
+macro_rules! chmin {($base:expr, $($cmps:expr),+ $(,)*) => {{let cmp_min = min!($($cmps),+);if $base > cmp_min {$base = cmp_min;true} else {false}}};}
+#[allow(unused_macros)]
+macro_rules! chmax {($base:expr, $($cmps:expr),+ $(,)*) => {{let cmp_max = max!($($cmps),+);if $base < cmp_max {$base = cmp_max;true} else {false}}};}
+#[allow(unused_macros)]
+macro_rules! min {
+    ($a:expr $(,)*) => {{$a}};
+    ($a:expr, $b:expr $(,)*) => {{if $a > $b {$b} else {$a}}};
+    ($a:expr, $($rest:expr),+ $(,)*) => {{let b = min!($($rest),+);if $a > b {b} else {$a}}};
+}
+#[allow(unused_macros)]
+macro_rules! max {
+    ($a:expr $(,)*) => {{$a}};
+    ($a:expr, $b:expr $(,)*) => {{if $a > $b {$a} else {$b}}};
+    ($a:expr, $($rest:expr),+ $(,)*) => {{let b = max!($($rest),+);if $a > b {$a} else {b}}};
+}
+
+#[allow(dead_code)]
+#[rustfmt::skip]
+pub mod reader { #[allow(unused_imports)] use itertools::Itertools; use std::{fmt::Debug, io::*, str::*};  pub struct Reader<R: BufRead> { reader: R, buf: Vec<u8>, pos: usize, }  macro_rules! prim_method { ($name:ident: $T: ty) => { pub fn $name(&mut self) -> $T { self.n::<$T>() } }; ($name:ident) => { prim_method!($name: $name); } } macro_rules! prim_methods { ($name:ident: $T:ty; $($rest:tt)*) => { prim_method!($name:$T); prim_methods!($($rest)*); }; ($name:ident; $($rest:tt)*) => { prim_method!($name); prim_methods!($($rest)*); }; () => () }  macro_rules! replace_expr { ($_t:tt $sub:expr) => { $sub }; } macro_rules! tuple_method { ($name: ident: ($($T:ident),+)) => { pub fn $name(&mut self) -> ($($T),+) { ($(replace_expr!($T self.n())),+) } } } macro_rules! tuple_methods { ($name:ident: ($($T:ident),+); $($rest:tt)*) => { tuple_method!($name:($($T),+)); tuple_methods!($($rest)*); }; () => () } macro_rules! vec_method { ($name: ident: ($($T:ty),+)) => { pub fn $name(&mut self, n: usize) -> Vec<($($T),+)> { (0..n).map(|_|($(replace_expr!($T self.n())),+)).collect_vec() } }; ($name: ident: $T:ty) => { pub fn $name(&mut self, n: usize) -> Vec<$T> { (0..n).map(|_|self.n()).collect_vec() } }; } macro_rules! vec_methods { ($name:ident: ($($T:ty),+); $($rest:tt)*) => { vec_method!($name:($($T),+)); vec_methods!($($rest)*); }; ($name:ident: $T:ty; $($rest:tt)*) => { vec_method!($name:$T); vec_methods!($($rest)*); }; () => () } impl<R: BufRead> Reader<R> { pub fn new(reader: R) -> Reader<R> { let (buf, pos) = (Vec::new(), 0); Reader { reader, buf, pos } } prim_methods! { u: usize; i: i64; f: f64; str: String; c: char; string: String; u8; u16; u32; u64; u128; usize; i8; i16; i32; i64; i128; isize; f32; f64; char; } tuple_methods! { u2: (usize, usize); u3: (usize, usize, usize); u4: (usize, usize, usize, usize); i2: (i64, i64); i3: (i64, i64, i64); i4: (i64, i64, i64, i64); cuu: (char, usize, usize); } vec_methods! { uv: usize; uv2: (usize, usize); uv3: (usize, usize, usize); iv: i64; iv2: (i64, i64); iv3: (i64, i64, i64); vq: (char, usize, usize); }  pub fn n<T: FromStr>(&mut self) -> T where T::Err: Debug, { self.n_op().unwrap() }  pub fn n_op<T: FromStr>(&mut self) -> Option<T> where T::Err: Debug, { if self.buf.is_empty() { self._read_next_line(); } let mut start = None; while self.pos != self.buf.len() { match (self.buf[self.pos], start.is_some()) { (b' ', true) | (b'\n', true) => break, (_, true) | (b' ', false) => self.pos += 1, (b'\n', false) => self._read_next_line(), (_, false) => start = Some(self.pos), } } start.map(|s| from_utf8(&self.buf[s..self.pos]).unwrap().parse().unwrap()) }  fn _read_next_line(&mut self) { self.pos = 0; self.buf.clear(); self.reader.read_until(b'\n', &mut self.buf).unwrap(); } pub fn s(&mut self) -> Vec<char> { self.n::<String>().chars().collect() } pub fn digits(&mut self) -> Vec<i64> { self.n::<String>() .chars() .map(|c| (c as u8 - b'0') as i64) .collect() } pub fn char_map(&mut self, h: usize) -> Vec<Vec<char>> { (0..h).map(|_| self.s()).collect() } pub fn bool_map(&mut self, h: usize, ng: char) -> Vec<Vec<bool>> { self.char_map(h) .iter() .map(|v| v.iter().map(|&c| c != ng).collect()) .collect() } pub fn matrix(&mut self, h: usize, w: usize) -> Vec<Vec<i64>> { (0..h).map(|_| self.iv(w)).collect() } } }
+
+#[allow(dead_code)]
+fn main() {
+    let stdin = stdin();
+    solve(Reader::new(stdin.lock()));
+}
+
+#[fastout]
+pub fn solve<R: BufRead>(mut reader: Reader<R>) {
+    let (n, m) = reader.u2();
+    let ab = reader.uv2(m);
+
+    let mut uf = UnionFind::new(n);
+    for &(a, b) in &ab {
+        uf.unite(a, b);
+    }
+
+    let mut g = vec![Vec::new(); n + 1];
+    for (a, b) in ab {
+        g[a].push(b);
+        g[b].push(a);
+    }
+
+    let mut roots = HashSet::new();
+    for i in 1..=n {
+        roots.insert(uf.root(i));
+    }
+
+    let mut ans = 1usize;
+    for root in roots {
+        let mut list = Vec::new();
+        let mut memo = HashSet::new();
+        dfs(root, 0, &g, &mut list, &mut memo);
+        // 0: undef 1: red 2: green 4: blue
+        let mut res = vec![0; n + 1];
+        res[root] = 1;
+        ans *= 3 * dfs2(0, &list, &g, res.clone());
+    }
+    println!("{}", ans);
+}
+
+fn dfs(
+    cur: usize,
+    from: usize,
+    g: &Vec<Vec<usize>>,
+    res: &mut Vec<usize>,
+    memo: &mut HashSet<usize>,
+) {
+    if memo.contains(&cur) {
+        return;
+    }
+    memo.insert(cur);
+    res.push(cur);
+    for &to in &g[cur] {
+        if from == to {
+            continue;
+        }
+        dfs(to, cur, g, res, memo);
+    }
+}
+
+fn dfs2(index: usize, list: &Vec<usize>, g: &Vec<Vec<usize>>, res: Vec<usize>) -> usize {
+    if index == list.len() - 1 {
+        return 1;
+    }
+    let mut r = 0;
+    let mut k = 0;
+    for &to in &g[list[index + 1]] {
+        k |= res[to];
+    }
+    if k & 1 == 0 {
+        let mut next = res.clone();
+        next[list[index + 1]] = 1;
+        r += dfs2(index + 1, list, g, next);
+    }
+    if k & 2 == 0 {
+        let mut next = res.clone();
+        next[list[index + 1]] = 2;
+        r += dfs2(index + 1, list, g, next);
+    }
+    if k & 4 == 0 {
+        let mut next = res.clone();
+        next[list[index + 1]] = 4;
+        r += dfs2(index + 1, list, g, next);
+    }
+    r
+}
+
+#[allow(unused_imports)]
+use union_find::*;
+
+#[allow(dead_code)]
+mod union_find {
+    pub struct UnionFind {
+        parent: Vec<usize>,
+        rank: Vec<usize>,
+    }
+
+    impl UnionFind {
+        pub fn new(n: usize) -> UnionFind {
+            let mut parent = vec![0; n + 1];
+            let rank = vec![0; n + 1];
+            for i in 1..(n + 1) {
+                parent[i] = i;
+            }
+            UnionFind { parent, rank }
+        }
+
+        pub fn root(&mut self, x: usize) -> usize {
+            if self.parent[x] == x {
+                x
+            } else {
+                let p = self.parent[x];
+                self.parent[x] = self.root(p);
+                self.parent[x]
+            }
+        }
+
+        pub fn rank(&self, x: usize) -> usize {
+            self.rank[x]
+        }
+
+        pub fn same(&mut self, x: usize, y: usize) -> bool {
+            self.root(x) == self.root(y)
+        }
+
+        pub fn unite(&mut self, x: usize, y: usize) {
+            let mut x = self.root(x);
+            let mut y = self.root(y);
+            if x == y {
+                return;
+            }
+            if self.rank(x) < self.rank(y) {
+                let tmp = y;
+                y = x;
+                x = tmp;
+            }
+            if self.rank(x) == self.rank(y) {
+                self.rank[x] += 1;
+            }
+            self.parent[x] = y;
+        }
+    }
+}
