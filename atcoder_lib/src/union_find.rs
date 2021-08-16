@@ -6,16 +6,18 @@ mod union_find {
     pub struct UnionFind {
         parent: Vec<usize>,
         rank: Vec<usize>,
+        size: Vec<usize>,
     }
 
     impl UnionFind {
         pub fn new(n: usize) -> UnionFind {
             let mut parent = vec![0; n + 1];
             let rank = vec![0; n + 1];
+            let size = vec![1; n + 1];
             for i in 1..(n + 1) {
                 parent[i] = i;
             }
-            UnionFind { parent, rank }
+            UnionFind { parent, rank, size }
         }
 
         pub fn root(&mut self, x: usize) -> usize {
@@ -32,6 +34,11 @@ mod union_find {
             self.rank[x]
         }
 
+        pub fn size(&mut self, x: usize) -> usize {
+            let root = self.root(x);
+            self.size[root]
+        }
+
         pub fn same(&mut self, x: usize, y: usize) -> bool {
             self.root(x) == self.root(y)
         }
@@ -43,14 +50,13 @@ mod union_find {
                 return;
             }
             if self.rank(x) < self.rank(y) {
-                let tmp = y;
-                y = x;
-                x = tmp;
+                std::mem::swap(&mut x, &mut y);
             }
             if self.rank(x) == self.rank(y) {
                 self.rank[x] += 1;
             }
             self.parent[x] = y;
+            self.size[y] += self.size[x];
         }
     }
 }
