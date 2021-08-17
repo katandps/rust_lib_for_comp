@@ -1,3 +1,6 @@
+#[allow(unused_imports)]
+use lowest_common_ancestor::LowestCommonAncestor;
+
 #[allow(dead_code)]
 mod lowest_common_ancestor {
     use std::mem::swap;
@@ -87,8 +90,7 @@ mod lowest_common_ancestor {
     }
 }
 
-#[allow(unused_imports)]
-use lowest_common_ancestor::LowestCommonAncestor;
+///////////////////////////////////////////
 
 #[cfg(test)]
 mod test {
