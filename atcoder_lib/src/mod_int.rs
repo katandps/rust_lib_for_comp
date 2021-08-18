@@ -6,6 +6,10 @@ pub mod mod_int {
     use std::marker::PhantomData;
     use std::ops::*;
 
+    pub fn mi(i: i64) -> Mi {
+        Mi::new(i)
+    }
+
     pub trait Mod: Copy + Clone + std::fmt::Debug {
         fn get() -> i64;
     }

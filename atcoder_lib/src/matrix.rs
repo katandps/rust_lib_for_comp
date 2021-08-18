@@ -26,12 +26,24 @@ mod matrix {
     }
 
     impl Matrix {
-        fn identity_matrix(n: usize) -> Self {
+        pub fn identity_matrix(n: usize) -> Self {
             let mut buf = vec![vec![Mi::new(0); n]; n];
             for i in 0..n {
                 buf[i][i] += 1;
             }
             Matrix { buf }
+        }
+
+        pub fn row_vector(v: &[Mi]) -> Self {
+            Matrix {
+                buf: vec![v.iter().cloned().collect()],
+            }
+        }
+
+        pub fn column_vector(v: &[Mi]) -> Self {
+            Matrix {
+                buf: v.iter().map(|mi| vec![*mi]).collect(),
+            }
         }
 
         /// (y, x)
@@ -193,15 +205,15 @@ mod test {
 
     #[test]
     fn test() {
-        let data = vec![vec![Mi::new(3), Mi::new(2)], vec![Mi::new(5), Mi::new(4)]];
+        let data = vec![vec![mi(3), mi(2)], vec![mi(5), mi(4)]];
         let matrix: Matrix = data.try_into().unwrap();
-        assert_eq!(matrix.determinant(), Some(Mi::new(2)));
+        assert_eq!(matrix.determinant(), Some(mi(2)));
 
         let data = vec![
-            vec![Mi::new(0), Mi::new(1), Mi::new(2), Mi::new(3)],
-            vec![Mi::new(4), Mi::new(5), Mi::new(6), Mi::new(7)],
-            vec![Mi::new(8), Mi::new(9), Mi::new(10), Mi::new(11)],
-            vec![Mi::new(12), Mi::new(13), Mi::new(14), Mi::new(15)],
+            vec![mi(0), mi(1), mi(2), mi(3)],
+            vec![mi(4), mi(5), mi(6), mi(7)],
+            vec![mi(8), mi(9), mi(10), mi(11)],
+            vec![mi(12), mi(13), mi(14), mi(15)],
         ];
         let matrix: Matrix = data.try_into().unwrap();
         let sub_matrix = matrix.sub_matrix(2, 3);
@@ -213,15 +225,11 @@ mod test {
         .try_into()
         .unwrap();
         assert_eq!(sub_matrix, expect_sub_matrix);
-        assert_eq!(sub_matrix.determinant(), Some(Mi::new(0)));
+        assert_eq!(sub_matrix.determinant(), Some(mi(0)));
 
-        let lhs: Matrix = vec![vec![Mi::new(1), Mi::new(2), Mi::new(3)]]
-            .try_into()
-            .unwrap();
-        let rhs: Matrix = vec![vec![Mi::new(4)], vec![Mi::new(5)], vec![Mi::new(6)]]
-            .try_into()
-            .unwrap();
-        let expect: Matrix = vec![vec![Mi::new(32)]].try_into().unwrap();
+        let lhs: Matrix = Matrix::row_vector(&vec![mi(1), mi(2), mi(3)]);
+        let rhs: Matrix = Matrix::column_vector(&vec![mi(4), mi(5), mi(6)]);
+        let expect: Matrix = vec![vec![mi(32)]].try_into().unwrap();
         assert_eq!(lhs * rhs, Some(expect));
     }
 }
