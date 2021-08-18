@@ -25,6 +25,7 @@ pub mod rps;
 pub mod segment_tree;
 pub mod sieve_of_eratosthenes;
 pub mod sqrt;
+pub mod suffix_array;
 pub mod union_find;
 pub mod warshall_floyd;
 pub mod z_algorithm;
