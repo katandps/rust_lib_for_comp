@@ -4,15 +4,16 @@ pub mod suffix_array {
     #[derive(Debug, Clone)]
     pub struct SuffixArray {
         sa: Vec<usize>,
+        source: Vec<u8>,
     }
 
     impl SuffixArray {
         /// create by SA-IS. O(N)
         pub fn create(source: &[u8]) -> Self {
-            let s = compress(source);
             let mut sais = SAIS::new(source.len());
-            let sa = sais.suffix_array(&s);
-            sa
+            let source = compress(source);
+            let sa = sais.suffix_array(&source);
+            Self { sa, source }
         }
     }
 
@@ -82,11 +83,9 @@ pub mod suffix_array {
             self.calc_pos(source, &pos_types);
         }
 
-        fn suffix_array(&mut self, source: &[u8]) -> SuffixArray {
+        fn suffix_array(&mut self, source: &[u8]) -> Vec<usize> {
             self.construct(source);
-            SuffixArray {
-                sa: self.pos.clone(),
-            }
+            self.pos.clone()
         }
 
         fn calc_lms_pos(&mut self, source: &[u8], pos_types: &PosTypes) {
