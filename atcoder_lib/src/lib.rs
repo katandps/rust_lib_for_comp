@@ -4,6 +4,7 @@ pub mod all_permutation;
 pub mod binary_indexed_tree;
 pub mod binary_search;
 pub mod chinese_remainder_theorem;
+pub mod compress;
 pub mod dbg_print;
 pub mod dinic;
 pub mod floor_sum;
