@@ -78,14 +78,14 @@ mod lowest_common_ancestor {
         }
 
         /// 2頂点u,v間の距離を求める
-        pub fn get_dist(&mut self, u: usize, v: usize) -> usize {
+        pub fn dist(&mut self, u: usize, v: usize) -> usize {
             let lca = self.query(u, v);
             self.dist[u] + self.dist[v] - 2 * self.dist[lca]
         }
 
         /// u,vを結ぶパス上に頂点aが存在するかどうか
         pub fn on_path(&mut self, u: usize, v: usize, a: usize) -> bool {
-            self.get_dist(u, a) + self.get_dist(a, v) == self.get_dist(u, v)
+            self.dist(u, a) + self.dist(a, v) == self.dist(u, v)
         }
     }
 }
@@ -120,8 +120,8 @@ mod test {
         assert_eq!(1, lca.query(3, 8));
         assert_eq!(3, lca.query(6, 7));
 
-        assert_eq!(2, lca.get_dist(0, 5));
-        assert_eq!(4, lca.get_dist(5, 4));
+        assert_eq!(2, lca.dist(0, 5));
+        assert_eq!(4, lca.dist(5, 4));
 
         assert_eq!(true, lca.on_path(5, 8, 1));
         assert_eq!(false, lca.on_path(5, 8, 3));

@@ -7,13 +7,14 @@ mod warshall_floyd {
 
     type COST = usize;
     type EDGE = (usize, usize, COST);
+    const INF: COST = 1 << 60;
 
     ///
     /// 辺の情報からWarshallFloyd法により全点間最小コストを計算する
     /// 計算量 O(N^3)
     ///
     pub fn warshall_floyd(vertex_n: usize, edges: &Vec<EDGE>) -> Vec<Vec<COST>> {
-        let mut ret = vec![vec![1_000_000_000usize; vertex_n + 1]; vertex_n + 1];
+        let mut ret = vec![vec![INF; vertex_n + 1]; vertex_n + 1];
         for i in 0..vertex_n + 1 {
             ret[i][i] = 0;
         }

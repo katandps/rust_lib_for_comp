@@ -109,3 +109,35 @@ opt-level = 3
 # ---------------------------------------------------------------------
 [lib]
 path = "src/lib.rs"
+
+[[bin]]
+name = "task_a"
+path = "src/a.rs"
+
+[[bin]]
+name = "task_b"
+path = "src/b.rs"
+
+[[bin]]
+name = "task_c"
+path = "src/c.rs"
+
+[[bin]]
+name = "task_d"
+path = "src/d.rs"
+
+[[bin]]
+name = "task_e"
+path = "src/e.rs"
+
+[[bin]]
+name = "task_f"
+path = "src/f.rs"
+
+[[bin]]
+name = "task_g"
+path = "src/g.rs"
+
+[[bin]]
+name = "task_h"
+path = "src/h.rs"
