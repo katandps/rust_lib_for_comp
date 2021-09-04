@@ -1,3 +1,20 @@
+#[allow(unused_macros)]
+macro_rules! chmin {($base:expr, $($cmps:expr),+ $(,)*) => {{let cmp_min = min!($($cmps),+);if $base > cmp_min {$base = cmp_min;true} else {false}}};}
+#[allow(unused_macros)]
+macro_rules! chmax {($base:expr, $($cmps:expr),+ $(,)*) => {{let cmp_max = max!($($cmps),+);if $base < cmp_max {$base = cmp_max;true} else {false}}};}
+#[allow(unused_macros)]
+macro_rules! min {
+    ($a:expr $(,)*) => {{$a}};
+    ($a:expr, $b:expr $(,)*) => {{if $a > $b {$b} else {$a}}};
+    ($a:expr, $($rest:expr),+ $(,)*) => {{let b = min!($($rest),+);if $a > b {b} else {$a}}};
+}
+#[allow(unused_macros)]
+macro_rules! max {
+    ($a:expr $(,)*) => {{$a}};
+    ($a:expr, $b:expr $(,)*) => {{if $a > $b {$a} else {$b}}};
+    ($a:expr, $($rest:expr),+ $(,)*) => {{let b = max!($($rest),+);if $a > b {$a} else {b}}};
+}
+
 #[allow(unused_imports)]
 use graph::*;
 
@@ -10,12 +27,12 @@ pub mod graph {
 
     pub type Weight = i64;
 
-    const INF: Weight = 1_000_000_000;
+    pub const INF: Weight = 1 << 60;
 
     #[derive(Copy, Clone)]
     pub struct Edge {
-        pub src: i64,
-        pub dst: i64,
+        pub src: usize,
+        pub dst: usize,
         pub weight: Weight,
     }
 
@@ -31,7 +48,7 @@ pub mod graph {
             Edge { src, dst, weight }
         }
 
-        pub fn new(src: i64, dst: i64, weight: Weight) -> Edge {
+        pub fn new(src: usize, dst: usize, weight: Weight) -> Edge {
             Edge { src, dst, weight }
         }
     }
@@ -69,9 +86,9 @@ pub mod graph {
         /// 辺行列からグラフを生成する O(N^2)
         pub fn from_matrix(weights: &Vec<Vec<Weight>>, n: usize) -> Graph {
             let mut ret = Self::new(n);
-            for i in 0..n as i64 {
-                for j in i + 1..n as i64 {
-                    if weights[i as usize][j as usize] == -1 {
+            for i in 0..n {
+                for j in i + 1..n {
+                    if weights[i][j] == -1 {
                         continue;
                     }
                     ret.add_edge(i, j, weights[i as usize][j as usize]);
@@ -81,17 +98,21 @@ pub mod graph {
             ret
         }
 
-        pub fn len(&self) -> usize {
+        /// 頂点数
+        /// number of vertices
+        pub fn v(&self) -> usize {
             self.0.len()
         }
 
-        pub fn add_edge(&mut self, a: i64, b: i64, w: Weight) {
-            self.0[a as usize].push(Edge::new(a, b, w));
-            self.0[b as usize].push(Edge::new(b, a, w));
+        /// 相互に行き来できる辺をつける
+        pub fn add_edge(&mut self, a: usize, b: usize, w: Weight) {
+            self.0[a].push(Edge::new(a, b, w));
+            self.0[b].push(Edge::new(b, a, w));
         }
 
-        pub fn add_arc(graph: &mut Graph, a: i64, b: i64, w: Weight) {
-            graph.0[a as usize].push(Edge::new(a, b, w));
+        /// 1方向にのみ移動できる辺をつける
+        pub fn add_arc(&mut self, a: usize, b: usize, w: Weight) {
+            self.0[a].push(Edge::new(a, b, w));
         }
 
         pub fn edges_from(&self, from: usize) -> &Vec<Edge> {
@@ -101,6 +122,9 @@ pub mod graph {
         ///
         /// Prim法でMinimumSpanningTree(最小全域木)を求める
         /// rから開始する (= rと連結でない点は無視する)
+        /// ## 計算量
+        /// 頂点数をV、辺数をEとすると
+        /// 二分ヒープによる実装なのでO(ElogV)
         /// ```
         /// use atcoder_lib::graph::graph::Graph;
         /// let data = vec![
@@ -115,12 +139,12 @@ pub mod graph {
         /// assert_eq!(5, graph.prim(0));
         /// ```
         ///
-        pub fn prim(&self, r: i64) -> Weight {
+        pub fn prim(&self, r: usize) -> Weight {
             let mut t = Vec::new();
             let mut total: Weight = 0;
-            let mut visits = vec![false; self.len()];
+            let mut visits = vec![false; self.v()];
             let mut q = BinaryHeap::new();
-            q.push(Reverse(Edge::new(-1, r, 0)));
+            q.push(Reverse(Edge::new(self.v(), r, 0)));
             while !q.is_empty() {
                 let Reverse(e) = q.pop().unwrap();
                 if visits[e.dst as usize] {
@@ -128,16 +152,61 @@ pub mod graph {
                 }
                 visits[e.dst as usize] = true;
                 total += e.weight;
-                if e.src != -1 {
+                if e.src != self.v() {
                     t.push(e)
                 }
-                for f in self.edges_from(e.dst as usize).iter() {
+                self.edges_from(e.dst).iter().for_each(|f| {
                     if !visits[f.dst as usize] {
                         q.push(Reverse(*f));
                     }
-                }
+                });
             }
             total
         }
+
+        ///
+        ///  ベルマンフォード法でlからrへの最小コストを求める
+        /// ## 計算量
+        ///  O(NM)
+        pub fn bellman_ford(&self, l: usize, r: usize) -> Weight {
+            let mut dist = vec![INF; self.v()];
+            dist[l] = 0;
+            for _step1 in 1..self.v() {
+                for src in 0..self.v() {
+                    if dist[src] != INF {
+                        self.edges_from(src).iter().for_each(|e| {
+                            let _ = chmin!(dist[e.dst], dist[src] + e.weight);
+                        });
+                    }
+                }
+            }
+            let mut neg = vec![false; self.v()];
+            for _step2 in 0..self.v() {
+                for src in 0..self.v() {
+                    if dist[src] != INF {
+                        self.edges_from(src).iter().for_each(|e| {
+                            neg[e.dst] |= neg[src] | chmin!(dist[e.dst], dist[src] + e.weight)
+                        });
+                    }
+                }
+            }
+            if neg[r] {
+                INF
+            } else {
+                dist[r]
+            }
+        }
+    }
+}
+
+#[cfg(test)]
+mod test {
+    use super::*;
+
+    #[test]
+    fn test() {
+        let n = 10;
+        let g = Graph::new(n);
+        assert_eq!(graph::INF, g.bellman_ford(0, 9));
     }
 }
