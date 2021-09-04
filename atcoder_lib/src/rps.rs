@@ -44,7 +44,7 @@ mod rps {
                 'R' => Rock,
                 'P' => Paper,
                 'S' => Scissors,
-                c => panic!(format!("変換できません: {}", c)),
+                c => panic!("変換できません: {}", c),
             }
         }
     }

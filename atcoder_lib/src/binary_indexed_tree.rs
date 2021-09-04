@@ -21,7 +21,7 @@ mod binary_indexed_tree {
         pub fn add(&mut self, i: usize, x: VALUE) {
             let i = i + 1; //0-indexed
             let mut idx = i as i32;
-            while idx < self.n as i32 {
+            while idx <= self.n as i32 {
                 self.bit[idx as usize] += x;
                 idx += idx & -idx;
             }
