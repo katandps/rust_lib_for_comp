@@ -7,6 +7,7 @@ edition = "2018"
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
 [dependencies]
+
 # 多バイト長整数、分数、複素数など
 num = "=0.2.1"
 num-bigint = "=0.2.5"
@@ -101,6 +102,7 @@ smallvec = "=1.1.0"
 [profile.release]
 lto = true
 panic = 'abort'
+overflow-checks = true
 
 [profile.test]
 opt-level = 3

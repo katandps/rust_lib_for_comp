@@ -102,14 +102,12 @@ smallvec = "=1.1.0"
 [profile.release]
 lto = true
 panic = 'abort'
+overflow-checks = true
 
 [profile.test]
 opt-level = 3
 
 # ---------------------------------------------------------------------
-[lib]
-path = "src/lib.rs"
-
 [[bin]]
 name = "task_a"
 path = "src/a.rs"
