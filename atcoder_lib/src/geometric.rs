@@ -81,12 +81,57 @@ mod geometric {
         pub fn abs(self) -> f64 {
             self.norm().sqrt()
         }
+    }
+
+    #[derive(Copy, Clone)]
+    pub struct Triangle {
+        p1: Point,
+        p2: Point,
+        p3: Point,
+    }
+
+    impl Triangle {
+        pub fn new(p1: Point, p2: Point, p3: Point) -> Triangle {
+            Triangle { p1, p2, p3 }
+        }
+
+        /// 内心を求める
+        pub fn inner_center(&self) -> Option<Point> {
+            let line = Line::new(self.p1, self.p2);
+            if line.distance(self.p3) > 0.0 {
+                Some((self.p1 + self.p2 + self.p3) / 3.0)
+            } else {
+                None
+            }
+        }
+
+        ///内接円の半径
+        pub fn inner_circle_radius(&self) -> f64 {
+            let a = (self.p1 - self.p2).abs();
+            let b = (self.p2 - self.p3).abs();
+            let c = (self.p3 - self.p1).abs();
+            let s = self.area();
+            2.0 * s / (a + b + c)
+        }
+
+        /// 面積を求める
+        pub fn area(&self) -> f64 {
+            let a = self.p2 - self.p1;
+            let b = self.p3 - self.p1;
+            (a.x * b.y - a.y * b.x).abs() / 2.0
+        }
 
         /// 外心を求める
-        pub fn circumcenter(p: Self, q: Self, r: Self) -> Option<Point> {
-            let pq = Line::new((p + q) / 2.0, (p + q) / 2.0 + (p - q).rot90());
-            let qr = Line::new((q + r) / 2.0, (q + r) / 2.0 + (q - r).rot90());
-            Line::cross_points(pq, qr)
+        pub fn circumcenter(&self) -> Option<Point> {
+            let p1p2 = Line::new(
+                (self.p1 + self.p2) / 2.0,
+                (self.p1 + self.p2) / 2.0 + (self.p1 - self.p2).rot90(),
+            );
+            let p2p3 = Line::new(
+                (self.p2 + self.p3) / 2.0,
+                (self.p2 + self.p3) / 2.0 + (self.p2 - self.p3).rot90(),
+            );
+            Line::cross_points(p1p2, p2p3)
         }
     }
 
@@ -211,6 +256,7 @@ mod geometric {
             }
         }
 
+        /// 直線と点の距離
         pub fn distance(self, p: Point) -> f64 {
             if self.p1.x == self.p2.x {
                 return (p.x - self.p1.x).abs();
@@ -309,7 +355,8 @@ mod test {
         let p1 = Point::new(0.0, 0.0);
         let p2 = Point::new(4.0, 0.0);
         let p3 = Point::new(2.0, 2.0 * 3.0f64.sqrt());
-        let cc = Point::circumcenter(p1, p2, p3).unwrap();
+        let tr = Triangle::new(p1, p2, p3);
+        let cc = tr.circumcenter().unwrap();
         assert_eq!(cc.x, 2.0);
         assert_eq!(cc.y, 2.0f64 / 3.0f64.sqrt());
     }
