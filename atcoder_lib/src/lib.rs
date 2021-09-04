@@ -16,6 +16,7 @@ pub mod grid;
 pub mod longest_increasing_subsequence;
 pub mod lowest_common_ancestor;
 pub mod lucas_theorem;
+pub mod manachar;
 pub mod matrix;
 pub mod min_max;
 pub mod mod_int;
