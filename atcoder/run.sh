@@ -1,4 +1,5 @@
 #!/bin/bash
+cd `dirname $0`
 
 if [ $# -ne 1 ]; then
   echo "問題が指定されていません"
