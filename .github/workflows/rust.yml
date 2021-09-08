@@ -17,7 +17,7 @@ jobs:
     steps:
       - uses: actions/checkout@v2
       - name: Run tests
-        run: cd atcoder_lib && cargo test --verbose
+        run: cd library && cargo test --verbose
 
   doc:
     runs-on: ubuntu-latest
@@ -27,10 +27,10 @@ jobs:
     steps:
       - uses: actions/checkout@v2
       - name: Run doc
-        run: cd atcoder_lib && cargo doc --no-deps
+        run: cd library && cargo doc --no-deps
 
       - name: Deploy
         uses: peaceiris/actions-gh-pages@v3
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
-          publish_dir: ./atcoder_lib/target/doc/
+          publish_dir: ./library/target/doc/
