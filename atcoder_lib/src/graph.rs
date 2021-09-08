@@ -22,7 +22,7 @@ use graph::*;
 pub mod graph {
     use std::cmp::Ordering;
     use std::cmp::Reverse;
-    use std::collections::BinaryHeap;
+    use std::collections::{BinaryHeap, VecDeque};
     use std::fmt::{Debug, Formatter};
 
     pub type Weight = i64;
@@ -219,6 +219,50 @@ pub mod graph {
                 });
             }
             dist
+        }
+
+        /// 頂点をトポロジカルソートして返す
+        /// グラフがDAGの場合に使用可
+        pub fn topological_sort(&self) -> Vec<usize> {
+            let mut deg = vec![0; self.v()];
+            for src in 0..self.v() {
+                for e in self.edges_from(src) {
+                    deg[e.dst] += 1;
+                }
+            }
+
+            let mut q = VecDeque::new();
+            for i in 0..self.v() {
+                if deg[i] == 0 {
+                    q.push_back(i);
+                }
+            }
+
+            let mut ret = Vec::new();
+            while let Some(src) = q.pop_front() {
+                self.edges_from(src).iter().for_each(|e| {
+                    deg[e.dst] -= 1;
+                    if deg[e.dst] == 0 {
+                        q.push_back(e.dst)
+                    }
+                });
+                ret.push(src);
+            }
+            ret
+        }
+
+        /// lを始点とする各点までの経路数を求める
+        /// グラフがDAGの場合に使用可
+        pub fn path(&self, l: usize) -> Vec<usize> {
+            let list = self.topological_sort();
+            let mut dp = vec![0; self.v()];
+            dp[l] = 1;
+            for src in list {
+                for e in self.edges_from(src) {
+                    dp[e.dst] += dp[src];
+                }
+            }
+            dp
         }
     }
 }
