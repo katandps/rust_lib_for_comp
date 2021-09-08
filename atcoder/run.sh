@@ -6,5 +6,4 @@ if [ $# -ne 1 ]; then
   exit 1
 fi
 
-RUST_BACKTRACE=1
-cargo run --bin task_$1 < sample/$1.txt
+RUST_BACKTRACE=1 cargo run --bin task_$1 < sample/$1.txt
