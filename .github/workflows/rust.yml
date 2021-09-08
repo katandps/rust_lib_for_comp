@@ -1,4 +1,4 @@
-name: RustCP
+name: Rust
 
 on:
   push:
