@@ -106,3 +106,9 @@ overflow-checks = true
 
 [profile.test]
 opt-level = 3
+
+[package.metadata.docs.rs]
+rustdoc-args = [
+    "--html-in-header",
+    "katex.html"
+]
