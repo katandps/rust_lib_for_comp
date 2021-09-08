@@ -3,7 +3,6 @@ pub use reader::*;
 #[allow(dead_code)]
 pub mod reader {
     #[allow(unused_imports)]
-    use itertools::Itertools;
     use std::{fmt::Debug, io::*, str::*};
 
     pub struct Reader<R: BufRead> {
@@ -56,12 +55,12 @@ pub mod reader {
     macro_rules! vec_method {
         ($name: ident: ($($T:ty),+)) => {
             pub fn $name(&mut self, n: usize) -> Vec<($($T),+)> {
-                (0..n).map(|_|($(replace_expr!($T self.n())),+)).collect_vec()
+                (0..n).map(|_|($(replace_expr!($T self.n())),+)).collect()
             }
         };
         ($name: ident: $T:ty) => {
             pub fn $name(&mut self, n: usize) -> Vec<$T> {
-                (0..n).map(|_|self.n()).collect_vec()
+                (0..n).map(|_|self.n()).collect()
             }
         };
     }
