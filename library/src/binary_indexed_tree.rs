@@ -39,17 +39,22 @@ mod binary_indexed_tree {
             ret
         }
 
-        /// sum of [a, b)
+        /// sum of [a, b]
         pub fn sum_ab(&self, a: usize, b: usize) -> VALUE {
-            self.sum(b) - self.sum(a)
+            if a == 0 {
+                self.sum(b)
+            } else {
+                self.sum(b) - self.sum(a - 1)
+            }
         }
     }
 
     impl std::fmt::Debug for BinaryIndexedTree {
         fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
             use itertools::*;
-            let v = (1..self.n).map(|i| self.sum(i) - self.sum(i - 1)).join(" ");
-            write!(f, "{}", v)
+            let v = (0..self.n).map(|i| self.sum_ab(i, i)).join(" ");
+            let v2 = (0..self.n).map(|i| self.sum(i)).join(" ");
+            write!(f, "\n{}\n{}", v, v2)
         }
     }
 }
