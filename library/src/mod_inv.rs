@@ -8,7 +8,7 @@ pub mod mod_inv {
     ///
     /// numberの逆元をmod moduloで求める
     /// ```
-    /// use atcoder_lib::mod_inv::mod_inv::mod_inv;
+    /// use library::mod_inv::mod_inv::mod_inv;
     /// assert_eq!(1, mod_inv(1, 13));
     /// assert_eq!(7, mod_inv(2, 13));
     /// assert_eq!(9, mod_inv(3, 13));

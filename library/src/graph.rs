@@ -126,7 +126,7 @@ pub mod graph {
         /// 頂点数をV、辺数をEとすると
         /// 二分ヒープによる実装なのでO(ElogV)
         /// ```
-        /// use atcoder_lib::graph::graph::Graph;
+        /// use library::graph::graph::Graph;
         /// let data = vec![
         ///     vec![-1, 2, 3, 1, -1],
         ///     vec![2, -1, -1, 4, -1],

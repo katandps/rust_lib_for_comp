@@ -19,8 +19,8 @@ mod mod_val_table {
         ///
         /// nを超える値を呼び出したとき、panicする
         /// ```rust, should_panic
-        /// # use atcoder_lib::mod_int::mod_int::Mi;
-        /// # use atcoder_lib::mod_val_table::ModValTable;
+        /// # use library::mod_int::mod_int::Mi;
+        /// # use library::mod_val_table::ModValTable;
         /// let fact = ModValTable::<Mi>::new(10);
         /// fact.combination(11, 11);
         /// ```
@@ -42,8 +42,8 @@ mod mod_val_table {
 
         /// Factorial 階乗 n!
         /// ```
-        /// # use atcoder_lib::mod_int::mod_int::Mi;
-        /// # use atcoder_lib::mod_val_table::ModValTable;
+        /// # use library::mod_int::mod_int::Mi;
+        /// # use library::mod_val_table::ModValTable;
         /// let five = ModValTable::<Mi>::new(5);
         /// let res = vec![1, 1, 2, 6, 24, 120];
         /// for i in 0..=5 {
@@ -57,8 +57,8 @@ mod mod_val_table {
 
         /// Permutation 順列 nPr = n! / (n - r)!
         /// ```
-        /// # use atcoder_lib::mod_int::mod_int::Mi;
-        /// # use atcoder_lib::mod_val_table::ModValTable;
+        /// # use library::mod_int::mod_int::Mi;
+        /// # use library::mod_val_table::ModValTable;
         /// let five = ModValTable::<Mi>::new(5);
         /// assert_eq!(1, five.permutation(5, 0).get());
         /// assert_eq!(5, five.permutation(5, 1).get());
@@ -78,8 +78,8 @@ mod mod_val_table {
         /// Combination 組合せ nCr = n! / (n - r)! r! = nPr / r!
         /// Binomial Coefficient
         /// ```
-        /// use atcoder_lib::mod_int::mod_int::Mi;
-        /// use atcoder_lib::mod_val_table::ModValTable;
+        /// use library::mod_int::mod_int::Mi;
+        /// use library::mod_val_table::ModValTable;
         /// let five = ModValTable::<Mi>::new(5);
         /// assert_eq!(1, five.combination(5, 0).get());
         /// assert_eq!(5, five.combination(5, 1).get());

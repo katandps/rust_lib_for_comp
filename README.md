@@ -8,7 +8,7 @@
 
 ## ライブラリ
 
-ドキュメントは[ここ](https://katandps.github.io/rust_competitive_programming/atcoder_lib/)
+ドキュメントは[ここ](https://katandps.github.io/rust_competitive_programming/library/)
 masterにpushすると自動テストが走る
 
 todo: CodeForces(1.31)でも動くように修正する
