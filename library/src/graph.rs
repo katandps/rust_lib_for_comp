@@ -15,6 +15,8 @@ macro_rules! max {
     ($a:expr, $($rest:expr),+ $(,)*) => {{let b = max!($($rest),+);if $a > b {$a} else {b}}};
 }
 
+//! グラフライブラリ
+
 #[allow(unused_imports)]
 use graph::*;
 
@@ -75,12 +77,20 @@ pub mod graph {
 
     /// 辺の情報を使用してグラフの問題を解くためのライブラリ
     #[derive(Clone, Debug)]
-    pub struct Graph(Vec<Vec<Edge>>);
+    pub struct Graph {
+        n: usize,
+        edges: Vec<Vec<Edge>>,
+        rev_edges: Vec<Vec<Edge>>,
+    }
 
     impl Graph {
         /// n: 頂点数
         pub fn new(n: usize) -> Self {
-            Self(vec![Vec::new(); n])
+            Self {
+                n,
+                edges: vec![Vec::new(); n],
+                rev_edges: vec![Vec::new(); n],
+            }
         }
 
         /// 辺行列からグラフを生成する O(N^2)
@@ -98,25 +108,18 @@ pub mod graph {
             ret
         }
 
-        /// 頂点数
-        /// number of vertices
-        pub fn v(&self) -> usize {
-            self.0.len()
-        }
-
         /// 相互に行き来できる辺をつける
         pub fn add_edge(&mut self, a: usize, b: usize, w: Weight) {
-            self.0[a].push(Edge::new(a, b, w));
-            self.0[b].push(Edge::new(b, a, w));
+            self.edges[a].push(Edge::new(a, b, w));
+            self.edges[b].push(Edge::new(b, a, w));
+            self.rev_edges[a].push(Edge::new(a, b, w));
+            self.rev_edges[b].push(Edge::new(b, a, w));
         }
 
         /// 1方向にのみ移動できる辺をつける
         pub fn add_arc(&mut self, a: usize, b: usize, w: Weight) {
-            self.0[a].push(Edge::new(a, b, w));
-        }
-
-        pub fn edges_from(&self, from: usize) -> &Vec<Edge> {
-            &self.0[from]
+            self.edges[a].push(Edge::new(a, b, w));
+            self.rev_edges[b].push(Edge::new(b, a, w));
         }
 
         ///
@@ -142,9 +145,9 @@ pub mod graph {
         pub fn prim(&self, r: usize) -> Weight {
             let mut t = Vec::new();
             let mut total: Weight = 0;
-            let mut visits = vec![false; self.v()];
+            let mut visits = vec![false; self.n];
             let mut q = BinaryHeap::new();
-            q.push(Reverse(Edge::new(self.v(), r, 0)));
+            q.push(Reverse(Edge::new(self.n, r, 0)));
             while !q.is_empty() {
                 let Reverse(e) = q.pop().unwrap();
                 if visits[e.dst as usize] {
@@ -152,10 +155,10 @@ pub mod graph {
                 }
                 visits[e.dst as usize] = true;
                 total += e.weight;
-                if e.src != self.v() {
+                if e.src != self.n {
                     t.push(e)
                 }
-                self.edges_from(e.dst).iter().for_each(|f| {
+                self.edges[e.dst].iter().for_each(|f| {
                     if !visits[f.dst as usize] {
                         q.push(Reverse(*f));
                     }
@@ -169,22 +172,22 @@ pub mod graph {
         /// ## 計算量
         ///  O(NM)
         pub fn bellman_ford(&self, l: usize, r: usize) -> Weight {
-            let mut dist = vec![INF; self.v()];
+            let mut dist = vec![INF; self.n];
             dist[l] = 0;
-            for _step1 in 1..self.v() {
-                for src in 0..self.v() {
+            for _step1 in 1..self.n {
+                for src in 0..self.n {
                     if dist[src] != INF {
-                        self.edges_from(src).iter().for_each(|e| {
+                        self.edges[src].iter().for_each(|e| {
                             let _ = chmin!(dist[e.dst], dist[src] + e.weight);
                         });
                     }
                 }
             }
-            let mut neg = vec![false; self.v()];
-            for _step2 in 0..self.v() {
-                for src in 0..self.v() {
+            let mut neg = vec![false; self.n];
+            for _step2 in 0..self.n {
+                for src in 0..self.n {
                     if dist[src] != INF {
-                        self.edges_from(src).iter().for_each(|e| {
+                        self.edges[src].iter().for_each(|e| {
                             neg[e.dst] |= neg[src] | chmin!(dist[e.dst], dist[src] + e.weight)
                         });
                     }
@@ -203,7 +206,7 @@ pub mod graph {
         /// ## 計算量
         ///  O(NlogN)
         pub fn dijkstra(&self, l: usize) -> Vec<Weight> {
-            let mut dist = vec![INF; self.v()];
+            let mut dist = vec![INF; self.n];
             let mut heap = BinaryHeap::new();
             dist[l] = 0;
             heap.push((Reverse(0), l));
@@ -211,7 +214,7 @@ pub mod graph {
                 if dist[src] != d {
                     continue;
                 }
-                self.edges_from(src).iter().for_each(|e| {
+                self.edges[src].iter().for_each(|e| {
                     if dist[e.dst] > dist[src] + e.weight {
                         dist[e.dst] = dist[src] + e.weight;
                         heap.push((Reverse(dist[e.dst]), e.dst))
@@ -221,18 +224,27 @@ pub mod graph {
             dist
         }
 
+        /// 各頂点の入次数を返す
+        fn indegree(&self) -> Vec<i32> {
+            (0..self.n)
+                .map(|dst| self.rev_edges[dst].len() as i32)
+                .collect()
+        }
+
+        /// 各頂点の出次数を返す
+        fn outdegree(&self) -> Vec<i32> {
+            (0..self.n)
+                .map(|src| self.edges[src].len() as i32)
+                .collect()
+        }
+
         /// 頂点をトポロジカルソートして返す
         /// グラフがDAGの場合に使用可
         pub fn topological_sort(&self) -> Vec<usize> {
-            let mut deg = vec![0; self.v()];
-            for src in 0..self.v() {
-                for e in self.edges_from(src) {
-                    deg[e.dst] += 1;
-                }
-            }
+            let mut deg = self.indegree();
 
             let mut q = VecDeque::new();
-            for i in 0..self.v() {
+            for i in 0..self.n {
                 if deg[i] == 0 {
                     q.push_back(i);
                 }
@@ -240,7 +252,7 @@ pub mod graph {
 
             let mut ret = Vec::new();
             while let Some(src) = q.pop_front() {
-                self.edges_from(src).iter().for_each(|e| {
+                self.edges[src].iter().for_each(|e| {
                     deg[e.dst] -= 1;
                     if deg[e.dst] == 0 {
                         q.push_back(e.dst)
@@ -255,14 +267,52 @@ pub mod graph {
         /// グラフがDAGの場合に使用可
         pub fn path(&self, l: usize) -> Vec<usize> {
             let list = self.topological_sort();
-            let mut dp = vec![0; self.v()];
+            let mut dp = vec![0; self.n];
             dp[l] = 1;
             for src in list {
-                for e in self.edges_from(src) {
+                for e in &self.edges[src] {
                     dp[e.dst] += dp[src];
                 }
             }
             dp
+        }
+
+        /// 後退解析で各点をスタートとしたときの勝敗を求める
+        /// 0: 未定/引き分け
+        /// 1: 勝ち
+        /// 2: 負け
+        pub fn retrograde_analysis(&self) -> Vec<usize> {
+            #[derive(Clone, Copy, Debug, PartialEq)]
+            enum Res {
+                DRAW,
+                WIN,
+                LOSE,
+            }
+            let mut deg = self.outdegree();
+            let mut ret = vec![Res::DRAW; self.n];
+
+            let mut q = VecDeque::new();
+            for i in 0..self.n {
+                if deg[i] == 0 {
+                    ret[i] = Res::LOSE;
+                    q.push_back(i);
+                }
+            }
+            while let Some(src) = q.pop_front() {
+                self.rev_edges[src].iter().for_each(|e| {
+                    if ret[e.dst] == Res::DRAW {
+                        deg[e.dst] -= 1;
+                        if ret[src] == Res::LOSE {
+                            ret[e.dst] = Res::WIN;
+                            q.push_back(e.dst);
+                        } else if deg[e.dst] == 0 {
+                            ret[e.dst] = Res::LOSE;
+                            q.push_back(e.dst);
+                        }
+                    }
+                });
+            }
+            ret.into_iter().map(|r| r as usize).collect()
         }
     }
 }
