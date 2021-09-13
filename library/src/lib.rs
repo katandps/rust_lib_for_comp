@@ -3,6 +3,7 @@ pub mod all_combination;
 pub mod all_permutation;
 pub mod binary_indexed_tree;
 pub mod binary_search;
+pub mod binary_trie;
 pub mod bipartite_graph;
 pub mod chinese_remainder_theorem;
 pub mod compress;
