@@ -1,3 +1,4 @@
+//! グラフライブラリ
 #[allow(unused_macros)]
 macro_rules! chmin {($base:expr, $($cmps:expr),+ $(,)*) => {{let cmp_min = min!($($cmps),+);if $base > cmp_min {$base = cmp_min;true} else {false}}};}
 #[allow(unused_macros)]
@@ -14,8 +15,6 @@ macro_rules! max {
     ($a:expr, $b:expr $(,)*) => {{if $a > $b {$a} else {$b}}};
     ($a:expr, $($rest:expr),+ $(,)*) => {{let b = max!($($rest),+);if $a > b {$a} else {b}}};
 }
-
-//! グラフライブラリ
 
 #[allow(unused_imports)]
 use graph::*;

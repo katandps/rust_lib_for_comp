@@ -49,7 +49,14 @@ impl BinaryTrie {
 
 impl std::fmt::Debug for BinaryTrie {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
-        write!(f, "{}", (0..self.size()).map(|i| self.nth(i)).join(" "))
+        write!(
+            f,
+            "{}",
+            (0..self.size())
+                .map(|i| self.nth(i).to_string())
+                .collect::<Vec<_>>()
+                .join(" ")
+        )
     }
 }
 
