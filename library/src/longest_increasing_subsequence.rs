@@ -1,20 +1,23 @@
-//! 最長増加部分列を求める (Longest Increasing Subsequence)
-//! $`長さ L の数列 A の最長増加部分列とは、
-//! 1 \leq i_1 < i_2 < ... < i_M \leq L
-//! かつ A_{i_1} < A_{i_2} < ... < A_{i_M} を満たす部分列 A_{i_1} , A_{i_2} , ... , A_{i_M} の中で、
-//! 最も M が大きいもの のこと`$
+//! 最長増加部分列 (Longest Increasing Subsequence)
+/// $`長さ L の数列 A の最長増加部分列とは、
+/// 1 \leq i_1 < i_2 < ... < i_M \leq L
+/// かつ A_{i_1} < A_{i_2} < ... < A_{i_M} を満たす部分列 A_{i_1} , A_{i_2} , ... , A_{i_M} の中で、
+/// 最も M が大きいもの のこと`$
 
 #[allow(unused_imports)]
 use longest_increasing_subsequence::*;
 
 #[allow(dead_code)]
 pub mod longest_increasing_subsequence {
+    use std::collections::VecDeque;
+
     const INF: i64 = 1 << 60;
 
     #[derive(Debug, Clone)]
     pub struct LIS {
         n: usize,
         dp: Vec<i64>,
+        stack: VecDeque<(usize, i64)>,
     }
 
     impl LIS {
@@ -22,12 +25,12 @@ pub mod longest_increasing_subsequence {
             LIS {
                 n,
                 dp: vec![INF; n],
+                stack: VecDeque::new(),
             }
         }
 
         /// LISを更新する
-        /// 更新したものの位置と値を返す
-        pub fn insert(&mut self, a: i64) -> (usize, i64) {
+        pub fn insert(&mut self, a: i64) {
             let mut ok = self.n as i64;
             let mut ng = -1;
             while (ok - ng).abs() > 1 {
@@ -38,11 +41,11 @@ pub mod longest_increasing_subsequence {
                     ng = mid;
                 }
             }
-            let ret = (ok as usize, self.dp[ok as usize]);
+            self.stack.push_front((ok as usize, self.dp[ok as usize]));
             self.dp[ok as usize] = a;
-            ret
         }
 
+        /// 最長増加部分列の長さを返す
         pub fn calc(&self) -> usize {
             let mut ok = 0;
             let mut ng = self.n as i64;
@@ -57,8 +60,32 @@ pub mod longest_increasing_subsequence {
             ok as usize + 1
         }
 
-        pub fn rollback(&mut self, rollback: (usize, i64)) {
-            self.dp[rollback.0] = rollback.1;
+        /// 更新をひとつ分巻き戻す
+        pub fn rollback(&mut self) {
+            if let Some((pos, val)) = self.stack.pop_front() {
+                self.dp[pos] = val;
+            }
+        }
+    }
+}
+
+#[cfg(test)]
+mod test {
+    use super::*;
+
+    #[test]
+    fn test() {
+        let mut lis = LIS::new(5);
+        let v = vec![1, 4, 2, 3, 5];
+        let expect = vec![1, 2, 2, 3, 4];
+        for i in 0..5 {
+            lis.insert(v[i]);
+            assert_eq!(expect[i], lis.calc());
+        }
+
+        for i in (0..5).rev() {
+            assert_eq!(expect[i], lis.calc());
+            lis.rollback();
         }
     }
 }
