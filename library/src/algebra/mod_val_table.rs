@@ -3,7 +3,7 @@ pub use mod_val_table::ModValTable;
 
 #[allow(dead_code)]
 mod mod_val_table {
-    use super::mod_int::*;
+    use crate::algebra::mod_int::mod_int::*;
 
     /// 剰余類Modについて、組み合わせや順列を数え上げる
     #[derive(std::fmt::Debug)]
@@ -19,8 +19,8 @@ mod mod_val_table {
         ///
         /// nを超える値を呼び出したとき、panicする
         /// ```rust, should_panic
-        /// # use library::mod_int::mod_int::Mi;
-        /// # use library::mod_val_table::ModValTable;
+        /// # use library::algebra::mod_int::mod_int::Mi;
+        /// # use library::algebra::mod_val_table::ModValTable;
         /// let fact = ModValTable::<Mi>::new(10);
         /// fact.combination(11, 11);
         /// ```
@@ -42,8 +42,8 @@ mod mod_val_table {
 
         /// Factorial 階乗 n!
         /// ```
-        /// # use library::mod_int::mod_int::Mi;
-        /// # use library::mod_val_table::ModValTable;
+        /// # use library::algebra::mod_int::mod_int::Mi;
+        /// # use library::algebra::mod_val_table::ModValTable;
         /// let five = ModValTable::<Mi>::new(5);
         /// let res = vec![1, 1, 2, 6, 24, 120];
         /// for i in 0..=5 {
@@ -57,8 +57,8 @@ mod mod_val_table {
 
         /// Permutation 順列 nPr = n! / (n - r)!
         /// ```
-        /// # use library::mod_int::mod_int::Mi;
-        /// # use library::mod_val_table::ModValTable;
+        /// # use library::algebra::mod_int::mod_int::Mi;
+        /// # use library::algebra::mod_val_table::ModValTable;
         /// let five = ModValTable::<Mi>::new(5);
         /// assert_eq!(1, five.permutation(5, 0).get());
         /// assert_eq!(5, five.permutation(5, 1).get());
@@ -78,8 +78,8 @@ mod mod_val_table {
         /// Combination 組合せ nCr = n! / (n - r)! r! = nPr / r!
         /// Binomial Coefficient
         /// ```
-        /// use library::mod_int::mod_int::Mi;
-        /// use library::mod_val_table::ModValTable;
+        /// use library::algebra::mod_int::mod_int::Mi;
+        /// use library::algebra::mod_val_table::ModValTable;
         /// let five = ModValTable::<Mi>::new(5);
         /// assert_eq!(1, five.combination(5, 0).get());
         /// assert_eq!(5, five.combination(5, 1).get());
@@ -111,4 +111,4 @@ mod mod_val_table {
 
 ////////////////////////////////////////////////////////
 
-use crate::mod_int::mod_int;
+use crate::algebra::mod_int::mod_int;

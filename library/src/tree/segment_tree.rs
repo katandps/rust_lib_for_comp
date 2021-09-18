@@ -1,3 +1,5 @@
+/// セグメント木
+
 #[allow(unused_imports)]
 use segment_tree::*;
 

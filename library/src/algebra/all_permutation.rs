@@ -1,3 +1,6 @@
+//! 順列の全列挙
+/// AtCoderではItertoolsでよい
+
 #[allow(unused_imports)]
 use all_permutation::*;
 

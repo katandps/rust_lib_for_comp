@@ -196,7 +196,7 @@ mod matrix {
 }
 ////////////////////////////////////////////////////////
 
-use crate::mod_int::mod_int::*;
+use crate::algebra::mod_int::mod_int::*;
 
 #[cfg(test)]
 mod test {

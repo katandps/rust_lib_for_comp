@@ -1,4 +1,5 @@
-/// 座標圧縮 O(NlogN)
+//! 座標圧縮 O(NlogN)
+//!
 #[allow(dead_code)]
 fn compress<T: Ord>(source: &[T]) -> Vec<usize> {
     let n = source.len();
@@ -19,7 +20,7 @@ fn compress<T: Ord>(source: &[T]) -> Vec<usize> {
 
 #[cfg(test)]
 mod test {
-    use crate::compress::*;
+    use crate::util::compress::*;
 
     #[test]
     fn compress_test() {

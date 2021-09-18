@@ -1,7 +1,8 @@
+//!じゃんけん
+
 #[allow(unused_imports)]
 use rps::*;
 
-///じゃんけん
 #[allow(dead_code)]
 mod rps {
     #[derive(Copy, Clone, Debug, Eq, PartialEq)]

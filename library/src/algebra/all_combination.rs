@@ -1,3 +1,6 @@
+//! 組み合わせの全列挙
+/// AtCoderではItertoolsでよい
+
 #[allow(unused_imports)]
 use all_combination::*;
 

@@ -1,3 +1,5 @@
+//! ディニッツ法
+
 #[allow(dead_code)]
 mod dinic {
     use std::collections::VecDeque;

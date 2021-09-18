@@ -1,3 +1,5 @@
+//! 二分探索
+
 #[allow(dead_code)]
 mod binary_search {
     fn search() -> isize {

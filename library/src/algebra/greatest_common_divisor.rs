@@ -1,3 +1,5 @@
+//! 最小公倍数(GCD)
+
 #[allow(unused_imports)]
 use greatest_common_divisor::*;
 

@@ -1,3 +1,5 @@
+//!標準入力を取得するヘルパー
+
 pub use reader::*;
 
 #[allow(dead_code)]

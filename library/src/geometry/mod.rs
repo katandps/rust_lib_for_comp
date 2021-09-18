@@ -1,5 +1,9 @@
+//! 幾何
+
 #[allow(unused_imports)]
 use geometric::*;
+
+pub mod floor_sum;
 
 #[allow(dead_code)]
 mod geometric {

@@ -1,3 +1,17 @@
+//! 代数
+
+pub mod all_combination;
+pub mod all_permutation;
+pub mod chinese_remainder_theorem;
+pub mod greatest_common_divisor;
+pub mod lucas_theorem;
+pub mod matrix;
+pub mod mod_int;
+pub mod mod_inv;
+pub mod mod_pow;
+pub mod mod_val_table;
+pub mod sieve_of_eratosthenes;
+
 /// マグマ
 /// 二項演算: $`M \circ M \to M`$
 pub trait Magma {

@@ -1,3 +1,5 @@
+//! 最大最小を求めるマクロ
+
 #[allow(unused_macros)]
 macro_rules! chmin {($base:expr, $($cmps:expr),+ $(,)*) => {{let cmp_min = min!($($cmps),+);if $base > cmp_min {$base = cmp_min;true} else {false}}};}
 #[allow(unused_macros)]

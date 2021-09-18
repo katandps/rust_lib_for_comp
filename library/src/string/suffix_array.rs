@@ -1,3 +1,5 @@
+//! 接尾辞配列
+
 pub mod suffix_array {
     use std::collections::BTreeMap;
 
@@ -236,7 +238,7 @@ pub mod suffix_array {
 
 #[cfg(test)]
 mod test {
-    use crate::suffix_array::suffix_array::SuffixArray;
+    use crate::string::suffix_array::suffix_array::SuffixArray;
 
     #[test]
     fn suffix_array_test() {

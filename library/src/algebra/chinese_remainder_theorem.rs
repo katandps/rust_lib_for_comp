@@ -1,3 +1,5 @@
+//! 中国剰余定理
+
 #[allow(unused_imports)]
 use chinese_remainder_theorem::*;
 

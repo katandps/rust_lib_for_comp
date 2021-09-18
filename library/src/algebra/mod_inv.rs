@@ -1,3 +1,5 @@
+//! 剰余体における逆元
+
 #[allow(unused_imports)]
 use mod_inv::*;
 
@@ -8,7 +10,7 @@ pub mod mod_inv {
     ///
     /// numberの逆元をmod moduloで求める
     /// ```
-    /// use library::mod_inv::mod_inv::mod_inv;
+    /// use library::algebra::mod_inv::mod_inv::mod_inv;
     /// assert_eq!(1, mod_inv(1, 13));
     /// assert_eq!(7, mod_inv(2, 13));
     /// assert_eq!(9, mod_inv(3, 13));

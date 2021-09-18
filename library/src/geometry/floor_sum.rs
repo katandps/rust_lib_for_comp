@@ -1,3 +1,5 @@
+//! 直線と格子点
+
 #[allow(unused_imports)]
 use floor_sum::*;
 

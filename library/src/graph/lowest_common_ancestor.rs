@@ -1,3 +1,5 @@
+//! 最近共通祖先
+
 #[allow(unused_imports)]
 use lowest_common_ancestor::LowestCommonAncestor;
 

@@ -1,3 +1,5 @@
+//! 整数での平方根
+
 #[allow(dead_code)]
 fn sqrt(a: isize) -> isize {
     let mut ng = std::i32::MAX as isize / 2;

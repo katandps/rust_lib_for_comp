@@ -1,3 +1,5 @@
+//! Fenwick Tree(Binary Indexed Tree)
+
 #[allow(unused_imports)]
 use binary_indexed_tree::*;
 
