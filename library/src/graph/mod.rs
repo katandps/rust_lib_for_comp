@@ -24,6 +24,7 @@ macro_rules! max {
 pub mod bipartite_graph;
 pub mod grid;
 pub mod lowest_common_ancestor;
+mod strongly_connected_components;
 pub mod union_find;
 pub mod warshall_floyd;
 
@@ -85,9 +86,9 @@ pub mod graph {
     /// 辺の情報を使用してグラフの問題を解くためのライブラリ
     #[derive(Clone, Debug)]
     pub struct Graph {
-        n: usize,
-        edges: Vec<Vec<Edge>>,
-        rev_edges: Vec<Vec<Edge>>,
+        pub n: usize,
+        pub edges: Vec<Vec<Edge>>,
+        pub rev_edges: Vec<Vec<Edge>>,
     }
 
     impl Graph {
