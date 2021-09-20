@@ -24,6 +24,7 @@ macro_rules! max {
 pub mod bipartite_graph;
 pub mod grid;
 pub mod lowest_common_ancestor;
+mod retrograde_analysis;
 mod strongly_connected_components;
 pub mod union_find;
 pub mod warshall_floyd;
@@ -240,7 +241,7 @@ pub mod graph {
         }
 
         /// 各頂点の出次数を返す
-        fn outdegree(&self) -> Vec<i32> {
+        pub fn outdegree(&self) -> Vec<i32> {
             (0..self.n)
                 .map(|src| self.edges[src].len() as i32)
                 .collect()
@@ -283,44 +284,6 @@ pub mod graph {
                 }
             }
             dp
-        }
-
-        /// 後退解析で各点をスタートとしたときの勝敗を求める
-        /// 0: 未定/引き分け
-        /// 1: 勝ち
-        /// 2: 負け
-        pub fn retrograde_analysis(&self) -> Vec<usize> {
-            #[derive(Clone, Copy, Debug, PartialEq)]
-            enum Res {
-                DRAW,
-                WIN,
-                LOSE,
-            }
-            let mut deg = self.outdegree();
-            let mut ret = vec![Res::DRAW; self.n];
-
-            let mut q = VecDeque::new();
-            for i in 0..self.n {
-                if deg[i] == 0 {
-                    ret[i] = Res::LOSE;
-                    q.push_back(i);
-                }
-            }
-            while let Some(src) = q.pop_front() {
-                self.rev_edges[src].iter().for_each(|e| {
-                    if ret[e.dst] == Res::DRAW {
-                        deg[e.dst] -= 1;
-                        if ret[src] == Res::LOSE {
-                            ret[e.dst] = Res::WIN;
-                            q.push_back(e.dst);
-                        } else if deg[e.dst] == 0 {
-                            ret[e.dst] = Res::LOSE;
-                            q.push_back(e.dst);
-                        }
-                    }
-                });
-            }
-            ret.into_iter().map(|r| r as usize).collect()
         }
     }
 }
