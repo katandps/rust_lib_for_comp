@@ -1,8 +1,8 @@
 #[allow(unused_imports)]
-use warshall_floyd::*;
+pub use warshall_floyd::*;
 
 #[allow(dead_code)]
-mod warshall_floyd {
+pub mod warshall_floyd {
     use std::cmp::min;
 
     type COST = usize;

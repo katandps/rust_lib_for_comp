@@ -1,7 +1,7 @@
 //! ディニッツ法
 
 #[allow(dead_code)]
-mod dinic {
+pub mod dinic {
     use std::collections::VecDeque;
 
     struct Edge {

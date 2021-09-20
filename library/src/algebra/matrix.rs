@@ -1,8 +1,8 @@
 #[allow(unused_imports)]
-use matrix::*;
+pub use matrix::*;
 
 #[allow(dead_code)]
-mod matrix {
+pub mod matrix {
     use super::*;
     use itertools::Itertools;
     use std::convert::TryInto;

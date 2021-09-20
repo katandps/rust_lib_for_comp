@@ -1,10 +1,10 @@
 //! リュカの定理( `$nCr mod p$` を `$O(logN)$` で得る )
 
 #[allow(unused_imports)]
-use lucas_theorem::*;
+pub use lucas_theorem::*;
 
 #[allow(dead_code)]
-mod lucas_theorem {
+pub mod lucas_theorem {
     pub fn lucas_theorem(mut n: usize, mut r: usize, p: usize) -> usize {
         if p < 2 {
             return 0;

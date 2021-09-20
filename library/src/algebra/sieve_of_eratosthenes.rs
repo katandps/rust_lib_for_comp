@@ -1,8 +1,8 @@
 #[allow(unused_imports)]
-use sieve_of_eratosthenes::*;
+pub use sieve_of_eratosthenes::*;
 
 #[allow(dead_code)]
-mod sieve_of_eratosthenes {
+pub mod sieve_of_eratosthenes {
     pub fn primes(m: usize) -> Vec<usize> {
         if m < 2 {
             return Vec::new();

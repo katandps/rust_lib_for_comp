@@ -1,10 +1,10 @@
 //! 最小公倍数(GCD)
 
 #[allow(unused_imports)]
-use greatest_common_divisor::*;
+pub use greatest_common_divisor::*;
 
 #[allow(dead_code)]
-mod greatest_common_divisor {
+pub mod greatest_common_divisor {
     use std::mem::swap;
 
     pub fn gcd(mut a: usize, mut b: usize) -> usize {

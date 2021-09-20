@@ -1,10 +1,10 @@
 //! 中国剰余定理
 
 #[allow(unused_imports)]
-use chinese_remainder_theorem::*;
+pub use chinese_remainder_theorem::*;
 
 #[allow(dead_code)]
-mod chinese_remainder_theorem {
+pub mod chinese_remainder_theorem {
     /// 中国剰余定理
     /// x === b1 mod m, x === b2 mod m となる整数xを返す(x === r mod m)
     /// (r, m) の順で返却

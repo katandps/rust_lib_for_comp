@@ -2,7 +2,7 @@
 pub use mod_val_table::ModValTable;
 
 #[allow(dead_code)]
-mod mod_val_table {
+pub mod mod_val_table {
     use super::*;
 
     /// 剰余類Modについて、組み合わせや順列を数え上げる
@@ -111,4 +111,4 @@ mod mod_val_table {
 
 ////////////////////////////////////////////////////////
 
-use crate::algebra::mod_int::mod_int::*;
+use crate::algebra::mod_int::*;

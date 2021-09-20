@@ -2,10 +2,10 @@
 /// AtCoderではItertoolsでよい
 
 #[allow(unused_imports)]
-use all_combination::*;
+pub use all_combination::*;
 
 #[allow(dead_code)]
-mod all_combination {
+pub mod all_combination {
     pub struct AllCombination {
         v: Vec<usize>,
     }

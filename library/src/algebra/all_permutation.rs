@@ -2,10 +2,10 @@
 /// AtCoderではItertoolsでよい
 
 #[allow(unused_imports)]
-use all_permutation::*;
+pub use all_permutation::*;
 
 #[allow(dead_code)]
-mod all_permutation {
+pub mod all_permutation {
     pub struct AllPermutation {
         v: Vec<Vec<usize>>,
     }

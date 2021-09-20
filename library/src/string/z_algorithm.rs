@@ -1,8 +1,8 @@
 #[allow(unused_imports)]
-use z_algorithm::*;
+pub use z_algorithm::*;
 
 #[allow(dead_code)]
-mod z_algorithm {
+pub mod z_algorithm {
     /// 文字列SとSのi文字目から始まる文字列の共通部分列の長さをO(N)で求める
     pub fn z(s: &Vec<char>) -> Vec<usize> {
         let mut c = 0;

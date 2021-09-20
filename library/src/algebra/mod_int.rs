@@ -3,7 +3,7 @@
 ////////////////////////////////////////////////////////
 
 #[allow(unused_imports)]
-use mod_int::*;
+pub use mod_int::*;
 
 #[allow(dead_code)]
 pub mod mod_int {

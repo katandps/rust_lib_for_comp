@@ -1,8 +1,8 @@
 #[allow(unused_imports)]
-use union_find::*;
+pub use union_find::*;
 
 #[allow(dead_code)]
-mod union_find {
+pub mod union_find {
     pub struct UnionFind {
         parent: Vec<usize>,
         rank: Vec<usize>,

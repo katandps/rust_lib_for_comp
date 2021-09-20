@@ -1,12 +1,12 @@
 //! 幾何
 
-#[allow(unused_imports)]
-use geometric::*;
-
 pub mod floor_sum;
 
+#[allow(unused_imports)]
+pub use geometric::*;
+
 #[allow(dead_code)]
-mod geometric {
+pub mod geometric {
     use std::f64;
     use std::fmt;
     use std::ops::{Add, AddAssign, Div, DivAssign, Mul, MulAssign, Sub, SubAssign};

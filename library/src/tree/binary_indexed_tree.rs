@@ -1,10 +1,10 @@
 //! Fenwick Tree(Binary Indexed Tree)
 
 #[allow(unused_imports)]
-use binary_indexed_tree::*;
+pub use binary_indexed_tree::*;
 
 #[allow(dead_code)]
-mod binary_indexed_tree {
+pub mod binary_indexed_tree {
     #[derive(Clone)]
     pub struct BinaryIndexedTree {
         n: usize,

@@ -1,10 +1,10 @@
 //!じゃんけん
 
 #[allow(unused_imports)]
-use rps::*;
+pub use rps::*;
 
 #[allow(dead_code)]
-mod rps {
+pub mod rps {
     #[derive(Copy, Clone, Debug, Eq, PartialEq)]
     pub enum RPS {
         Rock,

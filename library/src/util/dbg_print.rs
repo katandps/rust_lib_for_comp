@@ -1,4 +1,4 @@
-//! printデバッグしにくいデータ構造を出力する
+//! printデバッグしにくいデータ構造を出力する(コピペ用)
 
 #[allow(unused_imports)]
 use dbg_print::*;

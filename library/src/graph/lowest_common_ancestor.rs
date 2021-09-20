@@ -1,10 +1,10 @@
 //! 最近共通祖先
 
 #[allow(unused_imports)]
-use lowest_common_ancestor::LowestCommonAncestor;
+pub use lowest_common_ancestor::LowestCommonAncestor;
 
 #[allow(dead_code)]
-mod lowest_common_ancestor {
+pub mod lowest_common_ancestor {
     use std::mem::swap;
 
     /// LowestCommonAncestor(LCA)を求めるライブラリ

@@ -1,10 +1,10 @@
 //! 直線と格子点
 
 #[allow(unused_imports)]
-use floor_sum::*;
+pub use floor_sum::*;
 
 #[allow(dead_code)]
-mod floor_sum {
+pub mod floor_sum {
     type NUM = i64;
 
     /// y = (Ax + B)/M (0 <= x <= N) の下にある格子点の数を求める

@@ -1,8 +1,10 @@
+//! グリッドグラフ
+
 #[allow(unused_imports)]
-use grid::*;
+pub use grid::*;
 
 #[allow(dead_code)]
-mod grid {
+pub mod grid {
     #[derive(Debug)]
     pub struct Grid<T> {
         pub h: usize,

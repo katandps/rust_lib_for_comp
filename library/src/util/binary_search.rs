@@ -1,4 +1,4 @@
-//! 二分探索
+//! 二分探索(コピペ用)
 
 #[allow(dead_code)]
 mod binary_search {
