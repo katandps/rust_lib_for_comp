@@ -24,8 +24,8 @@ macro_rules! max {
 pub mod bipartite_graph;
 pub mod grid;
 pub mod lowest_common_ancestor;
-mod retrograde_analysis;
-mod strongly_connected_components;
+pub mod retrograde_analysis;
+pub mod strongly_connected_components;
 pub mod union_find;
 pub mod warshall_floyd;
 
