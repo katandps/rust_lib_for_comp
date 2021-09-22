@@ -1,10 +1,12 @@
 //! 最近共通祖先
+use super::Graph;
 
 #[allow(unused_imports)]
 pub use lowest_common_ancestor::LowestCommonAncestor;
 
 #[allow(dead_code)]
 pub mod lowest_common_ancestor {
+    use super::Graph;
     use std::mem::swap;
 
     /// LowestCommonAncestor(LCA)を求めるライブラリ
@@ -15,19 +17,18 @@ pub mod lowest_common_ancestor {
     }
 
     impl LowestCommonAncestor {
-        pub fn new(graph: &Vec<Vec<usize>>, root: usize) -> LowestCommonAncestor {
-            let v = graph.len();
+        pub fn new(g: &Graph, root: usize) -> LowestCommonAncestor {
             let mut k = 1;
-            while (1 << k) < v {
+            while (1 << k) < g.n {
                 k += 1;
             }
             let mut lca = LowestCommonAncestor {
-                parent: vec![vec![std::usize::MAX; v]; k],
-                dist: vec![std::usize::MAX; v],
+                parent: vec![vec![std::usize::MAX; g.n]; k],
+                dist: vec![std::usize::MAX; g.n],
             };
-            lca.dfs(graph, root, std::usize::MAX, 0);
+            lca.dfs(g, root, std::usize::MAX, 0);
             for k in 0..k - 1 {
-                for v in 0..v {
+                for v in 0..g.n {
                     if lca.parent[k][v] == std::usize::MAX {
                         lca.parent[k + 1][v] = 1;
                     } else {
@@ -42,12 +43,12 @@ pub mod lowest_common_ancestor {
         /// v: 今見ている頂点
         /// p: parent
         /// d: 根からの距離
-        fn dfs(&mut self, graph: &Vec<Vec<usize>>, v: usize, p: usize, d: usize) {
-            self.parent[0][v] = p;
-            self.dist[v] = d;
-            for &to in &graph[v] {
-                if to != p {
-                    self.dfs(graph, to, v, d + 1);
+        fn dfs(&mut self, g: &Graph, src: usize, p: usize, d: usize) {
+            self.parent[0][src] = p;
+            self.dist[src] = d;
+            for &to in &g.edges[src] {
+                if to.dst != p {
+                    self.dfs(g, to.dst, src, d + 1);
                 }
             }
         }
@@ -105,15 +106,15 @@ mod test {
         // 2   4   7
         // |   |
         // 5   8
-        let mut graph = vec![Vec::new(); 9];
-        graph[0].push(1);
-        graph[0].push(2);
-        graph[1].push(3);
-        graph[1].push(4);
-        graph[2].push(5);
-        graph[3].push(6);
-        graph[3].push(7);
-        graph[4].push(8);
+        let mut graph = Graph::new(9);
+        graph.add_edge(0, 1, 1);
+        graph.add_edge(0, 2, 1);
+        graph.add_edge(1, 3, 1);
+        graph.add_edge(1, 4, 1);
+        graph.add_edge(2, 5, 1);
+        graph.add_edge(3, 6, 1);
+        graph.add_edge(3, 7, 1);
+        graph.add_edge(4, 8, 1);
 
         let mut lca = LowestCommonAncestor::new(&graph, 0);
 
