@@ -21,19 +21,17 @@ pub mod binary_indexed_tree {
 
         /// add x to i
         pub fn add(&mut self, i: usize, x: VALUE) {
-            let i = i + 1; //0-indexed
-            let mut idx = i as i32;
+            let mut idx = i as i32 + 1;
             while idx <= self.n as i32 {
                 self.bit[idx as usize] += x;
                 idx += idx & -idx;
             }
         }
 
-        /// sum of [0, i)
+        /// sum of [0, i]
         pub fn sum(&self, i: usize) -> VALUE {
-            let i = i + 1;
             let mut ret = 0;
-            let mut idx = i as i32;
+            let mut idx = i as i32 + 1;
             while idx > 0 {
                 ret += self.bit[idx as usize];
                 idx -= idx & -idx;
@@ -41,12 +39,14 @@ pub mod binary_indexed_tree {
             ret
         }
 
-        /// sum of [a, b]
+        /// sum of [a, b)
         pub fn sum_ab(&self, a: usize, b: usize) -> VALUE {
-            if a == 0 {
-                self.sum(b)
+            if b == 0 {
+                0
+            } else if a == 0 {
+                self.sum(b - 1)
             } else {
-                self.sum(b) - self.sum(a - 1)
+                self.sum(b - 1) - self.sum(a - 1)
             }
         }
     }
