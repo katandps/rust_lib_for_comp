@@ -8,6 +8,8 @@ edition = "2018"
 
 [dependencies]
 
+[dev-dependencies]
+
 # 多バイト長整数、分数、複素数など
 num = "=0.2.1"
 num-bigint = "=0.2.5"
@@ -94,9 +96,6 @@ rustc-hash = "=1.0.1"
 # 固定配列上のベクタ。ヒープ領域でなくスタック領域にアロケートされるので高速かもしれない
 smallvec = "=1.1.0"
 
-# ---------------------------------------------------------------------
-
-[dev-dependencies]
 # cli_test_dir = "0.1"
 
 [profile.release]

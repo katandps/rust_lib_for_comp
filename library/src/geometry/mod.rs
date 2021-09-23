@@ -41,10 +41,7 @@ pub mod geometric {
                     Some(PI * 3.0 / 2.0)
                 }
             } else {
-                Some(
-                    (libm::atan(self.y / self.x) + if self.x > 0.0 { 0.0 } else { PI })
-                        .rem_euclid(PI * 2.0),
-                )
+                Some((self.y).atan2(self.x).rem_euclid(PI * 2.0))
             }
         }
 
@@ -372,5 +369,38 @@ mod test {
         let line = Line::new(p1, p2);
         assert_eq!(line.x(2.0), Some(1.0));
         assert_eq!(line.y(1.0), Some(2.0));
+    }
+
+    #[test]
+    fn declination() {
+        let p = Point::new(0.0, 0.0);
+        assert_eq!(None, p.declination());
+
+        let p = Point::new(1.0, 0.0);
+        assert_eq!(Some(std::f64::consts::PI * 0.0 / 4.0), p.declination());
+
+        let p = Point::new(1.0, 1.0);
+        assert_eq!(Some(std::f64::consts::PI * 1.0 / 4.0), p.declination());
+
+        let p = Point::new(0.0, 1.0);
+        assert_eq!(Some(std::f64::consts::PI * 2.0 / 4.0), p.declination());
+
+        let p = Point::new(-1.0, 1.0);
+        assert_eq!(Some(std::f64::consts::PI * 3.0 / 4.0), p.declination());
+
+        let p = Point::new(-1.0, 0.0);
+        assert_eq!(Some(std::f64::consts::PI * 4.0 / 4.0), p.declination());
+
+        let p = Point::new(-1.0, -1.0);
+        assert_eq!(Some(std::f64::consts::PI * 5.0 / 4.0), p.declination());
+
+        let p = Point::new(0.0, -1.0);
+        assert_eq!(Some(std::f64::consts::PI * 6.0 / 4.0), p.declination());
+
+        let p = Point::new(1.0, -1.0);
+        assert_eq!(Some(std::f64::consts::PI * 7.0 / 4.0), p.declination());
+
+        let p = Point::new(1.0, -0.0);
+        assert_eq!(Some(std::f64::consts::PI * 0.0 / 4.0), p.declination());
     }
 }

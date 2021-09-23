@@ -4,7 +4,6 @@ pub use matrix::*;
 #[allow(dead_code)]
 pub mod matrix {
     use super::*;
-    use itertools::Itertools;
     use std::convert::TryInto;
     use std::fmt;
     use std::ops;
@@ -189,7 +188,15 @@ pub mod matrix {
             write!(
                 f,
                 "{}",
-                self.buf.iter().map(|row| row.iter().join(" ")).join("\n")
+                self.buf
+                    .iter()
+                    .map(|row| row
+                        .iter()
+                        .map(|mi| mi.to_string())
+                        .collect::<Vec<_>>()
+                        .join(" "))
+                    .collect::<Vec<_>>()
+                    .join("\n")
             )
         }
     }

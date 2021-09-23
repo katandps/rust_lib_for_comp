@@ -53,9 +53,14 @@ pub mod binary_indexed_tree {
 
     impl std::fmt::Debug for BinaryIndexedTree {
         fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
-            use itertools::*;
-            let v = (0..self.n).map(|i| self.sum_ab(i, i)).join(" ");
-            let v2 = (0..self.n).map(|i| self.sum(i)).join(" ");
+            let v = (0..self.n)
+                .map(|i| self.sum_ab(i, i).to_string())
+                .collect::<Vec<_>>()
+                .join(" ");
+            let v2 = (0..self.n)
+                .map(|i| self.sum(i).to_string())
+                .collect::<Vec<_>>()
+                .join(" ");
             write!(f, "\n{}\n{}", v, v2)
         }
     }
