@@ -27,7 +27,7 @@ jobs:
     steps:
       - uses: actions/checkout@v2
       - name: Run doc
-        run: cd library && cargo doc --no-deps
+        run: cd library && cargo doc --no-deps --document-private-items
 
       - name: Deploy
         uses: peaceiris/actions-gh-pages@v3
