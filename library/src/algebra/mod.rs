@@ -21,7 +21,8 @@ pub mod algebra {
     use std::iter::{Product, Sum};
     use std::ops::{
         Add, AddAssign, BitAnd, BitAndAssign, BitOr, BitOrAssign, BitXor, BitXorAssign, Div,
-        DivAssign, Mul, MulAssign, Not, Rem, RemAssign, Sub, SubAssign,
+        DivAssign, Mul, MulAssign, Not, Rem, RemAssign, Shl, ShlAssign, Shr, ShrAssign, Sub,
+        SubAssign,
     };
 
     /// マグマ
@@ -87,6 +88,8 @@ pub mod algebra {
         }
         /// 作用fをvalueに作用させる
         fn apply(f: &Self::F, value: &<Self::M as Magma>::M) -> <Self::M as Magma>::M;
+        /// 作用fの単位元
+        fn identity_map() -> Self::F;
         /// 作用fと作用gを合成する
         fn compose(f: &Self::F, g: &Self::F) -> Self::F;
     }
@@ -136,6 +139,10 @@ pub mod algebra {
         + BitOrAssign
         + BitAndAssign
         + BitXorAssign
+        + Shl<Output = Self>
+        + Shr<Output = Self>
+        + ShlAssign
+        + ShrAssign
         + fmt::Display
         + fmt::Debug
         + Zero

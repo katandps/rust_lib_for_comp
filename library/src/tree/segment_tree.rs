@@ -11,6 +11,7 @@ pub mod segment_tree {
     use super::*;
 
     /// セグメント木
+    /// 一点更新、区間取得
     #[derive(Clone, Debug)]
     pub struct SegmentTree<M: Monoid> {
         n: usize,

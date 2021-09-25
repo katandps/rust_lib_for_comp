@@ -243,7 +243,7 @@ mod test {
     #[test]
     fn suffix_array_test() {
         let s: Vec<_> = "mmiissiissiippii".chars().map(|c| c as u8).collect();
-        let sa = SuffixArray::create(&s);
-        dbg!(sa);
+        let _sa = SuffixArray::create(&s);
+        // dbg!(sa);
     }
 }
