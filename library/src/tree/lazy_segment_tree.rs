@@ -1,6 +1,7 @@
 //! 遅延評価セグメント木
 use crate::algebra::{MapMonoid, Monoid};
 
+////////////////////////////////////////
 #[allow(unused_imports)]
 use lazy_segment_tree::*;
 
@@ -20,17 +21,17 @@ pub mod lazy_segment_tree {
         lazy: Vec<M::Func>,
     }
 
+    /// 1-indexedで配列の内容を詰めたセグメント木を生成する
     impl<M: MapMonoid> From<&Vec<<M::Mono as Monoid>::M>> for LazySegmentTree<M> {
         fn from(v: &Vec<<M::Mono as Monoid>::M>) -> Self {
-            let mut segtree = Self::new(v.len());
-            segtree.node[segtree.n - 1..2 * segtree.n - 1].clone_from_slice(&v);
+            let mut segtree = Self::new(v.len() + 1);
+            segtree.node[segtree.n + 1..segtree.n + v.len()].clone_from_slice(&v);
             for i in (0..segtree.n - 1).rev() {
                 segtree.calc(i);
             }
             segtree
         }
     }
-
     impl<M: MapMonoid> LazySegmentTree<M> {
         pub fn new(n: usize) -> Self {
             let n = (n + 1).next_power_of_two();
@@ -167,6 +168,9 @@ pub mod lazy_segment_tree {
         }
     }
 }
+
+///////////////////////////////////////////////////
+
 #[cfg(test)]
 mod test {
     use crate::algebra::impl_map_monoid::add_sum::AddSum;
