@@ -1,5 +1,5 @@
 //! 遅延評価セグメント木
-use crate::algebra::{Magma, MapMonoid, Unital};
+use crate::algebra::{MapMonoid, Monoid};
 
 #[allow(unused_imports)]
 use lazy_segment_tree::*;
@@ -10,15 +10,18 @@ pub mod lazy_segment_tree {
 
     /// 遅延評価セグメント木
     /// 区間更新、区間取得
+    ///
+    /// 実装内部は1-indexed
+    #[derive(Debug, Clone)]
     pub struct LazySegmentTree<M: MapMonoid> {
         n: usize,
         log: usize,
-        node: Vec<<M::M as Magma>::M>,
-        lazy: Vec<M::F>,
+        node: Vec<<<M as MapMonoid>::Mono as Monoid>::M>,
+        lazy: Vec<M::Func>,
     }
 
-    impl<M: MapMonoid> From<&Vec<<M::M as Magma>::M>> for LazySegmentTree<M> {
-        fn from(v: &Vec<<M::M as Magma>::M>) -> Self {
+    impl<M: MapMonoid> From<&Vec<<M::Mono as Monoid>::M>> for LazySegmentTree<M> {
+        fn from(v: &Vec<<M::Mono as Monoid>::M>) -> Self {
             let mut segtree = Self::new(v.len());
             segtree.node[segtree.n - 1..2 * segtree.n - 1].clone_from_slice(&v);
             for i in (0..segtree.n - 1).rev() {
@@ -32,26 +35,30 @@ pub mod lazy_segment_tree {
         pub fn new(n: usize) -> Self {
             let n = (n + 1).next_power_of_two();
             let log = n.trailing_zeros() as usize;
-            let node = vec![M::M::unit(); 2 * n - 1];
+            let node = vec![M::unit(); 2 * n];
             let lazy = vec![M::identity_map(); n];
-            Self { n, log, node, lazy }
+            let mut segtree = Self { n, log, node, lazy };
+            for i in (1..n).rev() {
+                segtree.calc(i)
+            }
+            segtree
         }
 
         /// 一点更新
-        pub fn update_at(&mut self, mut i: usize, f: M::F) {
+        pub fn update_at(&mut self, mut i: usize, f: M::Func) {
             assert!(i < self.n);
-            i += self.n - 1;
-            for j in (0..self.n).rev() {
+            i += self.n;
+            for j in (1..=self.log).rev() {
                 self.propagate(i >> j);
             }
             self.node[i] = M::apply(&f, &self.node[i]);
-            for j in 0..self.n {
+            for j in 1..=self.log {
                 self.calc(i >> j)
             }
         }
 
         /// 区間更新 [l, r)
-        pub fn update_range(&mut self, mut l: usize, mut r: usize, f: M::F) {
+        pub fn update_range(&mut self, mut l: usize, mut r: usize, f: M::Func) {
             assert!(l <= r && r <= self.n);
             if l == r {
                 return;
@@ -95,9 +102,9 @@ pub mod lazy_segment_tree {
         }
 
         /// i番目の値を取得する
-        pub fn get(&mut self, i: usize) -> <M::M as Magma>::M {
+        pub fn get(&mut self, mut i: usize) -> <M::Mono as Monoid>::M {
             assert!(i < self.n);
-            let i = i + self.n;
+            i += self.n;
             for j in (1..self.log).rev() {
                 self.propagate(i >> j);
             }
@@ -106,10 +113,10 @@ pub mod lazy_segment_tree {
 
         /// 区間 $`[l, r)`$ の値を取得する
         /// $`l == r`$ のときは $`unit`$ を返す
-        pub fn prod(&mut self, mut l: usize, mut r: usize) -> <M::M as Magma>::M {
+        pub fn prod(&mut self, mut l: usize, mut r: usize) -> <M::Mono as Monoid>::M {
             assert!(l <= r && r <= self.n);
             if l == r {
-                return M::M::unit();
+                return M::unit();
             }
             l += self.n;
             r += self.n;
@@ -121,8 +128,8 @@ pub mod lazy_segment_tree {
                     self.propagate(r >> i);
                 }
             }
-            let mut sml = M::M::unit();
-            let mut smr = M::M::unit();
+            let mut sml = M::unit();
+            let mut smr = M::unit();
             while l < r {
                 if l & 1 != 0 {
                     sml = M::op(&sml, &self.node[l]);
@@ -140,12 +147,12 @@ pub mod lazy_segment_tree {
 
         /// k番目の区間を内包する区間の値から計算する
         fn calc(&mut self, k: usize) {
-            assert!(2 * k + 2 < self.n);
-            self.node[k] = M::op(&self.node[2 * k + 1], &self.node[2 * k + 2]);
+            assert!(2 * k + 1 < self.node.len());
+            self.node[k] = M::op(&self.node[2 * k], &self.node[2 * k + 1]);
         }
 
-        /// k番目の区間に作用を適用する
-        fn eval(&mut self, k: usize, f: M::F) {
+        /// k番目の区間の値に作用を適用する
+        fn eval(&mut self, k: usize, f: M::Func) {
             self.node[k] = M::apply(&f, &self.node[k]);
             if k < self.n {
                 self.lazy[k] = M::compose(&f, &self.lazy[k]);
@@ -160,14 +167,26 @@ pub mod lazy_segment_tree {
         }
     }
 }
-
 #[cfg(test)]
 mod test {
+    use crate::algebra::impl_map_monoid::add_sum::AddSum;
+    use crate::tree::lazy_segment_tree::lazy_segment_tree::LazySegmentTree;
+
     #[test]
     fn a() {
-        // dbg!(3u32.trailing_zeros());
-        // dbg!(4u32.trailing_zeros());
-        // dbg!(8u32.trailing_zeros());
-        // dbg!(9u32.trailing_zeros());
+        let n = 5;
+        let mut segtree = LazySegmentTree::<AddSum>::new(n);
+
+        for i in 1..n {
+            assert_eq!(0, segtree.prod(i - 1, i).value);
+        }
+
+        // [0, 0, 3, 0, 0]
+        segtree.update_at(2, 3);
+        assert_eq!(3, segtree.prod(2, 3).value);
+
+        // [0, 2, 5, 2, 0]
+        segtree.update_range(1, 4, 2);
+        assert_eq!(7, segtree.prod(0, 3).value);
     }
 }

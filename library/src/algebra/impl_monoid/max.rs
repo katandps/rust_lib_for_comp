@@ -1,20 +1,19 @@
 //! $`a \circ b \to max(a, b)`$
-use crate::algebra::{Associative, BoundedBelow, Magma, SemiGroup, Unital};
+use crate::algebra::{Associative, BoundedBelow, Magma, Unital};
 
 pub use max::*;
 pub mod max {
     use super::*;
     use std::convert::Infallible;
+    use std::fmt::Debug;
     use std::marker::PhantomData;
 
     #[derive(Clone, Debug)]
     pub struct Max<S>(Infallible, PhantomData<fn() -> S>);
 
-    impl<S> SemiGroup for Max<S> where S: BoundedBelow + Copy + Ord {}
-
     impl<S> Magma for Max<S>
     where
-        S: BoundedBelow + Copy + Ord,
+        S: BoundedBelow + Copy + Ord + Debug,
     {
         type M = S;
 
@@ -23,11 +22,11 @@ pub mod max {
         }
     }
 
-    impl<S> Associative for Max<S> where S: BoundedBelow + Copy + Ord {}
+    impl<S> Associative for Max<S> where S: BoundedBelow + Copy + Ord + Debug {}
 
     impl<S> Unital for Max<S>
     where
-        S: BoundedBelow + Copy + Ord,
+        S: BoundedBelow + Copy + Ord + Debug,
     {
         fn unit() -> Self::M {
             S::min_value()

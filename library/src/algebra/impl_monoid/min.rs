@@ -1,20 +1,19 @@
 //! $`a \circ b \to min(a, b)`$
-use crate::algebra::{Associative, BoundedAbove, Magma, SemiGroup, Unital};
+use crate::algebra::{Associative, BoundedAbove, Magma, Unital};
 
 pub use min::*;
 pub mod min {
     use super::*;
     use std::convert::Infallible;
+    use std::fmt::Debug;
     use std::marker::PhantomData;
 
     #[derive(Clone, Debug)]
     pub struct Min<S>(Infallible, PhantomData<fn() -> S>);
 
-    impl<S> SemiGroup for Min<S> where S: BoundedAbove + Copy + Ord {}
-
     impl<S> Magma for Min<S>
     where
-        S: BoundedAbove + Copy + Ord,
+        S: BoundedAbove + Copy + Ord + Debug,
     {
         type M = S;
 
@@ -23,11 +22,11 @@ pub mod min {
         }
     }
 
-    impl<S> Associative for Min<S> where S: BoundedAbove + Copy + Ord {}
+    impl<S> Associative for Min<S> where S: BoundedAbove + Copy + Ord + Debug {}
 
     impl<S> Unital for Min<S>
     where
-        S: BoundedAbove + Copy + Ord,
+        S: BoundedAbove + Copy + Ord + Debug,
     {
         fn unit() -> Self::M {
             S::max_value()

@@ -4,6 +4,7 @@ pub mod all_combination;
 pub mod all_permutation;
 pub mod chinese_remainder_theorem;
 pub mod greatest_common_divisor;
+pub mod impl_map_monoid;
 pub mod impl_monoid;
 pub mod lucas_theorem;
 pub mod matrix;
@@ -18,6 +19,7 @@ pub mod sieve_of_eratosthenes;
 pub use algebra::*;
 pub mod algebra {
     use std::fmt;
+    use std::fmt::Debug;
     use std::iter::{Product, Sum};
     use std::ops::{
         Add, AddAssign, BitAnd, BitAndAssign, BitOr, BitOrAssign, BitXor, BitXorAssign, Div,
@@ -29,7 +31,7 @@ pub mod algebra {
     /// 二項演算: $`M \circ M \to M`$
     pub trait Magma {
         /// マグマを構成する集合$`M`$
-        type M: Clone + PartialEq;
+        type M: Clone + Debug + PartialEq;
         /// マグマを構成する演算$`op`$
         fn op(x: &Self::M, y: &Self::M) -> Self::M;
     }
@@ -39,7 +41,8 @@ pub mod algebra {
     pub trait Associative {}
 
     /// 半群
-    pub trait SemiGroup: Magma + Associative {}
+    pub trait SemiGroup {}
+    impl<M: Magma + Associative> SemiGroup for M {}
 
     /// 単位的
     pub trait Unital: Magma {
@@ -49,7 +52,26 @@ pub mod algebra {
 
     /// モノイド
     /// 結合則と、単位元を持つ
-    pub trait Monoid: SemiGroup + Unital {
+    pub trait Monoid {
+        type M: Clone + Debug + PartialEq;
+        fn op(x: &Self::M, y: &Self::M) -> Self::M;
+
+        fn unit() -> Self::M;
+
+        /// $`x^n = x\circ\cdots\circ x`$
+        fn pow(&self, x: Self::M, n: usize) -> Self::M;
+    }
+
+    impl<M: SemiGroup + Unital> Monoid for M {
+        type M = M::M;
+        fn op(x: &M::M, y: &M::M) -> M::M {
+            M::op(x, y)
+        }
+
+        fn unit() -> Self::M {
+            M::unit()
+        }
+
         /// $`x^n = x\circ\cdots\circ x`$
         fn pow(&self, x: Self::M, mut n: usize) -> Self::M {
             let mut res = Self::unit();
@@ -65,8 +87,6 @@ pub mod algebra {
         }
     }
 
-    impl<M: SemiGroup + Unital> Monoid for M {}
-
     /// 可逆的
     /// $`\exists e \in T, \forall a \in T, \exists b,c \in T, b \circ a = a \circ c = e`$
     pub trait Invertible: Magma {
@@ -75,23 +95,30 @@ pub mod algebra {
     }
 
     /// 群
-    pub trait Group: Monoid + Invertible {}
+    pub trait Group {}
+    impl<M: Monoid + Invertible> Group for M {}
 
     /// 作用付きモノイド
-    pub trait MapMonoid {
+    pub trait MapMonoid: Debug {
         /// モノイドM
-        type M: Monoid;
-        type F: Clone;
+        type Mono: Monoid;
+        type Func: Clone + Debug;
         /// 値xと値yを併合する
-        fn op(x: &<Self::M as Magma>::M, y: &<Self::M as Magma>::M) -> <Self::M as Magma>::M {
-            Self::M::op(&x, &y)
+        fn op(
+            x: &<Self::Mono as Monoid>::M,
+            y: &<Self::Mono as Monoid>::M,
+        ) -> <Self::Mono as Monoid>::M {
+            Self::Mono::op(&x, &y)
+        }
+        fn unit() -> <Self::Mono as Monoid>::M {
+            Self::Mono::unit()
         }
         /// 作用fをvalueに作用させる
-        fn apply(f: &Self::F, value: &<Self::M as Magma>::M) -> <Self::M as Magma>::M;
+        fn apply(f: &Self::Func, value: &<Self::Mono as Monoid>::M) -> <Self::Mono as Monoid>::M;
         /// 作用fの単位元
-        fn identity_map() -> Self::F;
+        fn identity_map() -> Self::Func;
         /// 作用fと作用gを合成する
-        fn compose(f: &Self::F, g: &Self::F) -> Self::F;
+        fn compose(f: &Self::Func, g: &Self::Func) -> Self::Func;
     }
 
     /// 加算の単位元
@@ -114,6 +141,7 @@ pub mod algebra {
         fn max_value() -> Self;
     }
 
+    /// 整数
     pub trait Integral:
         'static
         + Send
