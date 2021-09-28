@@ -1,11 +1,10 @@
 pub use reader::*;
 #[allow(unused_imports)]
 use {
-    itertools::Itertools,
-    num::Integer,
-    proconio::fastout,
+    reader::Reader,
     std::convert::TryInto,
     std::{cmp::*, collections::*, io::*, num::*, str::*},
+    writer::Writer,
 };
 
 #[allow(unused_macros)]
@@ -24,9 +23,6 @@ macro_rules! max {
     ($a:expr, $b:expr $(,)*) => {{if $a > $b {$a} else {$b}}};
     ($a:expr, $($rest:expr),+ $(,)*) => {{let b = max!($($rest),+);if $a > b {$a} else {b}}};
 }
-
-#[allow(dead_code)]
-pub use reader::*;
 
 #[allow(dead_code)]
 pub mod reader {
@@ -180,15 +176,47 @@ pub mod reader {
     }
 }
 
+pub mod writer {
+    use itertools::Itertools;
+    use std::fmt::Display;
+    use std::io::{BufWriter, Write};
+
+    pub struct Writer<W: Write> {
+        w: BufWriter<W>,
+    }
+    impl<W: Write> Writer<W> {
+        pub fn new(writer: W) -> Writer<W> {
+            Writer {
+                w: BufWriter::new(writer),
+            }
+        }
+
+        pub fn println<S: Display>(&mut self, s: &S) {
+            writeln!(self.w, "{}", s).unwrap()
+        }
+
+        pub fn print<S: Display>(&mut self, s: &S) {
+            write!(self.w, "{}", s).unwrap()
+        }
+
+        pub fn join_space<S: Display>(&mut self, v: &[S]) {
+            writeln!(self.w, "{}", v.iter().join(" ")).unwrap()
+        }
+
+        pub fn join_newline<S: Display>(&mut self, v: &[S]) {
+            writeln!(self.w, "{}", v.iter().join("\n")).unwrap()
+        }
+    }
+}
+
 #[allow(dead_code)]
 fn main() {
     let stdin = stdin();
-    solve(Reader::new(stdin.lock()));
+    let stdout = stdout();
+    solve(Reader::new(stdin.lock()), Writer::new(stdout.lock()));
 }
 
-#[fastout]
-pub fn solve<R: BufRead>(mut reader: Reader<R>) {
-    //$END$//
+pub fn solve<R: BufRead, W: Write>(mut reader: Reader<R>, mut output: Writer<W>) {
     let n = reader.u();
-    println!("{}", n);
+    output.println(&n);
 }

@@ -7,3 +7,4 @@ pub mod min_max;
 pub mod reader;
 pub mod rps;
 pub mod sqrt;
+pub mod writer;

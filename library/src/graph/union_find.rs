@@ -1,6 +1,3 @@
-#[allow(unused_imports)]
-pub use union_find::*;
-
 #[allow(dead_code)]
 pub mod union_find {
     pub struct UnionFind {
@@ -63,7 +60,7 @@ pub mod union_find {
 
 #[cfg(test)]
 mod test {
-    use super::*;
+    use crate::graph::union_find::union_find::UnionFind;
 
     #[test]
     pub fn it_works() {
