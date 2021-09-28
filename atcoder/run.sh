@@ -7,4 +7,4 @@ if [ $# -ne 1 ]; then
 fi
 
 cargo build --release --bin task_$1
-time RUST_BACKTRACE=1 ./target/release/task_$1 < sample/$1.txt >/dev/null
+time RUST_BACKTRACE=1 ./target/release/task_$1 < sample/$1.txt
