@@ -177,7 +177,6 @@ pub mod reader {
 }
 
 pub mod writer {
-    use itertools::Itertools;
     use std::fmt::Display;
     use std::io::{BufWriter, Write};
 
@@ -199,12 +198,17 @@ pub mod writer {
             write!(self.w, "{}", s).unwrap()
         }
 
-        pub fn join_space<S: Display>(&mut self, v: &[S]) {
-            writeln!(self.w, "{}", v.iter().join(" ")).unwrap()
-        }
-
-        pub fn join_newline<S: Display>(&mut self, v: &[S]) {
-            writeln!(self.w, "{}", v.iter().join("\n")).unwrap()
+        pub fn print_join<S: Display>(&mut self, v: &[S], separator: Option<&str>) {
+            let sep = separator.unwrap_or_else(|| "\n");
+            writeln!(
+                self.w,
+                "{}",
+                v.iter()
+                    .map(|s| s.to_string())
+                    .collect::<Vec<String>>()
+                    .join(sep)
+            )
+            .unwrap()
         }
     }
 }
