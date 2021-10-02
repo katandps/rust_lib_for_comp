@@ -1,36 +1,29 @@
-#[allow(unused_imports)]
-pub use warshall_floyd::*;
+//! ワーシャルフロイド法
+use crate::*;
 
-#[allow(dead_code)]
-pub mod warshall_floyd {
-    use std::cmp::min;
+type COST = usize;
+type EDGE = (usize, usize, COST);
+const INF: COST = 1 << 60;
 
-    type COST = usize;
-    type EDGE = (usize, usize, COST);
-    const INF: COST = 1 << 60;
-
-    ///
-    /// 辺の情報からWarshallFloyd法により全点間最小コストを計算する
-    /// 計算量 O(N^3)
-    ///
-    pub fn warshall_floyd(vertex_n: usize, edges: &Vec<EDGE>) -> Vec<Vec<COST>> {
-        let mut ret = vec![vec![INF; vertex_n + 1]; vertex_n + 1];
-        for i in 0..vertex_n + 1 {
-            ret[i][i] = 0;
-        }
-        for &(a, b, cost) in edges {
-            ret[a][b] = min(ret[a][b], cost);
-            ret[b][a] = min(ret[b][a], cost); //有向グラフの場合はコメントアウト
-        }
-        for i in 0..vertex_n + 1 {
-            for j in 0..vertex_n + 1 {
-                for k in 0..vertex_n + 1 {
-                    ret[j][k] = min(ret[j][k], ret[j][i] + ret[i][k])
-                }
+///
+/// 辺の情報からWarshallFloyd法により全点間最小コストを計算する
+/// 計算量 O(N^3)
+///
+pub fn warshall_floyd(vertex_n: usize, edges: &[EDGE]) -> Vec<Vec<COST>> {
+    let mut ret = vec![vec![INF; vertex_n + 1]; vertex_n + 1];
+    ret.iter_mut().enumerate().for_each(|(i, reti)| reti[i] = 0);
+    for &(a, b, cost) in edges {
+        ret[a][b] = min(ret[a][b], cost);
+        ret[b][a] = min(ret[b][a], cost); //有向グラフの場合はコメントアウト
+    }
+    for i in 0..vertex_n + 1 {
+        for j in 0..vertex_n + 1 {
+            for k in 0..vertex_n + 1 {
+                ret[j][k] = min(ret[j][k], ret[j][i] + ret[i][k])
             }
         }
-        ret
     }
+    ret
 }
 
 #[cfg(test)]

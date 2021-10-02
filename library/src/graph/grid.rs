@@ -1,67 +1,61 @@
 //! グリッドグラフ
 
-#[allow(unused_imports)]
-pub use grid::*;
+#[derive(Debug)]
+pub struct Grid<T> {
+    pub h: usize,
+    pub w: usize,
+    pub max: usize,
+    pub map: Vec<T>,
+}
 
-#[allow(dead_code)]
-pub mod grid {
-    #[derive(Debug)]
-    pub struct Grid<T> {
-        pub h: usize,
-        pub w: usize,
-        pub max: usize,
-        pub map: Vec<T>,
+impl<T: Clone> Grid<T> {
+    pub fn new(h: usize, w: usize, input: Vec<Vec<T>>) -> Grid<T> {
+        let mut map = Vec::new();
+        for r in input {
+            for c in r {
+                map.push(c);
+            }
+        }
+        let max = h * w;
+        Grid { h, w, max, map }
     }
-
-    impl<T: Clone> Grid<T> {
-        pub fn new(h: usize, w: usize, input: Vec<Vec<T>>) -> Grid<T> {
-            let mut map = Vec::new();
-            for r in input {
-                for c in r {
-                    map.push(c);
-                }
-            }
-            let max = h * w;
-            Grid { h, w, max, map }
+    pub fn key(&self, x: usize, y: usize) -> usize {
+        y * self.w + x
+    }
+    pub fn xy(&self, k: usize) -> (usize, usize) {
+        (self.x(k), self.y(k))
+    }
+    pub fn x(&self, k: usize) -> usize {
+        k % self.w
+    }
+    pub fn y(&self, k: usize) -> usize {
+        k / self.w
+    }
+    pub fn get(&self, key: usize) -> &T {
+        &self.map[key]
+    }
+    pub fn set(&mut self, key: usize, value: T) {
+        self.map[key] = value;
+    }
+    pub fn neighbor(&self, key: usize) -> Vec<usize> {
+        let mut ret = self.one_way(key);
+        if self.x(key) > 0 {
+            ret.push(key - 1);
         }
-        pub fn key(&self, x: usize, y: usize) -> usize {
-            y * self.w + x
+        if self.y(key) > 0 {
+            ret.push(key - self.w);
         }
-        pub fn xy(&self, k: usize) -> (usize, usize) {
-            (self.x(k), self.y(k))
+        ret
+    }
+    pub fn one_way(&self, key: usize) -> Vec<usize> {
+        let mut ret = Vec::new();
+        if self.x(key) + 1 < self.w {
+            ret.push(key + 1);
         }
-        pub fn x(&self, k: usize) -> usize {
-            k % self.w
+        if self.y(key) + 1 < self.h {
+            ret.push(key + self.w);
         }
-        pub fn y(&self, k: usize) -> usize {
-            k / self.w
-        }
-        pub fn get(&self, key: usize) -> &T {
-            &self.map[key]
-        }
-        pub fn set(&mut self, key: usize, value: T) {
-            self.map[key] = value;
-        }
-        pub fn neighbor(&self, key: usize) -> Vec<usize> {
-            let mut ret = self.one_way(key);
-            if self.x(key) > 0 {
-                ret.push(key - 1);
-            }
-            if self.y(key) > 0 {
-                ret.push(key - self.w);
-            }
-            ret
-        }
-        pub fn one_way(&self, key: usize) -> Vec<usize> {
-            let mut ret = Vec::new();
-            if self.x(key) + 1 < self.w {
-                ret.push(key + 1);
-            }
-            if self.y(key) + 1 < self.h {
-                ret.push(key + self.w);
-            }
-            ret
-        }
+        ret
     }
 }
 

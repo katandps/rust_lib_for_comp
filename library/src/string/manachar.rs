@@ -7,22 +7,21 @@
 pub fn manachar<T: Eq>(src: &[T]) -> Vec<usize> {
     let mut i = 0;
     let mut j = 0;
-    let n = src.len();
-    let mut r = vec![0; n];
-    while i < n {
-        while i >= j && i + j < n && src[i - j] == src[i + j] {
+    let mut dp = vec![0; src.len()];
+    while i < src.len() {
+        while i >= j && i + j < src.len() && src[i - j] == src[i + j] {
             j += 1;
         }
-        r[i] = j;
+        dp[i] = j;
         let mut k = 1;
-        while i >= k && k + r[i - k] < j {
-            r[i + k] = r[i - k];
+        while i >= k && k + dp[i - k] < j {
+            dp[i + k] = dp[i - k];
             k += 1;
         }
         i += k;
         j -= k;
     }
-    r
+    dp
 }
 
 #[cfg(test)]

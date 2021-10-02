@@ -1,69 +1,63 @@
 //!じゃんけん
 
-#[allow(unused_imports)]
-pub use rps::*;
+#[derive(Copy, Clone, Debug, Eq, PartialEq)]
+pub enum RPS {
+    Rock,
+    Paper,
+    Scissors,
+}
 
-#[allow(dead_code)]
-pub mod rps {
-    #[derive(Copy, Clone, Debug, Eq, PartialEq)]
-    pub enum RPS {
-        Rock,
-        Paper,
-        Scissors,
-    }
-
-    impl RPS {
-        pub fn battle(self, rhs: Self) -> RPS {
-            use RPS::*;
-            match (self, rhs) {
-                (Rock, Rock) => Rock,
-                (Rock, Paper) => Paper,
-                (Rock, Scissors) => Rock,
-                (Paper, Rock) => Paper,
-                (Paper, Paper) => Paper,
-                (Paper, Scissors) => Scissors,
-                (Scissors, Rock) => Rock,
-                (Scissors, Paper) => Scissors,
-                (Scissors, Scissors) => Scissors,
-            }
+impl RPS {
+    pub fn battle(self, rhs: Self) -> RPS {
+        use RPS::*;
+        match (self, rhs) {
+            (Rock, Rock) => Rock,
+            (Rock, Paper) => Paper,
+            (Rock, Scissors) => Rock,
+            (Paper, Rock) => Paper,
+            (Paper, Paper) => Paper,
+            (Paper, Scissors) => Scissors,
+            (Scissors, Rock) => Rock,
+            (Scissors, Paper) => Scissors,
+            (Scissors, Scissors) => Scissors,
         }
     }
+}
 
-    use std::fmt;
+use std::fmt;
 
-    impl fmt::Display for RPS {
-        fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
-            let c: char = (*self).into();
-            write!(f, "{}", c)
+impl fmt::Display for RPS {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        let c: char = (*self).into();
+        write!(f, "{}", c)
+    }
+}
+
+impl From<char> for RPS {
+    fn from(c: char) -> Self {
+        use RPS::*;
+        match c {
+            'R' => Rock,
+            'P' => Paper,
+            'S' => Scissors,
+            c => panic!("変換できません: {}", c),
         }
     }
+}
 
-    impl From<char> for RPS {
-        fn from(c: char) -> Self {
-            use RPS::*;
-            match c {
-                'R' => Rock,
-                'P' => Paper,
-                'S' => Scissors,
-                c => panic!("変換できません: {}", c),
-            }
-        }
+impl From<&char> for RPS {
+    fn from(c: &char) -> Self {
+        Self::from(*c)
     }
+}
 
-    impl From<&char> for RPS {
-        fn from(c: &char) -> Self {
-            Self::from(*c)
-        }
-    }
-
-    impl From<RPS> for char {
-        fn from(rps: RPS) -> Self {
-            use RPS::*;
-            match rps {
-                Rock => 'R',
-                Paper => 'P',
-                Scissors => 'S',
-            }
+impl From<RPS> for char {
+    fn from(rps: RPS) -> Self {
+        use RPS::*;
+        match rps {
+            Rock => 'R',
+            Paper => 'P',
+            Scissors => 'S',
         }
     }
 }

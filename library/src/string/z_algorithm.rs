@@ -1,27 +1,22 @@
-#[allow(unused_imports)]
-pub use z_algorithm::*;
+//! Z-algorithm 文字列SとSのi文字目から始まる文字列の共通部分列の長さをO(N)で求める
 
-#[allow(dead_code)]
-pub mod z_algorithm {
-    /// 文字列SとSのi文字目から始まる文字列の共通部分列の長さをO(N)で求める
-    pub fn z(s: &Vec<char>) -> Vec<usize> {
-        let mut c = 0;
-        let n = s.len();
-        let mut z = vec![0; n];
-        for i in 1..n {
-            let l = i - c;
-            if i + z[l] < c + z[c] {
-                z[i] = z[l];
-            } else {
-                let mut j = if c + z[c] > i { c + z[c] - i } else { 0 };
-                while i + j < n && s[j] == s[i + j] {
-                    j += 1;
-                }
-                z[i] = j;
-                c = i;
+pub fn z(src: &[char]) -> Vec<usize> {
+    let mut c = 0;
+    let n = src.len();
+    let mut ret = vec![0; n];
+    for i in 1..n {
+        let l = i - c;
+        if i + ret[l] < c + ret[c] {
+            ret[i] = ret[l];
+        } else {
+            let mut j = if c + ret[c] > i { c + ret[c] - i } else { 0 };
+            while i + j < n && src[j] == src[i + j] {
+                j += 1;
             }
+            ret[i] = j;
+            c = i;
         }
-        z[0] = n;
-        z
     }
+    ret[0] = n;
+    ret
 }

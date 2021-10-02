@@ -1,31 +1,28 @@
 #[allow(unused_imports)]
-pub use sieve_of_eratosthenes::*;
+use crate::*;
 
-#[allow(dead_code)]
-pub mod sieve_of_eratosthenes {
-    pub fn primes(m: usize) -> Vec<usize> {
-        if m < 2 {
-            return Vec::new();
-        }
-        if m == 2 {
-            return vec![2];
-        }
-        let mut b = vec![false; m + 1];
-        let mut ret = vec![2, 3];
-        let mut i = 5;
-        let mut f = 4;
-        while i <= m {
-            if !b[i] {
-                ret.push(i);
-                for j in i..m / i + 1 {
-                    b[i * j] = true;
-                }
-            }
-            f = 6 - f;
-            i += f;
-        }
-        ret
+pub fn primes(m: usize) -> Vec<usize> {
+    if m < 2 {
+        return Vec::new();
     }
+    if m == 2 {
+        return vec![2];
+    }
+    let mut b = vec![false; m + 1];
+    let mut ret = vec![2, 3];
+    let mut i = 5;
+    let mut f = 4;
+    while i <= m {
+        if !b[i] {
+            ret.push(i);
+            for j in i..m / i + 1 {
+                b[i * j] = true;
+            }
+        }
+        f = 6 - f;
+        i += f;
+    }
+    ret
 }
 
 #[cfg(test)]

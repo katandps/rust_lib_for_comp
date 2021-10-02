@@ -1,209 +1,201 @@
-#[allow(unused_imports)]
-pub use matrix::*;
+use crate::*;
 
-#[allow(dead_code)]
-pub mod matrix {
-    use super::*;
-    use std::convert::TryInto;
-    use std::fmt;
-    use std::ops;
+#[derive(Clone, Eq, PartialEq)]
+pub struct Matrix {
+    pub buf: Vec<Vec<Mi>>,
+}
 
-    #[derive(Clone, Eq, PartialEq)]
-    pub struct Matrix {
-        pub buf: Vec<Vec<Mi>>,
-    }
-
-    impl std::convert::TryFrom<Vec<Vec<Mi>>> for Matrix {
-        type Error = &'static str;
-        fn try_from(buf: Vec<Vec<Mi>>) -> std::result::Result<Self, Self::Error> {
-            if (1..buf.len()).any(|i| buf[0].len() != buf[i].len()) {
-                Err("size is invalid")
-            } else {
-                Ok(Self { buf })
-            }
+impl std::convert::TryFrom<Vec<Vec<Mi>>> for Matrix {
+    type Error = &'static str;
+    fn try_from(buf: Vec<Vec<Mi>>) -> std::result::Result<Self, Self::Error> {
+        if (1..buf.len()).any(|i| buf[0].len() != buf[i].len()) {
+            Err("size is invalid")
+        } else {
+            Ok(Self { buf })
         }
     }
+}
 
-    impl Matrix {
-        pub fn identity_matrix(n: usize) -> Self {
-            let mut buf = vec![vec![Mi::new(0); n]; n];
-            for i in 0..n {
-                buf[i][i] += 1;
-            }
-            Matrix { buf }
-        }
+impl Matrix {
+    pub fn identity_matrix(n: usize) -> Self {
+        let mut buf = vec![vec![Mi::new(0); n]; n];
 
-        pub fn row_vector(v: &[Mi]) -> Self {
-            Matrix {
-                buf: vec![v.iter().cloned().collect()],
-            }
-        }
+        buf.iter_mut()
+            .enumerate()
+            .for_each(|(i, bufi)| bufi[i] += 1);
+        Matrix { buf }
+    }
 
-        pub fn column_vector(v: &[Mi]) -> Self {
-            Matrix {
-                buf: v.iter().map(|mi| vec![*mi]).collect(),
-            }
-        }
-
-        /// (y, x)
-        fn size(&self) -> (usize, usize) {
-            if self.buf.len() == 0 {
-                (0, 0)
-            } else {
-                (self.buf.len(), self.buf[0].len())
-            }
-        }
-
-        /// y行目、x列目を除いた 余因子行列を計算する
-        /// x, y は 0-indexed
-        pub fn sub_matrix(&self, x: usize, y: usize) -> Self {
-            let (n, m) = self.size();
-            let mut sub = vec![vec![Mi::new(0); m - 1]; n - 1];
-            for yi in (0..n).filter(|&yi| yi != y) {
-                for xi in (0..m).filter(|&xi| xi != x) {
-                    sub[yi - if yi < y { 0 } else { 1 }][xi - if xi < x { 0 } else { 1 }] =
-                        self.buf[yi][xi];
-                }
-            }
-            Matrix { buf: sub }
-        }
-
-        /// 行列式detを計算する
-        /// 平方行列でない場合はNoneを返す
-        /// 計算量は O(size^3)
-        pub fn determinant(&self) -> Option<Mi> {
-            let (n, m) = self.size();
-            let zero = Mi::new(0);
-            if n != m {
-                return None;
-            }
-            if n == 0 {
-                return Some(zero);
-            }
-
-            let mut res = Mi::new(1);
-            let mut buf = self.buf.clone();
-            for i in 0..n {
-                match (i..n).find(|&ni| buf[ni][i] != zero) {
-                    Some(ni) => buf.swap(i, ni),
-                    None => return Some(zero),
-                }
-                res *= buf[i][i];
-                let diag = Mi::new(1) / buf[i][i];
-                (i..n).for_each(|j| buf[i][j] *= diag);
-                for ni in (0..n).filter(|&ni| ni != i) {
-                    let c = buf[ni][i];
-                    for j in i..n {
-                        let d = c * buf[i][j];
-                        buf[ni][j] -= d;
-                    }
-                }
-            }
-
-            Some(res)
-        }
-
-        pub fn pow(mut self, mut e: i64) -> Option<Self> {
-            let (n, m) = self.size();
-            if n != m {
-                return None;
-            }
-            let mut result = Self::identity_matrix(n);
-            while e > 0 {
-                if e & 1 == 1 {
-                    result = (result * self.clone()).unwrap();
-                }
-                e >>= 1;
-                self = (self.clone() * self).unwrap();
-            }
-            Some(result)
+    pub fn row_vector(v: &[Mi]) -> Self {
+        Matrix {
+            buf: vec![v.to_vec()],
         }
     }
 
-    impl ops::Add<Matrix> for Matrix {
-        type Output = Self;
-        fn add(mut self, rhs: Self) -> Self {
-            for i in 0..self.buf.len() {
-                for j in 0..self.buf[0].len() {
-                    self.buf[i][j] += rhs.buf[i][j]
+    pub fn column_vector(v: &[Mi]) -> Self {
+        Matrix {
+            buf: v.iter().map(|mi| vec![*mi]).collect(),
+        }
+    }
+
+    /// (y, x)
+    fn size(&self) -> (usize, usize) {
+        if self.buf.is_empty() {
+            (0, 0)
+        } else {
+            (self.buf.len(), self.buf[0].len())
+        }
+    }
+
+    /// y行目、x列目を除いた 余因子行列を計算する
+    /// x, y は 0-indexed
+    pub fn sub_matrix(&self, x: usize, y: usize) -> Self {
+        let (n, m) = self.size();
+        let mut sub = vec![vec![Mi::new(0); m - 1]; n - 1];
+        for yi in (0..n).filter(|&yi| yi != y) {
+            for xi in (0..m).filter(|&xi| xi != x) {
+                sub[yi - if yi < y { 0 } else { 1 }][xi - if xi < x { 0 } else { 1 }] =
+                    self.buf[yi][xi];
+            }
+        }
+        Matrix { buf: sub }
+    }
+
+    /// 行列式detを計算する
+    /// 平方行列でない場合はNoneを返す
+    /// 計算量は O(size^3)
+    pub fn determinant(&self) -> Option<Mi> {
+        let (n, m) = self.size();
+        let zero = Mi::new(0);
+        if n != m {
+            return None;
+        }
+        if n == 0 {
+            return Some(zero);
+        }
+
+        let mut res = Mi::new(1);
+        let mut buf = self.buf.clone();
+        for i in 0..n {
+            match (i..n).find(|&ni| buf[ni][i] != zero) {
+                Some(ni) => buf.swap(i, ni),
+                None => return Some(zero),
+            }
+            res *= buf[i][i];
+            let diag = Mi::new(1) / buf[i][i];
+            (i..n).for_each(|j| buf[i][j] *= diag);
+            for ni in (0..n).filter(|&ni| ni != i) {
+                let c = buf[ni][i];
+                for j in i..n {
+                    let d = c * buf[i][j];
+                    buf[ni][j] -= d;
                 }
             }
-            self
         }
+
+        Some(res)
     }
 
-    impl ops::Neg for Matrix {
-        type Output = Self;
-        fn neg(mut self) -> Self {
-            for i in 0..self.buf.len() {
-                for j in 0..self.buf[0].len() {
-                    self.buf[i][j] = -self.buf[i][j]
+    pub fn pow(mut self, mut e: i64) -> Option<Self> {
+        let (n, m) = self.size();
+        if n != m {
+            return None;
+        }
+        let mut result = Self::identity_matrix(n);
+        while e > 0 {
+            if e & 1 == 1 {
+                result = (result * self.clone()).unwrap();
+            }
+            e >>= 1;
+            self = (self.clone() * self).unwrap();
+        }
+        Some(result)
+    }
+}
+
+impl Add<Matrix> for Matrix {
+    type Output = Self;
+    fn add(mut self, rhs: Self) -> Self {
+        for i in 0..self.buf.len() {
+            for j in 0..self.buf[0].len() {
+                self.buf[i][j] += rhs.buf[i][j]
+            }
+        }
+        self
+    }
+}
+
+impl Neg for Matrix {
+    type Output = Self;
+    fn neg(mut self) -> Self {
+        for i in 0..self.buf.len() {
+            for j in 0..self.buf[0].len() {
+                self.buf[i][j] = -self.buf[i][j]
+            }
+        }
+        self
+    }
+}
+
+impl Sub<Matrix> for Matrix {
+    type Output = Self;
+    fn sub(self, rhs: Self) -> Self {
+        self + (-rhs)
+    }
+}
+
+impl Mul<i64> for Matrix {
+    type Output = Self;
+    fn mul(mut self, rhs: i64) -> Self {
+        let (n, m) = self.size();
+        for i in 0..n {
+            for j in 0..m {
+                self.buf[i][j] *= rhs;
+            }
+        }
+        self
+    }
+}
+
+impl Mul<Matrix> for Matrix {
+    type Output = Option<Matrix>;
+    fn mul(self, rhs: Matrix) -> Option<Matrix> {
+        let ((self_y, self_x), (rhs_y, rhs_x)) = (self.size(), rhs.size());
+        if self_x != rhs_y {
+            return None;
+        }
+        let mut buf = vec![vec![Mi::new(0); rhs_x]; self_y];
+        buf.iter_mut().enumerate().for_each(|(i, bufi)| {
+            bufi.iter_mut().enumerate().for_each(|(j, bufij)| {
+                for k in 0..self_x {
+                    *bufij += self.buf[i][k] * rhs.buf[k][j];
                 }
-            }
-            self
-        }
+            });
+        });
+        Some(buf.try_into().unwrap())
     }
+}
 
-    impl ops::Sub<Matrix> for Matrix {
-        type Output = Self;
-        fn sub(self, rhs: Self) -> Self {
-            self + (-rhs)
-        }
-    }
-
-    impl ops::Mul<i64> for Matrix {
-        type Output = Self;
-        fn mul(mut self, rhs: i64) -> Self {
-            let (n, m) = self.size();
-            for i in 0..n {
-                for j in 0..m {
-                    self.buf[i][j] *= rhs;
-                }
-            }
-            self
-        }
-    }
-
-    impl ops::Mul<Matrix> for Matrix {
-        type Output = Option<Matrix>;
-        fn mul(self, rhs: Matrix) -> Option<Matrix> {
-            let ((self_y, self_x), (rhs_y, rhs_x)) = (self.size(), rhs.size());
-            if self_x != rhs_y {
-                return None;
-            }
-            let mut buf = vec![vec![Mi::new(0); rhs_x]; self_y];
-            for i in 0..self_y {
-                for j in 0..rhs_x {
-                    for k in 0..self_x {
-                        buf[i][j] += self.buf[i][k] * rhs.buf[k][j];
-                    }
-                }
-            }
-            Some(buf.try_into().unwrap())
-        }
-    }
-
-    impl fmt::Debug for Matrix {
-        fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
-            write!(
-                f,
-                "{}",
-                self.buf
+impl Debug for Matrix {
+    fn fmt(&self, f: &mut Formatter<'_>) -> std::fmt::Result {
+        write!(
+            f,
+            "{}",
+            self.buf
+                .iter()
+                .map(|row| row
                     .iter()
-                    .map(|row| row
-                        .iter()
-                        .map(|mi| mi.to_string())
-                        .collect::<Vec<_>>()
-                        .join(" "))
+                    .map(|mi| mi.to_string())
                     .collect::<Vec<_>>()
-                    .join("\n")
-            )
-        }
+                    .join(" "))
+                .collect::<Vec<_>>()
+                .join("\n")
+        )
     }
 }
 ////////////////////////////////////////////////////////
 
-use crate::algebra::mod_int::mod_int::*;
+use crate::algebra::mod_int::*;
 
 #[cfg(test)]
 mod test {

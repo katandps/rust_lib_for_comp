@@ -1,49 +1,41 @@
 //! 順列の全列挙
 /// AtCoderではItertoolsでよい
 
-#[allow(unused_imports)]
-pub use all_permutation::*;
+pub struct AllPermutation {
+    v: Vec<Vec<usize>>,
+}
 
-#[allow(dead_code)]
-pub mod all_permutation {
-    pub struct AllPermutation {
-        v: Vec<Vec<usize>>,
+impl AllPermutation {
+    pub fn new(n: usize) -> Self {
+        let mut p = AllPermutation { v: Vec::new() };
+        p.permutate((0..n).collect(), Vec::with_capacity(n));
+        p
     }
 
-    impl AllPermutation {
-        pub fn new(n: usize) -> Self {
-            let mut p = AllPermutation { v: Vec::new() };
-            p.permutate((0..n).collect(), Vec::with_capacity(n));
-            p
-        }
-
-        fn permutate(&mut self, rest: Vec<usize>, mut current: Vec<usize>) {
-            if rest.len() == 1 {
-                current.push(rest[0]);
-                self.v.push(current);
-            } else {
-                if rest.len() == 2 {
-                    let mut next = current.clone();
-                    next.push(rest[0]);
-                    next.push(rest[1]);
-                    self.v.push(next);
-                    current.push(rest[1]);
-                    current.push(rest[0]);
-                    self.v.push(current);
-                } else {
-                    for rest_i in 0..rest.len() {
-                        let mut next = current.clone();
-                        let mut next_rest = rest.clone();
-                        next.push(next_rest.remove(rest_i));
-                        self.permutate(next_rest, next)
-                    }
-                }
+    fn permutate(&mut self, rest: Vec<usize>, mut current: Vec<usize>) {
+        if rest.len() == 1 {
+            current.push(rest[0]);
+            self.v.push(current);
+        } else if rest.len() == 2 {
+            let mut next = current.clone();
+            next.push(rest[0]);
+            next.push(rest[1]);
+            self.v.push(next);
+            current.push(rest[1]);
+            current.push(rest[0]);
+            self.v.push(current);
+        } else {
+            for rest_i in 0..rest.len() {
+                let mut next = current.clone();
+                let mut next_rest = rest.clone();
+                next.push(next_rest.remove(rest_i));
+                self.permutate(next_rest, next)
             }
         }
+    }
 
-        pub fn get(&self) -> &Vec<Vec<usize>> {
-            &self.v
-        }
+    pub fn get(&self) -> &Vec<Vec<usize>> {
+        &self.v
     }
 }
 

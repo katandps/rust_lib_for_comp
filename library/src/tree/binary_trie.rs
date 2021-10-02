@@ -4,18 +4,12 @@
 const BIT_LEN: i64 = 60;
 type TrieValue = i64;
 
-#[derive(Clone)]
+#[derive(Clone, Default)]
 pub struct BinaryTrie {
     root: TrieNode,
 }
 
 impl BinaryTrie {
-    pub fn new() -> BinaryTrie {
-        BinaryTrie {
-            root: TrieNode::new(),
-        }
-    }
-
     pub fn size(&self) -> usize {
         self.root.count
     }
@@ -66,14 +60,16 @@ struct TrieNode {
     child: Vec<Option<TrieNode>>,
 }
 
-impl TrieNode {
-    fn new() -> TrieNode {
-        TrieNode {
+impl Default for TrieNode {
+    fn default() -> Self {
+        Self {
             count: 0,
             child: vec![None, None],
         }
     }
+}
 
+impl TrieNode {
     pub fn add(&mut self, v: TrieValue, b: i64) {
         self.count += 1;
         if b < 0 {
@@ -83,7 +79,7 @@ impl TrieNode {
         if let Some(c) = self.child[dst].as_mut() {
             c.add(v, b - 1);
         } else {
-            let mut node = TrieNode::new();
+            let mut node = TrieNode::default();
             node.add(v, b - 1);
             self.child[dst] = Some(node);
         }
@@ -135,7 +131,7 @@ pub mod test {
     use super::*;
     #[test]
     fn test() {
-        let mut trie = BinaryTrie::new();
+        let mut trie = BinaryTrie::default();
         trie.insert(5);
         trie.insert(6);
         trie.insert(7);

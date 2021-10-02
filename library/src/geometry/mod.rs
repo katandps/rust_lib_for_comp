@@ -259,10 +259,10 @@ pub mod geometric {
 
         /// 直線と点の距離
         pub fn distance(self, p: Point) -> f64 {
-            if self.p1.x == self.p2.x {
+            if (self.p1.x - self.p2.x).abs() < f64::EPSILON {
                 return (p.x - self.p1.x).abs();
             }
-            if self.p1.y == self.p2.y {
+            if (self.p1.y - self.p2.y).abs() < f64::EPSILON {
                 return (p.y - self.p1.y).abs();
             }
             let l = Line::new(p, p + (self.p2 - self.p1).rot90());

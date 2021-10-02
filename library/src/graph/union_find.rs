@@ -1,66 +1,60 @@
-#[allow(dead_code)]
-pub mod union_find {
-    pub struct UnionFind {
-        parent: Vec<usize>,
-        rank: Vec<usize>,
-        size: Vec<usize>,
+pub struct UnionFind {
+    parent: Vec<usize>,
+    rank: Vec<usize>,
+    size: Vec<usize>,
+}
+
+impl UnionFind {
+    pub fn new(n: usize) -> UnionFind {
+        let parent = (0..n + 1).collect::<Vec<_>>();
+        let rank = vec![0; n + 1];
+        let size = vec![1; n + 1];
+        UnionFind { parent, rank, size }
     }
 
-    impl UnionFind {
-        pub fn new(n: usize) -> UnionFind {
-            let mut parent = vec![0; n + 1];
-            let rank = vec![0; n + 1];
-            let size = vec![1; n + 1];
-            for i in 1..(n + 1) {
-                parent[i] = i;
-            }
-            UnionFind { parent, rank, size }
+    pub fn root(&mut self, x: usize) -> usize {
+        if self.parent[x] == x {
+            x
+        } else {
+            let p = self.parent[x];
+            self.parent[x] = self.root(p);
+            self.parent[x]
         }
+    }
 
-        pub fn root(&mut self, x: usize) -> usize {
-            if self.parent[x] == x {
-                x
-            } else {
-                let p = self.parent[x];
-                self.parent[x] = self.root(p);
-                self.parent[x]
-            }
-        }
+    pub fn rank(&self, x: usize) -> usize {
+        self.rank[x]
+    }
 
-        pub fn rank(&self, x: usize) -> usize {
-            self.rank[x]
-        }
+    pub fn size(&mut self, x: usize) -> usize {
+        let root = self.root(x);
+        self.size[root]
+    }
 
-        pub fn size(&mut self, x: usize) -> usize {
-            let root = self.root(x);
-            self.size[root]
-        }
+    pub fn same(&mut self, x: usize, y: usize) -> bool {
+        self.root(x) == self.root(y)
+    }
 
-        pub fn same(&mut self, x: usize, y: usize) -> bool {
-            self.root(x) == self.root(y)
+    pub fn unite(&mut self, x: usize, y: usize) {
+        let mut x = self.root(x);
+        let mut y = self.root(y);
+        if x == y {
+            return;
         }
-
-        pub fn unite(&mut self, x: usize, y: usize) {
-            let mut x = self.root(x);
-            let mut y = self.root(y);
-            if x == y {
-                return;
-            }
-            if self.rank(x) < self.rank(y) {
-                std::mem::swap(&mut x, &mut y);
-            }
-            if self.rank(x) == self.rank(y) {
-                self.rank[x] += 1;
-            }
-            self.parent[x] = y;
-            self.size[y] += self.size[x];
+        if self.rank(x) < self.rank(y) {
+            std::mem::swap(&mut x, &mut y);
         }
+        if self.rank(x) == self.rank(y) {
+            self.rank[x] += 1;
+        }
+        self.parent[x] = y;
+        self.size[y] += self.size[x];
     }
 }
 
 #[cfg(test)]
 mod test {
-    use crate::graph::union_find::union_find::UnionFind;
+    use super::*;
 
     #[test]
     pub fn it_works() {

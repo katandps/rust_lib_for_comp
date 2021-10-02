@@ -1,68 +1,62 @@
 //! Fenwick Tree(Binary Indexed Tree)
 
-#[allow(unused_imports)]
-pub use binary_indexed_tree::*;
+#[derive(Clone)]
+pub struct BinaryIndexedTree {
+    n: usize,
+    bit: Vec<VALUE>,
+}
 
-#[allow(dead_code)]
-pub mod binary_indexed_tree {
-    #[derive(Clone)]
-    pub struct BinaryIndexedTree {
-        n: usize,
-        bit: Vec<VALUE>,
+type VALUE = i64;
+impl BinaryIndexedTree {
+    pub fn new(n: usize) -> BinaryIndexedTree {
+        let n = n + 1;
+        let bit = vec![0; n + 1];
+        BinaryIndexedTree { n, bit }
     }
 
-    type VALUE = i64;
-    impl BinaryIndexedTree {
-        pub fn new(n: usize) -> BinaryIndexedTree {
-            let n = n + 1;
-            let bit = vec![0; n + 1];
-            BinaryIndexedTree { n, bit }
-        }
-
-        /// add x to i
-        pub fn add(&mut self, i: usize, x: VALUE) {
-            let mut idx = i as i32 + 1;
-            while idx <= self.n as i32 {
-                self.bit[idx as usize] += x;
-                idx += idx & -idx;
-            }
-        }
-
-        /// sum of [0, i]
-        pub fn sum(&self, i: usize) -> VALUE {
-            let mut ret = 0;
-            let mut idx = i as i32 + 1;
-            while idx > 0 {
-                ret += self.bit[idx as usize];
-                idx -= idx & -idx;
-            }
-            ret
-        }
-
-        /// sum of [a, b)
-        pub fn sum_ab(&self, a: usize, b: usize) -> VALUE {
-            if b == 0 {
-                0
-            } else if a == 0 {
-                self.sum(b - 1)
-            } else {
-                self.sum(b - 1) - self.sum(a - 1)
-            }
+    /// add x to i
+    pub fn add(&mut self, i: usize, x: VALUE) {
+        let mut idx = i as i32 + 1;
+        while idx <= self.n as i32 {
+            self.bit[idx as usize] += x;
+            idx += idx & -idx;
         }
     }
 
-    impl std::fmt::Debug for BinaryIndexedTree {
-        fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
-            let v = (0..self.n)
-                .map(|i| self.sum_ab(i, i).to_string())
-                .collect::<Vec<_>>()
-                .join(" ");
-            let v2 = (0..self.n)
-                .map(|i| self.sum(i).to_string())
-                .collect::<Vec<_>>()
-                .join(" ");
-            write!(f, "\n{}\n{}", v, v2)
+    /// sum of [0, i]
+    pub fn sum(&self, i: usize) -> VALUE {
+        let mut ret = 0;
+        let mut idx = i as i32 + 1;
+        while idx > 0 {
+            ret += self.bit[idx as usize];
+            idx -= idx & -idx;
         }
+        ret
+    }
+
+    /// sum of [a, b)
+    pub fn sum_ab(&self, a: usize, b: usize) -> VALUE {
+        if b == 0 {
+            0
+        } else if a == 0 {
+            self.sum(b - 1)
+        } else {
+            self.sum(b - 1) - self.sum(a - 1)
+        }
+    }
+}
+
+impl std::fmt::Debug for BinaryIndexedTree {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        let v = (0..self.n)
+            .map(|i| self.sum_ab(i, i).to_string())
+            .collect::<Vec<_>>()
+            .join(" ");
+        let v2 = (0..self.n)
+            .map(|i| self.sum(i).to_string())
+            .collect::<Vec<_>>()
+            .join(" ");
+        write!(f, "\n{}\n{}", v, v2)
     }
 }
 

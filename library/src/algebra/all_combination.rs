@@ -1,34 +1,28 @@
 //! 組み合わせの全列挙
 /// AtCoderではItertoolsでよい
 
-#[allow(unused_imports)]
-pub use all_combination::*;
+pub struct AllCombination {
+    v: Vec<usize>,
+}
 
-#[allow(dead_code)]
-pub mod all_combination {
-    pub struct AllCombination {
-        v: Vec<usize>,
+impl AllCombination {
+    pub fn new(n: usize, r: usize) -> AllCombination {
+        let mut c = AllCombination { v: Vec::new() };
+        c.combination(n, r);
+        c
     }
 
-    impl AllCombination {
-        pub fn new(n: usize, r: usize) -> AllCombination {
-            let mut c = AllCombination { v: Vec::new() };
-            c.combination(n, r);
-            c
-        }
-
-        fn combination(&mut self, n: usize, r: usize) {
-            let p = 1usize << n;
-            for i in 0..p {
-                if i.count_ones() == r as u32 {
-                    self.v.push(i)
-                }
+    fn combination(&mut self, n: usize, r: usize) {
+        let p = 1usize << n;
+        for i in 0..p {
+            if i.count_ones() == r as u32 {
+                self.v.push(i)
             }
         }
+    }
 
-        pub fn get(&self) -> &Vec<usize> {
-            &self.v
-        }
+    pub fn get(&self) -> &Vec<usize> {
+        &self.v
     }
 }
 
