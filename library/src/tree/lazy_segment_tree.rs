@@ -12,7 +12,7 @@ pub struct LazySegmentTree<M: MapMonoid> {
     n: usize,
     log: usize,
     node: Vec<<<M as MapMonoid>::Mono as Monoid>::M>,
-    lazy: Vec<M::Func>,
+    lazy: Vec<<M::Func as Monoid>::M>,
 }
 
 /// 1-indexedで配列の内容を詰めたセグメント木を生成する
@@ -40,7 +40,7 @@ impl<M: MapMonoid> LazySegmentTree<M> {
     }
 
     /// 一点更新
-    pub fn update_at(&mut self, mut i: usize, f: M::Func) {
+    pub fn update_at(&mut self, mut i: usize, f: <M::Func as Monoid>::M) {
         assert!(i < self.n);
         i += self.n;
         for j in (1..=self.log).rev() {
@@ -53,7 +53,7 @@ impl<M: MapMonoid> LazySegmentTree<M> {
     }
 
     /// 区間更新 [l, r)
-    pub fn update_range(&mut self, mut l: usize, mut r: usize, f: M::Func) {
+    pub fn update_range(&mut self, mut l: usize, mut r: usize, f: <M::Func as Monoid>::M) {
         assert!(l <= r && r <= self.n);
         if l == r {
             return;
@@ -147,7 +147,7 @@ impl<M: MapMonoid> LazySegmentTree<M> {
     }
 
     /// k番目の区間の値に作用を適用する
-    fn eval(&mut self, k: usize, f: M::Func) {
+    fn eval(&mut self, k: usize, f: <M::Func as Monoid>::M) {
         self.node[k] = M::apply(&f, &self.node[k]);
         if k < self.n {
             self.lazy[k] = M::compose(&f, &self.lazy[k]);
@@ -166,8 +166,23 @@ impl<M: MapMonoid> LazySegmentTree<M> {
 
 #[cfg(test)]
 mod test {
-    use crate::algebra::impl_map_monoid::add_sum::AddSum;
-    use crate::tree::lazy_segment_tree::LazySegmentTree;
+    use super::*;
+    use crate::algebra::impl_monoid::sum::{Segment, Sum};
+
+    // これは毎回書く(モノイドとモノイドから作用付きモノイドを作る)
+    #[derive(Debug)]
+    pub struct AddSum;
+    impl MapMonoid for AddSum {
+        type Mono = Sum<Segment>;
+        type Func = Sum<i64>;
+
+        fn apply(
+            f: &<Self::Func as Monoid>::M,
+            value: &<Self::Mono as Monoid>::M,
+        ) -> <Self::Mono as Monoid>::M {
+            value + f.clone()
+        }
+    }
 
     #[test]
     fn a() {

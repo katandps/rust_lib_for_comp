@@ -1,5 +1,6 @@
 pub use std::cmp::{max, min, Ordering, Reverse};
 pub use std::collections::{BTreeMap, BTreeSet, BinaryHeap, HashMap, HashSet, VecDeque};
+pub use std::convert::Infallible;
 pub use std::convert::{TryFrom, TryInto};
 pub use std::fmt::{Debug, Display, Formatter};
 pub use std::io::BufRead;

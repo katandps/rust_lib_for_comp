@@ -5,7 +5,6 @@ pub mod all_combination;
 pub mod all_permutation;
 pub mod chinese_remainder_theorem;
 pub mod greatest_common_divisor;
-pub mod impl_map_monoid;
 pub mod impl_monoid;
 pub mod lucas_theorem;
 pub mod matrix;
@@ -89,10 +88,11 @@ pub trait Group {}
 impl<M: Monoid + Invertible> Group for M {}
 
 /// 作用付きモノイド
+/// 値Mono、作用Funcはモノイドで、
 pub trait MapMonoid: Debug {
     /// モノイドM
     type Mono: Monoid;
-    type Func: Clone + Debug;
+    type Func: Monoid;
     /// 値xと値yを併合する
     fn op(
         x: &<Self::Mono as Monoid>::M,
@@ -104,11 +104,21 @@ pub trait MapMonoid: Debug {
         Self::Mono::unit()
     }
     /// 作用fをvalueに作用させる
-    fn apply(f: &Self::Func, value: &<Self::Mono as Monoid>::M) -> <Self::Mono as Monoid>::M;
+    fn apply(
+        f: &<Self::Func as Monoid>::M,
+        value: &<Self::Mono as Monoid>::M,
+    ) -> <Self::Mono as Monoid>::M;
     /// 作用fの単位元
-    fn identity_map() -> Self::Func;
+    fn identity_map() -> <Self::Func as Monoid>::M {
+        Self::Func::unit()
+    }
     /// 作用fと作用gを合成する
-    fn compose(f: &Self::Func, g: &Self::Func) -> Self::Func;
+    fn compose(
+        f: &<Self::Func as Monoid>::M,
+        g: &<Self::Func as Monoid>::M,
+    ) -> <Self::Func as Monoid>::M {
+        Self::Func::op(f, g)
+    }
 }
 
 /// 加算の単位元

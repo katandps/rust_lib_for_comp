@@ -3,3 +3,4 @@
 pub mod max;
 pub mod min;
 pub mod sum;
+pub mod xor;
