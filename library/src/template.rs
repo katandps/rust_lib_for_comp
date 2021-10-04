@@ -1,6 +1,40 @@
-//!標準入力を取得するヘルパー
-use crate::*;
+/// general import
+pub use std::{
+    cmp::{max, min, Ordering, Reverse},
+    collections::{BTreeMap, BTreeSet, BinaryHeap, HashMap, HashSet, VecDeque},
+    convert::Infallible,
+    convert::{TryFrom, TryInto},
+    fmt::{Debug, Display, Formatter},
+    io::{stdin, stdout, BufRead, BufWriter, Write},
+    iter::{Product, Sum},
+    marker::PhantomData,
+    ops::{
+        Add, AddAssign, BitAnd, BitAndAssign, BitOr, BitOrAssign, BitXor, BitXorAssign, Deref,
+        DerefMut, Div, DivAssign, Mul, MulAssign, Neg, Not, RangeBounds, Rem, RemAssign, Shl,
+        ShlAssign, Shr, ShrAssign, Sub, SubAssign,
+    },
+    str::{from_utf8, FromStr},
+};
 
+/// min-max macros
+#[allow(unused_macros)]
+macro_rules! chmin {($base:expr, $($cmps:expr),+ $(,)*) => {{let cmp_min = min!($($cmps),+);if $base > cmp_min {$base = cmp_min;true} else {false}}};}
+#[allow(unused_macros)]
+macro_rules! chmax {($base:expr, $($cmps:expr),+ $(,)*) => {{let cmp_max = max!($($cmps),+);if $base < cmp_max {$base = cmp_max;true} else {false}}};}
+#[allow(unused_macros)]
+macro_rules! min {
+    ($a:expr $(,)*) => {{$a}};
+    ($a:expr, $b:expr $(,)*) => {{if $a > $b {$b} else {$a}}};
+    ($a:expr, $($rest:expr),+ $(,)*) => {{let b = min!($($rest),+);if $a > b {b} else {$a}}};
+}
+#[allow(unused_macros)]
+macro_rules! max {
+    ($a:expr $(,)*) => {{$a}};
+    ($a:expr, $b:expr $(,)*) => {{if $a > $b {$a} else {$b}}};
+    ($a:expr, $($rest:expr),+ $(,)*) => {{let b = max!($($rest),+);if $a > b {$a} else {b}}};
+}
+
+/// stdin reader
 pub struct Reader<R: BufRead> {
     reader: R,
     buf: Vec<u8>,
@@ -147,82 +181,48 @@ impl<R: BufRead> Reader<R> {
     }
 }
 
-#[cfg(test)]
-mod tests {
-    use super::*;
-    use itertools::Itertools;
-    use std::io::Cursor;
-
-    #[test]
-    fn basics() {
-        let cursor = Cursor::new(b"-123 456.7 12345 Hello, world!\n");
-        let mut reader = Reader::new(cursor);
-
-        assert_eq!(-123, reader.i());
-        assert_eq!(456.7, reader.f());
-        assert_eq!(12345, reader.u());
-        assert_eq!("Hello,".to_string(), reader.str());
-        assert_eq!("world!".to_string(), reader.str());
-
-        let cursor = Cursor::new(b"123 456 789 012 345 678\n");
-        let mut reader = Reader::new(cursor);
-
-        assert_eq!(vec![123, 456, 789, 12, 345, 678], reader.uv(6));
-    }
-
-    #[test]
-    fn edge_cases() {
-        {
-            let cursor = Cursor::new(b"8\n");
-            let mut reader = Reader::new(cursor);
-            assert_eq!(8u32, reader.n());
-        }
-        {
-            let cursor = Cursor::new(b"\n9\n");
-            let mut reader = Reader::new(cursor);
-            assert_eq!(9i32, reader.n());
-        }
-        {
-            let cursor = Cursor::new(b"\n\n10\n11\n");
-            let mut reader = Reader::new(cursor);
-            assert_eq!(10u8, reader.n());
-            assert_eq!(11u8, reader.n());
+/// stdin writer
+pub struct Writer<W: Write> {
+    w: BufWriter<W>,
+}
+impl<W: Write> Writer<W> {
+    pub fn new(writer: W) -> Writer<W> {
+        Writer {
+            w: BufWriter::new(writer),
         }
     }
 
-    #[test]
-    fn map() {
-        {
-            let data = vec!["...#..", ".###..", "....##", ""];
-            let cursor = Cursor::new(data.iter().join("\n"));
-            let mut reader = Reader::new(cursor);
-            let res = reader.char_map(3);
-            for i in 0..3 {
-                let v = data[i].chars().collect_vec();
-                for j in 0..6 {
-                    assert_eq!(v[j], res[i][j]);
-                }
-            }
-        }
-        {
-            let data = vec!["S..#..", ".###..", "...G##", ""];
-            let cursor = Cursor::new(data.iter().join("\n"));
-            let mut reader = Reader::new(cursor);
-            let res = reader.bool_map(3, '#');
-            for i in 0..3 {
-                let v = data[i].chars().collect_vec();
-                for j in 0..6 {
-                    assert_eq!(v[j] != '#', res[i][j]);
-                }
-            }
-        }
+    pub fn println<S: Display>(&mut self, s: &S) {
+        writeln!(self.w, "{}", s).unwrap()
     }
 
-    #[test]
-    fn digits() {
-        let cursor = Cursor::new("123456\n");
-        let mut reader = Reader::new(cursor);
-        let res = reader.digits();
-        assert_eq!(res, vec![1, 2, 3, 4, 5, 6]);
+    pub fn print<S: Display>(&mut self, s: &S) {
+        write!(self.w, "{}", s).unwrap()
     }
+
+    pub fn print_join<S: Display>(&mut self, v: &[S], separator: Option<&str>) {
+        let sep = separator.unwrap_or_else(|| "\n");
+        writeln!(
+            self.w,
+            "{}",
+            v.iter()
+                .map(|s| s.to_string())
+                .collect::<Vec<String>>()
+                .join(sep)
+        )
+        .unwrap()
+    }
+}
+
+#[allow(dead_code)]
+fn main() {
+    let stdin = stdin();
+    let stdout = stdout();
+    solve(Reader::new(stdin.lock()), Writer::new(stdout.lock()));
+}
+
+pub fn solve<R: BufRead, W: Write>(mut reader: Reader<R>, mut output: Writer<W>) {
+    //$END$//
+    let n = reader.u();
+    output.println(&n);
 }

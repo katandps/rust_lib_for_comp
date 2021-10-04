@@ -1,5 +1,4 @@
-use std::fmt::Display;
-use std::io::{BufWriter, Write};
+use crate::*;
 
 pub struct Writer<W: Write> {
     w: BufWriter<W>,

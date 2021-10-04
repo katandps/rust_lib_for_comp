@@ -6,7 +6,7 @@ pub fn mi(i: i64) -> Mi {
     Mi::new(i)
 }
 
-pub trait Mod: Copy + Clone + std::fmt::Debug {
+pub trait Mod: Copy + Clone + Debug {
     fn get() -> i64;
 }
 
@@ -181,14 +181,14 @@ impl<M: Mod> DivAssign<ModInt<M>> for ModInt<M> {
     }
 }
 
-impl<M: Mod> std::fmt::Display for ModInt<M> {
-    fn fmt(&self, f: &mut std::fmt::Formatter) -> std::fmt::Result {
+impl<M: Mod> Display for ModInt<M> {
+    fn fmt(&self, f: &mut Formatter) -> std::fmt::Result {
         write!(f, "{}", self.n)
     }
 }
 
-impl<M: Mod> std::fmt::Debug for ModInt<M> {
-    fn fmt(&self, f: &mut std::fmt::Formatter) -> std::fmt::Result {
+impl<M: Mod> Debug for ModInt<M> {
+    fn fmt(&self, f: &mut Formatter) -> std::fmt::Result {
         write!(f, "{}", self.n)
     }
 }

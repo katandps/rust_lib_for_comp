@@ -1,14 +1,19 @@
-pub use std::cmp::{max, min, Ordering, Reverse};
-pub use std::collections::{BTreeMap, BTreeSet, BinaryHeap, HashMap, HashSet, VecDeque};
-pub use std::convert::Infallible;
-pub use std::convert::{TryFrom, TryInto};
-pub use std::fmt::{Debug, Display, Formatter};
-pub use std::io::BufRead;
-pub use std::iter::{Product, Sum};
-pub use std::marker::PhantomData;
-pub use std::ops::{
-    Add, AddAssign, BitAnd, BitAndAssign, BitOr, BitOrAssign, BitXor, BitXorAssign, Deref,
-    DerefMut, Div, DivAssign, Mul, MulAssign, Neg, Not, RangeBounds, Rem, RemAssign, Shl,
-    ShlAssign, Shr, ShrAssign, Sub, SubAssign,
+//! prelude
+
+/// general import
+pub use std::{
+    cmp::{max, min, Ordering, Reverse},
+    collections::{BTreeMap, BTreeSet, BinaryHeap, HashMap, HashSet, VecDeque},
+    convert::Infallible,
+    convert::{TryFrom, TryInto},
+    fmt::{Debug, Display, Formatter},
+    io::{stdin, stdout, BufRead, BufWriter, Write},
+    iter::{Product, Sum},
+    marker::PhantomData,
+    ops::{
+        Add, AddAssign, BitAnd, BitAndAssign, BitOr, BitOrAssign, BitXor, BitXorAssign, Deref,
+        DerefMut, Div, DivAssign, Mul, MulAssign, Neg, Not, RangeBounds, Rem, RemAssign, Shl,
+        ShlAssign, Shr, ShrAssign, Sub, SubAssign,
+    },
+    str::{from_utf8, FromStr},
 };
-pub use std::str::{from_utf8, FromStr};
