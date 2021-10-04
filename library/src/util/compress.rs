@@ -1,7 +1,7 @@
 //! 座標圧縮 O(NlogN)
-//!
+
 #[allow(dead_code)]
-fn compress<T: Ord>(source: &[T]) -> Vec<usize> {
+pub fn compress<T: Ord>(source: &[T]) -> Vec<usize> {
     let n = source.len();
     let mut idx: Vec<usize> = (0..n).collect();
     idx.sort_by_key(|&i| &source[i]);
