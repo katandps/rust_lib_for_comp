@@ -1,38 +1,48 @@
 //! 接尾辞配列
 
-use std::collections::BTreeMap;
+use crate::util::compress::compress;
+use crate::*;
 
 #[derive(Debug, Clone)]
 pub struct SuffixArray {
-    sa: Vec<usize>,
-    source: Vec<u8>,
+    pub sa: Vec<usize>,
+    pub source: Vec<u8>,
 }
 
 impl SuffixArray {
     /// create by SA-IS. O(N)
-    pub fn create(source: &[u8]) -> Self {
+    pub fn build(source: &[u8]) -> Self {
+        let mut source: Vec<_> = source.to_vec();
+        source.push(0);
         let mut sais = SAIS::new(source.len());
-        let source = compress(source);
-        let sa = sais.suffix_array(&source);
+        let sa = sais.suffix_array(
+            &compress(&source)
+                .iter()
+                .map(|&u| u as u8)
+                .collect::<Vec<_>>(),
+        );
         Self { sa, source }
     }
-}
 
-fn compress(source: &[u8]) -> Vec<u8> {
-    let mut source: Vec<_> = source.to_vec();
-    source.push(0);
-    let n = source.len();
-    let mut idx: Vec<_> = (0..n).collect();
-    idx.sort_by_key(|&i| &source[i]);
-    let mut s2 = vec![0; n];
-    let mut now = 0;
-    for i in 0..n {
-        if i > 0 && source[idx[i - 1]] != source[idx[i]] {
-            now += 1;
+    /// targetがsourceに含まれるとき、そのindexの一つを返す
+    pub fn search(&self, target: &[u8]) -> Option<usize> {
+        let mut l = 0;
+        let mut r = self.sa.len();
+        while r - l > 1 {
+            let mid = (l + r) / 2;
+            if &self.source[self.sa[mid]..min(self.sa[mid] + target.len(), self.sa.len())] <= target
+            {
+                l = mid;
+            } else {
+                r = mid;
+            }
         }
-        s2[idx[i]] = now;
+        if &self.source[self.sa[l]..min(self.sa[l] + target.len(), self.sa.len())] == target {
+            Some(self.sa[l])
+        } else {
+            None
+        }
     }
-    s2
 }
 
 #[derive(Debug, Clone)]
@@ -232,9 +242,25 @@ mod test {
     use super::*;
 
     #[test]
-    fn suffix_array_test() {
-        let s: Vec<_> = "mmiissiissiippii".chars().map(|c| c as u8).collect();
-        let _sa = SuffixArray::create(&s);
-        // dbg!(sa);
+    fn search_test() {
+        assert!(build_u8_vec("abc") <= build_u8_vec("abcd"));
+        assert!(build_u8_vec("abc") <= build_u8_vec("abc"));
+        assert!(!(build_u8_vec("abc") <= build_u8_vec("ab")));
+        assert!(build_u8_vec("abc") <= build_u8_vec("abd"));
+
+        let s: Vec<_> = build_u8_vec("mmiissiissiippii");
+        let sa = SuffixArray::build(&s);
+        assert!(sa.search(&build_u8_vec("")).is_some());
+        assert!(sa.search(&build_u8_vec("i")).is_some());
+        assert_eq!(Some(0), sa.search(&build_u8_vec("mmiissiissiippii")));
+        assert_eq!(Some(3), sa.search(&build_u8_vec("issiis")));
+        assert_eq!(Some(12), sa.search(&build_u8_vec("ppii")));
+        assert_eq!(None, sa.search(&build_u8_vec("issiisss")));
+        assert_eq!(None, sa.search(&build_u8_vec("ppiii")));
+        assert_eq!(None, sa.search(&build_u8_vec("b")));
+    }
+
+    fn build_u8_vec(s: &str) -> Vec<u8> {
+        s.chars().map(|c| c as u8).collect()
     }
 }
