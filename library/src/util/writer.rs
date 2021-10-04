@@ -32,17 +32,3 @@ impl<W: Write> Writer<W> {
         .unwrap()
     }
 }
-
-#[cfg(test)]
-mod test {
-    use super::*;
-    use std::io::stdout;
-
-    #[test]
-    fn t() {
-        let stdout = stdout();
-        let mut writer = Writer::new(stdout.lock());
-        writer.println(&123);
-        writer.print_join(&vec![123, 45, 678], None);
-    }
-}
