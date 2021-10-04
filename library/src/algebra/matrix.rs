@@ -1,5 +1,7 @@
+//! 行列
 use crate::*;
 
+/// 行列
 #[derive(Clone, Eq, PartialEq)]
 pub struct Matrix {
     pub buf: Vec<Vec<Mi>>,
@@ -17,6 +19,7 @@ impl std::convert::TryFrom<Vec<Vec<Mi>>> for Matrix {
 }
 
 impl Matrix {
+    /// N行N列の単位行列を生成する
     pub fn identity_matrix(n: usize) -> Self {
         let mut buf = vec![vec![Mi::new(0); n]; n];
 
@@ -26,12 +29,14 @@ impl Matrix {
         Matrix { buf }
     }
 
+    /// vをもとに行行列を生成する
     pub fn row_vector(v: &[Mi]) -> Self {
         Matrix {
             buf: vec![v.to_vec()],
         }
     }
 
+    /// vをもとに列行列を生成する
     pub fn column_vector(v: &[Mi]) -> Self {
         Matrix {
             buf: v.iter().map(|mi| vec![*mi]).collect(),

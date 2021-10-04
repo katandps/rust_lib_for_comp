@@ -1,4 +1,8 @@
-#[allow(dead_code)]
+//! 累乗のMOD
+
+/// 累乗 `$p^{e} % m$`
+/// ### 計算量
+/// `$log(e)$`
 pub fn pow(p: usize, e: usize, m: usize) -> usize {
     let mut result = 1;
     let mut cur = p;
