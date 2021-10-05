@@ -53,8 +53,8 @@ impl<M: MapMonoid> LazySegmentTree<M> {
     }
 
     /// 区間更新 [l, r)
-    pub fn update_range(&mut self, mut l: usize, mut r: usize, f: <M::Func as Monoid>::M) {
-        assert!(l <= r && r <= self.n);
+    pub fn update_range<R: RangeBounds<usize>>(&mut self, range: R, f: <M::Func as Monoid>::M) {
+        let (mut l, mut r) = self.to_lr(range);
         if l == r {
             return;
         }
@@ -96,11 +96,27 @@ impl<M: MapMonoid> LazySegmentTree<M> {
         }
     }
 
+    fn to_lr<R: RangeBounds<usize>>(&self, range: R) -> (usize, usize) {
+        use Bound::*;
+        let l = match range.start_bound() {
+            Unbounded => 0,
+            Included(&s) => s,
+            Excluded(&s) => s + 1,
+        };
+        let r = match range.end_bound() {
+            Unbounded => self.n,
+            Included(&e) => e + 1,
+            Excluded(&e) => e,
+        };
+        assert!(l <= r && r <= self.n);
+        (l, r)
+    }
+
     /// i番目の値を取得する
     pub fn get(&mut self, mut i: usize) -> <M::Mono as Monoid>::M {
         assert!(i < self.n);
         i += self.n;
-        for j in (1..self.log).rev() {
+        for j in (1..=self.log).rev() {
             self.propagate(i >> j);
         }
         self.node[i].clone()
@@ -108,8 +124,8 @@ impl<M: MapMonoid> LazySegmentTree<M> {
 
     /// 区間 $`[l, r)`$ の値を取得する
     /// $`l == r`$ のときは $`unit`$ を返す
-    pub fn prod(&mut self, mut l: usize, mut r: usize) -> <M::Mono as Monoid>::M {
-        assert!(l <= r && r <= self.n);
+    pub fn prod<R: RangeBounds<usize>>(&mut self, range: R) -> <M::Mono as Monoid>::M {
+        let (mut l, mut r) = self.to_lr(range);
         if l == r {
             return M::unit();
         }
@@ -190,15 +206,15 @@ mod test {
         let mut segtree = LazySegmentTree::<AddSum>::new(n);
 
         for i in 1..n {
-            assert_eq!(0, segtree.prod(i - 1, i).value);
+            assert_eq!(0, segtree.prod(i - 1..i).value);
         }
 
         // [0, 0, 3, 0, 0]
         segtree.update_at(2, 3);
-        assert_eq!(3, segtree.prod(2, 3).value);
+        assert_eq!(3, segtree.prod(2..3).value);
 
         // [0, 2, 5, 2, 0]
-        segtree.update_range(1, 4, 2);
-        assert_eq!(7, segtree.prod(0, 3).value);
+        segtree.update_range(1..4, 2);
+        assert_eq!(7, segtree.prod(0..3).value);
     }
 }

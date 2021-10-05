@@ -9,9 +9,9 @@ pub use std::{
     iter::{Product, Sum},
     marker::PhantomData,
     ops::{
-        Add, AddAssign, BitAnd, BitAndAssign, BitOr, BitOrAssign, BitXor, BitXorAssign, Deref,
-        DerefMut, Div, DivAssign, Mul, MulAssign, Neg, Not, RangeBounds, Rem, RemAssign, Shl,
-        ShlAssign, Shr, ShrAssign, Sub, SubAssign,
+        Add, AddAssign, BitAnd, BitAndAssign, BitOr, BitOrAssign, BitXor, BitXorAssign, Bound,
+        Deref, DerefMut, Div, DivAssign, Mul, MulAssign, Neg, Not, RangeBounds, Rem, RemAssign,
+        Shl, ShlAssign, Shr, ShrAssign, Sub, SubAssign,
     },
     str::{from_utf8, FromStr},
 };

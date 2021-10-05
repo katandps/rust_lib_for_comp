@@ -46,7 +46,7 @@ impl<M: Monoid> SegmentTree<M> {
     where
         R: RangeBounds<usize>,
     {
-        use std::ops::Bound::*;
+        use Bound::*;
         let l = match range.start_bound() {
             Unbounded => 0,
             Included(&s) => s,

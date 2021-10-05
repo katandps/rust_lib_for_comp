@@ -19,7 +19,7 @@ where
     }
 }
 
-impl<S> Associative for Min<S> where S: BoundedAbove + Copy + Ord + Debug {}
+impl<S> Associative for Min<S> {}
 
 impl<S> Unital for Min<S>
 where
