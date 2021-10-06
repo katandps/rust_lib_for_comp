@@ -19,10 +19,13 @@ macro_rules! max {
     ($a:expr, $($rest:expr),+ $(,)*) => {{let b = max!($($rest),+);if $a > b {$a} else {b}}};
 }
 
+pub mod bellman_ford;
 pub mod bipartite_graph;
+pub mod dijkstra;
 pub mod directed_acyclic_graph;
 pub mod grid;
 pub mod lowest_common_ancestor;
+pub mod minimum_spanning_tree;
 pub mod retrograde_analysis;
 pub mod strongly_connected_components;
 pub mod union_find;
@@ -86,6 +89,25 @@ pub struct Graph {
     pub rev_edges: Vec<Vec<Edge>>,
 }
 
+/// 辺行列からグラフを生成する O(N^2)
+impl From<&Vec<Vec<Weight>>> for Graph {
+    fn from(w: &Vec<Vec<Weight>>) -> Self {
+        let n = w.len();
+        let mut ret = Self::new(n);
+        for i in 0..n {
+            assert_eq!(n, w[i].len());
+            for j in i + 1..n {
+                if w[i][j] == -1 {
+                    continue;
+                }
+                ret.add_edge(i, j, w[i as usize][j as usize]);
+                ret.add_edge(j, i, w[j as usize][i as usize]);
+            }
+        }
+        ret
+    }
+}
+
 impl Graph {
     /// n: 頂点数
     pub fn new(n: usize) -> Self {
@@ -94,21 +116,6 @@ impl Graph {
             edges: vec![Vec::new(); n],
             rev_edges: vec![Vec::new(); n],
         }
-    }
-
-    /// 辺行列からグラフを生成する O(N^2)
-    pub fn from_matrix(weights: &[Vec<Weight>], n: usize) -> Graph {
-        let mut ret = Self::new(n);
-        for i in 0..n {
-            for j in i + 1..n {
-                if weights[i][j] == -1 {
-                    continue;
-                }
-                ret.add_edge(i, j, weights[i as usize][j as usize]);
-                ret.add_edge(j, i, weights[j as usize][i as usize]);
-            }
-        }
-        ret
     }
 
     /// 相互に行き来できる辺をつける
@@ -125,108 +132,6 @@ impl Graph {
         self.rev_edges[b].push(Edge::new(b, a, w));
     }
 
-    ///
-    /// Prim法でMinimumSpanningTree(最小全域木)を求める
-    /// rから開始する (= rと連結でない点は無視する)
-    /// ## 計算量
-    /// 頂点数をV、辺数をEとすると
-    /// 二分ヒープによる実装なのでO(ElogV)
-    /// ```
-    /// use library::graph::Graph;
-    /// let data = vec![
-    ///     vec![-1, 2, 3, 1, -1],
-    ///     vec![2, -1, -1, 4, -1],
-    ///     vec![3, -1, -1, 1, 1],
-    ///     vec![1, 4, 1, -1, 3],
-    ///     vec![-1, -1, 1, 3, -1],
-    /// ];
-    ///
-    /// let graph = Graph::from_matrix(&data, 5);
-    /// assert_eq!(5, graph.prim(0));
-    /// ```
-    ///
-    pub fn prim(&self, r: usize) -> Weight {
-        let mut t = Vec::new();
-        let mut total: Weight = 0;
-        let mut visits = vec![false; self.n];
-        let mut q = BinaryHeap::new();
-        q.push(Reverse(Edge::new(self.n, r, 0)));
-        while !q.is_empty() {
-            let Reverse(e) = q.pop().unwrap();
-            if visits[e.dst as usize] {
-                continue;
-            }
-            visits[e.dst as usize] = true;
-            total += e.weight;
-            if e.src != self.n {
-                t.push(e)
-            }
-            self.edges[e.dst].iter().for_each(|f| {
-                if !visits[f.dst as usize] {
-                    q.push(Reverse(*f));
-                }
-            });
-        }
-        total
-    }
-
-    ///
-    ///  ベルマンフォード法でlからrへの最小コストを求める
-    /// ## 計算量
-    ///  O(NM)
-    pub fn bellman_ford(&self, l: usize, r: usize) -> Weight {
-        let mut dist = vec![INF; self.n];
-        dist[l] = 0;
-        for _step1 in 1..self.n {
-            for src in 0..self.n {
-                if dist[src] != INF {
-                    self.edges[src].iter().for_each(|e| {
-                        let _ = chmin!(dist[e.dst], dist[src] + e.weight);
-                    });
-                }
-            }
-        }
-        let mut neg = vec![false; self.n];
-        for _step2 in 0..self.n {
-            for src in 0..self.n {
-                if dist[src] != INF {
-                    self.edges[src].iter().for_each(|e| {
-                        neg[e.dst] |= neg[src] | chmin!(dist[e.dst], dist[src] + e.weight)
-                    });
-                }
-            }
-        }
-        if neg[r] {
-            INF
-        } else {
-            dist[r]
-        }
-    }
-
-    ///
-    /// dijkstra法でlから各頂点への最小コストを求める
-    /// 負辺がある場合は使えない
-    /// ## 計算量
-    ///  O(NlogN)
-    pub fn dijkstra(&self, l: usize) -> Vec<Weight> {
-        let mut dist = vec![INF; self.n];
-        let mut heap = BinaryHeap::new();
-        dist[l] = 0;
-        heap.push((Reverse(0), l));
-        while let Some((Reverse(d), src)) = heap.pop() {
-            if dist[src] != d {
-                continue;
-            }
-            self.edges[src].iter().for_each(|e| {
-                if dist[e.dst] > dist[src] + e.weight {
-                    dist[e.dst] = dist[src] + e.weight;
-                    heap.push((Reverse(dist[e.dst]), e.dst))
-                }
-            });
-        }
-        dist
-    }
-
     /// 各頂点の入次数を返す
     pub fn indegree(&self) -> Vec<i32> {
         (0..self.n)
@@ -239,19 +144,5 @@ impl Graph {
         (0..self.n)
             .map(|src| self.edges[src].len() as i32)
             .collect()
-    }
-}
-
-// ここまで
-
-#[cfg(test)]
-mod test {
-    use super::*;
-
-    #[test]
-    fn test() {
-        let n = 10;
-        let g = Graph::new(n);
-        assert_eq!(graph::INF, g.bellman_ford(0, 9));
     }
 }
