@@ -221,8 +221,8 @@ fn main() {
     solve(Reader::new(stdin.lock()), Writer::new(stdout.lock()));
 }
 
-pub fn solve<R: BufRead, W: Write>(mut reader: Reader<R>, mut output: Writer<W>) {
+pub fn solve<R: BufRead, W: Write>(mut reader: Reader<R>, mut writer: Writer<W>) {
     //$END$//
     let n = reader.u();
-    output.println(&n);
+    writer.println(&n);
 }
