@@ -10,7 +10,7 @@ struct DAG;
 impl DAG {
     /// 頂点をトポロジカルソートして返す
     /// グラフがDAGの場合に使用可
-    pub fn topological_sort(g: &Graph) -> Vec<usize> {
+    pub fn topological_sort<W>(g: &Graph<W>) -> Vec<usize> {
         let mut deg = g.indegree();
 
         let mut q = VecDeque::new();
@@ -35,7 +35,7 @@ impl DAG {
 
     /// lを始点とする各点までの経路数を求める
     /// グラフがDAGの場合に使用可
-    pub fn path(g: &Graph, l: usize) -> Vec<usize> {
+    pub fn path<W>(g: &Graph<W>, l: usize) -> Vec<usize> {
         let list = Self::topological_sort(&g);
         let mut dp = vec![0; g.n];
         dp[l] = 1;

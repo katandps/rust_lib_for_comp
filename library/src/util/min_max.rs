@@ -1,16 +1,16 @@
 //! 最大最小を求めるマクロ
 
-#[allow(unused_macros)]
+#[macro_export]
 macro_rules! chmin {($base:expr, $($cmps:expr),+ $(,)*) => {{let cmp_min = min!($($cmps),+);if $base > cmp_min {$base = cmp_min;true} else {false}}};}
-#[allow(unused_macros)]
+#[macro_export]
 macro_rules! chmax {($base:expr, $($cmps:expr),+ $(,)*) => {{let cmp_max = max!($($cmps),+);if $base < cmp_max {$base = cmp_max;true} else {false}}};}
-#[allow(unused_macros)]
+#[macro_export]
 macro_rules! min {
     ($a:expr $(,)*) => {{$a}};
     ($a:expr, $b:expr $(,)*) => {{if $a > $b {$b} else {$a}}};
     ($a:expr, $($rest:expr),+ $(,)*) => {{let b = min!($($rest),+);if $a > b {b} else {$a}}};
 }
-#[allow(unused_macros)]
+#[macro_export]
 macro_rules! max {
     ($a:expr $(,)*) => {{$a}};
     ($a:expr, $b:expr $(,)*) => {{if $a > $b {$a} else {$b}}};

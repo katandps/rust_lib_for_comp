@@ -1,7 +1,6 @@
 //! 最近共通祖先
 use super::Graph;
-
-use std::mem::swap;
+use crate::*;
 
 /// LowestCommonAncestor(LCA)を求めるライブラリ
 /// 事前処理NlogN、クエリlogN
@@ -11,12 +10,12 @@ pub struct LowestCommonAncestor {
 }
 
 impl LowestCommonAncestor {
-    pub fn new(g: &Graph, root: usize) -> LowestCommonAncestor {
+    pub fn new<W: Copy>(g: &Graph<W>, root: usize) -> Self {
         let mut k = 1;
         while (1 << k) < g.n {
             k += 1;
         }
-        let mut lca = LowestCommonAncestor {
+        let mut lca = Self {
             parent: vec![vec![std::usize::MAX; g.n]; k],
             dist: vec![std::usize::MAX; g.n],
         };
@@ -37,7 +36,7 @@ impl LowestCommonAncestor {
     /// v: 今見ている頂点
     /// p: parent
     /// d: 根からの距離
-    fn dfs(&mut self, g: &Graph, src: usize, p: usize, d: usize) {
+    fn dfs<W: Copy>(&mut self, g: &Graph<W>, src: usize, p: usize, d: usize) {
         self.parent[0][src] = p;
         self.dist[src] = d;
         for &to in &g.edges[src] {

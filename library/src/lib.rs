@@ -8,3 +8,4 @@ pub mod tree;
 pub mod util;
 
 pub use prelude::*;
+pub use util::min_max;

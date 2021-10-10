@@ -1,5 +1,6 @@
 //! 後退解析(ゲーム問題)
 
+use crate::graph::graph::Graph;
 use crate::*;
 
 #[derive(Clone, Copy, Debug, PartialEq)]
@@ -15,7 +16,7 @@ pub struct RetrogradeAnalysis {
 }
 
 impl RetrogradeAnalysis {
-    pub fn build(g: &Graph) -> RetrogradeAnalysis {
+    pub fn build<W>(g: &Graph<W>) -> RetrogradeAnalysis {
         let mut deg = g.outdegree();
         let mut ret = vec![WinLose::DRAW; g.n];
 
@@ -47,7 +48,3 @@ impl RetrogradeAnalysis {
         self.result[i]
     }
 }
-
-//////////////////////////////////////////////////////
-
-use crate::graph::graph::Graph;

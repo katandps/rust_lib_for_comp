@@ -1,21 +1,22 @@
 //! 強連結成分分解(SCC)
 use super::Graph;
+use crate::algebra::One;
 use crate::*;
 
-pub struct SCC {
+pub struct SCC<W> {
     /// もとの頂点と強連結成分の対応
     pub group: Vec<usize>,
     /// 強連結成分をまとめたグラフ(DAG)
-    pub graph: Graph,
+    pub graph: Graph<W>,
     /// 強連結成分ごとの個数
     pub size: Vec<usize>,
     /// 強連結成分の個数
     pub n: usize,
 }
 
-impl SCC {
+impl<W: Clone + One> SCC<W> {
     /// SCCを構築する O(N + M)
-    pub fn build(g: &Graph) -> SCC {
+    pub fn build(g: &Graph<W>) -> SCC<W> {
         let mut rest = (0..g.n).collect::<HashSet<_>>();
         let mut back_queue = VecDeque::new();
         while let Some(&src) = rest.iter().next() {
@@ -44,7 +45,7 @@ impl SCC {
             for edge in &g.edges[i] {
                 let (s, t) = (group[edge.src], group[edge.dst]);
                 if s != t {
-                    graph.add_arc(s, t, 1);
+                    graph.add_arc(s, t, W::one());
                 }
             }
         }
@@ -57,7 +58,7 @@ impl SCC {
         }
     }
 
-    fn dfs(g: &Graph, src: usize, back_queue: &mut VecDeque<usize>, rest: &mut HashSet<usize>) {
+    fn dfs(g: &Graph<W>, src: usize, back_queue: &mut VecDeque<usize>, rest: &mut HashSet<usize>) {
         if !rest.contains(&src) {
             return;
         }
@@ -68,7 +69,7 @@ impl SCC {
         back_queue.push_front(src);
     }
 
-    fn dfs2(g: &Graph, src: usize, flag: usize, result: &mut Vec<Option<usize>>) {
+    fn dfs2(g: &Graph<W>, src: usize, flag: usize, result: &mut Vec<Option<usize>>) {
         if result[src].is_some() {
             return;
         }
