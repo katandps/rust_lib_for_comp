@@ -7,14 +7,15 @@ pub mod bipartite_graph;
 pub mod dijkstra;
 pub mod directed_acyclic_graph;
 pub mod grid;
+pub mod kruskal;
 pub mod lowest_common_ancestor;
-pub mod minimum_spanning_tree;
+pub mod prim;
 pub mod retrograde_analysis;
 pub mod strongly_connected_components;
 pub mod union_find;
 pub mod warshall_floyd;
 
-///////////////
+/// Edge 辺
 
 #[derive(Copy, Clone, Eq, Ord, Default)]
 pub struct Edge<W> {
@@ -68,6 +69,16 @@ pub struct Graph<W> {
     pub n: usize,
     pub edges: Vec<Vec<Edge<W>>>,
     pub rev_edges: Vec<Vec<Edge<W>>>,
+}
+
+impl<W: Clone> Clone for Graph<W> {
+    fn clone(&self) -> Self {
+        Self {
+            n: self.n,
+            edges: self.edges.clone(),
+            rev_edges: self.rev_edges.clone(),
+        }
+    }
 }
 
 /// i64の辺行列からグラフを生成する O(N^2)

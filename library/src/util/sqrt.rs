@@ -1,8 +1,8 @@
-//! 整数での平方根
+//! 整数範囲での平方根(切り捨て)
 
 #[allow(dead_code)]
-fn sqrt(a: isize) -> isize {
-    let mut ng = std::i32::MAX as isize / 2;
+fn sqrt(a: i64) -> i64 {
+    let mut ng = std::i32::MAX as i64 / 8;
     let mut ok = -1;
     while (ok - ng).abs() > 1 {
         let mid = (ok + ng) / 2;

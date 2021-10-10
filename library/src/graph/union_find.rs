@@ -1,3 +1,5 @@
+//! 素集合データ構造 (UnionFind)
+
 pub struct UnionFind {
     parent: Vec<usize>,
     rank: Vec<usize>,
