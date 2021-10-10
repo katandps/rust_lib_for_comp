@@ -47,7 +47,7 @@ impl<W: Zero + Ord + Copy + Add<Output = W> + AddAssign> Prim<W> {
             }
             graph.edges[edge.dst].iter().for_each(|f| {
                 if !visits[f.dst as usize] {
-                    q.push(Reverse(f.clone()));
+                    q.push(Reverse(*f));
                 }
             });
         }
@@ -59,6 +59,6 @@ impl<W: Zero + Ord + Copy + Add<Output = W> + AddAssign> Prim<W> {
     }
 
     pub fn sum(&self) -> W {
-        self.sum.clone()
+        self.sum
     }
 }
