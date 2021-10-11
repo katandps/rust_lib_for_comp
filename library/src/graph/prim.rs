@@ -31,7 +31,11 @@ pub struct Prim<W> {
     sum: W,
 }
 
-impl<W: Zero + Ord + Copy + AddAssign, G: GraphTrait<Weight = W>> From<&G> for Prim<W> {
+impl<W, G> From<&G> for Prim<W>
+where
+    W: Zero + Ord + Copy + AddAssign,
+    G: GraphTrait<Weight = W>,
+{
     fn from(graph: &G) -> Self {
         let start = 0;
         let mut tree = Vec::new();

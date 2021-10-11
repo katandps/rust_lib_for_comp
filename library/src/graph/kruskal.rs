@@ -30,7 +30,11 @@ pub struct Kruskal<W> {
     sum: W,
 }
 
-impl<W: Zero + PartialOrd + Copy + AddAssign, G: GraphTrait<Weight = W>> From<&G> for Kruskal<W> {
+impl<W, G> From<&G> for Kruskal<W>
+where
+    W: Zero + PartialOrd + Copy + AddAssign,
+    G: GraphTrait<Weight = W>,
+{
     fn from(graph: &G) -> Self {
         let mut edges = Vec::new();
         for i in 0..graph.size() {

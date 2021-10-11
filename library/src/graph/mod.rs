@@ -1,5 +1,6 @@
 //! グラフ
 
+/// 辺の情報はEdgeに載せる
 use crate::*;
 
 pub mod bellman_ford;
@@ -16,6 +17,7 @@ pub mod union_find;
 pub mod warshall_floyd;
 
 /// Edge 辺
+/// W はWeightで各処理に対応するTraitを実装する
 
 #[derive(Copy, Clone, Eq, Ord, Default)]
 pub struct Edge<W> {
@@ -52,6 +54,20 @@ pub trait GraphTrait {
     type Weight;
     fn size(&self) -> usize;
     fn edges(&self, src: usize) -> Vec<Edge<Self::Weight>>;
+    fn rev_edges(&self, dst: usize) -> Vec<Edge<Self::Weight>>;
+    /// 各頂点の入次数を返す
+    fn indegree(&self) -> Vec<i32> {
+        (0..self.size())
+            .map(|dst| self.rev_edges(dst).len() as i32)
+            .collect()
+    }
+
+    /// 各頂点の出次数を返す
+    fn outdegree(&self) -> Vec<i32> {
+        (0..self.size())
+            .map(|src| self.edges(src).len() as i32)
+            .collect()
+    }
 }
 
 impl<W: Clone> GraphTrait for Graph<W> {
@@ -61,6 +77,9 @@ impl<W: Clone> GraphTrait for Graph<W> {
     }
     fn edges(&self, src: usize) -> Vec<Edge<W>> {
         self.edges[src].clone()
+    }
+    fn rev_edges(&self, src: usize) -> Vec<Edge<W>> {
+        self.rev_edges[src].clone()
     }
 }
 
@@ -81,7 +100,7 @@ impl<W: Clone> Clone for Graph<W> {
     }
 }
 
-/// i64の辺行列からグラフを生成する O(N^2)
+/// i64の隣接行列からグラフを生成する O(N^2)
 impl From<&Vec<Vec<i64>>> for Graph<i64> {
     fn from(w: &Vec<Vec<i64>>) -> Self {
         let n = w.len();
@@ -97,22 +116,6 @@ impl From<&Vec<Vec<i64>>> for Graph<i64> {
             }
         }
         ret
-    }
-}
-
-impl<W> Graph<W> {
-    /// 各頂点の入次数を返す
-    pub fn indegree(&self) -> Vec<i32> {
-        (0..self.n)
-            .map(|dst| self.rev_edges[dst].len() as i32)
-            .collect()
-    }
-
-    /// 各頂点の出次数を返す
-    pub fn outdegree(&self) -> Vec<i32> {
-        (0..self.n)
-            .map(|src| self.edges[src].len() as i32)
-            .collect()
     }
 }
 

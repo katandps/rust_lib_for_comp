@@ -1,12 +1,13 @@
 //! 2部グラフ
-use super::Graph;
+use crate::graph::GraphTrait;
 
-impl<W> Graph<W> {
-    /// グラフが二部グラフかどうか判定する
-    /// 二部グラフだったときはその分割方法を1つ返す
-    /// なお、グラフが連結でない場合は正しく判定できない
+/// グラフが二部グラフかどうか判定する
+/// 二部グラフだったときはその分割方法を1つ返す
+/// なお、グラフが連結でない場合は正しく判定できない
+
+impl<W> dyn GraphTrait<Weight = W> {
     pub fn is_bipartite_graph(&self) -> Option<Vec<bool>> {
-        let mut dist = vec![None; self.n];
+        let mut dist = vec![None; self.size()];
         dist[0] = Some(true);
         if self.dfs(0, &mut dist) {
             Some(dist.iter().map(|op| op.unwrap()).collect())
@@ -15,7 +16,7 @@ impl<W> Graph<W> {
         }
     }
     fn dfs(&self, src: usize, d: &mut Vec<Option<bool>>) -> bool {
-        for edge in &self.edges[src] {
+        for edge in &self.edges(src) {
             if d[edge.dst] == d[src] {
                 return false;
             }

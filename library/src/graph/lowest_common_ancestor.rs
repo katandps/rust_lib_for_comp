@@ -1,27 +1,33 @@
 //! 最近共通祖先
-use super::Graph;
+use crate::graph::GraphTrait;
 use crate::*;
 
 /// LowestCommonAncestor(LCA)を求めるライブラリ
 /// 事前処理NlogN、クエリlogN
-pub struct LowestCommonAncestor {
+pub struct LowestCommonAncestor<W, G> {
     parent: Vec<Vec<usize>>,
     dist: Vec<usize>,
+    _marker: PhantomData<fn() -> (W, G)>,
 }
 
-impl LowestCommonAncestor {
-    pub fn new<W: Copy>(g: &Graph<W>, root: usize) -> Self {
+impl<W, G> LowestCommonAncestor<W, G>
+where
+    W: Copy,
+    G: GraphTrait<Weight = W>,
+{
+    pub fn new(g: &G, root: usize) -> Self {
         let mut k = 1;
-        while (1 << k) < g.n {
+        while (1 << k) < g.size() {
             k += 1;
         }
         let mut lca = Self {
-            parent: vec![vec![std::usize::MAX; g.n]; k],
-            dist: vec![std::usize::MAX; g.n],
+            parent: vec![vec![std::usize::MAX; g.size()]; k],
+            dist: vec![std::usize::MAX; g.size()],
+            _marker: Default::default(),
         };
         lca.dfs(g, root, std::usize::MAX, 0);
         for k in 0..k - 1 {
-            for v in 0..g.n {
+            for v in 0..g.size() {
                 if lca.parent[k][v] == std::usize::MAX {
                     lca.parent[k + 1][v] = 1;
                 } else {
@@ -36,10 +42,10 @@ impl LowestCommonAncestor {
     /// v: 今見ている頂点
     /// p: parent
     /// d: 根からの距離
-    fn dfs<W: Copy>(&mut self, g: &Graph<W>, src: usize, p: usize, d: usize) {
+    fn dfs(&mut self, g: &G, src: usize, p: usize, d: usize) {
         self.parent[0][src] = p;
         self.dist[src] = d;
-        for &to in &g.edges[src] {
+        for &to in &g.edges(src) {
             if to.dst != p {
                 self.dfs(g, to.dst, src, d + 1);
             }
@@ -90,6 +96,7 @@ impl LowestCommonAncestor {
 #[cfg(test)]
 mod test {
     use super::*;
+    use crate::graph::Graph;
 
     #[test]
     pub fn it_works() {

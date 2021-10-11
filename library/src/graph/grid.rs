@@ -33,6 +33,23 @@ impl<W: Clone> GraphTrait for Grid<W> {
         }
         ret
     }
+
+    fn rev_edges(&self, dst: usize) -> Vec<Edge<W>> {
+        let mut ret = Vec::new();
+        if self.x(dst) + 1 < self.w {
+            ret.push(Edge::new(dst, dst + 1, self.map[dst].clone()));
+        }
+        if self.y(dst) + 1 < self.h {
+            ret.push(Edge::new(dst, dst + self.w, self.map[dst].clone()));
+        }
+        if self.x(dst) > 0 {
+            ret.push(Edge::new(dst, dst - 1, self.map[dst].clone()));
+        }
+        if self.y(dst) > 0 {
+            ret.push(Edge::new(dst, dst - self.w, self.map[dst].clone()));
+        }
+        ret
+    }
 }
 
 impl<W: Clone> Grid<W> {

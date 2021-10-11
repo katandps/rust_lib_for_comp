@@ -1,9 +1,10 @@
 //! 強連結成分分解(SCC)
 use super::Graph;
 use crate::algebra::One;
+use crate::graph::GraphTrait;
 use crate::*;
 
-pub struct SCC<W> {
+pub struct SCC<W, G> {
     /// もとの頂点と強連結成分の対応
     pub group: Vec<usize>,
     /// 強連結成分をまとめたグラフ(DAG)
@@ -12,17 +13,22 @@ pub struct SCC<W> {
     pub size: Vec<usize>,
     /// 強連結成分の個数
     pub n: usize,
+    _marker: PhantomData<fn() -> G>,
 }
 
-impl<W: Clone + One> SCC<W> {
+impl<W, G> SCC<W, G>
+where
+    W: Clone + One,
+    G: GraphTrait<Weight = W>,
+{
     /// SCCを構築する O(N + M)
-    pub fn build(g: &Graph<W>) -> SCC<W> {
-        let mut rest = (0..g.n).collect::<HashSet<_>>();
+    pub fn build(g: &G) -> Self {
+        let mut rest = (0..g.size()).collect::<HashSet<_>>();
         let mut back_queue = VecDeque::new();
         while let Some(&src) = rest.iter().next() {
             Self::dfs(&g, src, &mut back_queue, &mut rest);
         }
-        let mut result = vec![None; g.n];
+        let mut result = vec![None; g.size()];
         let mut i = 0;
         while let Some(src) = back_queue.pop_front() {
             if result[src].is_some() {
@@ -32,17 +38,17 @@ impl<W: Clone + One> SCC<W> {
             i += 1;
         }
 
-        let mut size = vec![0; g.n];
+        let mut size = vec![0; g.size()];
         let mut graph = Graph::new(i);
-        let mut group = vec![0; g.n];
-        for i in 0..g.n {
+        let mut group = vec![0; g.size()];
+        for i in 0..g.size() {
             assert!(result[i].is_some());
             size[result[i].unwrap()] += 1;
             group[i] = result[i].unwrap();
         }
 
-        for i in 0..g.n {
-            for edge in &g.edges[i] {
+        for src in 0..g.size() {
+            for edge in &g.edges(src) {
                 let (s, t) = (group[edge.src], group[edge.dst]);
                 if s != t {
                     graph.add_arc(s, t, W::one());
@@ -55,26 +61,27 @@ impl<W: Clone + One> SCC<W> {
             graph,
             size,
             n: i,
+            _marker: Default::default(),
         }
     }
 
-    fn dfs(g: &Graph<W>, src: usize, back_queue: &mut VecDeque<usize>, rest: &mut HashSet<usize>) {
+    fn dfs(g: &G, src: usize, back_queue: &mut VecDeque<usize>, rest: &mut HashSet<usize>) {
         if !rest.contains(&src) {
             return;
         }
         rest.remove(&src);
-        for edge in &g.edges[src] {
+        for edge in &g.edges(src) {
             Self::dfs(g, edge.dst, back_queue, rest);
         }
         back_queue.push_front(src);
     }
 
-    fn dfs2(g: &Graph<W>, src: usize, flag: usize, result: &mut Vec<Option<usize>>) {
+    fn dfs2(g: &G, src: usize, flag: usize, result: &mut Vec<Option<usize>>) {
         if result[src].is_some() {
             return;
         }
         result[src] = Some(flag);
-        for edge in &g.rev_edges[src] {
+        for edge in &g.rev_edges(src) {
             Self::dfs2(g, edge.dst, flag, result);
         }
     }

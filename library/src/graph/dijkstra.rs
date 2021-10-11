@@ -5,12 +5,16 @@ use crate::*;
 
 ///
 /// dijkstra法でlから各頂点への最小コストを求める
-/// 負辺がある場合は使えない
+/// ## 制約
+/// 負辺なし
 /// ## 計算量
-///  O(NlogN)
+/// O(NlogN)
 
 pub struct Dijkstra<W>(Vec<W>);
-impl<W: Copy + BoundedAbove + Add<Output = W> + PartialEq + Ord + Zero> Dijkstra<W> {
+impl<W> Dijkstra<W>
+where
+    W: Copy + BoundedAbove + Add<Output = W> + PartialEq + Ord + Zero,
+{
     pub fn dijkstra<G: GraphTrait<Weight = W>>(g: &G, l: usize) -> Self {
         let mut dist = vec![W::max_value(); g.size()];
         let mut heap = BinaryHeap::new();

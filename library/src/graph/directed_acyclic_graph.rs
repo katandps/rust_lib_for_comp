@@ -1,7 +1,7 @@
 //! 有向非巡回グラフ(DAG)
 
-use super::Graph;
-use std::collections::VecDeque;
+use crate::graph::GraphTrait;
+use crate::*;
 
 #[allow(dead_code)]
 struct DAG;
@@ -10,7 +10,10 @@ struct DAG;
 impl DAG {
     /// 頂点をトポロジカルソートして返す
     /// グラフがDAGの場合に使用可
-    pub fn topological_sort<W>(g: &Graph<W>) -> Vec<usize> {
+    pub fn topological_sort<W, G>(g: &G) -> Vec<usize>
+    where
+        G: GraphTrait<Weight = W>,
+    {
         let mut deg = g.indegree();
 
         let mut q = VecDeque::new();
@@ -22,7 +25,7 @@ impl DAG {
 
         let mut ret = Vec::new();
         while let Some(src) = q.pop_front() {
-            g.edges[src].iter().for_each(|e| {
+            g.edges(src).iter().for_each(|e| {
                 deg[e.dst] -= 1;
                 if deg[e.dst] == 0 {
                     q.push_back(e.dst)
@@ -35,12 +38,15 @@ impl DAG {
 
     /// lを始点とする各点までの経路数を求める
     /// グラフがDAGの場合に使用可
-    pub fn path<W>(g: &Graph<W>, l: usize) -> Vec<usize> {
-        let list = Self::topological_sort(&g);
-        let mut dp = vec![0; g.n];
+    pub fn path<W, G>(g: &G, l: usize) -> Vec<usize>
+    where
+        G: GraphTrait<Weight = W>,
+    {
+        let list = Self::topological_sort(g);
+        let mut dp = vec![0; g.size()];
         dp[l] = 1;
         for src in list {
-            for e in &g.edges[src] {
+            for e in &g.edges(src) {
                 dp[e.dst] += dp[src];
             }
         }
