@@ -7,7 +7,7 @@
 ///
 pub struct SID {
     size: usize,
-    blocks: usize,
+    _blocks: usize,
     bits: Vec<u64>,
     sum: Vec<u64>,
 }
@@ -21,7 +21,7 @@ impl SID {
     /// ## 計算量
     /// O(1)
     pub fn access(&self, p: usize) -> bool {
-        self.bits[p >> Self::BIT_LEN_LEN] >> (p & Self::BIT_LEN - 1) & 1 != 0
+        self.bits[p >> Self::BIT_LEN_LEN] >> (p & (Self::BIT_LEN - 1)) & 1 != 0
     }
 
     /// [0, p)に1のビットがいくつあるか
@@ -30,8 +30,8 @@ impl SID {
     /// O(1)
     pub fn rank(&self, p: usize) -> u64 {
         self.sum[p >> Self::BIT_LEN_LEN]
-            + (self.bits[p >> Self::BIT_LEN_LEN] & (1 << (p & Self::BIT_LEN - 1)) - 1).count_ones()
-                as u64
+            + (self.bits[p >> Self::BIT_LEN_LEN] & ((1 << (p & (Self::BIT_LEN - 1))) - 1))
+                .count_ones() as u64
     }
 
     /// 1のビットをx個含む[0, p)の区間であって、pが最小となるものを返す
@@ -74,7 +74,7 @@ impl SIDBuilder {
     }
 
     pub fn set(&mut self, p: usize) {
-        self.bits[p >> SID::BIT_LEN_LEN] |= 1 << (p & SID::BIT_LEN - 1)
+        self.bits[p >> SID::BIT_LEN_LEN] |= 1 << (p & (SID::BIT_LEN - 1))
     }
 
     pub fn build(self) -> SID {
@@ -84,7 +84,7 @@ impl SIDBuilder {
         }
         SID {
             size: self.size,
-            blocks: self.blocks,
+            _blocks: self.blocks,
             bits: self.bits,
             sum,
         }

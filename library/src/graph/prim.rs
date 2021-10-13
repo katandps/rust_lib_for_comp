@@ -54,7 +54,7 @@ where
             }
             for edge in graph.edges(edge.dst) {
                 if !visits[edge.dst as usize] {
-                    q.push(Reverse(edge.clone()));
+                    q.push(Reverse(edge));
                 }
             }
         }

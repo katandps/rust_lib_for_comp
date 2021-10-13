@@ -6,9 +6,9 @@ use std::fmt::Debug;
 use std::marker::PhantomData;
 
 #[derive(Clone, Debug)]
-pub struct Max<S>(Infallible, PhantomData<fn() -> S>);
+pub struct MaxMonoid<S>(Infallible, PhantomData<fn() -> S>);
 
-impl<S> Magma for Max<S>
+impl<S> Magma for MaxMonoid<S>
 where
     S: BoundedBelow + Copy + Ord + Debug,
 {
@@ -19,9 +19,9 @@ where
     }
 }
 
-impl<S> Associative for Max<S> where S: BoundedBelow + Copy + Ord + Debug {}
+impl<S> Associative for MaxMonoid<S> where S: BoundedBelow + Copy + Ord + Debug {}
 
-impl<S> Unital for Max<S>
+impl<S> Unital for MaxMonoid<S>
 where
     S: BoundedBelow + Copy + Ord + Debug,
 {

@@ -97,12 +97,12 @@ impl<M: Monoid> SegmentTree<M> {
 #[cfg(test)]
 mod test {
     use super::*;
-    use crate::algebra::impl_monoid::max::Max;
+    use crate::algebra::impl_monoid::max_monoid::MaxMonoid;
 
     #[test]
     fn it_works() {
         let base = vec![3, 1, 4, 1, 5, 9, 2, 6, 5, 3];
-        let mut segtree: SegmentTree<Max<_>> = SegmentTree::new(&base);
+        let mut segtree: SegmentTree<MaxMonoid<_>> = SegmentTree::new(&base);
 
         assert_eq!(3, segtree.get_by_range(0..1));
         assert_eq!(3, segtree.get_by_range(0..2));

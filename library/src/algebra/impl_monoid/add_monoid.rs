@@ -3,18 +3,18 @@ use crate::algebra::{Associative, Magma, Unital, Zero};
 use crate::*;
 
 #[derive(Clone, Debug)]
-pub struct Sum<S>(Infallible, PhantomData<fn() -> S>);
+pub struct AddMonoid<S>(Infallible, PhantomData<fn() -> S>);
 
-impl<S: Zero + Copy + Add<Output = S> + Ord + Debug> Magma for Sum<S> {
+impl<S: Zero + Copy + Add<Output = S> + Ord + Debug> Magma for AddMonoid<S> {
     type M = S;
     fn op(x: &Self::M, y: &Self::M) -> Self::M {
         *x + *y
     }
 }
 
-impl<S: Zero + Copy + Add<Output = S> + Ord + Debug> Associative for Sum<S> {}
+impl<S: Zero + Copy + Add<Output = S> + Ord + Debug> Associative for AddMonoid<S> {}
 
-impl<S: Zero + Copy + Add<Output = S> + Ord + Debug> Unital for Sum<S> {
+impl<S: Zero + Copy + Add<Output = S> + Ord + Debug> Unital for AddMonoid<S> {
     fn unit() -> Self::M {
         S::zero()
     }
@@ -30,13 +30,13 @@ pub struct Segment {
     size: i64,
 }
 
-impl std::fmt::Debug for Segment {
-    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+impl Debug for Segment {
+    fn fmt(&self, f: &mut Formatter<'_>) -> std::fmt::Result {
         write!(f, "v: {}, size: {}", self.value, self.size)
     }
 }
 
-impl std::ops::Add<Segment> for Segment {
+impl Add<Segment> for Segment {
     type Output = Segment;
 
     fn add(self, rhs: Segment) -> Self::Output {
@@ -47,7 +47,7 @@ impl std::ops::Add<Segment> for Segment {
     }
 }
 
-impl std::ops::Add<i64> for &Segment {
+impl Add<i64> for &Segment {
     type Output = Segment;
     fn add(self, rhs: i64) -> Self::Output {
         Segment {

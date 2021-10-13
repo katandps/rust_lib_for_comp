@@ -183,14 +183,14 @@ impl<M: MapMonoid> LazySegmentTree<M> {
 #[cfg(test)]
 mod test {
     use super::*;
-    use crate::algebra::impl_monoid::sum::{Segment, Sum};
+    use crate::algebra::impl_monoid::add_monoid::{AddMonoid, Segment};
 
     // これは毎回書く(モノイドとモノイドから作用付きモノイドを作る)
     #[derive(Debug)]
     pub struct AddSum;
     impl MapMonoid for AddSum {
-        type Mono = Sum<Segment>;
-        type Func = Sum<i64>;
+        type Mono = AddMonoid<Segment>;
+        type Func = AddMonoid<i64>;
 
         fn apply(
             f: &<Self::Func as Monoid>::M,

@@ -1,7 +1,8 @@
 //! モノイドの実装
 
-pub mod max;
-pub mod min;
-pub mod overwrite;
-pub mod sum;
-pub mod xor;
+pub mod add_monoid;
+pub mod max_monoid;
+pub mod min_monoid;
+pub mod or_monoid;
+pub mod overwrite_monoid;
+pub mod xor_monoid;
