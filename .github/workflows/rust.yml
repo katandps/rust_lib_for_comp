@@ -30,22 +30,18 @@ jobs:
         with:
           toolchain: stable
           components: clippy
-          working-directory: ./library
       - uses: actions-rs/cargo@v1
         with:
           command: clippy
-          args: -- -D warnings
-          working-directory: ./library
+          args: --manifest-path ./library -- -D warnings
       - uses: actions-rs/cargo@v1
         with:
           command: test
-          args: --verbose
-          working-directory: ./library
+          args: --manifest-path ./library --verbose
       - uses: actions-rs/cargo@v1
         with:
           command: doc
-          args: --no-deps
-          working-directory: ./library
+          args: --manifest-path ./library --no-deps
       - uses: peaceiris/actions-gh-pages@v3
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
