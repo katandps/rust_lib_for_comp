@@ -33,15 +33,15 @@ jobs:
       - uses: actions-rs/cargo@v1
         with:
           command: clippy
-          args: --manifest-path ./library -- -D warnings
+          args: --manifest-path ./library/Cargo.toml -- -D warnings
       - uses: actions-rs/cargo@v1
         with:
           command: test
-          args: --manifest-path ./library --verbose
+          args: --manifest-path ./library/Cargo.toml --verbose
       - uses: actions-rs/cargo@v1
         with:
           command: doc
-          args: --manifest-path ./library --no-deps
+          args: --manifest-path ./library/Cargo.toml --no-deps
       - uses: peaceiris/actions-gh-pages@v3
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
