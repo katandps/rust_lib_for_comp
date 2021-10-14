@@ -60,13 +60,6 @@ impl<M: Monoid> SegmentTree<M> {
         self.g(l, r, None, None, None)
     }
 
-    /// iの値を取得する
-    /// ## 計算量
-    /// $`O(logN)`$
-    pub fn get(&self, i: usize) -> M::M {
-        self.g(i, i + 1, None, None, None)
-    }
-
     /// [start, end)の値を求める
     /// k: 自分がいるノードのインデックス
     /// l, r: 対象区間 [l, r)
@@ -92,6 +85,17 @@ impl<M: Monoid> SegmentTree<M> {
     }
 }
 
+/// indexの値を取得する
+/// ## 計算量
+/// $`O(1)`$
+impl<M: Monoid> Index<usize> for SegmentTree<M> {
+    type Output = M::M;
+
+    fn index(&self, i: usize) -> &M::M {
+        &self.node[i + self.n - 1]
+    }
+}
+
 ///////////////////////////////////////////////////////////////////
 
 #[cfg(test)]
@@ -103,6 +107,10 @@ mod test {
     fn it_works() {
         let base = vec![3, 1, 4, 1, 5, 9, 2, 6, 5, 3];
         let mut segtree: SegmentTree<MaxMonoid<_>> = SegmentTree::new(&base);
+
+        for i in 0..base.len() {
+            assert_eq!(base[i], segtree[i]);
+        }
 
         assert_eq!(3, segtree.get_by_range(0..1));
         assert_eq!(3, segtree.get_by_range(0..2));
