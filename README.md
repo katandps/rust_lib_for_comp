@@ -10,7 +10,7 @@
 
 ドキュメントは[ここ](https://katandps.github.io/rust_competitive_programming/library/)
 
-masterにpushすると自動テストが走る
+masterにpushするとテスト/静的解析/Doc生成が走る
 
 ## 運用
 
