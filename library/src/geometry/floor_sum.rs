@@ -1,9 +1,7 @@
 //! 直線と格子点
-type NUM = i64;
-
 /// y = (Ax + B)/M (0 <= x <= N) の下にある格子点の数を求める
 /// O(log(max(A,M))
-pub fn floor_sum(n: NUM, m: NUM, mut a: NUM, mut b: NUM) -> NUM {
+pub fn floor_sum(n: i64, m: i64, mut a: i64, mut b: i64) -> i64 {
     let mut ans = 0;
     if a >= m {
         ans += (n - 1) * n * (a / m) / 2;

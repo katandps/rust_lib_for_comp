@@ -172,9 +172,7 @@ impl Mul<Matrix> for Matrix {
         let mut buf = vec![vec![Mi::new(0); rhs_x]; self_y];
         buf.iter_mut().enumerate().for_each(|(i, bufi)| {
             bufi.iter_mut().enumerate().for_each(|(j, bufij)| {
-                for k in 0..self_x {
-                    *bufij += self.buf[i][k] * rhs.buf[k][j];
-                }
+                *bufij = (0..self_x).map(|k| self.buf[i][k] * rhs.buf[k][j]).sum();
             });
         });
         Some(buf.try_into().unwrap())

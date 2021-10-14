@@ -19,7 +19,7 @@ pub mod warshall_floyd;
 /// Edge 辺
 /// W はWeightで各処理に対応するTraitを実装する
 
-#[derive(Copy, Clone, Eq, Ord, Default)]
+#[derive(Copy, Clone, Eq, Default)]
 pub struct Edge<W> {
     pub src: usize,
     pub dst: usize,
@@ -47,6 +47,12 @@ impl<W: PartialEq> PartialEq for Edge<W> {
 impl<W: PartialOrd> PartialOrd for Edge<W> {
     fn partial_cmp(&self, other: &Self) -> Option<Ordering> {
         self.weight.partial_cmp(&other.weight)
+    }
+}
+
+impl<W: PartialOrd + Eq> Ord for Edge<W> {
+    fn cmp(&self, other: &Self) -> Ordering {
+        self.weight.partial_cmp(&other.weight).expect("Found NAN")
     }
 }
 
@@ -111,8 +117,8 @@ impl From<&Vec<Vec<i64>>> for Graph<i64> {
                 if w[i][j] == -1 {
                     continue;
                 }
-                ret.add_edge(i, j, w[i as usize][j as usize].clone());
-                ret.add_edge(j, i, w[j as usize][i as usize].clone());
+                ret.add_edge(i, j, w[i as usize][j as usize]);
+                ret.add_edge(j, i, w[j as usize][i as usize]);
             }
         }
         ret

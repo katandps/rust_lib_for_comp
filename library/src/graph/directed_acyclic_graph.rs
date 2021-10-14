@@ -4,10 +4,10 @@ use crate::graph::GraphTrait;
 use crate::*;
 
 #[allow(dead_code)]
-struct DAG;
+struct Dag;
 
 #[allow(dead_code)]
-impl DAG {
+impl Dag {
     /// 頂点をトポロジカルソートして返す
     /// グラフがDAGの場合に使用可
     pub fn topological_sort<W, G>(g: &G) -> Vec<usize>

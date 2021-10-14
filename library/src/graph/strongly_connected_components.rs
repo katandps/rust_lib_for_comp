@@ -26,7 +26,7 @@ where
         let mut rest = (0..g.size()).collect::<HashSet<_>>();
         let mut back_queue = VecDeque::new();
         while let Some(&src) = rest.iter().next() {
-            Self::dfs(&g, src, &mut back_queue, &mut rest);
+            Self::dfs(g, src, &mut back_queue, &mut rest);
         }
         let mut result = vec![None; g.size()];
         let mut i = 0;
@@ -34,7 +34,7 @@ where
             if result[src].is_some() {
                 continue;
             }
-            Self::dfs2(&g, src, i, &mut result);
+            Self::dfs2(g, src, i, &mut result);
             i += 1;
         }
 

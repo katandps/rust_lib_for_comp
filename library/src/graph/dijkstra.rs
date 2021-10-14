@@ -15,7 +15,7 @@ impl<W> Dijkstra<W>
 where
     W: Copy + BoundedAbove + Add<Output = W> + PartialEq + Ord + Zero,
 {
-    pub fn dijkstra<G: GraphTrait<Weight = W>>(g: &G, l: usize) -> Self {
+    pub fn calc<G: GraphTrait<Weight = W>>(g: &G, l: usize) -> Self {
         let mut dist = vec![W::max_value(); g.size()];
         let mut heap = BinaryHeap::new();
         dist[l] = W::zero();

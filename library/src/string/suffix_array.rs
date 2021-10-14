@@ -14,7 +14,7 @@ impl SuffixArray {
     pub fn build(source: &[u8]) -> Self {
         let mut source: Vec<_> = source.to_vec();
         source.push(0);
-        let mut sais = SAIS::new(source.len());
+        let mut sais = Sais::new(source.len());
         let sa = sais.suffix_array(
             &compress(&source)
                 .iter()
@@ -45,8 +45,12 @@ impl SuffixArray {
     }
 }
 
+/// SA-IS法によるSuffixArrayの構築
+///
+/// ## 計算量
+/// `$O(N)$`
 #[derive(Debug, Clone)]
-struct SAIS {
+struct Sais {
     pos: Vec<usize>,
     lms_pos: Vec<usize>,
     reduced_text_pos: Vec<usize>,
@@ -54,9 +58,9 @@ struct SAIS {
     bucket_start: Vec<usize>,
     bucket_end: Vec<usize>,
 }
-impl SAIS {
-    fn new(n: usize) -> SAIS {
-        SAIS {
+impl Sais {
+    fn new(n: usize) -> Sais {
+        Sais {
             pos: Vec::with_capacity(n),
             lms_pos: Vec::with_capacity(n),
             reduced_text_pos: vec![0; n + 1],

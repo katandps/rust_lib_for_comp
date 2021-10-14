@@ -1,14 +1,12 @@
 //! 2次元BIT
-
+use crate::*;
 /// verified by https://atcoder.jp/contests/typical90/tasks/typical90_ab
 
 pub struct BinaryIndexedTree2 {
     h: usize,
     w: usize,
-    bit: Vec<Vec<VALUE>>,
+    bit: Vec<Vec<i64>>,
 }
-
-type VALUE = i64;
 
 impl BinaryIndexedTree2 {
     pub fn new(h: usize, w: usize) -> BinaryIndexedTree2 {
@@ -17,7 +15,7 @@ impl BinaryIndexedTree2 {
         BinaryIndexedTree2 { h, w, bit }
     }
 
-    pub fn add(&mut self, y: usize, x: usize, v: VALUE) {
+    pub fn add(&mut self, y: usize, x: usize, v: i64) {
         let mut idx = x as i32 + 1;
         while idx < self.w as i32 {
             let mut idy = y as i32 + 1;
@@ -30,7 +28,7 @@ impl BinaryIndexedTree2 {
     }
 
     /// sum of 0 <= y <= h & 0 <= x <= w
-    pub fn sum(&self, y: usize, x: usize) -> VALUE {
+    pub fn sum(&self, y: usize, x: usize) -> i64 {
         let mut ret = 0;
         let mut idx = x as i32 + 1;
         while idx > 0 {
@@ -44,12 +42,12 @@ impl BinaryIndexedTree2 {
         ret
     }
 
-    pub fn sum_ab(&self, (y1, x1): (usize, usize), (y2, x2): (usize, usize)) -> VALUE {
+    pub fn sum_ab(&self, (y1, x1): (usize, usize), (y2, x2): (usize, usize)) -> i64 {
         self.sum(y2, x2) - self.sum(y2, x1) - self.sum(y1, x2) + self.sum(y1, x1)
     }
 }
 
-impl std::fmt::Debug for BinaryIndexedTree2 {
+impl Debug for BinaryIndexedTree2 {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         let mut buf = String::new();
         buf += "\n";

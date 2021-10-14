@@ -84,6 +84,9 @@ pub trait Invertible: Magma {
     fn inv(&self, x: &Self::M) -> Self::M;
 }
 
+pub trait InvertibleMonoid: Monoid + Invertible {}
+impl<M: Monoid + Invertible> InvertibleMonoid for M {}
+
 /// 群
 pub trait Group {}
 impl<M: Monoid + Invertible> Group for M {}
@@ -99,7 +102,7 @@ pub trait MapMonoid: Debug {
         x: &<Self::Mono as Monoid>::M,
         y: &<Self::Mono as Monoid>::M,
     ) -> <Self::Mono as Monoid>::M {
-        Self::Mono::op(&x, &y)
+        Self::Mono::op(x, y)
     }
     fn unit() -> <Self::Mono as Monoid>::M {
         Self::Mono::unit()

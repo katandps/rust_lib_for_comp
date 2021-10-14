@@ -206,6 +206,12 @@ impl<M: Mod> DerefMut for ModInt<M> {
     }
 }
 
+impl<M: Mod> Sum for ModInt<M> {
+    fn sum<I: Iterator<Item = Self>>(iter: I) -> Self {
+        iter.fold(Self::new(0), |x, a| x + a)
+    }
+}
+
 impl<M: Mod> From<i64> for ModInt<M> {
     fn from(i: i64) -> Self {
         Self::new(i)

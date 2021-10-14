@@ -3,10 +3,9 @@
 #[derive(Clone)]
 pub struct BinaryIndexedTree {
     n: usize,
-    bit: Vec<VALUE>,
+    bit: Vec<i64>,
 }
 
-type VALUE = i64;
 impl BinaryIndexedTree {
     pub fn new(n: usize) -> BinaryIndexedTree {
         let n = n + 1;
@@ -15,7 +14,7 @@ impl BinaryIndexedTree {
     }
 
     /// add x to i
-    pub fn add(&mut self, i: usize, x: VALUE) {
+    pub fn add(&mut self, i: usize, x: i64) {
         let mut idx = i as i32 + 1;
         while idx <= self.n as i32 {
             self.bit[idx as usize] += x;
@@ -24,7 +23,7 @@ impl BinaryIndexedTree {
     }
 
     /// sum of [0, i]
-    pub fn sum(&self, i: usize) -> VALUE {
+    pub fn sum(&self, i: usize) -> i64 {
         let mut ret = 0;
         let mut idx = i as i32 + 1;
         while idx > 0 {
@@ -35,7 +34,7 @@ impl BinaryIndexedTree {
     }
 
     /// sum of [a, b)
-    pub fn sum_ab(&self, a: usize, b: usize) -> VALUE {
+    pub fn sum_ab(&self, a: usize, b: usize) -> i64 {
         if b == 0 {
             0
         } else if a == 0 {

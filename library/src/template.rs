@@ -202,7 +202,7 @@ impl<W: Write> Writer<W> {
     }
 
     pub fn print_join<S: Display>(&mut self, v: &[S], separator: Option<&str>) {
-        let sep = separator.unwrap_or_else(|| "\n");
+        let sep = separator.unwrap_or("\n");
         writeln!(
             self.w,
             "{}",
