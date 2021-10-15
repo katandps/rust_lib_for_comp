@@ -6,7 +6,7 @@ use crate::*;
 /// 遅延評価セグメント木
 /// 区間更新、区間取得
 ///
-/// 実装内部は1-indexed
+/// 実装内部は0-indexed
 #[derive(Debug, Clone)]
 pub struct LazySegmentTree<M: MapMonoid> {
     n: usize,
@@ -19,7 +19,7 @@ pub struct LazySegmentTree<M: MapMonoid> {
 impl<M: MapMonoid> From<&Vec<<M::Mono as Monoid>::M>> for LazySegmentTree<M> {
     fn from(v: &Vec<<M::Mono as Monoid>::M>) -> Self {
         let mut segtree = Self::new(v.len() + 1);
-        segtree.node[segtree.n + 1..segtree.n + v.len()].clone_from_slice(v);
+        segtree.node[segtree.n..segtree.n + v.len() - 1].clone_from_slice(v);
         for i in (0..segtree.n - 1).rev() {
             segtree.calc(i);
         }
@@ -96,6 +96,7 @@ impl<M: MapMonoid> LazySegmentTree<M> {
         }
     }
 
+    /// Range to [l, r)
     fn to_lr<R: RangeBounds<usize>>(&self, range: R) -> (usize, usize) {
         use Bound::*;
         let l = match range.start_bound() {
