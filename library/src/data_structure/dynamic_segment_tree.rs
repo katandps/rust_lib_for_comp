@@ -84,7 +84,7 @@ mod node {
     impl<M: Monoid> Node<M> {
         pub fn set(&mut self, pos: u64, bit: i32, value: M::M) {
             if bit < 0 {
-                self.value = value.clone();
+                self.value = value;
                 return;
             }
             let dst = (pos >> bit & 1) as usize;
