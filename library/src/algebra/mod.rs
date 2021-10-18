@@ -93,7 +93,7 @@ impl<M: Monoid + Invertible> Group for M {}
 
 /// 作用付きモノイド
 /// 値Mono、作用Funcはモノイドで、
-pub trait MapMonoid: Debug {
+pub trait MapMonoid {
     /// モノイドM
     type Mono: Monoid;
     type Func: Monoid;
@@ -116,7 +116,8 @@ pub trait MapMonoid: Debug {
     fn identity_map() -> <Self::Func as Monoid>::M {
         Self::Func::unit()
     }
-    /// 作用fと作用gを合成する
+    /// composition:
+    /// $`h() = f(g())`$
     fn compose(
         f: &<Self::Func as Monoid>::M,
         g: &<Self::Func as Monoid>::M,

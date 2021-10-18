@@ -1,8 +1,8 @@
 //! 非負整数をBit列とみなしてトライ木に載せたもの
-//! multiset的な機能を持つ
+/// multiset的な機能を持つ
+use crate::*;
 
-const BIT_LEN: i64 = 60;
-type TrieValue = i64;
+type TrieValue = u64;
 
 #[derive(Clone, Default)]
 pub struct BinaryTrie {
@@ -10,39 +10,45 @@ pub struct BinaryTrie {
 }
 
 impl BinaryTrie {
+    /// $`2^{60}`$未満の非負整数を登録できる
+    pub const BIT_LEN: i64 = 60;
+
+    /// 今までにinsertした個数
     pub fn size(&self) -> usize {
         self.root.count
     }
 
-    pub fn insert(&mut self, v: TrieValue) {
-        self.root.add(v, BIT_LEN - 1);
+    /// vをinsertする
+    pub fn insert(&mut self, v: u64) {
+        self.root.add(v, Self::BIT_LEN - 1);
     }
 
+    /// vを一つ削除する
     pub fn erase(&mut self, v: TrieValue) {
-        self.root.sub(v, BIT_LEN - 1);
+        self.root.sub(v, Self::BIT_LEN - 1);
     }
 
     /// biasとXORをとったときに最小値となるような値を取得する
-    pub fn min_element(&self, bias: Option<i64>) -> i64 {
-        self.root.get_min(bias.unwrap_or(0), BIT_LEN - 1)
+    pub fn min_element(&self, bias: Option<TrieValue>) -> TrieValue {
+        self.root.get_min(bias.unwrap_or(0), Self::BIT_LEN - 1)
     }
 
     /// biasとXORをとったときに最大値となるような値を取得する
-    pub fn max_element(&self, bias: Option<i64>) -> i64 {
+    pub fn max_element(&self, bias: Option<TrieValue>) -> TrieValue {
         self.root.get_min(
-            bias.map_or((1 << BIT_LEN) - 1, |b| b ^ ((1 << BIT_LEN) - 1)),
-            BIT_LEN - 1,
+            bias.map_or((1 << Self::BIT_LEN) - 1, |b| b ^ ((1 << Self::BIT_LEN) - 1)),
+            Self::BIT_LEN - 1,
         )
     }
 
     pub fn nth(&self, k: usize) -> TrieValue {
         assert!(k <= self.size());
-        self.root.get(k, BIT_LEN - 1)
+        self.root.get(k, Self::BIT_LEN - 1)
     }
 }
 
-impl std::fmt::Debug for BinaryTrie {
-    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+impl Debug for BinaryTrie {
+    fn fmt(&self, f: &mut Formatter<'_>) -> std::fmt::Result {
         write!(
             f,
             "{}",

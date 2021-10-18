@@ -187,7 +187,6 @@ mod test {
     use crate::algebra::impl_monoid::add_monoid::{AddMonoid, Segment};
 
     // これは毎回書く(モノイドとモノイドから作用付きモノイドを作る)
-    #[derive(Debug)]
     pub struct AddSum;
     impl MapMonoid for AddSum {
         type Mono = AddMonoid<Segment>;
