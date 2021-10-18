@@ -19,6 +19,8 @@ impl<M: Monoid> Default for DynamicSegmentTree<M> {
 }
 
 impl<M: Monoid> DynamicSegmentTree<M> {
+    /// 最大幅を $`2^{BIT_LEN}`$ とする
+    pub const BIT_LEN: i32 = 62;
     /// 値iをvalueに更新する
     /// ## 計算量
     /// $`O(logN)`$
@@ -57,11 +59,6 @@ impl<M: Monoid> DynamicSegmentTree<M> {
         };
         (l as u64, r as u64)
     }
-}
-
-impl<M: Monoid> DynamicSegmentTree<M> {
-    /// 最大幅を $`2^{60}`$ とする
-    pub const BIT_LEN: i32 = 62;
 }
 
 mod node {
