@@ -1,6 +1,6 @@
 //! 接尾辞配列
 
-use crate::util::compress::compress;
+use crate::algo::compress::compress;
 use crate::*;
 
 #[derive(Debug, Clone)]

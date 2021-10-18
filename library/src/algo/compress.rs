@@ -20,7 +20,7 @@ pub fn compress<T: Ord>(source: &[T]) -> Vec<usize> {
 
 #[cfg(test)]
 mod test {
-    use crate::util::compress::*;
+    use crate::algo::compress::*;
 
     #[test]
     fn compress_test() {
