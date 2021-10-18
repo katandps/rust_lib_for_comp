@@ -5,6 +5,8 @@ use algebra::Monoid;
 /// 動的セグメント木
 /// セグメント木よりメモリアクセスが遅いが、メモリ使用量は挿入したノードの数を上界とする。
 /// データの挿入が$`O(logN)`$となっていることに注意。
+/// ## verify
+/// [ARC008D](https://atcoder.jp/contests/arc008/submissions/26669109)
 #[derive(Clone, Debug)]
 pub struct DynamicSegmentTree<M: Monoid> {
     root: node::Node<M>,

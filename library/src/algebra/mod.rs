@@ -49,20 +49,6 @@ pub trait Monoid {
     fn unit() -> Self::M;
 
     /// $`x^n = x\circ\cdots\circ x`$
-    fn pow(&self, x: Self::M, n: usize) -> Self::M;
-}
-
-impl<M: SemiGroup + Unital> Monoid for M {
-    type M = M::M;
-    fn op(x: &M::M, y: &M::M) -> M::M {
-        M::op(x, y)
-    }
-
-    fn unit() -> Self::M {
-        M::unit()
-    }
-
-    /// $`x^n = x\circ\cdots\circ x`$
     fn pow(&self, x: Self::M, mut n: usize) -> Self::M {
         let mut res = Self::unit();
         let mut base = x;
@@ -74,6 +60,17 @@ impl<M: SemiGroup + Unital> Monoid for M {
             n >>= 1;
         }
         res
+    }
+}
+
+impl<M: SemiGroup + Unital> Monoid for M {
+    type M = M::M;
+    fn op(x: &M::M, y: &M::M) -> M::M {
+        M::op(x, y)
+    }
+
+    fn unit() -> Self::M {
+        M::unit()
     }
 }
 
