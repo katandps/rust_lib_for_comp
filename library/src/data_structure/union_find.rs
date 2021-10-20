@@ -1,6 +1,9 @@
 //! 素集合データ構造 (UnionFind)
 use crate::swap;
 
+///
+/// ## verify
+/// [ARC056B](https://atcoder.jp/contests/arc056/submissions/26705121)
 pub struct UnionFind {
     parent: Vec<usize>,
     rank: Vec<usize>,

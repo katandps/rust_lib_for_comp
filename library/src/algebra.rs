@@ -89,6 +89,12 @@ impl<M: Magma + Associative + Unital + Invertible> Group for M {}
 pub trait AbelianGroup: Magma + Associative + Unital + Commutative + Invertible {}
 impl<M: Magma + Associative + Unital + Commutative + Invertible> AbelianGroup for M {}
 
+/// Band
+/// 1. 結合法則
+/// 1. 冪等律
+pub trait Band: Magma + Associative + Idempotent {}
+impl<M: Magma + Associative + Idempotent> Band for M {}
+
 /// 作用付きモノイド
 pub trait MapMonoid {
     /// モノイドM
