@@ -140,26 +140,27 @@ mod node {
 #[cfg(test)]
 mod test {
     use super::*;
-    use crate::algebra::impl_monoid::max_monoid::MaxMonoid;
+    use crate::algebra::binary_operation::maximization::Maximization;
+    use crate::algebra::Unital;
 
     #[test]
     fn test() {
-        let mut segtree = DynamicSegmentTree::<MaxMonoid<i64>>::default();
+        let mut segtree = DynamicSegmentTree::<Maximization<i64>>::default();
         segtree.set(50000000, 8);
         segtree.set(80000000000000, 10);
-        assert_eq!(MaxMonoid::<i64>::unit(), segtree.prod(0..50000000));
+        assert_eq!(Maximization::<i64>::unit(), segtree.prod(0..50000000));
         assert_eq!(8, segtree.prod(0..50000001));
         assert_eq!(8, segtree.prod(0..80000000000000));
         assert_eq!(10, segtree.prod(0..80000000000001));
         assert_eq!(
-            MaxMonoid::<i64>::unit(),
+            Maximization::<i64>::unit(),
             segtree.prod(50000001..80000000000000)
         );
         assert_eq!(10, segtree.prod(50000001..80000000000001));
         assert_eq!(10, segtree.prod(80000000000000..80000000000001));
         assert_eq!(10, segtree.prod(80000000000000..10000000000000000000));
         assert_eq!(
-            MaxMonoid::<i64>::unit(),
+            Maximization::<i64>::unit(),
             segtree.prod(80000000000001..10000000000000000000)
         );
     }

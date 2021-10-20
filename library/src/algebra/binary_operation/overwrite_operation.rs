@@ -4,9 +4,8 @@ use crate::algebra::{Associative, Magma, Unital, Zero};
 use crate::*;
 
 #[derive(Clone, Debug)]
-pub struct OverwriteMonoid<S>(Infallible, PhantomData<fn() -> S>);
-
-impl<S: Zero + Copy + Ord + Debug> Magma for OverwriteMonoid<S> {
+pub struct OverwriteOperation<S>(Infallible, PhantomData<fn() -> S>);
+impl<S: Zero + Copy + Ord + Debug> Magma for OverwriteOperation<S> {
     type M = Option<S>;
     fn op(x: &Self::M, y: &Self::M) -> Self::M {
         match (x, y) {
@@ -16,11 +15,9 @@ impl<S: Zero + Copy + Ord + Debug> Magma for OverwriteMonoid<S> {
         }
     }
 }
-
-impl<S: Zero + Copy + Ord + Debug> Associative for OverwriteMonoid<S> {}
-
-impl<S: Zero + Copy + Ord + Debug> Unital for OverwriteMonoid<S> {
+impl<S: Zero + Copy + Ord + Debug> Unital for OverwriteOperation<S> {
     fn unit() -> Self::M {
         None
     }
 }
+impl<S: Zero + Copy + Ord + Debug> Associative for OverwriteOperation<S> {}

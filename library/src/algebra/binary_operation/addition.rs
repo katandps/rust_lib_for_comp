@@ -1,29 +1,32 @@
 //! $`a \circ b \to sum(a, b)`$
-use crate::algebra::{Associative, Magma, Unital, Zero};
+use crate::algebra::{Associative, Commutative, Invertible, Magma, Unital, Zero};
 use crate::*;
 
 #[derive(Clone, Debug)]
-pub struct AddMonoid<S>(Infallible, PhantomData<fn() -> S>);
-
-impl<S: Zero + Copy + Add<Output = S> + Ord + Debug> Magma for AddMonoid<S> {
+pub struct Addition<S>(Infallible, PhantomData<fn() -> S>);
+impl<S: Zero + Copy + Add<Output = S> + Ord + Debug> Magma for Addition<S> {
     type M = S;
-    fn op(x: &Self::M, y: &Self::M) -> Self::M {
+    fn op(x: &S, y: &S) -> S {
         *x + *y
     }
 }
-
-impl<S: Zero + Copy + Add<Output = S> + Ord + Debug> Associative for AddMonoid<S> {}
-
-impl<S: Zero + Copy + Add<Output = S> + Ord + Debug> Unital for AddMonoid<S> {
-    fn unit() -> Self::M {
+impl<S: Zero + Copy + Add<Output = S> + Ord + Debug> Associative for Addition<S> {}
+impl<S: Zero + Copy + Add<Output = S> + Ord + Debug> Unital for Addition<S> {
+    fn unit() -> S {
         S::zero()
+    }
+}
+impl<S: Zero + Copy + Add<Output = S> + Ord + Debug> Commutative for Addition<S> {}
+impl<S: Zero + Copy + Add<Output = S> + Ord + Debug + Neg<Output = S>> Invertible for Addition<S> {
+    fn inv(x: &S) -> S {
+        (*x).neg()
     }
 }
 
 /// 区間和を求めるセグメント木に載せる値
 /// ### algo
 /// 例えば、[0, 4)の区間に3を足した時、 合計の値は3に区間の幅をかけた12増える
-/// 区間の長さを持たせることで計算できるようにする
+/// 区間の長さを持たせることで計算できるようになる
 #[derive(Clone, Copy, PartialEq, Ord, PartialOrd, Eq)]
 pub struct Segment {
     pub value: i64,

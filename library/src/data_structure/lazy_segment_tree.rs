@@ -1,5 +1,5 @@
 //! 遅延評価セグメント木
-use crate::algebra::{MapMonoid, Monoid};
+use crate::algebra::{Magma, MapMonoid};
 use crate::*;
 
 ////////////////////////////////////////
@@ -11,13 +11,13 @@ use crate::*;
 pub struct LazySegmentTree<M: MapMonoid> {
     n: usize,
     log: usize,
-    node: Vec<<<M as MapMonoid>::Mono as Monoid>::M>,
-    lazy: Vec<<M::Func as Monoid>::M>,
+    node: Vec<<M::Mono as Magma>::M>,
+    lazy: Vec<<M::Func as Magma>::M>,
 }
 
 /// 1-indexedで配列の内容を詰めたセグメント木を生成する
-impl<M: MapMonoid> From<&Vec<<M::Mono as Monoid>::M>> for LazySegmentTree<M> {
-    fn from(v: &Vec<<M::Mono as Monoid>::M>) -> Self {
+impl<M: MapMonoid> From<&Vec<<M::Mono as Magma>::M>> for LazySegmentTree<M> {
+    fn from(v: &Vec<<M::Mono as Magma>::M>) -> Self {
         let mut segtree = Self::new(v.len() + 1);
         segtree.node[segtree.n..segtree.n + v.len() - 1].clone_from_slice(v);
         for i in (0..segtree.n - 1).rev() {
@@ -40,7 +40,7 @@ impl<M: MapMonoid> LazySegmentTree<M> {
     }
 
     /// 一点更新
-    pub fn update_at(&mut self, mut i: usize, f: <M::Func as Monoid>::M) {
+    pub fn update_at(&mut self, mut i: usize, f: <M::Func as Magma>::M) {
         assert!(i < self.n);
         i += self.n;
         for j in (1..=self.log).rev() {
@@ -53,7 +53,7 @@ impl<M: MapMonoid> LazySegmentTree<M> {
     }
 
     /// 区間更新 [l, r)
-    pub fn update_range<R: RangeBounds<usize>>(&mut self, range: R, f: <M::Func as Monoid>::M) {
+    pub fn update_range<R: RangeBounds<usize>>(&mut self, range: R, f: <M::Func as Magma>::M) {
         let (mut l, mut r) = self.to_lr(range);
         if l == r {
             return;
@@ -114,7 +114,7 @@ impl<M: MapMonoid> LazySegmentTree<M> {
     }
 
     /// i番目の値を取得する
-    pub fn get(&mut self, mut i: usize) -> <M::Mono as Monoid>::M {
+    pub fn get(&mut self, mut i: usize) -> <M::Mono as Magma>::M {
         assert!(i < self.n);
         i += self.n;
         for j in (1..=self.log).rev() {
@@ -125,7 +125,7 @@ impl<M: MapMonoid> LazySegmentTree<M> {
 
     /// 区間 $`[l, r)`$ の値を取得する
     /// $`l == r`$ のときは $`unit`$ を返す
-    pub fn prod<R: RangeBounds<usize>>(&mut self, range: R) -> <M::Mono as Monoid>::M {
+    pub fn prod<R: RangeBounds<usize>>(&mut self, range: R) -> <M::Mono as Magma>::M {
         let (mut l, mut r) = self.to_lr(range);
         if l == r {
             return M::unit();
@@ -164,7 +164,7 @@ impl<M: MapMonoid> LazySegmentTree<M> {
     }
 
     /// k番目の区間の値に作用を適用する
-    fn eval(&mut self, k: usize, f: <M::Func as Monoid>::M) {
+    fn eval(&mut self, k: usize, f: <M::Func as Magma>::M) {
         self.node[k] = M::apply(&f, &self.node[k]);
         if k < self.n {
             self.lazy[k] = M::compose(&f, &self.lazy[k]);
@@ -184,19 +184,19 @@ impl<M: MapMonoid> LazySegmentTree<M> {
 #[cfg(test)]
 mod test {
     use super::*;
-    use crate::algebra::impl_monoid::add_monoid::{AddMonoid, Segment};
+    use crate::algebra::binary_operation::addition::{Addition, Segment};
 
     // これは毎回書く(モノイドとモノイドから作用付きモノイドを作る)
     pub struct AddSum;
     impl MapMonoid for AddSum {
-        type Mono = AddMonoid<Segment>;
-        type Func = AddMonoid<i64>;
+        type Mono = Addition<Segment>;
+        type Func = Addition<i64>;
 
         fn apply(
-            f: &<Self::Func as Monoid>::M,
-            value: &<Self::Mono as Monoid>::M,
-        ) -> <Self::Mono as Monoid>::M {
-            value + f.clone()
+            f: &<Self::Func as Magma>::M,
+            value: &<Self::Mono as Magma>::M,
+        ) -> <Self::Mono as Magma>::M {
+            value + *f
         }
     }
 

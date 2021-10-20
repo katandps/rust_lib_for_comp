@@ -3,9 +3,9 @@ use crate::*;
 
 pub mod all_combination;
 pub mod all_permutation;
+pub mod binary_operation;
 pub mod chinese_remainder_theorem;
 pub mod greatest_common_divisor;
-pub mod impl_monoid;
 pub mod lucas_theorem;
 pub mod matrix;
 pub mod mod_int;
@@ -30,24 +30,34 @@ pub trait Magma {
 /// $`\forall a,\forall b, \forall c \in T, (a \circ b) \circ c = a \circ (b \circ c)`$
 pub trait Associative {}
 
-/// 半群
-pub trait SemiGroup {}
-impl<M: Magma + Associative> SemiGroup for M {}
-
 /// 単位的
 pub trait Unital: Magma {
     /// 単位元 identity element: $`e`$
     fn unit() -> Self::M;
 }
 
+/// 可換
+pub trait Commutative: Magma {}
+
+/// 可逆的
+/// $`\exists e \in T, \forall a \in T, \exists b,c \in T, b \circ a = a \circ c = e`$
+pub trait Invertible: Magma {
+    /// $`a`$ where $`a \circ x = e`$
+    fn inv(x: &Self::M) -> Self::M;
+}
+
+/// 冪等性
+pub trait Idempotent: Magma {}
+
+/// 半群
+/// 1. 結合則
+pub trait SemiGroup {}
+impl<M: Magma + Associative> SemiGroup for M {}
+
 /// モノイド
-/// 結合則と、単位元を持つ
-pub trait Monoid {
-    type M: Clone + Debug + PartialEq;
-    fn op(x: &Self::M, y: &Self::M) -> Self::M;
-
-    fn unit() -> Self::M;
-
+/// 1. 結合則
+/// 1. 単位元
+pub trait Monoid: Magma + Associative + Unital {
     /// $`x^n = x\circ\cdots\circ x`$
     fn pow(&self, x: Self::M, mut n: usize) -> Self::M {
         let mut res = Self::unit();
@@ -62,63 +72,50 @@ pub trait Monoid {
         res
     }
 }
+impl<M: Magma + Associative + Unital> Monoid for M {}
 
-impl<M: SemiGroup + Unital> Monoid for M {
-    type M = M::M;
-    fn op(x: &M::M, y: &M::M) -> M::M {
-        M::op(x, y)
-    }
-
-    fn unit() -> Self::M {
-        M::unit()
-    }
-}
-
-/// 可逆的
-/// $`\exists e \in T, \forall a \in T, \exists b,c \in T, b \circ a = a \circ c = e`$
-pub trait Invertible: Magma {
-    /// $`a`$ where $`a \circ x = e`$
-    fn inv(&self, x: &Self::M) -> Self::M;
-}
-
-pub trait InvertibleMonoid: Monoid + Invertible {}
-impl<M: Monoid + Invertible> InvertibleMonoid for M {}
+/// 可換モノイド
+pub trait CommutativeMonoid: Magma + Associative + Unital + Commutative {}
+impl<M: Magma + Associative + Unital + Commutative> CommutativeMonoid for M {}
 
 /// 群
-pub trait Group {}
-impl<M: Monoid + Invertible> Group for M {}
+/// 1. 結合法則
+/// 1. 単位元
+/// 1. 逆元
+pub trait Group: Magma + Associative + Unital + Invertible {}
+impl<M: Magma + Associative + Unital + Invertible> Group for M {}
+
+/// アーベル群
+pub trait AbelianGroup: Magma + Associative + Unital + Commutative + Invertible {}
+impl<M: Magma + Associative + Unital + Commutative + Invertible> AbelianGroup for M {}
 
 /// 作用付きモノイド
-/// 値Mono、作用Funcはモノイドで、
 pub trait MapMonoid {
     /// モノイドM
     type Mono: Monoid;
     type Func: Monoid;
     /// 値xと値yを併合する
-    fn op(
-        x: &<Self::Mono as Monoid>::M,
-        y: &<Self::Mono as Monoid>::M,
-    ) -> <Self::Mono as Monoid>::M {
+    fn op(x: &<Self::Mono as Magma>::M, y: &<Self::Mono as Magma>::M) -> <Self::Mono as Magma>::M {
         Self::Mono::op(x, y)
     }
-    fn unit() -> <Self::Mono as Monoid>::M {
+    fn unit() -> <Self::Mono as Magma>::M {
         Self::Mono::unit()
     }
     /// 作用fをvalueに作用させる
     fn apply(
-        f: &<Self::Func as Monoid>::M,
-        value: &<Self::Mono as Monoid>::M,
-    ) -> <Self::Mono as Monoid>::M;
+        f: &<Self::Func as Magma>::M,
+        value: &<Self::Mono as Magma>::M,
+    ) -> <Self::Mono as Magma>::M;
     /// 作用fの単位元
-    fn identity_map() -> <Self::Func as Monoid>::M {
+    fn identity_map() -> <Self::Func as Magma>::M {
         Self::Func::unit()
     }
     /// composition:
     /// $`h() = f(g())`$
     fn compose(
-        f: &<Self::Func as Monoid>::M,
-        g: &<Self::Func as Monoid>::M,
-    ) -> <Self::Func as Monoid>::M {
+        f: &<Self::Func as Magma>::M,
+        g: &<Self::Func as Magma>::M,
+    ) -> <Self::Func as Magma>::M {
         Self::Func::op(f, g)
     }
 }
