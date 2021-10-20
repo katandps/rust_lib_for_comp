@@ -8,3 +8,5 @@ pub mod dynamic_segment_tree;
 pub mod lazy_segment_tree;
 pub mod segment_tree;
 pub mod succinct_indexable_dictionaries;
+pub mod union_find;
+pub mod weighted_union_find;

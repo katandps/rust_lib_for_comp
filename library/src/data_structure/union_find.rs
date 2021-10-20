@@ -1,4 +1,5 @@
 //! 素集合データ構造 (UnionFind)
+use crate::swap;
 
 pub struct UnionFind {
     parent: Vec<usize>,
@@ -7,19 +8,18 @@ pub struct UnionFind {
 }
 
 impl UnionFind {
-    pub fn new(n: usize) -> UnionFind {
+    pub fn new(n: usize) -> Self {
         let parent = (0..n + 1).collect::<Vec<_>>();
         let rank = vec![0; n + 1];
         let size = vec![1; n + 1];
-        UnionFind { parent, rank, size }
+        Self { parent, rank, size }
     }
 
     pub fn root(&mut self, x: usize) -> usize {
         if self.parent[x] == x {
             x
         } else {
-            let p = self.parent[x];
-            self.parent[x] = self.root(p);
+            self.parent[x] = self.root(self.parent[x]);
             self.parent[x]
         }
     }
@@ -44,7 +44,7 @@ impl UnionFind {
             return;
         }
         if self.rank(x) < self.rank(y) {
-            std::mem::swap(&mut x, &mut y);
+            swap(&mut x, &mut y);
         }
         if self.rank(x) == self.rank(y) {
             self.rank[x] += 1;

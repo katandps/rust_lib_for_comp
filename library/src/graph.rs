@@ -13,7 +13,6 @@ pub mod lowest_common_ancestor;
 pub mod prim;
 pub mod retrograde_analysis;
 pub mod strongly_connected_components;
-pub mod union_find;
 pub mod warshall_floyd;
 
 /// Edge 辺

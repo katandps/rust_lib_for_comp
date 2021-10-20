@@ -2,10 +2,11 @@
 use crate::algebra::AbelianGroup;
 use crate::*;
 
-/// verified by https://atcoder.jp/contests/typical90/tasks/typical90_ab
-
 /// # Fenwick Tree 2D
 /// アーベル群の二項演算を載せることができる二次元構造
+///
+/// ## verify
+/// [Typical90_028](https://atcoder.jp/contests/typical90/submissions/26701638)
 pub struct BinaryIndexedTree2<A: AbelianGroup> {
     h: usize,
     w: usize,

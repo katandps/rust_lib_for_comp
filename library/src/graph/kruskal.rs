@@ -1,9 +1,9 @@
 //! 最小全域木(クラスカル法)
 use super::GraphTrait;
+use crate::data_structure::union_find::UnionFind;
 use crate::graph::Edge;
 use crate::*;
 use algebra::Zero;
-use graph::union_find::UnionFind;
 
 /// 最小全域木(最小全域森)
 ///
