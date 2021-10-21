@@ -1,4 +1,5 @@
-//! ダイクストラ法
+//! # ダイクストラ法
+//!
 use crate::algebra::{BoundedAbove, Zero};
 use crate::graph::GraphTrait;
 use crate::*;
@@ -9,14 +10,19 @@ use crate::*;
 /// 負辺なし
 /// ## 計算量
 /// O(NlogN)
-
-pub struct Dijkstra<W>(Vec<W>);
+/// ## verify
+/// [ARC011C](https://atcoder.jp/contests/arc011/submissions/26722909)
+pub struct Dijkstra<W> {
+    dist: Vec<W>,
+    prev: Vec<usize>,
+}
 impl<W> Dijkstra<W>
 where
     W: Copy + BoundedAbove + Add<Output = W> + PartialEq + Ord + Zero,
 {
     pub fn calc<G: GraphTrait<Weight = W>>(g: &G, l: usize) -> Self {
         let mut dist = vec![W::max_value(); g.size()];
+        let mut prev = vec![g.size(); g.size()];
         let mut heap = BinaryHeap::new();
         dist[l] = W::zero();
         heap.push((Reverse(W::zero()), l));
@@ -27,10 +33,21 @@ where
             g.edges(src).iter().for_each(|e| {
                 if dist[e.dst] > dist[src] + e.weight {
                     dist[e.dst] = dist[src] + e.weight;
+                    prev[e.dst] = src;
                     heap.push((Reverse(dist[e.dst]), e.dst))
                 }
             });
         }
-        Self(dist)
+        Self { dist, prev }
+    }
+
+    pub fn path(&self, mut to: usize) -> Vec<usize> {
+        let mut path = Vec::new();
+        while to != self.dist.len() {
+            path.push(to);
+            to = self.prev[to];
+        }
+        path.reverse();
+        path
     }
 }
