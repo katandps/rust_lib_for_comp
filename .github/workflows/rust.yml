@@ -38,10 +38,10 @@ jobs:
         with:
           command: test
           args: --manifest-path ./library/Cargo.toml --verbose
-      - run: rm ./library/rust-toolchain
       - uses: actions-rs/cargo@v1
         with:
           command: doc
+          toolchain: 1.56.0
           args: --manifest-path ./library/Cargo.toml --no-deps
       - uses: peaceiris/actions-gh-pages@v3
         with:
