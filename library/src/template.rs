@@ -112,8 +112,7 @@ impl<R: BufRead> Reader<R> {
         Reader { reader, buf, pos }
     }
     prim_methods! {
-        u: usize; i: i64; f: f64; str: String; c: char; string: String;
-        u8; u16; u32; u64; u128; usize; i8; i16; i32; i64; i128; isize; f32; f64; char;
+        u: usize; i: i64; f: f64; str: String; c: char; string: String; u8; u16; u32; u64; u128; usize; i8; i16; i32; i64; i128; isize; f32; f64; char;
     }
     tuple_methods! {
         u2: (usize, usize); u3: (usize, usize, usize); u4: (usize, usize, usize, usize);

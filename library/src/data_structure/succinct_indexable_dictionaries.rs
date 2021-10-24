@@ -24,11 +24,19 @@ impl SID {
         self.bits[p >> Self::BIT_LEN_LEN] >> (p & (Self::BIT_LEN - 1)) & 1 != 0
     }
 
-    /// [0, p)に1のビットがいくつあるか
+    /// [0, p)にbのビットがいくつあるか
     ///
     /// ## 計算量
     /// O(1)
-    pub fn rank(&self, p: usize) -> u64 {
+    pub fn rank(&self, p: usize, b: bool) -> u64 {
+        if b {
+            self.rank_1(p)
+        } else {
+            p as u64 - self.rank_1(p)
+        }
+    }
+
+    fn rank_1(&self, p: usize) -> u64 {
         self.sum[p >> Self::BIT_LEN_LEN]
             + (self.bits[p >> Self::BIT_LEN_LEN] & ((1 << (p & (Self::BIT_LEN - 1))) - 1))
                 .count_ones() as u64
@@ -41,13 +49,13 @@ impl SID {
     /// O(log(Size))
     pub fn select(&self, x: usize) -> Option<usize> {
         let x = x as u64;
-        if self.rank(self.size) < x {
+        if self.rank_1(self.size) < x {
             return None;
         }
         let (mut lb, mut ub) = (-1, self.size as i64);
         while ub - lb > 1 {
             let mid = (lb + ub) >> 1;
-            if self.rank(mid as usize) < x {
+            if self.rank_1(mid as usize) < x {
                 lb = mid
             } else {
                 ub = mid
@@ -111,12 +119,12 @@ mod test {
         assert!(dict.access(125));
         assert!(!dict.access(126));
 
-        assert_eq!(0, dict.rank(0));
-        assert_eq!(1, dict.rank(1));
-        assert_eq!(2, dict.rank(2));
-        assert_eq!(2, dict.rank(3));
-        assert_eq!(2, dict.rank(125));
-        assert_eq!(3, dict.rank(126));
+        assert_eq!(0, dict.rank(0, true));
+        assert_eq!(1, dict.rank(1, true));
+        assert_eq!(2, dict.rank(2, true));
+        assert_eq!(2, dict.rank(3, true));
+        assert_eq!(2, dict.rank(125, true));
+        assert_eq!(3, dict.rank(126, true));
 
         assert_eq!(Some(0), dict.select(0));
         assert_eq!(Some(1), dict.select(1));

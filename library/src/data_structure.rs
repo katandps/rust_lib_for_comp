@@ -10,4 +10,5 @@ pub mod segment_tree;
 pub mod sparse_table;
 pub mod succinct_indexable_dictionaries;
 pub mod union_find;
+pub mod wavelet_matrix;
 pub mod weighted_union_find;

@@ -147,71 +147,21 @@ pub trait BoundedAbove {
 }
 
 /// 整数
-pub trait Integral:
-    'static
-    + Send
-    + Sync
-    + Copy
-    + Ord
-    + Not<Output = Self>
-    + Add<Output = Self>
-    + Sub<Output = Self>
-    + Mul<Output = Self>
-    + Div<Output = Self>
-    + Rem<Output = Self>
-    + AddAssign
-    + SubAssign
-    + MulAssign
-    + DivAssign
-    + RemAssign
-    + Sum
-    + Product
-    + BitOr<Output = Self>
-    + BitAnd<Output = Self>
-    + BitXor<Output = Self>
-    + BitOrAssign
-    + BitAndAssign
-    + BitXorAssign
-    + Shl<Output = Self>
-    + Shr<Output = Self>
-    + ShlAssign
-    + ShrAssign
-    + Display
-    + Debug
-    + Zero
-    + One
-    + BoundedBelow
-    + BoundedAbove
-{
-}
+#[rustfmt::skip]
+pub trait Integral: 'static + Send + Sync + Copy + Ord + Display + Debug
++ Add<Output = Self> + Sub<Output = Self> + Mul<Output = Self> + Div<Output = Self> + Rem<Output = Self>
++ AddAssign + SubAssign + MulAssign + DivAssign + RemAssign + Sum + Product
++ BitOr<Output = Self> + BitAnd<Output = Self> + BitXor<Output = Self> + Not<Output = Self> + Shl<Output = Self> + Shr<Output = Self>
++ BitOrAssign + BitAndAssign + BitXorAssign + ShlAssign + ShrAssign
++ Zero + One + BoundedBelow + BoundedAbove{}
 
 macro_rules! impl_integral {
     ($($ty:ty),*) => {
         $(
-            impl Zero for $ty {
-                fn zero() -> Self {
-                    0
-                }
-            }
-
-            impl One for $ty {
-                fn one() -> Self {
-                    1
-                }
-            }
-
-            impl BoundedBelow for $ty {
-                fn min_value() -> Self {
-                    Self::min_value()
-                }
-            }
-
-            impl BoundedAbove for $ty {
-                fn max_value() -> Self {
-                    Self::max_value()
-                }
-            }
-
+            impl Zero for $ty { fn zero() -> Self { 0 }}
+            impl One for $ty { fn one() -> Self { 1 }}
+            impl BoundedBelow for $ty { fn min_value() -> Self { Self::min_value() }}
+            impl BoundedAbove for $ty { fn max_value() -> Self { Self::max_value() }}
             impl Integral for $ty {}
         )*
     };

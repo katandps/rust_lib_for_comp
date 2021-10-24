@@ -1,3 +1,5 @@
+//! 競技プログラミング向けライブラリ
+
 pub mod algebra;
 pub mod algo;
 pub mod convolution;
