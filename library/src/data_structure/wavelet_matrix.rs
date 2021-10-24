@@ -6,7 +6,7 @@ use crate::data_structure::succinct_indexable_dictionaries::{SIDBuilder, SID};
 
 pub struct WaveletMatrix {
     depth: usize,
-    size: usize,
+    _size: usize,
     matrix: Vec<SID>,
     mid: Vec<usize>,
 }
