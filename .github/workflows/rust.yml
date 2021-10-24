@@ -26,10 +26,9 @@ jobs:
             ~/.cargo/git/db/
             library/target
           key: ${{ runner.os }}-cargo-${{ hashFiles('**/Cargo.lock') }}
-      - uses: actions-rs/toolchain@v1
-        with:
-          toolchain: stable
-          components: clippy
+      - run: rustup install 1.42.0
+      - run: rustup install 1.56.0
+      - run: rustup component add clippy
       - run: cargo +1.42.0 clippy --manifest-path ./library/Cargo.toml -- -D warnings
       - run: cargo +1.42.0 test --manifest-path ./library/Cargo.toml
       - run: cargo +1.56.0 doc --manifest-path ./library/Cargo.toml --no-deps
