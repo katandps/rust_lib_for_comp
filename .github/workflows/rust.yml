@@ -29,7 +29,7 @@ jobs:
       - run: rustup install 1.42.0
       - run: rustup install 1.56.0
       - run: rustup component add clippy
-      - run: cargo +1.42.0 clippy --manifest-path ./library/Cargo.toml -- -D warnings
+      - run: cargo clippy --manifest-path ./library/Cargo.toml -- -D warnings
       - run: cargo +1.42.0 test --manifest-path ./library/Cargo.toml
       - run: cargo +1.56.0 doc --manifest-path ./library/Cargo.toml --no-deps
       - uses: peaceiris/actions-gh-pages@v3
