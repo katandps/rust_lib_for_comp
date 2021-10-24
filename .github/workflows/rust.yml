@@ -30,19 +30,9 @@ jobs:
         with:
           toolchain: stable
           components: clippy
-      - uses: actions-rs/cargo@v1
-        with:
-          command: clippy
-          args: --manifest-path ./library/Cargo.toml -- -D warnings
-      - uses: actions-rs/cargo@v1
-        with:
-          command: test
-          args: --manifest-path ./library/Cargo.toml --verbose
-      - uses: actions-rs/cargo@v1
-        with:
-          command: doc
-          toolchain: 1.56.0
-          args: --manifest-path ./library/Cargo.toml --no-deps
+      - run: cargo +1.42.0 clippy --manifest-path ./library/Cargo.toml -- -D warnings
+      - run: cargo +1.42.0 test --manifest-path ./library/Cargo.toml
+      - run: cargo +1.56.0 doc --manifest-path ./library/Cargo.toml --no-deps
       - uses: peaceiris/actions-gh-pages@v3
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
