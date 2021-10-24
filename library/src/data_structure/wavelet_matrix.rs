@@ -43,7 +43,7 @@ impl From<Vec<u64>> for WaveletMatrix {
         mid.reverse();
 
         Self {
-            size,
+            _size: size,
             depth,
             matrix,
             mid,
