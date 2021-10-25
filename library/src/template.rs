@@ -135,6 +135,6 @@ fn main() {
 
 pub fn solve<R: BufRead, W: Write>(mut reader: Reader<R>, mut writer: Writer<W>) {
     //$END$//
-    let n = reader.next::<usize>();
+    let n = reader.val::<usize>();
     writer.println(&n);
 }
