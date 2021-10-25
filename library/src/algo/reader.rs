@@ -1,24 +1,15 @@
 //!標準入力を取得するヘルパー
 use crate::*;
 
-pub struct Reader<R: BufRead> {
+pub struct Reader<R> {
     reader: R,
     buf: VecDeque<String>,
 }
 
-impl<R: BufRead> Reader<R> {
-    pub fn new(reader: R) -> Reader<R> {
-        Reader {
-            reader,
-            buf: VecDeque::new(),
-        }
-    }
+impl<R: BufRead> Iterator for Reader<R> {
+    type Item = String;
 
-    pub fn next<T>(&mut self) -> T
-    where
-        T: FromStr,
-        T::Err: Debug,
-    {
+    fn next(&mut self) -> Option<String> {
         if self.buf.is_empty() {
             let mut buf = Vec::new();
             self.reader.read_to_end(&mut buf).unwrap();
@@ -27,23 +18,29 @@ impl<R: BufRead> Reader<R> {
                 .map(ToString::to_string)
                 .for_each(|s| self.buf.push_back(s));
         }
-        match self.buf.pop_front() {
-            Some(token) => token.parse().unwrap(),
-            _ => panic!("入力が足りません。"),
+        self.buf.pop_front()
+    }
+}
+impl<R: BufRead> Reader<R> {
+    pub fn new(reader: R) -> Reader<R> {
+        Reader {
+            reader,
+            buf: VecDeque::new(),
         }
     }
-    pub fn vec<T>(&mut self, length: usize) -> Vec<T>
-    where
-        T: FromStr,
-        T::Err: Debug,
-    {
-        (0..length).map(|_| self.next()).collect()
+    pub fn val<T: FromStr>(&mut self) -> T {
+        self.next()
+            .map(|token| token.parse().ok().expect("型変換エラー"))
+            .expect("入力が足りません")
+    }
+    pub fn vec<T: FromStr>(&mut self, length: usize) -> Vec<T> {
+        (0..length).map(|_| self.val()).collect()
     }
     pub fn chars(&mut self) -> Vec<char> {
-        self.next::<String>().chars().collect()
+        self.val::<String>().chars().collect()
     }
     pub fn digits(&mut self) -> Vec<i64> {
-        self.next::<String>()
+        self.val::<String>()
             .chars()
             .map(|c| (c as u8 - b'0') as i64)
             .collect()
@@ -59,11 +56,7 @@ impl<R: BufRead> Reader<R> {
             .collect()
     }
     /// h*w行列を取得する
-    pub fn matrix<T>(&mut self, h: usize, w: usize) -> Vec<Vec<T>>
-    where
-        T: FromStr,
-        T::Err: Debug,
-    {
+    pub fn matrix<T: FromStr>(&mut self, h: usize, w: usize) -> Vec<Vec<T>> {
         (0..h).map(|_| self.vec(w)).collect()
     }
 }
@@ -80,19 +73,19 @@ mod tests {
             let cursor = Cursor::new(b"-123 456.7 12345\nhogehoge\n");
             let mut reader = Reader::new(cursor);
 
-            assert_eq!(-123, reader.next());
-            assert_eq!(456.7, reader.next());
-            assert_eq!(12345, reader.next());
-            assert_eq!("hogehoge".to_string(), reader.next::<String>());
+            assert_eq!(-123, reader.val());
+            assert_eq!(456.7, reader.val());
+            assert_eq!(12345, reader.val());
+            assert_eq!("hogehoge".to_string(), reader.val::<String>());
         }
         {
             let cursor = Cursor::new(b"-123 456.7 12345\rhogehoge\r");
             let mut reader = Reader::new(cursor);
 
-            assert_eq!(-123, reader.next());
-            assert_eq!(456.7, reader.next());
-            assert_eq!(12345, reader.next());
-            assert_eq!("hogehoge".to_string(), reader.next::<String>());
+            assert_eq!(-123, reader.val());
+            assert_eq!(456.7, reader.val());
+            assert_eq!(12345, reader.val());
+            assert_eq!("hogehoge".to_string(), reader.val::<String>());
         }
         {
             let cursor = Cursor::new(b"123 456 789 012 345 678\n");
@@ -106,18 +99,18 @@ mod tests {
         {
             let cursor = Cursor::new(b"8\n");
             let mut reader = Reader::new(cursor);
-            assert_eq!(8u32, reader.next());
+            assert_eq!(8u32, reader.val());
         }
         {
             let cursor = Cursor::new(b"\n9\n");
             let mut reader = Reader::new(cursor);
-            assert_eq!(9i32, reader.next());
+            assert_eq!(9i32, reader.val());
         }
         {
             let cursor = Cursor::new(b"\n\n10\n11\n");
             let mut reader = Reader::new(cursor);
-            assert_eq!(10u8, reader.next());
-            assert_eq!(11u8, reader.next());
+            assert_eq!(10u8, reader.val());
+            assert_eq!(11u8, reader.val());
         }
     }
 

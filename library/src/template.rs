@@ -36,18 +36,14 @@ macro_rules! max {
 }
 
 /// stdin reader
-pub struct Reader<R: BufRead> {
+pub struct Reader<R> {
     reader: R,
     buf: VecDeque<String>,
 }
-impl<R: BufRead> Reader<R> {
-    pub fn new(reader: R) -> Reader<R> {
-        Reader {
-            reader,
-            buf: VecDeque::new(),
-        }
-    }
-    pub fn next<T: FromStr>(&mut self) -> T {
+impl<R: BufRead> Iterator for Reader<R> {
+    type Item = String;
+
+    fn next(&mut self) -> Option<String> {
         if self.buf.is_empty() {
             let mut buf = Vec::new();
             self.reader.read_to_end(&mut buf).unwrap();
@@ -56,19 +52,29 @@ impl<R: BufRead> Reader<R> {
                 .map(ToString::to_string)
                 .for_each(|s| self.buf.push_back(s));
         }
-        match self.buf.pop_front() {
-            Some(token) => token.parse().ok().expect("型変換エラーです."),
-            _ => panic!("入力が足りません."),
+        self.buf.pop_front()
+    }
+}
+impl<R: BufRead> Reader<R> {
+    pub fn new(reader: R) -> Reader<R> {
+        Reader {
+            reader,
+            buf: VecDeque::new(),
         }
     }
+    pub fn val<T: FromStr>(&mut self) -> T {
+        self.next()
+            .map(|token| token.parse().ok().expect("型変換エラー"))
+            .expect("入力が足りません")
+    }
     pub fn vec<T: FromStr>(&mut self, length: usize) -> Vec<T> {
-        (0..length).map(|_| self.next()).collect()
+        (0..length).map(|_| self.val()).collect()
     }
     pub fn chars(&mut self) -> Vec<char> {
-        self.next::<String>().chars().collect()
+        self.val::<String>().chars().collect()
     }
     pub fn digits(&mut self) -> Vec<i64> {
-        self.next::<String>()
+        self.val::<String>()
             .chars()
             .map(|c| (c as u8 - b'0') as i64)
             .collect()
