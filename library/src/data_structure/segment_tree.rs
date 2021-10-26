@@ -55,11 +55,8 @@ impl<M: Monoid> SegmentTree<M> {
     /// Rangeで与えられた区間の値を取得する
     /// ## 計算量
     /// $`O(logN)`$
-    pub fn prod<R>(&self, range: R) -> M::M
-    where
-        R: RangeBounds<usize>,
-    {
-        let (mut l, mut r) = self.to_lr(range);
+    pub fn prod<R: RangeBounds<usize>>(&self, range: R) -> M::M {
+        let (mut l, mut r) = to_lr(&range, self.n);
         l += self.n;
         r += self.n;
         let mut sml = M::unit();
@@ -77,23 +74,6 @@ impl<M: Monoid> SegmentTree<M> {
             r >>= 1;
         }
         M::op(&sml, &smr)
-    }
-
-    /// Range to [l, r)
-    fn to_lr<R: RangeBounds<usize>>(&self, range: R) -> (usize, usize) {
-        use Bound::*;
-        let l = match range.start_bound() {
-            Unbounded => 0,
-            Included(&s) => s,
-            Excluded(&s) => s + 1,
-        };
-        let r = match range.end_bound() {
-            Unbounded => self.n,
-            Included(&e) => e + 1,
-            Excluded(&e) => e,
-        };
-        assert!(l <= r && r <= self.n);
-        (l, r)
     }
 }
 

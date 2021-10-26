@@ -10,5 +10,6 @@ pub mod graph;
 pub mod prelude;
 pub mod string;
 
-pub use algo::min_max;
+pub use crate::algo::min_max;
+pub use crate::algo::range::to_lr;
 pub use prelude::*;

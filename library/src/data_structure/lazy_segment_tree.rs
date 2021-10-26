@@ -15,46 +15,40 @@ pub struct LazySegmentTree<M: MapMonoid> {
     lazy: Vec<<M::Func as Magma>::M>,
 }
 
+impl<M: MapMonoid> From<usize> for LazySegmentTree<M> {
+    fn from(length: usize) -> Self {
+        let n = (length + 1).next_power_of_two();
+        let log = n.trailing_zeros() as usize;
+        let node = vec![M::unit(); 2 * n];
+        let lazy = vec![M::identity_map(); n];
+        let mut tree = Self { n, log, node, lazy };
+        (1..n).rev().for_each(|i| tree.calc(i));
+        tree
+    }
+}
+
 /// 1-indexedで配列の内容を詰めたセグメント木を生成する
 impl<M: MapMonoid> From<&Vec<<M::Mono as Magma>::M>> for LazySegmentTree<M> {
     fn from(v: &Vec<<M::Mono as Magma>::M>) -> Self {
-        let mut segtree = Self::new(v.len() + 1);
+        let mut segtree = Self::from(v.len() + 1);
         segtree.node[segtree.n..segtree.n + v.len() - 1].clone_from_slice(v);
-        for i in (0..segtree.n - 1).rev() {
-            segtree.calc(i);
-        }
+        (0..segtree.n - 1).rev().for_each(|i| segtree.calc(i));
         segtree
     }
 }
 impl<M: MapMonoid> LazySegmentTree<M> {
-    pub fn new(n: usize) -> Self {
-        let n = (n + 1).next_power_of_two();
-        let log = n.trailing_zeros() as usize;
-        let node = vec![M::unit(); 2 * n];
-        let lazy = vec![M::identity_map(); n];
-        let mut segtree = Self { n, log, node, lazy };
-        for i in (1..n).rev() {
-            segtree.calc(i)
-        }
-        segtree
-    }
-
     /// 一点更新
     pub fn update_at(&mut self, mut i: usize, f: <M::Func as Magma>::M) {
         assert!(i < self.n);
         i += self.n;
-        for j in (1..=self.log).rev() {
-            self.propagate(i >> j);
-        }
+        (1..=self.log).rev().for_each(|j| self.propagate(i >> j));
         self.node[i] = M::apply(&f, &self.node[i]);
-        for j in 1..=self.log {
-            self.calc(i >> j)
-        }
+        (1..=self.log).for_each(|j| self.calc(i >> j));
     }
 
     /// 区間更新 [l, r)
     pub fn update_range<R: RangeBounds<usize>>(&mut self, range: R, f: <M::Func as Magma>::M) {
-        let (mut l, mut r) = self.to_lr(range);
+        let (mut l, mut r) = to_lr(&range, self.n);
         if l == r {
             return;
         }
@@ -96,23 +90,6 @@ impl<M: MapMonoid> LazySegmentTree<M> {
         }
     }
 
-    /// Range to [l, r)
-    fn to_lr<R: RangeBounds<usize>>(&self, range: R) -> (usize, usize) {
-        use Bound::*;
-        let l = match range.start_bound() {
-            Unbounded => 0,
-            Included(&s) => s,
-            Excluded(&s) => s + 1,
-        };
-        let r = match range.end_bound() {
-            Unbounded => self.n,
-            Included(&e) => e + 1,
-            Excluded(&e) => e,
-        };
-        assert!(l <= r && r <= self.n);
-        (l, r)
-    }
-
     /// i番目の値を取得する
     pub fn get(&mut self, mut i: usize) -> <M::Mono as Magma>::M {
         assert!(i < self.n);
@@ -126,7 +103,7 @@ impl<M: MapMonoid> LazySegmentTree<M> {
     /// 区間 $`[l, r)`$ の値を取得する
     /// $`l == r`$ のときは $`unit`$ を返す
     pub fn prod<R: RangeBounds<usize>>(&mut self, range: R) -> <M::Mono as Magma>::M {
-        let (mut l, mut r) = self.to_lr(range);
+        let (mut l, mut r) = to_lr(&range, self.n);
         if l == r {
             return M::unit();
         }
@@ -203,7 +180,7 @@ mod test {
     #[test]
     fn a() {
         let n = 5;
-        let mut segtree = LazySegmentTree::<AddSum>::new(n);
+        let mut segtree = LazySegmentTree::<AddSum>::from(n);
 
         for i in 1..n {
             assert_eq!(0, segtree.prod(i - 1..i).value);

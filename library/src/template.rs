@@ -35,6 +35,21 @@ macro_rules! max {
     ($a:expr, $($rest:expr),+ $(,)*) => {{let b = max!($($rest),+);if $a > b {$a} else {b}}};
 }
 
+pub fn to_lr<R: RangeBounds<usize>>(range: R, length: usize) -> (usize, usize) {
+    let l = match range.start_bound() {
+        Bound::Unbounded => 0,
+        Bound::Included(&s) => s,
+        Bound::Excluded(&s) => s + 1,
+    };
+    let r = match range.end_bound() {
+        Bound::Unbounded => length,
+        Bound::Included(&e) => e + 1,
+        Bound::Excluded(&e) => e,
+    };
+    assert!(l <= r && r <= length);
+    (l, r)
+}
+
 /// stdin reader
 pub struct Reader<R> {
     reader: R,
