@@ -13,7 +13,7 @@ impl<R: BufRead> Iterator for Reader<R> {
         if self.buf.is_empty() {
             let mut buf = Vec::new();
             self.reader.read_to_end(&mut buf).unwrap();
-            let s = from_utf8(&buf).expect("utf8でない文字列が入力されました.");
+            let s = from_utf8(&buf).expect("Not UTF-8 format input.");
             s.split_whitespace()
                 .map(ToString::to_string)
                 .for_each(|s| self.buf.push_back(s));
@@ -30,8 +30,8 @@ impl<R: BufRead> Reader<R> {
     }
     pub fn val<T: FromStr>(&mut self) -> T {
         self.next()
-            .map(|token| token.parse().ok().expect("型変換エラー"))
-            .expect("入力が足りません")
+            .map(|token| token.parse().ok().expect("Failed to parse."))
+            .expect("Insufficient input.")
     }
     pub fn vec<T: FromStr>(&mut self, length: usize) -> Vec<T> {
         (0..length).map(|_| self.val()).collect()

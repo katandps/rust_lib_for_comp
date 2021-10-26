@@ -9,7 +9,8 @@ pub mod geometry;
 pub mod graph;
 pub mod prelude;
 pub mod string;
+pub mod util;
 
-pub use crate::algo::min_max;
 pub use crate::algo::range::to_lr;
 pub use prelude::*;
+pub use util::min_max;
