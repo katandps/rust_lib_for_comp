@@ -1,18 +1,18 @@
-//! 累乗のMOD
-
-/// 累乗 `$p^{e} % m$`
-/// ### 計算量
-/// `$log(e)$`
-pub fn pow(p: usize, e: usize, m: usize) -> usize {
-    let mut result = 1;
-    let mut cur = p;
-    let mut e = e;
+//! # $`p^e mod m`$
+//! ## 計算量
+//! $`log(e)`$
+//! ## verified by
+//! [ATC002B](https://atcoder.jp/contests/atc002/submissions/26825488)
+pub fn pow(mut p: usize, mut e: usize, m: usize) -> usize {
+    let mut res = 1;
     while e > 0 {
         if e & 1 == 1 {
-            result = result * cur % m;
+            res *= p;
+            res %= m;
         }
         e >>= 1;
-        cur = cur * cur % m;
+        p *= p;
+        p %= m;
     }
-    result
+    res
 }
