@@ -23,17 +23,9 @@ macro_rules! chmin {($base:expr, $($cmps:expr),+ $(,)*) => {{let cmp_min = min!(
 #[allow(unused_macros)]
 macro_rules! chmax {($base:expr, $($cmps:expr),+ $(,)*) => {{let cmp_max = max!($($cmps),+);if $base < cmp_max {$base = cmp_max;true} else {false}}};}
 #[allow(unused_macros)]
-macro_rules! min {
-    ($a:expr $(,)*) => {{$a}};
-    ($a:expr, $b:expr $(,)*) => {{if $a > $b {$b} else {$a}}};
-    ($a:expr, $($rest:expr),+ $(,)*) => {{let b = min!($($rest),+);if $a > b {b} else {$a}}};
-}
+macro_rules! min {($a:expr $(,)*) => {{$a}};($a:expr, $b:expr $(,)*) => {{if $a > $b {$b} else {$a}}};($a:expr, $($rest:expr),+ $(,)*) => {{let b = min!($($rest),+);if $a > b {b} else {$a}}};}
 #[allow(unused_macros)]
-macro_rules! max {
-    ($a:expr $(,)*) => {{$a}};
-    ($a:expr, $b:expr $(,)*) => {{if $a > $b {$a} else {$b}}};
-    ($a:expr, $($rest:expr),+ $(,)*) => {{let b = max!($($rest),+);if $a > b {$a} else {b}}};
-}
+macro_rules! max {($a:expr $(,)*) => {{$a}};($a:expr, $b:expr $(,)*) => {{if $a > $b {$a} else {$b}}};($a:expr, $($rest:expr),+ $(,)*) => {{let b = max!($($rest),+);if $a > b {$a} else {b}}};}
 
 pub fn to_lr<R: RangeBounds<usize>>(range: R, length: usize) -> (usize, usize) {
     let l = match range.start_bound() {
@@ -110,34 +102,26 @@ impl<R: BufRead> Reader<R> {
 
 /// stdin writer
 pub struct Writer<W: Write> {
-    w: BufWriter<W>,
+    writer: BufWriter<W>,
 }
 impl<W: Write> Writer<W> {
-    pub fn new(writer: W) -> Writer<W> {
-        Writer {
-            w: BufWriter::new(writer),
+    pub fn new(write: W) -> Self {
+        Self {
+            writer: BufWriter::new(write),
         }
     }
-
-    pub fn println<S: Display>(&mut self, s: &S) {
-        writeln!(self.w, "{}", s).unwrap()
+    pub fn println<S: Display>(&mut self, s: S) {
+        writeln!(self.writer, "{}", s).expect("Failed to write.")
     }
-
-    pub fn print<S: Display>(&mut self, s: &S) {
-        write!(self.w, "{}", s).unwrap()
+    pub fn print<S: Display>(&mut self, s: S) {
+        write!(self.writer, "{}", s).expect("Failed to write.")
     }
-
-    pub fn print_join<S: Display>(&mut self, v: &[S], separator: Option<&str>) {
-        let sep = separator.unwrap_or("\n");
-        writeln!(
-            self.w,
-            "{}",
-            v.iter()
-                .map(|s| s.to_string())
-                .collect::<Vec<String>>()
-                .join(sep)
-        )
-        .unwrap()
+    pub fn print_join<S: Display>(&mut self, v: &[S], separator: &str) {
+        v.iter().fold("", |sep, arg| {
+            write!(self.writer, "{}{}", sep, arg).expect("Failed to write.");
+            separator
+        });
+        writeln!(self.writer).expect("Failed to write.");
     }
 }
 
