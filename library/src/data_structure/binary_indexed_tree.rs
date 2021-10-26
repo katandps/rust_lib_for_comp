@@ -1,22 +1,33 @@
-//! Fenwick Tree(Binary Indexed Tree)
-use crate::algebra::AbelianGroup;
+//! # BinaryIndexedTree(Fenwick Tree)
+//! アーベル群の二項演算を載せることができる
+use crate::algebra::{AbelianGroup, Magma};
 use crate::*;
-
-/// # Fenwick Tree
-/// アーベル群の二項演算を載せることができる
 #[derive(Clone)]
-pub struct BinaryIndexedTree<A: AbelianGroup> {
+pub struct BinaryIndexedTree<A: Magma> {
     n: usize,
     bit: Vec<A::M>,
 }
 
-impl<A: AbelianGroup> BinaryIndexedTree<A> {
-    pub fn new(n: usize) -> Self {
-        let n = n + 1;
-        let bit = vec![A::unit(); n + 1];
-        BinaryIndexedTree { n, bit }
+impl<A: AbelianGroup> From<usize> for BinaryIndexedTree<A> {
+    fn from(length: usize) -> Self {
+        Self {
+            n: length,
+            bit: vec![A::unit(); length + 1],
+        }
     }
+}
 
+impl<A: AbelianGroup> From<&[A::M]> for BinaryIndexedTree<A> {
+    fn from(src: &[A::M]) -> Self {
+        let mut bit = Self::from(src.len());
+        src.iter()
+            .enumerate()
+            .for_each(|(i, item)| bit.add(i + 1, item.clone()));
+        bit
+    }
+}
+
+impl<A: AbelianGroup> BinaryIndexedTree<A> {
     /// add x to i
     pub fn add(&mut self, i: usize, x: A::M) {
         let mut idx = i as i32 + 1;
@@ -73,7 +84,7 @@ mod test {
     fn test() {
         const LEN: usize = 1000;
         let mut v = vec![0; LEN];
-        let mut bit = BinaryIndexedTree::<Addition<i64>>::new(LEN);
+        let mut bit = BinaryIndexedTree::<Addition<i64>>::from(LEN);
 
         for _ in 0..1000 {
             let left = rand::thread_rng().gen_range(0, LEN);
@@ -95,7 +106,7 @@ mod test {
     fn test_hand() {
         const LEN: usize = 10;
         let mut v = vec![0; LEN];
-        let mut bit = BinaryIndexedTree::<Addition<i64>>::new(LEN);
+        let mut bit = BinaryIndexedTree::<Addition<i64>>::from(LEN);
 
         for i in 3..5 {
             v[i] += 1;
