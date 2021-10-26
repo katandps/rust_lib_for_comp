@@ -1,15 +1,19 @@
-//! 簡潔ビットベクトル(完備辞書)
-
-/// SuccinctIndexableDictionary
-///
-/// ## 概要
-/// ビット列に対してrank()とselect()を提供する簡潔データ構造
-///
+//! # 簡潔ビットベクトル(完備辞書)
+//!
+//! ## 概要
+//! 長さNのビット列について、前計算$`O(N)`$で
+//! ビット列に対してrank()とselect()を提供する簡潔データ構造
+//!
+//! ## 計算量
+//! - 構築: $`O(N)`$
+//! - access: $`O(1)`$
+//! - rank: $`O(1)`$
+//! - select: $`O(logN)`$
 pub struct SID {
     size: usize,
     _blocks: usize,
     bits: Vec<u64>,
-    sum: Vec<u64>,
+    sum: Vec<usize>,
 }
 
 impl SID {
@@ -28,18 +32,18 @@ impl SID {
     ///
     /// ## 計算量
     /// O(1)
-    pub fn rank(&self, p: usize, b: bool) -> u64 {
+    pub fn rank(&self, p: usize, b: bool) -> usize {
         if b {
             self.rank_1(p)
         } else {
-            p as u64 - self.rank_1(p)
+            p - self.rank_1(p)
         }
     }
 
-    fn rank_1(&self, p: usize) -> u64 {
+    fn rank_1(&self, p: usize) -> usize {
         self.sum[p >> Self::BIT_LEN_LEN]
             + (self.bits[p >> Self::BIT_LEN_LEN] & ((1 << (p & (Self::BIT_LEN - 1))) - 1))
-                .count_ones() as u64
+                .count_ones() as usize
     }
 
     /// 1のビットをx個含む[0, p)の区間であって、pが最小となるものを返す
@@ -48,7 +52,6 @@ impl SID {
     /// ## 計算量
     /// O(log(Size))
     pub fn select(&self, x: usize) -> Option<usize> {
-        let x = x as u64;
         if self.rank_1(self.size) < x {
             return None;
         }
@@ -88,7 +91,7 @@ impl SIDBuilder {
     pub fn build(self) -> SID {
         let mut sum = vec![0; self.blocks];
         for i in 1..self.blocks {
-            sum[i] = sum[i - 1] + self.bits[i - 1].count_ones() as u64;
+            sum[i] = sum[i - 1] + self.bits[i - 1].count_ones() as usize;
         }
         SID {
             size: self.size,

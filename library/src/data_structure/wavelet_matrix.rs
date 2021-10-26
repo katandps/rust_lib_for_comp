@@ -1,6 +1,16 @@
-//! ウェーブレット行列
+//! # ウェーブレット行列
+//! ## 概要
+//! 正整数列について、構築$`O(NlogV)`$で$`O(logV)`$ or $`O(log^2V)`$のクエリを提供する
+//!
 //! ## dependencies
 //! [完備辞書](crate::data_structure::succinct_indexable_dictionaries)
+//!
+//! ## 計算量
+//! - 構築: $`O(NlogV)`$
+//! - クエリ: $`O(log^2V)`$
+//!
+//! ## verify
+//! unverified
 
 use crate::data_structure::succinct_indexable_dictionaries::{SIDBuilder, SID};
 
@@ -11,9 +21,6 @@ pub struct WaveletMatrix {
     mid: Vec<usize>,
 }
 
-///
-/// ## 計算量
-/// $`O(NlogN)`$
 impl From<Vec<u64>> for WaveletMatrix {
     fn from(mut src: Vec<u64>) -> Self {
         let size = src.len();
@@ -67,28 +74,71 @@ impl WaveletMatrix {
         ret
     }
 
-    pub fn rank() {
-        todo!()
+    fn succ(&self, b: bool, l: usize, r: usize, level: usize) -> (usize, usize) {
+        (
+            self.matrix[level].rank(l, b) + self.mid[level] * if b { 1 } else { 0 },
+            self.matrix[level].rank(r, b) + self.mid[level] * if b { 1 } else { 0 },
+        )
     }
 
-    pub fn kth_smallest() {
-        todo!()
+    /// $`[0 <= i < r) かつ v[i] == x`$ であるようなiの個数
+    pub fn rank(&self, x: u64, r: usize) -> usize {
+        let (_l, r) = (0..self.depth).rev().fold((0, r), |(l, r), level| {
+            self.succ((x >> level) & 1 > 0, l, r, level)
+        });
+        r - 1
     }
 
-    pub fn kth_largest() {
-        todo!()
+    /// $`[l, r)`$ のうち、小さい方からk番目の数
+    pub fn kth_smallest(&self, l: usize, r: usize, mut k: usize) -> u64 {
+        assert!(k < r - l);
+        let mut ret = 0;
+        (0..self.depth).rev().fold((l, r), |(l, r), level| {
+            let cnt = self.matrix[level].rank(r, false) - self.matrix[level].rank(l, false);
+            if cnt <= k {
+                ret |= 1 << level;
+                k -= cnt;
+            }
+            self.succ(cnt <= k, l, r, level)
+        });
+        ret
+    }
+    /// $`[l, r)`$ のうち、大きい方からk番目の数
+    pub fn kth_largest(&self, l: usize, r: usize, k: usize) -> u64 {
+        self.kth_smallest(l, r, r - l - k - 1)
     }
 
-    pub fn range_freq() {
-        todo!()
+    /// $`[l, r)`$ のうち、upper未満のものの個数
+    pub fn range_freq(&self, l: usize, r: usize, upper: u64) -> usize {
+        let mut ret = 0;
+        (0..self.depth).rev().fold((l, r), |(l, r), level| {
+            let b = upper >> level & 1 == 1;
+            if b {
+                ret += self.matrix[level].rank(r, false) - self.matrix[level].rank(l, false);
+            }
+            self.succ(b, l, r, level)
+        });
+        ret
     }
 
-    pub fn prev() {
-        todo!()
+    /// $`[l, r)`$のうち、 upperより小さいもののうち最大のもの
+    pub fn prev(&self, l: usize, r: usize, upper: u64) -> Option<u64> {
+        let cnt = self.range_freq(l, r, upper);
+        if cnt == 0 {
+            None
+        } else {
+            Some(self.kth_smallest(l, r, cnt - 1))
+        }
     }
 
-    pub fn next() {
-        todo!()
+    /// $`[l, r)`$のうち、lower以上のもののうち最小のもの
+    pub fn next(&self, l: usize, r: usize, lower: u64) -> Option<u64> {
+        let cnt = self.range_freq(l, r, lower);
+        if cnt == r - l {
+            None
+        } else {
+            Some(self.kth_smallest(l, r, cnt))
+        }
     }
 }
 
