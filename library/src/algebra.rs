@@ -2,7 +2,6 @@
 use crate::*;
 
 pub mod all_combination;
-pub mod all_permutation;
 pub mod binary_operation;
 pub mod chinese_remainder_theorem;
 pub mod lucas_theorem;
@@ -11,6 +10,7 @@ pub mod mod_int;
 pub mod mod_inv;
 pub mod mod_pow;
 pub mod mod_val_table;
+pub mod next_permutation;
 pub mod sieve_of_eratosthenes;
 pub mod subset;
 
