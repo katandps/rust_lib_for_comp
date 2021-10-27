@@ -5,7 +5,6 @@ pub mod all_combination;
 pub mod all_permutation;
 pub mod binary_operation;
 pub mod chinese_remainder_theorem;
-pub mod greatest_common_divisor;
 pub mod lucas_theorem;
 pub mod matrix;
 pub mod mod_int;
