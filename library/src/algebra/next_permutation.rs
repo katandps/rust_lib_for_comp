@@ -65,6 +65,6 @@ mod test {
     #[test]
     fn include_same_value() {
         let v = vec![1, 2, 2, 3];
-        dbg!(12, NextPermutation::from(&v).into_iter().count());
+        assert_eq!(12, NextPermutation::from(&v).count());
     }
 }
