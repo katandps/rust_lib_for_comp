@@ -1,19 +1,18 @@
-//! $`a \circ b \to xor(a, b)`$
+//! # BitXor $`a \circ b \to xor(a, b)`$
 use crate::algebra::{Associative, Commutative, Magma, Unital, Zero};
 use crate::*;
 
-#[derive(Clone, Debug)]
 pub struct BitXorOperation<S>(Infallible, PhantomData<fn() -> S>);
-impl<S: Zero + Copy + BitXor<Output = S> + Ord + Debug> Magma for BitXorOperation<S> {
+impl<S: Clone + BitXor<Output = S> + PartialEq> Magma for BitXorOperation<S> {
     type M = S;
     fn op(x: &Self::M, y: &Self::M) -> Self::M {
-        *x ^ *y
+        x.clone() ^ y.clone()
     }
 }
-impl<S: Zero + Copy + BitXor<Output = S> + Ord + Debug> Unital for BitXorOperation<S> {
+impl<S: Clone + BitXor<Output = S> + PartialEq + Zero> Unital for BitXorOperation<S> {
     fn unit() -> Self::M {
         S::zero()
     }
 }
-impl<S: Zero + Copy + BitXor<Output = S> + Ord + Debug> Associative for BitXorOperation<S> {}
-impl<S: Zero + Copy + BitXor<Output = S> + Ord + Debug> Commutative for BitXorOperation<S> {}
+impl<S: Clone + BitXor<Output = S> + PartialEq> Associative for BitXorOperation<S> {}
+impl<S: Clone + BitXor<Output = S> + PartialEq> Commutative for BitXorOperation<S> {}

@@ -1,36 +1,43 @@
-//! 遅延評価セグメント木
+//! #遅延評価セグメント木
+//! 区間更新 $`O(logN)`$、区間取得 $`O(logN)`
+//!
+//! ## verify
+//! [ABL E](https://atcoder.jp/contests/abl/submissions/26979080)
+
 use crate::algebra::{Magma, MapMonoid};
 use crate::*;
 
-////////////////////////////////////////
-/// 遅延評価セグメント木
-/// 区間更新、区間取得
-///
-/// 実装内部は0-indexed
-#[derive(Debug, Clone)]
+#[derive(Clone)]
 pub struct LazySegmentTree<M: MapMonoid> {
+    m: M,
     n: usize,
     log: usize,
     node: Vec<<M::Mono as Magma>::M>,
     lazy: Vec<<M::Func as Magma>::M>,
 }
 
-impl<M: MapMonoid> From<usize> for LazySegmentTree<M> {
-    fn from(length: usize) -> Self {
+impl<M: MapMonoid> From<(M, usize)> for LazySegmentTree<M> {
+    fn from((m, length): (M, usize)) -> Self {
         let n = (length + 1).next_power_of_two();
         let log = n.trailing_zeros() as usize;
         let node = vec![M::unit(); 2 * n];
         let lazy = vec![M::identity_map(); n];
-        let mut tree = Self { n, log, node, lazy };
+        let mut tree = Self {
+            m,
+            n,
+            log,
+            node,
+            lazy,
+        };
         (1..n).rev().for_each(|i| tree.calc(i));
         tree
     }
 }
 
 /// 1-indexedで配列の内容を詰めたセグメント木を生成する
-impl<M: MapMonoid> From<&Vec<<M::Mono as Magma>::M>> for LazySegmentTree<M> {
-    fn from(v: &Vec<<M::Mono as Magma>::M>) -> Self {
-        let mut segtree = Self::from(v.len() + 1);
+impl<M: MapMonoid> From<(M, &Vec<<M::Mono as Magma>::M>)> for LazySegmentTree<M> {
+    fn from((m, v): (M, &Vec<<M::Mono as Magma>::M>)) -> Self {
+        let mut segtree = Self::from((m, v.len() + 1));
         segtree.node[segtree.n..segtree.n + v.len() - 1].clone_from_slice(v);
         (0..segtree.n - 1).rev().for_each(|i| segtree.calc(i));
         segtree
@@ -42,7 +49,7 @@ impl<M: MapMonoid> LazySegmentTree<M> {
         assert!(i < self.n);
         i += self.n;
         (1..=self.log).rev().for_each(|j| self.propagate(i >> j));
-        self.node[i] = M::apply(&f, &self.node[i]);
+        self.node[i] = self.m.apply(&f, &self.node[i]);
         (1..=self.log).for_each(|j| self.calc(i >> j));
     }
 
@@ -121,30 +128,30 @@ impl<M: MapMonoid> LazySegmentTree<M> {
         let mut smr = M::unit();
         while l < r {
             if l & 1 != 0 {
-                sml = M::op(&sml, &self.node[l]);
+                sml = self.m.op(&sml, &self.node[l]);
                 l += 1;
             }
             if r & 1 != 0 {
                 r -= 1;
-                smr = M::op(&self.node[r], &smr);
+                smr = self.m.op(&self.node[r], &smr);
             }
             l >>= 1;
             r >>= 1;
         }
-        M::op(&sml, &smr)
+        self.m.op(&sml, &smr)
     }
 
     /// k番目の区間を内包する区間の値から計算する
     fn calc(&mut self, k: usize) {
         assert!(2 * k + 1 < self.node.len());
-        self.node[k] = M::op(&self.node[2 * k], &self.node[2 * k + 1]);
+        self.node[k] = self.m.op(&self.node[2 * k], &self.node[2 * k + 1]);
     }
 
     /// k番目の区間の値に作用を適用する
     fn eval(&mut self, k: usize, f: <M::Func as Magma>::M) {
-        self.node[k] = M::apply(&f, &self.node[k]);
+        self.node[k] = self.m.apply(&f, &self.node[k]);
         if k < self.n {
-            self.lazy[k] = M::compose(&f, &self.lazy[k]);
+            self.lazy[k] = self.m.compose(&self.lazy[k], &f);
         }
     }
 
@@ -166,21 +173,23 @@ mod test {
     // これは毎回書く(モノイドとモノイドから作用付きモノイドを作る)
     pub struct AddSum;
     impl MapMonoid for AddSum {
-        type Mono = Addition<Segment>;
+        type Mono = Addition<Segment<i64>>;
         type Func = Addition<i64>;
 
         fn apply(
+            &self,
             f: &<Self::Func as Magma>::M,
             value: &<Self::Mono as Magma>::M,
         ) -> <Self::Mono as Magma>::M {
-            value + *f
+            value.clone() + *f
         }
     }
 
     #[test]
     fn a() {
         let n = 5;
-        let mut segtree = LazySegmentTree::<AddSum>::from(n);
+        let m = AddSum;
+        let mut segtree = LazySegmentTree::<AddSum>::from((m, n));
 
         for i in 1..n {
             assert_eq!(0, segtree.prod(i - 1..i).value);

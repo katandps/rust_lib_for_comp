@@ -4,6 +4,7 @@ use crate::*;
 pub mod all_combination;
 pub mod binary_operation;
 pub mod chinese_remainder_theorem;
+pub mod complex;
 pub mod lucas_theorem;
 pub mod matrix;
 pub mod mod_int;
@@ -20,7 +21,7 @@ pub mod subset;
 /// 二項演算: $`M \circ M \to M`$
 pub trait Magma {
     /// マグマを構成する集合$`M`$
-    type M: Clone + Debug + PartialEq;
+    type M: Clone + PartialEq;
     /// マグマを構成する演算$`op`$
     fn op(x: &Self::M, y: &Self::M) -> Self::M;
 }
@@ -100,7 +101,11 @@ pub trait MapMonoid {
     type Mono: Monoid;
     type Func: Monoid;
     /// 値xと値yを併合する
-    fn op(x: &<Self::Mono as Magma>::M, y: &<Self::Mono as Magma>::M) -> <Self::Mono as Magma>::M {
+    fn op(
+        &self,
+        x: &<Self::Mono as Magma>::M,
+        y: &<Self::Mono as Magma>::M,
+    ) -> <Self::Mono as Magma>::M {
         Self::Mono::op(x, y)
     }
     fn unit() -> <Self::Mono as Magma>::M {
@@ -108,6 +113,7 @@ pub trait MapMonoid {
     }
     /// 作用fをvalueに作用させる
     fn apply(
+        &self,
         f: &<Self::Func as Magma>::M,
         value: &<Self::Mono as Magma>::M,
     ) -> <Self::Mono as Magma>::M;
@@ -118,33 +124,29 @@ pub trait MapMonoid {
     /// composition:
     /// $`h() = f(g())`$
     fn compose(
+        &self,
         f: &<Self::Func as Magma>::M,
         g: &<Self::Func as Magma>::M,
     ) -> <Self::Func as Magma>::M {
         Self::Func::op(f, g)
     }
 }
-
 /// 加算の単位元
 pub trait Zero {
     fn zero() -> Self;
 }
-
 /// 乗算の単位元
 pub trait One {
     fn one() -> Self;
 }
-
 /// 下に有界
 pub trait BoundedBelow {
     fn min_value() -> Self;
 }
-
 /// 上に有界
 pub trait BoundedAbove {
     fn max_value() -> Self;
 }
-
 /// 整数
 #[rustfmt::skip]
 pub trait Integral: 'static + Send + Sync + Copy + Ord + Display + Debug

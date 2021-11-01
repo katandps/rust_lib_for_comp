@@ -7,7 +7,7 @@ use algebra::Monoid;
 /// データの挿入が$`O(logN)`$となっていることに注意。
 /// ## verify
 /// [ARC008D](https://atcoder.jp/contests/arc008/submissions/26669109)
-#[derive(Clone, Debug)]
+#[derive(Clone)]
 pub struct DynamicSegmentTree<M: Monoid> {
     root: node::Node<M>,
 }

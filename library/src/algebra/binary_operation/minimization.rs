@@ -1,24 +1,23 @@
-//! $`a \circ b \to min(a, b)`$
+//! # 最小化 $`a \circ b \to min(a, b)`$
 use crate::algebra::{Associative, BoundedAbove, Commutative, Idempotent, Magma, Unital};
 use crate::*;
 
-#[derive(Clone, Debug)]
 pub struct Minimization<S>(Infallible, PhantomData<fn() -> S>);
-impl<S: BoundedAbove + Copy + PartialOrd + Debug> Magma for Minimization<S> {
+impl<S: Clone + PartialOrd> Magma for Minimization<S> {
     type M = S;
     fn op(x: &Self::M, y: &Self::M) -> Self::M {
-        if x > y {
-            *y
+        if x <= y {
+            y.clone()
         } else {
-            *x
+            x.clone()
         }
     }
 }
-impl<S: BoundedAbove + Copy + PartialOrd + Debug> Unital for Minimization<S> {
+impl<S: BoundedAbove + Clone + PartialOrd> Unital for Minimization<S> {
     fn unit() -> Self::M {
         S::max_value()
     }
 }
-impl<S: BoundedAbove + Copy + PartialOrd + Debug> Associative for Minimization<S> {}
-impl<S: BoundedAbove + Copy + PartialOrd + Debug> Commutative for Minimization<S> {}
-impl<S: BoundedAbove + Copy + PartialOrd + Debug> Idempotent for Minimization<S> {}
+impl<S: Clone + PartialOrd> Associative for Minimization<S> {}
+impl<S: Clone + PartialOrd> Commutative for Minimization<S> {}
+impl<S: Clone + PartialOrd> Idempotent for Minimization<S> {}

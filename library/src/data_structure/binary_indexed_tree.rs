@@ -62,7 +62,10 @@ impl<A: AbelianGroup> BinaryIndexedTree<A> {
     }
 }
 
-impl<A: AbelianGroup> Debug for BinaryIndexedTree<A> {
+impl<A: AbelianGroup> Debug for BinaryIndexedTree<A>
+where
+    A::M: Debug,
+{
     fn fmt(&self, f: &mut Formatter<'_>) -> std::fmt::Result {
         let v = (0..self.n)
             .map(|i| format!("{:?}", self.fold(&(i..=i))))

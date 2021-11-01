@@ -1,28 +1,23 @@
-//! $`a \circ b \to max(a, b)`$
+//! # 最大化 $`a \circ b \to max(a, b)`$
 use crate::algebra::{Associative, BoundedBelow, Commutative, Idempotent, Magma, Unital};
+use crate::*;
 
-use std::convert::Infallible;
-use std::fmt::Debug;
-use std::marker::PhantomData;
-
-#[derive(Clone, Debug)]
 pub struct Maximization<S>(Infallible, PhantomData<fn() -> S>);
-impl<S: BoundedBelow + Copy + PartialOrd + Debug> Magma for Maximization<S> {
+impl<S: Clone + PartialOrd> Magma for Maximization<S> {
     type M = S;
-
     fn op(x: &Self::M, y: &Self::M) -> Self::M {
-        if x < y {
-            *y
+        if x >= y {
+            x.clone()
         } else {
-            *x
+            y.clone()
         }
     }
 }
-impl<S: BoundedBelow + Copy + PartialOrd + Debug> Unital for Maximization<S> {
+impl<S: Clone + PartialOrd + BoundedBelow> Unital for Maximization<S> {
     fn unit() -> Self::M {
         S::min_value()
     }
 }
-impl<S: BoundedBelow + Copy + PartialOrd + Debug> Associative for Maximization<S> {}
-impl<S: BoundedBelow + Copy + PartialOrd + Debug> Commutative for Maximization<S> {}
-impl<S: BoundedBelow + Copy + PartialOrd + Debug> Idempotent for Maximization<S> {}
+impl<S: Clone + PartialOrd> Associative for Maximization<S> {}
+impl<S: Clone + PartialOrd> Commutative for Maximization<S> {}
+impl<S: Clone + PartialOrd> Idempotent for Maximization<S> {}

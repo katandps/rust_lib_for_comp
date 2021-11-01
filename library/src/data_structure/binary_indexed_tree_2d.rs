@@ -56,7 +56,10 @@ impl<A: AbelianGroup> BinaryIndexedTree2<A> {
     }
 }
 
-impl<A: AbelianGroup> Debug for BinaryIndexedTree2<A> {
+impl<A: AbelianGroup> Debug for BinaryIndexedTree2<A>
+where
+    A::M: Debug,
+{
     fn fmt(&self, f: &mut Formatter<'_>) -> std::fmt::Result {
         let mut buf = String::new();
         buf += "\n";
