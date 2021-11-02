@@ -8,7 +8,7 @@
 //! - 構築: $`O(N)`$
 //! - access: $`O(1)`$
 //! - rank: $`O(1)`$
-//! - select: $`O(logN)`$
+//! - select: $`O( \log N)`$
 pub struct SID {
     size: usize,
     _blocks: usize,
@@ -50,7 +50,7 @@ impl SID {
     /// 存在しない場合はNone
     ///
     /// ## 計算量
-    /// O(log(Size))
+    /// O( \log Size)
     pub fn select(&self, x: usize) -> Option<usize> {
         if self.rank_1(self.size) < x {
             return None;

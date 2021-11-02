@@ -1,7 +1,8 @@
 //! ワーシャルフロイド法
 use crate::algebra::{BoundedAbove, Zero};
 use crate::graph::GraphTrait;
-use crate::*;
+use crate::prelude::*;
+use crate::{chmin, min};
 
 ///
 /// ワーシャルフロイド法で(i,j)間の最短距離を求める

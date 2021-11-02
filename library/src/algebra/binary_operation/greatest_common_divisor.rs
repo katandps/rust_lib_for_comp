@@ -1,7 +1,7 @@
 //! # GCD $`a \circ b \to gcd(a, b)`$
 //! 最小公倍数をユークリッドの互除法で求める
 use crate::algebra::{Associative, Commutative, Idempotent, Magma, Unital, Zero};
-use crate::*;
+use crate::prelude::*;
 
 pub struct Gcd<S>(Infallible, PhantomData<fn() -> S>);
 impl<S: Clone + RemAssign + PartialOrd + Zero> Magma for Gcd<S> {

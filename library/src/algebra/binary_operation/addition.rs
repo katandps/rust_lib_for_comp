@@ -4,7 +4,7 @@
 //! [ABL E](https://atcoder.jp/contests/abl/submissions/26979080)
 
 use crate::algebra::{Associative, Commutative, Invertible, Magma, Unital, Zero};
-use crate::*;
+use crate::prelude::*;
 
 pub struct Addition<S>(Infallible, PhantomData<fn() -> S>);
 impl<S: Clone + Add<Output = S> + PartialEq> Magma for Addition<S> {

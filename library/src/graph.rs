@@ -1,7 +1,7 @@
-//! グラフ
+//! # グラフ
+//!
 
-/// 辺の情報はEdgeに載せる
-use crate::*;
+use crate::prelude::*;
 
 pub mod bellman_ford;
 pub mod bipartite_graph;
@@ -17,7 +17,6 @@ pub mod warshall_floyd;
 
 /// Edge 辺
 /// W はWeightで各処理に対応するTraitを実装する
-
 #[derive(Copy, Clone, Eq, Default)]
 pub struct Edge<W> {
     pub src: usize,

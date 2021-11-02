@@ -1,10 +1,10 @@
-//! ポテンシャル付きUnionFindTree
+//! # ポテンシャル付きUnionFindTree
+//! アーベル群の値をポテンシャルとして、頂点間のポテンシャルを管理する
+//! ## verify
+//! [ARC90_D](https://atcoder.jp/contests/arc090/submissions/26701502)
 use crate::algebra::AbelianGroup;
-use crate::swap;
-/// # ポテンシャル付きUnionFindTree
-/// アーベル群の値をポテンシャルとして、頂点間のポテンシャルを管理する
-/// ## verify
-/// [ARC90_D](https://atcoder.jp/contests/arc090/submissions/26701502)
+use crate::prelude::swap;
+
 #[derive(Clone, Debug)]
 pub struct WeightedUnionFind<A: AbelianGroup> {
     parent: Vec<usize>,

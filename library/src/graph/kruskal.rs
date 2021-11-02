@@ -1,29 +1,28 @@
 //! 最小全域木(クラスカル法)
+//! 最小全域木(最小全域森)
+//!
+//! Kruskal法でMinimumSpanningTree(最小全域木)を求める
+//! ## 計算量
+//! 頂点数をV、辺数をEとすると $` E \log E`$
+//! ```
+//! use library::graph::Graph;
+//! use library::graph::kruskal::Kruskal;
+//!
+//! let graph = Graph::from(&vec![
+//!     vec![-1, 2, 3, 1, -1],
+//!     vec![2, -1, -1, 4, -1],
+//!     vec![3, -1, -1, 1, 1],
+//!     vec![1, 4, 1, -1, 3],
+//!     vec![-1, -1, 1, 3, -1],
+//! ]);
+//! assert_eq!(5, Kruskal::from(&graph).sum());
+//! ```
+//!
 use super::GraphTrait;
+use crate::algebra::Zero;
 use crate::data_structure::union_find::UnionFind;
 use crate::graph::Edge;
-use crate::*;
-use algebra::Zero;
-
-/// 最小全域木(最小全域森)
-///
-/// Kruskal法でMinimumSpanningTree(最小全域木)を求める
-/// ## 計算量
-/// 頂点数をV、辺数をEとすると ElogE
-/// ```
-/// use library::graph::Graph;
-/// use library::graph::kruskal::Kruskal;
-///
-/// let graph = Graph::from(&vec![
-///     vec![-1, 2, 3, 1, -1],
-///     vec![2, -1, -1, 4, -1],
-///     vec![3, -1, -1, 1, 1],
-///     vec![1, 4, 1, -1, 3],
-///     vec![-1, -1, 1, 3, -1],
-/// ]);
-/// assert_eq!(5, Kruskal::from(&graph).sum());
-/// ```
-///
+use crate::prelude::*;
 
 pub struct Kruskal<W> {
     tree: Vec<Edge<W>>,

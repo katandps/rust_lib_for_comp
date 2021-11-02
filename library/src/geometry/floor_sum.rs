@@ -1,6 +1,6 @@
-//! 直線と格子点
-/// y = (Ax + B)/M (0 <= x <= N) の下にある格子点の数を求める
-/// O(log(max(A,M))
+//! # 直線と格子点
+//! $` y = \frac{Ax + B}{M} (0 \leq x \leq N) `$  の下にある格子点の数を求める
+//! $`O( \log \max_{A, M})`$
 pub fn floor_sum(n: i64, m: i64, mut a: i64, mut b: i64) -> i64 {
     let mut ans = 0;
     if a >= m {

@@ -1,7 +1,7 @@
 //! 有向非巡回グラフ(DAG)
 
 use crate::graph::GraphTrait;
-use crate::*;
+use crate::prelude::*;
 
 #[allow(dead_code)]
 struct Dag;

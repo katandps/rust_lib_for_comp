@@ -1,17 +1,16 @@
 //! # ダイクストラ法
 //!
+//! dijkstra法でlから各頂点への最小コストを求める
+//! ## 制約
+//! 負辺なし
+//! ## 計算量
+//! O(N \log N)
+//! ## verify
+//! [ARC011C](https://atcoder.jp/contests/arc011/submissions/26722909)
 use crate::algebra::{BoundedAbove, Zero};
 use crate::graph::GraphTrait;
-use crate::*;
+use crate::prelude::*;
 
-///
-/// dijkstra法でlから各頂点への最小コストを求める
-/// ## 制約
-/// 負辺なし
-/// ## 計算量
-/// O(NlogN)
-/// ## verify
-/// [ARC011C](https://atcoder.jp/contests/arc011/submissions/26722909)
 pub struct Dijkstra<W> {
     dist: Vec<W>,
     prev: Vec<usize>,

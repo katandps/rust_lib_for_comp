@@ -1,6 +1,6 @@
 //! # 乗算 $`a \circ b \to prod(a, b)`$
 use crate::algebra::{Associative, Commutative, Invertible, Magma, One, Unital};
-use crate::*;
+use crate::prelude::*;
 
 pub struct Multiplication<S>(Infallible, PhantomData<fn() -> S>);
 impl<S: Clone + Mul<Output = S> + PartialEq> Magma for Multiplication<S> {

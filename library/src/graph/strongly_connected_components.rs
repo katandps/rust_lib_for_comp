@@ -2,7 +2,7 @@
 use super::Graph;
 use crate::algebra::One;
 use crate::graph::GraphTrait;
-use crate::*;
+use crate::prelude::*;
 
 pub struct SCC<W, G> {
     /// もとの頂点と強連結成分の対応

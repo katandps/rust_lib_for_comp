@@ -1,7 +1,7 @@
 //! 後退解析(ゲーム問題)
 
 use crate::graph::GraphTrait;
-use crate::*;
+use crate::prelude::*;
 
 #[derive(Clone, Copy, Debug, PartialEq)]
 pub enum WinLose {

@@ -1,6 +1,6 @@
-//! # $`p^e mod m`$
+//! # $`p^e \bmod m`$
 //! ## 計算量
-//! $`log(e)`$
+//! $` \log e`$
 //! ## verified by
 //! [ATC002B](https://atcoder.jp/contests/atc002/submissions/26825488)
 pub fn pow(mut p: usize, mut e: usize, m: usize) -> usize {

@@ -1,5 +1,5 @@
 //! BitSet
-use crate::*;
+use crate::prelude::*;
 
 /// bitの大きな配列に対するbit演算を省メモリかつ高速に行うデータ構造
 

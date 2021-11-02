@@ -1,10 +1,10 @@
 //! 動的セグメント木
-use crate::*;
-use algebra::Monoid;
+use crate::algebra::Monoid;
+use crate::prelude::*;
 
 /// 動的セグメント木
 /// セグメント木よりメモリアクセスが遅いが、メモリ使用量は挿入したノードの数を上界とする。
-/// データの挿入が$`O(logN)`$となっていることに注意。
+/// データの挿入が$`O( \log N)`$となっていることに注意。
 /// ## verify
 /// [ARC008D](https://atcoder.jp/contests/arc008/submissions/26669109)
 #[derive(Clone)]
@@ -25,19 +25,19 @@ impl<M: Monoid> DynamicSegmentTree<M> {
     pub const BIT_LEN: i32 = 62;
     /// 値iをvalueに更新する
     /// ## 計算量
-    /// $`O(logN)`$
+    /// $`O( \log N)`$
     pub fn set(&mut self, i: u64, value: M::M) {
         self.root.set(i, Self::BIT_LEN - 1, value);
     }
     /// 値iをvalueに更新する
     /// ## 計算量
-    /// $`O(logN)`$
+    /// $`O( \log N)`$
     pub fn get(&self, i: u64) -> M::M {
         self.root.get(i, Self::BIT_LEN - 1)
     }
     /// Rangeで与えられた区間の値を取得する
     /// ## 計算量
-    /// $`O(logN)`$
+    /// $`O( \log N)`$
     pub fn prod<R>(&self, range: R) -> M::M
     where
         R: RangeBounds<usize>,

@@ -3,7 +3,7 @@
 //! ## verify
 //! [ABL E](https://atcoder.jp/contests/abl/submissions/26979080)
 use crate::algebra::{Associative, Idempotent, Magma, Unital};
-use crate::*;
+use crate::prelude::*;
 
 pub struct OverwriteOperation<S>(Infallible, PhantomData<fn() -> S>);
 impl<S: Clone + PartialEq> Magma for OverwriteOperation<S> {

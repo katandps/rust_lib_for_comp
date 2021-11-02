@@ -1,6 +1,6 @@
 //! グリッドグラフ
 use crate::graph::{Edge, GraphTrait};
-use crate::*;
+use crate::prelude::*;
 
 #[derive(Debug)]
 pub struct Grid<W> {

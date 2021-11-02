@@ -1,5 +1,5 @@
 //!標準入力を取得するヘルパー
-use crate::*;
+use crate::prelude::*;
 
 pub struct Reader<R> {
     reader: R,

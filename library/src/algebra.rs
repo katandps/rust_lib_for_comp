@@ -1,5 +1,5 @@
 //! 代数
-use crate::*;
+use crate::prelude::*;
 
 pub mod all_combination;
 pub mod binary_operation;

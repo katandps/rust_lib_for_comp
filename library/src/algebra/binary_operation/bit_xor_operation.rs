@@ -1,6 +1,6 @@
 //! # BitXor $`a \circ b \to xor(a, b)`$
 use crate::algebra::{Associative, Commutative, Magma, Unital, Zero};
-use crate::*;
+use crate::prelude::*;
 
 pub struct BitXorOperation<S>(Infallible, PhantomData<fn() -> S>);
 impl<S: Clone + BitXor<Output = S> + PartialEq> Magma for BitXorOperation<S> {

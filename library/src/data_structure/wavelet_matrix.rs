@@ -1,18 +1,18 @@
 //! # ウェーブレット行列
 //! ## 概要
-//! 正整数列について、構築$`O(NlogV)`$で$`O(logV)`$ or $`O(log^2V)`$のクエリを提供する
+//! 正整数列について、構築$`O(N \log V)`$で$`O( \log V)`$ or $`O( \log^2 V)`$のクエリを提供する
 //!
 //! ## dependencies
 //! [完備辞書](crate::data_structure::succinct_indexable_dictionaries)
 //!
 //! ## 計算量
-//! - 構築: $`O(NlogV)`$
-//! - クエリ: $`O(log^2V)`$
+//! - 構築: $`O(N \log V)`$
+//! - クエリ: $`O( \log^2 V)`$
 //!
 //! ## verify
 //! unverified
 use crate::data_structure::succinct_indexable_dictionaries::{SIDBuilder, SID};
-use crate::*;
+use crate::prelude::*;
 
 pub struct WaveletMatrix {
     depth: usize,
@@ -61,7 +61,7 @@ impl From<Vec<u64>> for WaveletMatrix {
 impl WaveletMatrix {
     ///
     /// ## 計算量
-    /// $`O(logN)`$
+    /// $`O( \log N)`$
     pub fn access(&self, mut k: usize) -> u64 {
         let mut ret = 0;
         (0..self.depth).rev().for_each(|level| {

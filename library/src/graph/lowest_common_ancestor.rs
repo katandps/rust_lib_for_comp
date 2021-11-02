@@ -1,9 +1,9 @@
-//! 最近共通祖先
+//! # 最近共通祖先
+//! LowestCommonAncestor(LCA)を求めるライブラリ
+//! 事前処理 $`N \log N`$、クエリ$` \log N `$
 use crate::graph::GraphTrait;
-use crate::*;
+use crate::prelude::*;
 
-/// LowestCommonAncestor(LCA)を求めるライブラリ
-/// 事前処理NlogN、クエリlogN
 pub struct LowestCommonAncestor<W, G> {
     parent: Vec<Vec<usize>>,
     dist: Vec<usize>,
@@ -52,7 +52,7 @@ where
         }
     }
 
-    /// u,vの最近共通祖先(LCA)を求める(O(logN))
+    /// u,vの最近共通祖先(LCA)を求める$` (O(\log N))`$
     pub fn query(&mut self, mut u: usize, mut v: usize) -> usize {
         // uの深さはvの深さ以上
         if self.dist[u] < self.dist[v] {

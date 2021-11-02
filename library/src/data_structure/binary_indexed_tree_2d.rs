@@ -1,6 +1,6 @@
 //! 2次元BIT
 use crate::algebra::AbelianGroup;
-use crate::*;
+use crate::prelude::*;
 
 /// # Fenwick Tree 2D
 /// アーベル群の二項演算を載せることができる二次元構造

@@ -1,5 +1,5 @@
 //! ディニッツ法
-use crate::*;
+use crate::prelude::*;
 
 struct Edge {
     pub to: usize,

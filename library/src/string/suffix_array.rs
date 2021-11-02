@@ -1,7 +1,7 @@
 //! 接尾辞配列
 
 use crate::algo::compress::compress;
-use crate::*;
+use crate::prelude::*;
 
 #[derive(Debug, Clone)]
 pub struct SuffixArray {

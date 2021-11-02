@@ -1,5 +1,4 @@
-#[allow(unused_imports)]
-use crate::*;
+//! # エラトステネスの篩
 
 pub fn primes(m: usize) -> Vec<usize> {
     if m < 2 {

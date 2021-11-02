@@ -1,11 +1,13 @@
-//! Sparse Table
+//! # Sparse Table
+//! 静的データ構造
+//! 事前計算 $`O(N \log N)`$で、foldを$`O(1)`$で計算できる
+//!
+//! Bandが載る
+//! ## verify
+//! [Static RMQ](https://judge.yosupo.jp/submission/64144)
 use crate::algebra::Band;
+use crate::prelude::*;
 
-/// 事前計算`$\theta NlogN$`で、foldをO(1)で計算できる
-///
-/// Bandが載る
-/// ## verify
-/// [Static RMQ](https://judge.yosupo.jp/submission/64144)
 #[derive(Debug, Clone)]
 pub struct SparseTable<B: Band> {
     size: usize,
@@ -31,9 +33,8 @@ impl<B: Band> From<&[B::M]> for SparseTable<B> {
 }
 
 impl<B: Band> SparseTable<B> {
-    /// [l, r)
-    pub fn query(&self, l: usize, r: usize) -> B::M {
-        assert!(r > l);
+    pub fn query<R: RangeBounds<usize>>(&self, range: R) -> B::M {
+        let (l, r) = to_lr(&range, self.size);
         let lg = 63 - (r - l).leading_zeros();
         B::op(
             &self.table[lg as usize][l],

@@ -1,13 +1,9 @@
-//! セグメント木
+//! # セグメント木
+//! セグメント木(非再帰)
+//! 一点更新$` O(1) `$、区間取得$`O( \log N )`$
 use crate::algebra::Monoid;
-use crate::*;
+use crate::prelude::*;
 
-///////////////////////////////////////////////////////////////////
-
-/// セグメント木(非再帰)
-/// 一点更新、区間取得
-///
-/// 0-indexed
 #[derive(Clone, Debug)]
 pub struct SegmentTree<M: Monoid> {
     n: usize,
@@ -42,7 +38,7 @@ impl<M: Monoid> SegmentTree<M> {
 
     /// 値iをvalueに更新する
     /// ## 計算量
-    /// $`O(logN)`$
+    /// $`O( \log N)`$
     pub fn update_at(&mut self, mut i: usize, value: M::M) {
         i += self.n;
         self.node[i] = value;
@@ -54,7 +50,7 @@ impl<M: Monoid> SegmentTree<M> {
 
     /// Rangeで与えられた区間の値を取得する
     /// ## 計算量
-    /// $`O(logN)`$
+    /// $`O( \log N)`$
     pub fn prod<R: RangeBounds<usize>>(&self, range: R) -> M::M {
         let (mut l, mut r) = to_lr(&range, self.n);
         l += self.n;
@@ -79,7 +75,7 @@ impl<M: Monoid> SegmentTree<M> {
 
 /// indexの値を取得する
 /// ## 計算量
-/// $`O(1)`$
+/// $` O(1)`$
 impl<M: Monoid> Index<usize> for SegmentTree<M> {
     type Output = M::M;
 

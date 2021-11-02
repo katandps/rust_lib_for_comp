@@ -3,7 +3,7 @@
 //!
 //! 誤差の対策は十分に行うこと
 use crate::algebra::{One, Zero};
-use crate::*;
+use crate::prelude::*;
 
 #[derive(Clone, Copy)]
 pub struct Complex {

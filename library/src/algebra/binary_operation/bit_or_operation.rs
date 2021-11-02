@@ -1,6 +1,6 @@
 //! # BitOr $`a \circ b \to or(a, b)`$
 use crate::algebra::{Associative, Commutative, Idempotent, Magma, Unital, Zero};
-use crate::*;
+use crate::prelude::*;
 
 pub struct BitOrOperation<S>(Infallible, PhantomData<fn() -> S>);
 impl<S: Clone + BitOr<Output = S> + PartialEq> Magma for BitOrOperation<S> {

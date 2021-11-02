@@ -1,6 +1,6 @@
-//! prelude
+//! # 一括インポート用モジュール
+//! ここでインポートする要素はtemplateで使えるようにしておく
 
-/// general import
 pub use std::{
     cmp::{max, min, Ordering, Reverse},
     collections::{BTreeMap, BTreeSet, BinaryHeap, HashMap, HashSet, VecDeque},
@@ -18,3 +18,5 @@ pub use std::{
     },
     str::{from_utf8, FromStr},
 };
+
+pub use crate::algo::range::to_lr;

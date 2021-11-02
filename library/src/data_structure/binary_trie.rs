@@ -1,6 +1,6 @@
 //! 非負整数をBit列とみなしてトライ木に載せたもの
 /// multiset的な機能を持つ
-use crate::*;
+use crate::prelude::*;
 
 type TrieValue = u64;
 

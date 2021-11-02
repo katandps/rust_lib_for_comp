@@ -1,4 +1,4 @@
-//! リュカの定理( $`nCr mod p`$ を $`O(logN)`$ で得る )
+//! リュカの定理( $`nCr \bmod p`$ を $`O( \log N)`$ で得る )
 
 #[allow(dead_code)]
 pub struct LucasTheorem;

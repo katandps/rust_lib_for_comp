@@ -1,7 +1,7 @@
 //! # BinaryIndexedTree(Fenwick Tree)
 //! アーベル群の二項演算を載せることができる
 use crate::algebra::{AbelianGroup, Magma};
-use crate::*;
+use crate::prelude::*;
 
 #[derive(Clone)]
 pub struct BinaryIndexedTree<A: Magma> {

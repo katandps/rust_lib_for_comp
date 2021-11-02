@@ -1,6 +1,6 @@
 //! # 最小化 $`a \circ b \to min(a, b)`$
 use crate::algebra::{Associative, BoundedAbove, Commutative, Idempotent, Magma, Unital};
-use crate::*;
+use crate::prelude::*;
 
 pub struct Minimization<S>(Infallible, PhantomData<fn() -> S>);
 impl<S: Clone + PartialOrd> Magma for Minimization<S> {

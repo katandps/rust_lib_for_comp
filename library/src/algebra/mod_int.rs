@@ -1,6 +1,6 @@
 //! 剰余体
 use crate::algebra::Zero;
-use crate::*;
+use crate::prelude::*;
 ////////////////////////////////////////////////////////
 
 pub fn mi(i: i64) -> Mi {

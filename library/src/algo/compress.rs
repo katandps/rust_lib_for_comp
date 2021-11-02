@@ -1,4 +1,4 @@
-//! 座標圧縮 O(NlogN)
+//! 座標圧縮 O( N \log N)
 
 #[allow(dead_code)]
 pub fn compress<T: Ord>(source: &[T]) -> Vec<usize> {

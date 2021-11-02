@@ -1,31 +1,27 @@
-//! 最小全域木(プリム法)
+//! #最小全域木(プリム法)
+//! Prim法でMinimumSpanningTree(最小全域木)を求める
+//! startと連結でない点は無視する
+//! ## 計算量
+//!
+//! 二分ヒープによる実装なので頂点数をV、辺数をEとして$` O(E \log V)`$
+//! ```
+//! use library::graph::Graph;
+//! use library::graph::prim::Prim;
+//!
+//! let graph = Graph::from(&vec![
+//!     vec![-1, 2, 3, 1, -1],
+//!     vec![2, -1, -1, 4, -1],
+//!     vec![3, -1, -1, 1, 1],
+//!     vec![1, 4, 1, -1, 3],
+//!     vec![-1, -1, 1, 3, -1],
+//! ]);
+//! assert_eq!(5, Prim::from(&graph).sum());
+//! ```
+//!
 use crate::algebra::Zero;
 use crate::graph::{Edge, GraphTrait};
-use crate::*;
+use crate::prelude::*;
 
-/// 最小全域木(最小全域森)
-///
-///
-///
-/// Prim法でMinimumSpanningTree(最小全域木)を求める
-/// startと連結でない点は無視する
-/// ## 計算量
-/// 頂点数をV、辺数をEとすると
-/// 二分ヒープによる実装なのでO(ElogV)
-/// ```
-/// use library::graph::Graph;
-/// use library::graph::prim::Prim;
-///
-/// let graph = Graph::from(&vec![
-///     vec![-1, 2, 3, 1, -1],
-///     vec![2, -1, -1, 4, -1],
-///     vec![3, -1, -1, 1, 1],
-///     vec![1, 4, 1, -1, 3],
-///     vec![-1, -1, 1, 3, -1],
-/// ]);
-/// assert_eq!(5, Prim::from(&graph).sum());
-/// ```
-///
 pub struct Prim<W> {
     tree: Vec<Edge<W>>,
     sum: W,

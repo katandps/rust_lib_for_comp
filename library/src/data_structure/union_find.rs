@@ -1,5 +1,5 @@
 //! 素集合データ構造 (UnionFind)
-use crate::swap;
+use crate::prelude::swap;
 
 ///
 /// ## verify

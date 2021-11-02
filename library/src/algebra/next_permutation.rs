@@ -4,7 +4,7 @@
 //! - `size: usize`を与えると[0, size)の順列を辞書順に得るIteratorとなる
 //! - `src: &Vec<T>` を与えると重複を考慮した順列を得る
 //!
-use crate::*;
+use crate::prelude::*;
 
 #[derive(Clone, Debug)]
 pub struct NextPermutation<T>(Option<Vec<T>>);

@@ -1,7 +1,6 @@
 //! 行列
-use crate::*;
+use crate::prelude::*;
 
-/// 行列
 #[derive(Clone, Eq, PartialEq)]
 pub struct Matrix {
     pub buf: Vec<Vec<Mi>>,

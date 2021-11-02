@@ -2,7 +2,7 @@
 //! バッファリングされた出力を提供する
 //! ## 使い方
 //! std::io::Writeを実装している型を渡して初期化する
-use crate::*;
+use crate::prelude::*;
 
 pub struct Writer<W: Write> {
     writer: BufWriter<W>,

@@ -1,6 +1,6 @@
 //! # 最大化 $`a \circ b \to max(a, b)`$
 use crate::algebra::{Associative, BoundedBelow, Commutative, Idempotent, Magma, Unital};
-use crate::*;
+use crate::prelude::*;
 
 pub struct Maximization<S>(Infallible, PhantomData<fn() -> S>);
 impl<S: Clone + PartialOrd> Magma for Maximization<S> {
