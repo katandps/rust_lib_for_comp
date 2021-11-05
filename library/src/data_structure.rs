@@ -5,6 +5,7 @@ pub mod binary_indexed_tree_2d;
 pub mod binary_trie;
 pub mod bit_matrix;
 pub mod bitset;
+pub mod disjoint_sparse_table;
 pub mod dynamic_segment_tree;
 pub mod lazy_segment_tree;
 pub mod segment_tree;

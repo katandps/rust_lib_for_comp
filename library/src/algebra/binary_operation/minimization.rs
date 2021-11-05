@@ -7,9 +7,9 @@ impl<S: Clone + PartialOrd> Magma for Minimization<S> {
     type M = S;
     fn op(x: &Self::M, y: &Self::M) -> Self::M {
         if x <= y {
-            y.clone()
-        } else {
             x.clone()
+        } else {
+            y.clone()
         }
     }
 }

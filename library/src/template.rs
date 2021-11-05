@@ -27,7 +27,7 @@ macro_rules! min {($a:expr $(,)*) => {{$a}};($a:expr, $b:expr $(,)*) => {{if $a 
 #[allow(unused_macros)]
 macro_rules! max {($a:expr $(,)*) => {{$a}};($a:expr, $b:expr $(,)*) => {{if $a > $b {$a} else {$b}}};($a:expr, $($rest:expr),+ $(,)*) => {{let b = max!($($rest),+);if $a > b {$a} else {b}}};}
 
-pub fn to_lr<R: RangeBounds<usize>>(range: R, length: usize) -> (usize, usize) {
+pub fn to_lr<R: RangeBounds<usize>>(range: &R, length: usize) -> (usize, usize) {
     let l = match range.start_bound() {
         Bound::Unbounded => 0,
         Bound::Included(&s) => s,

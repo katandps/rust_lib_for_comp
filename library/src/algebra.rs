@@ -51,7 +51,7 @@ pub trait Idempotent: Magma {}
 
 /// 半群
 /// 1. 結合則
-pub trait SemiGroup {}
+pub trait SemiGroup: Magma + Associative {}
 impl<M: Magma + Associative> SemiGroup for M {}
 
 /// モノイド
