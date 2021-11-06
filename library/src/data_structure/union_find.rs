@@ -1,9 +1,12 @@
 //! 素集合データ構造 (UnionFind)
+//! size圧縮かつrank圧縮を行うUnionFindTree
+//! ## 計算量
+//!  - クエリ: $`O( \alpha )`$
+//! ## verify
+//! [ARC056B](https://atcoder.jp/contests/arc056/submissions/26705121)
 use crate::prelude::swap;
 
-///
-/// ## verify
-/// [ARC056B](https://atcoder.jp/contests/arc056/submissions/26705121)
+#[derive(Clone)]
 pub struct UnionFind {
     parent: Vec<usize>,
     rank: Vec<usize>,
