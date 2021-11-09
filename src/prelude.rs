@@ -20,3 +20,5 @@ pub use std::{
 };
 
 pub use crate::algo::range::to_lr;
+
+pub use cargo_snippet::snippet;

@@ -3,12 +3,8 @@ name: Rust
 on:
   push:
     branches: [ master ]
-    paths: 
-      - "library/**"
   pull_request:
     branches: [ master ]
-    paths: 
-      - "library/**"
 
 env:
   CARGO_TERM_COLOR: always
@@ -28,15 +24,15 @@ jobs:
             ~/.cargo/registry/index/
             ~/.cargo/registry/cache/
             ~/.cargo/git/db/
-            library/target
+            target
           key: ${{ runner.os }}-cargo-${{ hashFiles('**/Cargo.lock') }}
       - run: rustup install 1.42.0
       - run: rustup install 1.56.0
       - run: rustup component add clippy
-      - run: cargo clippy --manifest-path ./library/Cargo.toml -- -D warnings
-      - run: cargo +1.42.0 test --manifest-path ./library/Cargo.toml
-      - run: cargo +1.56.0 doc --manifest-path ./library/Cargo.toml --no-deps
+      - run: cargo clippy -- -D warnings
+      - run: cargo +1.42.0 test
+      - run: cargo +1.56.0 doc --no-deps
       - uses: peaceiris/actions-gh-pages@v3
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
-          publish_dir: ./library/target/doc/
+          publish_dir: ./target/doc/

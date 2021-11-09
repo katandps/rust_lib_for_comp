@@ -1,5 +1,5 @@
 [package]
-name = "library"
+name = "rust-competitive-programming"
 version = "0.1.0"
 authors = ["katand <katandps@gmail.com>"]
 edition = "2018"
@@ -8,6 +8,7 @@ rust-version = "1.42"
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
 [dependencies]
+cargo-snippet = "0.6"
 
 [dev-dependencies]
 

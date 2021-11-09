@@ -18,6 +18,7 @@ pub mod subset;
 
 /////////////////////////////////////////////////////////
 
+#[snippet("algebra")]
 /// マグマ
 /// 二項演算: $`M \circ M \to M`$
 pub trait Magma {
