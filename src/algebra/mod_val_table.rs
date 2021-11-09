@@ -16,8 +16,8 @@ impl<M: Mod> ModValTable<ModInt<M>> {
     ///
     /// nを超える値を呼び出したとき、panicする
     /// ```rust, should_panic
-    /// # use library::algebra::mod_int::Mi;
-    /// # use library::algebra::mod_val_table::ModValTable;
+    /// # use rust_competitive_programming::algebra::mod_int::Mi;
+    /// # use rust_competitive_programming::algebra::mod_val_table::ModValTable;
     /// let fact = ModValTable::<Mi>::new(10);
     /// fact.combination(11, 11);
     /// ```
@@ -39,8 +39,8 @@ impl<M: Mod> ModValTable<ModInt<M>> {
 
     /// Factorial 階乗 n!
     /// ```
-    /// # use library::algebra::mod_int::Mi;
-    /// # use library::algebra::mod_val_table::ModValTable;
+    /// # use rust_competitive_programming::algebra::mod_int::Mi;
+    /// # use rust_competitive_programming::algebra::mod_val_table::ModValTable;
     /// let five = ModValTable::<Mi>::new(5);
     /// let res = vec![1, 1, 2, 6, 24, 120];
     /// for i in 0..=5 {
@@ -54,8 +54,8 @@ impl<M: Mod> ModValTable<ModInt<M>> {
 
     /// Permutation 順列 nPr = n! / (n - r)!
     /// ```
-    /// # use library::algebra::mod_int::Mi;
-    /// # use library::algebra::mod_val_table::ModValTable;
+    /// # use rust_competitive_programming::algebra::mod_int::Mi;
+    /// # use rust_competitive_programming::algebra::mod_val_table::ModValTable;
     /// let five = ModValTable::<Mi>::new(5);
     /// assert_eq!(1, five.permutation(5, 0).get());
     /// assert_eq!(5, five.permutation(5, 1).get());
@@ -75,8 +75,8 @@ impl<M: Mod> ModValTable<ModInt<M>> {
     /// Combination 組合せ nCr = n! / (n - r)! r! = nPr / r!
     /// Binomial Coefficient
     /// ```
-    /// use library::algebra::mod_int::Mi;
-    /// use library::algebra::mod_val_table::ModValTable;
+    /// use rust_competitive_programming::algebra::mod_int::Mi;
+    /// use rust_competitive_programming::algebra::mod_val_table::ModValTable;
     /// let five = ModValTable::<Mi>::new(5);
     /// assert_eq!(1, five.combination(5, 0).get());
     /// assert_eq!(5, five.combination(5, 1).get());

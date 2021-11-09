@@ -9,8 +9,8 @@ use crate::{chmin, min};
 /// ## 計算量
 /// 頂点数をNとしてO(N^3)
 /// ```
-/// use library::graph::Graph;
-/// use library::graph::warshall_floyd::WarshallFloyd;
+/// use rust_competitive_programming::graph::Graph;
+/// use rust_competitive_programming::graph::warshall_floyd::WarshallFloyd;
 ///
 /// let mut graph = Graph::new(5);
 /// graph.add_arc(0, 1, 1);

@@ -11,10 +11,3 @@
 ## ライブラリ
 
 masterにpushするとテスト/静的解析/Doc生成が走る
-
-## 運用
-
-`{site-name}/src/` 以下にあるファイルで問題を解く
-各問題について、`sample` ファイル及びディレクトリが入力ファイル
-`{site-name}/run.sh` で入力付きで作成したファイルを実行できる
-templateはlibrary/main.rsをコピーして使用する
