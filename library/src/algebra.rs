@@ -13,6 +13,7 @@ pub mod mod_pow;
 pub mod mod_val_table;
 pub mod next_permutation;
 pub mod sieve_of_eratosthenes;
+pub mod split_of_natural_number;
 pub mod subset;
 
 /////////////////////////////////////////////////////////
