@@ -3,6 +3,7 @@
 use crate::algebra::{Associative, Commutative, Idempotent, Magma, Unital, Zero};
 use crate::prelude::*;
 
+#[snippet(name = "gcd-operation", doc_hidden)]
 pub struct Gcd<S>(Infallible, PhantomData<fn() -> S>);
 impl<S: Clone + RemAssign + PartialOrd + Zero> Magma for Gcd<S> {
     type M = S;
@@ -18,13 +19,21 @@ impl<S: Clone + RemAssign + PartialOrd + Zero> Magma for Gcd<S> {
         x
     }
 }
+
+#[snippet(name = "gcd-operation", doc_hidden)]
 impl<S: Clone + RemAssign + PartialOrd + Zero> Associative for Gcd<S> {}
+
+#[snippet(name = "gcd-operation", doc_hidden)]
 impl<S: Clone + RemAssign + PartialOrd + Zero> Unital for Gcd<S> {
     fn unit() -> S {
         S::zero()
     }
 }
+
+#[snippet(name = "gcd-operation", doc_hidden)]
 impl<S: Clone + RemAssign + PartialOrd + Zero> Commutative for Gcd<S> {}
+
+#[snippet(name = "gcd-operation", doc_hidden)]
 impl<S: Clone + RemAssign + PartialOrd + Zero> Idempotent for Gcd<S> {}
 
 #[cfg(test)]

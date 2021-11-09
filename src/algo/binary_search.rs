@@ -1,7 +1,10 @@
 //! # 二分探索
 //!
 //! 整数での二分探索を行う
-//!
+
+use crate::prelude::*;
+
+#[snippet(name = "binary_search", doc_hidden)]
 pub fn binary_search<F: Fn(i64) -> bool>(mut ok: i64, mut ng: i64, f: F) -> i64 {
     while (ok - ng).abs() > 1 {
         let mid = (ok + ng) / 2;

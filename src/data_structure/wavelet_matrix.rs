@@ -14,6 +14,7 @@
 use crate::data_structure::succinct_indexable_dictionaries::{SIDBuilder, SID};
 use crate::prelude::*;
 
+#[snippet(name = "wavelet-matrix", doc-hidden)]
 pub struct WaveletMatrix {
     depth: usize,
     _size: usize,
@@ -21,6 +22,7 @@ pub struct WaveletMatrix {
     mid: Vec<usize>,
 }
 
+#[snippet(name = "wavelet-matrix", doc-hidden)]
 impl From<Vec<u64>> for WaveletMatrix {
     fn from(mut src: Vec<u64>) -> Self {
         let size = src.len();
@@ -58,6 +60,7 @@ impl From<Vec<u64>> for WaveletMatrix {
     }
 }
 
+#[snippet(name = "wavelet-matrix", doc-hidden)]
 impl WaveletMatrix {
     ///
     /// ## 計算量

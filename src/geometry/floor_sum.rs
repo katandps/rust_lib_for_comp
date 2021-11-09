@@ -1,6 +1,10 @@
 //! # 直線と格子点
 //! $` y = \frac{Ax + B}{M} (0 \leq x \leq N) `$  の下にある格子点の数を求める
+//! ## 計算量
 //! $`O( \log \max_{A, M})`$
+use crate::prelude::*;
+
+#[snippet(name = "floor-sum", doc-hidden)]
 pub fn floor_sum(n: i64, m: i64, mut a: i64, mut b: i64) -> i64 {
     let mut ans = 0;
     if a >= m {

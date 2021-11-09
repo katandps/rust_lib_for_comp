@@ -4,12 +4,14 @@
 use crate::graph::GraphTrait;
 use crate::prelude::*;
 
+#[snippet(name = "lowest-common-ancestor", doc_hidden)]
 pub struct LowestCommonAncestor<W, G> {
     parent: Vec<Vec<usize>>,
     dist: Vec<usize>,
     _marker: PhantomData<fn() -> (W, G)>,
 }
 
+#[snippet(name = "lowest-common-ancestor", doc_hidden)]
 impl<W, G> LowestCommonAncestor<W, G>
 where
     W: Copy,
@@ -90,8 +92,6 @@ where
         self.dist(u, a) + self.dist(a, v) == self.dist(u, v)
     }
 }
-
-///////////////////////////////////////////
 
 #[cfg(test)]
 mod test {

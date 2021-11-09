@@ -1,5 +1,8 @@
 //! # エラトステネスの篩
 
+use crate::prelude::*;
+
+#[snippet(name = "sieve-of-eratosthenes", doc_hidden)]
 pub fn primes(m: usize) -> Vec<usize> {
     if m < 2 {
         return Vec::new();

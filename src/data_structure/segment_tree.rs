@@ -4,6 +4,7 @@
 use crate::algebra::Monoid;
 use crate::prelude::*;
 
+#[snippet(name = "segment-tree", doc_hidden)]
 #[derive(Clone, Debug)]
 pub struct SegmentTree<M: Monoid> {
     n: usize,
@@ -11,6 +12,7 @@ pub struct SegmentTree<M: Monoid> {
     node: Vec<M::M>,
 }
 
+#[snippet(name = "segment-tree", doc_hidden)]
 impl<M: Monoid> From<&Vec<M::M>> for SegmentTree<M> {
     fn from(v: &Vec<M::M>) -> Self {
         let mut segtree = Self::new(v.len() + 1);
@@ -22,6 +24,7 @@ impl<M: Monoid> From<&Vec<M::M>> for SegmentTree<M> {
     }
 }
 
+#[snippet(name = "segment-tree", doc_hidden)]
 impl<M: Monoid> SegmentTree<M> {
     /// vを初期値としてセグメント木を生成する
     /// vの長さを要素数とする
@@ -73,6 +76,7 @@ impl<M: Monoid> SegmentTree<M> {
     }
 }
 
+#[snippet(name = "segment-tree", doc_hidden)]
 /// indexの値を取得する
 /// ## 計算量
 /// $` O(1)`$

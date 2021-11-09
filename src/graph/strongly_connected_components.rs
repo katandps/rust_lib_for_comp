@@ -4,6 +4,7 @@ use crate::algebra::One;
 use crate::graph::GraphTrait;
 use crate::prelude::*;
 
+#[snippet(name = "strongly-connected-components", doc_hidden)]
 pub struct SCC<W, G> {
     /// もとの頂点と強連結成分の対応
     pub group: Vec<usize>,
@@ -16,6 +17,7 @@ pub struct SCC<W, G> {
     _marker: PhantomData<fn() -> G>,
 }
 
+#[snippet(name = "strongly-connected-components", doc_hidden)]
 impl<W, G> SCC<W, G>
 where
     W: Clone + One,

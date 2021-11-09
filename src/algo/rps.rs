@@ -1,5 +1,8 @@
 //!じゃんけん
 
+use crate::prelude::*;
+
+#[snippet(name = "rock-paper-scissors", doc_hidden)]
 #[derive(Copy, Clone, Debug, Eq, PartialEq)]
 pub enum RPS {
     Rock,
@@ -7,6 +10,7 @@ pub enum RPS {
     Scissors,
 }
 
+#[snippet(name = "rock-paper-scissors", doc_hidden)]
 impl RPS {
     pub fn battle(self, rhs: Self) -> RPS {
         use RPS::*;
@@ -24,15 +28,15 @@ impl RPS {
     }
 }
 
-use std::fmt;
-
-impl fmt::Display for RPS {
-    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+#[snippet(name = "rock-paper-scissors", doc_hidden)]
+impl Display for RPS {
+    fn fmt(&self, f: &mut Formatter<'_>) -> std::fmt::Result {
         let c: char = (*self).into();
         write!(f, "{}", c)
     }
 }
 
+#[snippet(name = "rock-paper-scissors", doc_hidden)]
 impl From<char> for RPS {
     fn from(c: char) -> Self {
         use RPS::*;
@@ -45,12 +49,14 @@ impl From<char> for RPS {
     }
 }
 
+#[snippet(name = "rock-paper-scissors", doc_hidden)]
 impl From<&char> for RPS {
     fn from(c: &char) -> Self {
         Self::from(*c)
     }
 }
 
+#[snippet(name = "rock-paper-scissors", doc_hidden)]
 impl From<RPS> for char {
     fn from(rps: RPS) -> Self {
         use RPS::*;

@@ -1,7 +1,9 @@
 //! 整数範囲での平方根(切り捨て)
 
-#[allow(dead_code)]
-fn sqrt(a: i64) -> i64 {
+use crate::prelude::*;
+
+#[snippet(name = "sqrt", doc_hidden)]
+pub fn sqrt(a: i64) -> i64 {
     let mut ng = std::i32::MAX as i64 / 8;
     let mut ok = -1;
     while (ok - ng).abs() > 1 {

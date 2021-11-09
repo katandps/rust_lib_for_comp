@@ -1,18 +1,21 @@
 //! 2次元BIT
+//! # Fenwick Tree 2D
+//! アーベル群の二項演算を載せることができる二次元構造
+//!
+//! ## verify
+//! [Typical90_028](https://atcoder.jp/contests/typical90/submissions/26701638)
+
 use crate::algebra::AbelianGroup;
 use crate::prelude::*;
 
-/// # Fenwick Tree 2D
-/// アーベル群の二項演算を載せることができる二次元構造
-///
-/// ## verify
-/// [Typical90_028](https://atcoder.jp/contests/typical90/submissions/26701638)
+#[snippet(name = "binary-indexed-tree-2d", doc_hidden)]
 pub struct BinaryIndexedTree2<A: AbelianGroup> {
     h: usize,
     w: usize,
     bit: Vec<Vec<A::M>>,
 }
 
+#[snippet(name = "binary-indexed-tree-2d", doc_hidden)]
 impl<A: AbelianGroup> BinaryIndexedTree2<A> {
     pub fn new(h: usize, w: usize) -> Self {
         let (h, w) = (h + 1, w + 1);
@@ -56,6 +59,7 @@ impl<A: AbelianGroup> BinaryIndexedTree2<A> {
     }
 }
 
+#[snippet(name = "binary-indexed-tree-2d", doc_hidden)]
 impl<A: AbelianGroup> Debug for BinaryIndexedTree2<A>
 where
     A::M: Debug,

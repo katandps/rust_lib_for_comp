@@ -5,8 +5,15 @@
 use crate::algebra::{BoundedAbove, BoundedBelow, Zero};
 use crate::graph::GraphTrait;
 use crate::prelude::*;
-use crate::{chmin, min};
 
+macro_rules! chmin {($base:expr, $($cmps:expr),+ $(,)*) => {{let cmp_min = min!($($cmps),+);if $base > cmp_min {$base = cmp_min;true} else {false}}};}
+macro_rules! min {
+    ($a:expr $(,)*) => {{$a}};
+    ($a:expr, $b:expr $(,)*) => {{if $a > $b {$b} else {$a}}};
+    ($a:expr, $($rest:expr),+ $(,)*) => {{let b = min!($($rest),+);if $a > b {b} else {$a}}};
+}
+
+#[snippet(name = "bellman_ford", doc_hidden)]
 pub fn bellman_ford<W, G>(g: &G, src: usize) -> Vec<W>
 where
     W: Copy + BoundedAbove + BoundedBelow + Zero + PartialEq + PartialOrd + Add<Output = W>,

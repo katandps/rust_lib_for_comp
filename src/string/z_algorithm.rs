@@ -1,5 +1,11 @@
-//! Z-algorithm 文字列SとSのi文字目から始まる文字列の共通部分列の長さをO(N)で求める
+//! # Z-algorithm
+//! 文字列SとSのi文字目から始まる文字列の共通部分列の長さをで求める
+//! ## 計算量
+//! $`O(N)`$
 
+use crate::prelude::*;
+
+#[snippet(name = "z-algorithm", doc_hidden)]
 pub fn z(src: &[char]) -> Vec<usize> {
     let mut c = 0;
     let n = src.len();

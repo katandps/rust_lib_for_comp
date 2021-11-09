@@ -69,22 +69,6 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "a2a5ac8f984bfcf3a823267e5fde638acc3325f6496633a5da6bb6eb2171e103"
 
 [[package]]
-name = "library"
-version = "0.1.0"
-dependencies = [
- "cargo-snippet",
- "getrandom",
- "itertools",
- "itertools-num",
- "rand",
- "rand_chacha",
- "rand_core",
- "rand_distr",
- "rand_hc",
- "rand_pcg",
-]
-
-[[package]]
 name = "num-traits"
 version = "0.2.11"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -157,6 +141,22 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "16abd0c1b639e9eb4d7c50c0b8100b0d0f849be2349829c740fe8e6eb4816429"
 dependencies = [
  "rand_core",
+]
+
+[[package]]
+name = "rust-competitive-programming"
+version = "0.1.0"
+dependencies = [
+ "cargo-snippet",
+ "getrandom",
+ "itertools",
+ "itertools-num",
+ "rand",
+ "rand_chacha",
+ "rand_core",
+ "rand_distr",
+ "rand_hc",
+ "rand_pcg",
 ]
 
 [[package]]

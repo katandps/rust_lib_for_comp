@@ -1,11 +1,13 @@
 //!標準入力を取得するヘルパー
 use crate::prelude::*;
 
+#[snippet(name = "template", doc_hidden)]
 pub struct Reader<R> {
     reader: R,
     buf: VecDeque<String>,
 }
 
+#[snippet(name = "template", doc_hidden)]
 impl<R: BufRead> Iterator for Reader<R> {
     type Item = String;
 
@@ -21,6 +23,8 @@ impl<R: BufRead> Iterator for Reader<R> {
         self.buf.pop_front()
     }
 }
+
+#[snippet(name = "template", doc_hidden)]
 impl<R: BufRead> Reader<R> {
     pub fn new(reader: R) -> Reader<R> {
         Reader {
@@ -28,26 +32,32 @@ impl<R: BufRead> Reader<R> {
             buf: VecDeque::new(),
         }
     }
+
     pub fn val<T: FromStr>(&mut self) -> T {
         self.next()
             .map(|token| token.parse().ok().expect("Failed to parse."))
             .expect("Insufficient input.")
     }
+
     pub fn vec<T: FromStr>(&mut self, length: usize) -> Vec<T> {
         (0..length).map(|_| self.val()).collect()
     }
+
     pub fn chars(&mut self) -> Vec<char> {
         self.val::<String>().chars().collect()
     }
+
     pub fn digits(&mut self) -> Vec<i64> {
         self.val::<String>()
             .chars()
             .map(|c| (c as u8 - b'0') as i64)
             .collect()
     }
+
     pub fn char_map(&mut self, h: usize) -> Vec<Vec<char>> {
         (0..h).map(|_| self.chars()).collect()
     }
+
     /// charの2次元配列からboolのmapを作る ngで指定した壁のみfalseとなる
     pub fn bool_map(&mut self, h: usize, ng: char) -> Vec<Vec<bool>> {
         self.char_map(h)
@@ -55,6 +65,7 @@ impl<R: BufRead> Reader<R> {
             .map(|v| v.iter().map(|&c| c != ng).collect())
             .collect()
     }
+
     /// h*w行列を取得する
     pub fn matrix<T: FromStr>(&mut self, h: usize, w: usize) -> Vec<Vec<T>> {
         (0..h).map(|_| self.vec(w)).collect()

@@ -9,6 +9,10 @@
 //! - access: $`O(1)`$
 //! - rank: $`O(1)`$
 //! - select: $`O( \log N)`$
+
+use crate::prelude::*;
+
+#[snippet(name = "succinct-indexable-dictionaries", doc-hidden)]
 pub struct SID {
     size: usize,
     _blocks: usize,
@@ -16,6 +20,7 @@ pub struct SID {
     sum: Vec<usize>,
 }
 
+#[snippet(name = "succinct-indexable-dictionaries", doc-hidden)]
 impl SID {
     const BIT_LEN_LEN: usize = 6;
     const BIT_LEN: usize = 1 << Self::BIT_LEN_LEN;
@@ -68,12 +73,14 @@ impl SID {
     }
 }
 
+#[snippet(name = "succinct-indexable-dictionaries", doc-hidden)]
 pub struct SIDBuilder {
     size: usize,
     blocks: usize,
     bits: Vec<u64>,
 }
 
+#[snippet(name = "succinct-indexable-dictionaries", doc-hidden)]
 impl SIDBuilder {
     pub fn new(size: usize) -> Self {
         let blocks = (size + SID::BIT_LEN) >> SID::BIT_LEN_LEN;

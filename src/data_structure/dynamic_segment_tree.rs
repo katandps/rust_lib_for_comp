@@ -1,17 +1,18 @@
-//! 動的セグメント木
+//! # 動的セグメント木
+//! セグメント木よりメモリアクセスが遅いが、メモリ使用量は挿入したノードの数を上界とする。
+//! データの挿入が$`O( \log N)`$となっていることに注意。
+//! ## verify
+//! [ARC008D](https://atcoder.jp/contests/arc008/submissions/26669109)
 use crate::algebra::Monoid;
 use crate::prelude::*;
 
-/// 動的セグメント木
-/// セグメント木よりメモリアクセスが遅いが、メモリ使用量は挿入したノードの数を上界とする。
-/// データの挿入が$`O( \log N)`$となっていることに注意。
-/// ## verify
-/// [ARC008D](https://atcoder.jp/contests/arc008/submissions/26669109)
+#[snippet(name = "dynamic-segment-tree", doc_hidden)]
 #[derive(Clone)]
 pub struct DynamicSegmentTree<M: Monoid> {
     root: node::Node<M>,
 }
 
+#[snippet(name = "dynamic-segment-tree", doc_hidden)]
 impl<M: Monoid> Default for DynamicSegmentTree<M> {
     fn default() -> Self {
         Self {
@@ -20,6 +21,7 @@ impl<M: Monoid> Default for DynamicSegmentTree<M> {
     }
 }
 
+#[snippet(name = "dynamic-segment-tree", doc_hidden)]
 impl<M: Monoid> DynamicSegmentTree<M> {
     /// 最大幅を $`2^{BIT_LEN}`$ とする
     pub const BIT_LEN: i32 = 62;
@@ -63,6 +65,7 @@ impl<M: Monoid> DynamicSegmentTree<M> {
     }
 }
 
+#[snippet(name = "dynamic-segment-tree", doc_hidden)]
 mod node {
     use super::Monoid;
     #[derive(Clone, Debug)]

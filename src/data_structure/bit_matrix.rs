@@ -5,13 +5,16 @@
 //! unverified
 
 use crate::data_structure::bitset::BitSet;
+use crate::prelude::*;
 
+#[snippet(name = "bit-matrix", doc_hidden)]
 pub struct BitMatrix {
     height: usize,
     width: usize,
     val: Vec<BitSet>,
 }
 
+#[snippet(name = "bit-matrix", doc_hidden)]
 impl BitMatrix {
     pub fn new(height: usize, width: usize) -> BitMatrix {
         BitMatrix {

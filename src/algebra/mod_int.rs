@@ -1,44 +1,61 @@
 //! 剰余体
 use crate::algebra::Zero;
 use crate::prelude::*;
-////////////////////////////////////////////////////////
 
+#[snippet(name = "mod-int", doc_hidden)]
+pub type Mi = ModInt<Mod1e9p7>;
+
+#[snippet(name = "mod-int", doc_hidden)]
 pub fn mi(i: i64) -> Mi {
     Mi::new(i)
 }
+
+#[snippet(name = "mod-int", doc_hidden)]
 pub trait Mod: Copy + Clone + Debug {
     fn get() -> i64;
 }
-pub type Mi = ModInt<Mod1e9p7>;
+
+#[snippet(name = "mod-int", doc_hidden)]
 #[derive(Copy, Clone, Eq, PartialEq, Debug)]
 pub struct Mod1e9p7;
+
+#[snippet(name = "mod-int", doc_hidden)]
 #[derive(Copy, Clone, Eq, PartialEq, Debug)]
 pub struct Mod1e9p9;
+
+#[snippet(name = "mod-int", doc_hidden)]
 #[derive(Copy, Clone, Eq, PartialEq, Debug)]
 pub struct Mod998244353;
 
+#[snippet(name = "mod-int", doc_hidden)]
 impl Mod for Mod1e9p7 {
     fn get() -> i64 {
         1_000_000_007
     }
 }
+
+#[snippet(name = "mod-int", doc_hidden)]
 impl Mod for Mod1e9p9 {
     fn get() -> i64 {
         1_000_000_009
     }
 }
+
+#[snippet(name = "mod-int", doc_hidden)]
 impl Mod for Mod998244353 {
     fn get() -> i64 {
         998_244_353
     }
 }
 
+#[snippet(name = "mod-int", doc_hidden)]
 #[derive(Copy, Clone, Eq, PartialEq)]
 pub struct ModInt<M: Mod> {
     n: i64,
     _p: PhantomData<fn() -> M>,
 }
 
+#[snippet(name = "mod-int", doc_hidden)]
 impl<M: Mod> ModInt<M> {
     pub fn new(n: i64) -> Self {
         Self {
@@ -61,12 +78,16 @@ impl<M: Mod> ModInt<M> {
         self.n
     }
 }
+
+#[snippet(name = "mod-int", doc_hidden)]
 impl<M: Mod> Add<i64> for ModInt<M> {
     type Output = Self;
     fn add(self, rhs: i64) -> Self {
         self + ModInt::new(rhs.rem_euclid(M::get()))
     }
 }
+
+#[snippet(name = "mod-int", doc_hidden)]
 impl<M: Mod> Add<ModInt<M>> for ModInt<M> {
     type Output = Self;
     fn add(self, rhs: Self) -> Self {
@@ -77,28 +98,38 @@ impl<M: Mod> Add<ModInt<M>> for ModInt<M> {
         Self { n, _p: self._p }
     }
 }
+
+#[snippet(name = "mod-int", doc_hidden)]
 impl<M: Mod> AddAssign<i64> for ModInt<M> {
     fn add_assign(&mut self, rhs: i64) {
         *self = *self + rhs
     }
 }
+
+#[snippet(name = "mod-int", doc_hidden)]
 impl<M: Mod> AddAssign<ModInt<M>> for ModInt<M> {
     fn add_assign(&mut self, rhs: Self) {
         *self = *self + rhs
     }
 }
+
+#[snippet(name = "mod-int", doc_hidden)]
 impl<M: Mod> Neg for ModInt<M> {
     type Output = Self;
     fn neg(self) -> Self {
         Self::new(-self.n)
     }
 }
+
+#[snippet(name = "mod-int", doc_hidden)]
 impl<M: Mod> Sub<i64> for ModInt<M> {
     type Output = Self;
     fn sub(self, rhs: i64) -> Self {
         self - ModInt::new(rhs.rem_euclid(M::get()))
     }
 }
+
+#[snippet(name = "mod-int", doc_hidden)]
 impl<M: Mod> Sub<ModInt<M>> for ModInt<M> {
     type Output = Self;
     fn sub(self, rhs: Self) -> Self {
@@ -109,104 +140,137 @@ impl<M: Mod> Sub<ModInt<M>> for ModInt<M> {
         Self { n, _p: self._p }
     }
 }
+
+#[snippet(name = "mod-int", doc_hidden)]
 impl<M: Mod> SubAssign<i64> for ModInt<M> {
     fn sub_assign(&mut self, rhs: i64) {
         *self = *self - rhs
     }
 }
+
+#[snippet(name = "mod-int", doc_hidden)]
 impl<M: Mod> SubAssign<ModInt<M>> for ModInt<M> {
     fn sub_assign(&mut self, rhs: Self) {
         *self = *self - rhs
     }
 }
+
+#[snippet(name = "mod-int", doc_hidden)]
 impl<M: Mod> Mul<i64> for ModInt<M> {
     type Output = Self;
     fn mul(self, rhs: i64) -> Self {
         ModInt::new(self.n * (rhs % M::get()))
     }
 }
+
+#[snippet(name = "mod-int", doc_hidden)]
 impl<M: Mod> Mul<ModInt<M>> for ModInt<M> {
     type Output = Self;
     fn mul(self, rhs: Self) -> Self {
         self * rhs.n
     }
 }
+
+#[snippet(name = "mod-int", doc_hidden)]
 impl<M: Mod> MulAssign<i64> for ModInt<M> {
     fn mul_assign(&mut self, rhs: i64) {
         *self = *self * rhs
     }
 }
+
+#[snippet(name = "mod-int", doc_hidden)]
 impl<M: Mod> MulAssign<ModInt<M>> for ModInt<M> {
     fn mul_assign(&mut self, rhs: Self) {
         *self = *self * rhs
     }
 }
+
+#[snippet(name = "mod-int", doc_hidden)]
 impl<M: Mod> Div<i64> for ModInt<M> {
     type Output = Self;
     fn div(self, rhs: i64) -> Self {
         self * ModInt::new(rhs).pow(M::get() - 2)
     }
 }
+
+#[snippet(name = "mod-int", doc_hidden)]
 impl<M: Mod> Div<ModInt<M>> for ModInt<M> {
     type Output = Self;
     fn div(self, rhs: Self) -> Self {
         self / rhs.n
     }
 }
+
+#[snippet(name = "mod-int", doc_hidden)]
 impl<M: Mod> DivAssign<i64> for ModInt<M> {
     fn div_assign(&mut self, rhs: i64) {
         *self = *self / rhs
     }
 }
+
+#[snippet(name = "mod-int", doc_hidden)]
 impl<M: Mod> DivAssign<ModInt<M>> for ModInt<M> {
     fn div_assign(&mut self, rhs: Self) {
         *self = *self / rhs
     }
 }
+
+#[snippet(name = "mod-int", doc_hidden)]
 impl<M: Mod> Display for ModInt<M> {
     fn fmt(&self, f: &mut Formatter) -> std::fmt::Result {
         write!(f, "{}", self.n)
     }
 }
+
+#[snippet(name = "mod-int", doc_hidden)]
 impl<M: Mod> Debug for ModInt<M> {
     fn fmt(&self, f: &mut Formatter) -> std::fmt::Result {
         write!(f, "{}", self.n)
     }
 }
+
+#[snippet(name = "mod-int", doc_hidden)]
 impl<M: Mod> Deref for ModInt<M> {
     type Target = i64;
     fn deref(&self) -> &Self::Target {
         &self.n
     }
 }
+
+#[snippet(name = "mod-int", doc_hidden)]
 impl<M: Mod> DerefMut for ModInt<M> {
     fn deref_mut(&mut self) -> &mut Self::Target {
         &mut self.n
     }
 }
+
+#[snippet(name = "mod-int", doc_hidden)]
 impl<M: Mod> Sum for ModInt<M> {
     fn sum<I: Iterator<Item = Self>>(iter: I) -> Self {
         iter.fold(Self::new(0), |x, a| x + a)
     }
 }
+
+#[snippet(name = "mod-int", doc_hidden)]
 impl<M: Mod> From<i64> for ModInt<M> {
     fn from(i: i64) -> Self {
         Self::new(i)
     }
 }
+
+#[snippet(name = "mod-int", doc_hidden)]
 impl<M: Mod> From<ModInt<M>> for i64 {
     fn from(m: ModInt<M>) -> Self {
         m.n
     }
 }
 
+#[snippet(name = "mod-int", doc_hidden)]
 impl<M: Mod> Zero for ModInt<M> {
     fn zero() -> Self {
         Self::new(0)
     }
 }
-
-////////////////////////////////////////////////////////
 
 #[cfg(test)]
 mod test {

@@ -24,11 +24,13 @@ use crate::data_structure::union_find::UnionFind;
 use crate::graph::Edge;
 use crate::prelude::*;
 
+#[snippet(name = "kruskal", doc_hidden)]
 pub struct Kruskal<W> {
     tree: Vec<Edge<W>>,
     sum: W,
 }
 
+#[snippet(name = "kruskal", doc_hidden)]
 impl<W, G> From<&G> for Kruskal<W>
 where
     W: Zero + PartialOrd + Copy + AddAssign,
@@ -56,12 +58,14 @@ where
     }
 }
 
+#[snippet(name = "kruskal", doc_hidden)]
 impl<W> Kruskal<W> {
     pub fn tree(&self) -> &Vec<Edge<W>> {
         &self.tree
     }
 }
 
+#[snippet(name = "kruskal", doc_hidden)]
 impl<W: Copy> Kruskal<W> {
     pub fn sum(&self) -> W {
         self.sum

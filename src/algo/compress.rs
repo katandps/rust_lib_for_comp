@@ -1,6 +1,8 @@
 //! 座標圧縮 O( N \log N)
 
-#[allow(dead_code)]
+use crate::prelude::*;
+
+#[snippet(name = "compress", doc_hidden)]
 pub fn compress<T: Ord>(source: &[T]) -> Vec<usize> {
     let n = source.len();
     let mut idx: Vec<usize> = (0..n).collect();
@@ -15,8 +17,6 @@ pub fn compress<T: Ord>(source: &[T]) -> Vec<usize> {
     }
     ret
 }
-
-//-----------------------------------------------------------
 
 #[cfg(test)]
 mod test {

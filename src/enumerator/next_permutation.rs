@@ -6,6 +6,7 @@
 //!
 use crate::prelude::*;
 
+#[snippet(name = "next-permutation", doc_hidden)]
 #[derive(Clone, Debug)]
 pub struct NextPermutation<T>(Option<Vec<T>>);
 impl<T: Clone + Debug + PartialOrd> Iterator for NextPermutation<T> {
@@ -35,12 +36,14 @@ impl<T: Clone + Debug + PartialOrd> Iterator for NextPermutation<T> {
     }
 }
 
+#[snippet(name = "next-permutation", doc_hidden)]
 impl From<usize> for NextPermutation<usize> {
     fn from(size: usize) -> Self {
         NextPermutation(Some((0..size).collect()))
     }
 }
 
+#[snippet(name = "next-permutation", doc_hidden)]
 impl<T: Clone + PartialOrd> From<&Vec<T>> for NextPermutation<T> {
     fn from(src: &Vec<T>) -> Self {
         NextPermutation(Some(src.to_vec()))

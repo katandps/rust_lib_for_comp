@@ -1,14 +1,15 @@
-//! 最長増加部分列 (Longest Increasing Subsequence)
+//! # 最長増加部分列 (Longest Increasing Subsequence)
+//! $`長さ L の数列 A の最長増加部分列とは、
+//! 1 \leq i_1 < i_2 < ... < i_M \leq L
+//! かつ A_{i_1} < A_{i_2} < ... < A_{i_M} を満たす部分列 A_{i_1} , A_{i_2} , ... , A_{i_M} の中で、
+//! 最も M が大きいもの のこと`$
 
-use std::collections::VecDeque;
+use crate::prelude::*;
 
-/// $`長さ L の数列 A の最長増加部分列とは、
-/// 1 \leq i_1 < i_2 < ... < i_M \leq L
-/// かつ A_{i_1} < A_{i_2} < ... < A_{i_M} を満たす部分列 A_{i_1} , A_{i_2} , ... , A_{i_M} の中で、
-/// 最も M が大きいもの のこと`$
-
+#[snippet(name = "longest-increasing-subsequence", doc_hidden)]
 const INF: i64 = 1 << 60;
 
+#[snippet(name = "longest-increasing-subsequence", doc_hidden)]
 #[derive(Debug, Clone)]
 pub struct LIS {
     n: usize,
@@ -16,6 +17,7 @@ pub struct LIS {
     stack: VecDeque<(usize, i64)>,
 }
 
+#[snippet(name = "longest-increasing-subsequence", doc_hidden)]
 impl LIS {
     pub fn new(n: usize) -> LIS {
         LIS {

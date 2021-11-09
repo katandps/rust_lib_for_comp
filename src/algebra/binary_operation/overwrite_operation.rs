@@ -5,7 +5,10 @@
 use crate::algebra::{Associative, Idempotent, Magma, Unital};
 use crate::prelude::*;
 
+#[snippet(name = "overwrite_operation", doc_hidden)]
 pub struct OverwriteOperation<S>(Infallible, PhantomData<fn() -> S>);
+
+#[snippet(name = "overwrite_operation", doc_hidden)]
 impl<S: Clone + PartialEq> Magma for OverwriteOperation<S> {
     type M = Option<S>;
     fn op(x: &Self::M, y: &Self::M) -> Self::M {
@@ -16,10 +19,16 @@ impl<S: Clone + PartialEq> Magma for OverwriteOperation<S> {
         }
     }
 }
+
+#[snippet(name = "overwrite_operation", doc_hidden)]
 impl<S: Clone + PartialEq> Unital for OverwriteOperation<S> {
     fn unit() -> Self::M {
         None
     }
 }
+
+#[snippet(name = "overwrite_operation", doc_hidden)]
 impl<S: Clone + PartialEq> Associative for OverwriteOperation<S> {}
+
+#[snippet(name = "overwrite_operation", doc_hidden)]
 impl<S: Clone + PartialEq> Idempotent for OverwriteOperation<S> {}

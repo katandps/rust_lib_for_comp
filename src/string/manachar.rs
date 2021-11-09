@@ -1,7 +1,11 @@
-//! 最長回文半径
+//! # 最長回文半径 Manachar's Algorithm
+//!
+//! ## 計算量
+//! $`O(N)`$
 
-/// 最長回文半径をO(N)で求める Manachar's Algorithm
-///
+use crate::prelude::*;
+
+#[snippet(name = "manachar", doc_hidden)]
 /// 返り値は中心をiとしたときの最大回文半径
 /// 偶数長の回文半径がほしければsrcにダミー文字を挟む(ex. abba -> a_b_b_a
 pub fn manachar<T: Eq>(src: &[T]) -> Vec<usize> {

@@ -8,12 +8,14 @@
 use crate::algebra::Band;
 use crate::prelude::*;
 
+#[snippet(name = "sparse-table", doc_hidden)]
 #[derive(Debug, Clone)]
 pub struct SparseTable<B: Band> {
     size: usize,
     table: Vec<Vec<B::M>>,
 }
 
+#[snippet(name = "sparse-table", doc_hidden)]
 impl<B: Band> From<&[B::M]> for SparseTable<B> {
     fn from(v: &[B::M]) -> Self {
         let size = v.len();
@@ -32,6 +34,7 @@ impl<B: Band> From<&[B::M]> for SparseTable<B> {
     }
 }
 
+#[snippet(name = "sparse-table", doc_hidden)]
 impl<B: Band> SparseTable<B> {
     pub fn query<R: RangeBounds<usize>>(&self, range: R) -> B::M {
         let (l, r) = to_lr(&range, self.size);

@@ -3,12 +3,14 @@
 use crate::algo::compress::compress;
 use crate::prelude::*;
 
+#[snippet(name = "suffix-array", doc_hidden)]
 #[derive(Debug, Clone)]
 pub struct SuffixArray {
     pub sa: Vec<usize>,
     pub source: Vec<u8>,
 }
 
+#[snippet(name = "suffix-array", doc_hidden)]
 impl SuffixArray {
     /// create by SA-IS. O(N)
     pub fn build(source: &[u8]) -> Self {
@@ -45,6 +47,7 @@ impl SuffixArray {
     }
 }
 
+#[snippet(name = "suffix-array", doc_hidden)]
 /// SA-IS法によるSuffixArrayの構築
 ///
 /// ## 計算量
@@ -58,6 +61,8 @@ struct Sais {
     bucket_start: Vec<usize>,
     bucket_end: Vec<usize>,
 }
+
+#[snippet(name = "suffix-array", doc_hidden)]
 impl Sais {
     fn new(n: usize) -> Sais {
         Sais {
@@ -214,7 +219,10 @@ impl Sais {
     }
 }
 
+#[snippet(name = "suffix-array", doc_hidden)]
 struct PosTypes(Vec<bool>);
+
+#[snippet(name = "suffix-array", doc_hidden)]
 impl PosTypes {
     fn new(source: &[u8]) -> Self {
         let n = source.len();

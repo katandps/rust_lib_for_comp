@@ -5,6 +5,7 @@
 
 use crate::prelude::*;
 
+#[snippet(name = "split-of-natural-number", doc_hidden)]
 #[derive(Clone, Debug)]
 pub struct SplitOfNumber(Option<Vec<usize>>);
 impl Iterator for SplitOfNumber {
@@ -32,12 +33,14 @@ impl Iterator for SplitOfNumber {
     }
 }
 
+#[snippet(name = "split-of-natural-number", doc_hidden)]
 impl From<usize> for SplitOfNumber {
     fn from(n: usize) -> Self {
         SplitOfNumber(Some(vec![n]))
     }
 }
 
+#[snippet(name = "split-of-natural-number", doc_hidden)]
 impl From<&[usize]> for SplitOfNumber {
     fn from(src: &[usize]) -> Self {
         SplitOfNumber(Some(src.to_vec()))

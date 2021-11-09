@@ -6,12 +6,14 @@
 use crate::algebra::SemiGroup;
 use crate::prelude::*;
 
+#[snippet(name = "disjoint-sparse-table", doc_hidden)]
 pub struct DisjointSparseTable<S: SemiGroup> {
     len: usize,
     table: Vec<Vec<S::M>>,
     lookup: Vec<usize>,
 }
 
+#[snippet(name = "disjoint-sparse-table", doc_hidden)]
 impl<S: SemiGroup> From<&[S::M]> for DisjointSparseTable<S> {
     fn from(src: &[S::M]) -> Self {
         let len = src.len();
@@ -46,6 +48,7 @@ impl<S: SemiGroup> From<&[S::M]> for DisjointSparseTable<S> {
     }
 }
 
+#[snippet(name = "disjoint-sparse-table", doc_hidden)]
 impl<S: SemiGroup> DisjointSparseTable<S> {
     pub fn fold<R: RangeBounds<usize>>(&self, range: R) -> S::M {
         let (l, r) = to_lr(&range, self.len);

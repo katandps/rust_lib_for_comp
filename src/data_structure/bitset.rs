@@ -1,14 +1,16 @@
 //! BitSet
+//! bitの大きな配列に対するbit演算を省メモリかつ高速に行うデータ構造
+
 use crate::prelude::*;
 
-/// bitの大きな配列に対するbit演算を省メモリかつ高速に行うデータ構造
-
+#[snippet(name = "bit-set", doc_hidden)]
 #[derive(Clone, Debug, Eq, PartialEq)]
 pub struct BitSet {
     bits: Vec<u64>,
     size: usize,
 }
 
+#[snippet(name = "bit-set", doc_hidden)]
 impl BitSet {
     const BLOCK_LEN: usize = 1 << Self::BLOCK_LEN_LEN;
     const BLOCK_LEN_LEN: usize = 6;
@@ -46,6 +48,7 @@ impl BitSet {
     }
 }
 
+#[snippet(name = "bit-set", doc_hidden)]
 impl Index<usize> for BitSet {
     type Output = bool;
 
@@ -57,6 +60,7 @@ impl Index<usize> for BitSet {
     }
 }
 
+#[snippet(name = "bit-set", doc_hidden)]
 impl BitAnd for BitSet {
     type Output = BitSet;
 
@@ -71,6 +75,7 @@ impl BitAnd for BitSet {
     }
 }
 
+#[snippet(name = "bit-set", doc_hidden)]
 impl BitOr for BitSet {
     type Output = Self;
 
@@ -85,6 +90,7 @@ impl BitOr for BitSet {
     }
 }
 
+#[snippet(name = "bit-set", doc_hidden)]
 impl BitXor for BitSet {
     type Output = Self;
 
@@ -99,12 +105,14 @@ impl BitXor for BitSet {
     }
 }
 
+#[snippet(name = "bit-set", doc_hidden)]
 impl ShlAssign<usize> for BitSet {
     fn shl_assign(&mut self, rhs: usize) {
         *self = self.clone() << rhs;
     }
 }
 
+#[snippet(name = "bit-set", doc_hidden)]
 impl Shl<usize> for BitSet {
     type Output = Self;
 
@@ -135,12 +143,14 @@ impl Shl<usize> for BitSet {
     }
 }
 
+#[snippet(name = "bit-set", doc_hidden)]
 impl ShrAssign<usize> for BitSet {
     fn shr_assign(&mut self, rhs: usize) {
         *self = self.clone() >> rhs;
     }
 }
 
+#[snippet(name = "bit-set", doc_hidden)]
 impl Shr<usize> for BitSet {
     type Output = Self;
 
@@ -170,6 +180,7 @@ impl Shr<usize> for BitSet {
     }
 }
 
+#[snippet(name = "bit-set", doc_hidden)]
 impl Not for BitSet {
     type Output = Self;
 
@@ -181,6 +192,7 @@ impl Not for BitSet {
     }
 }
 
+#[snippet(name = "bit-set", doc_hidden)]
 impl Display for BitSet {
     fn fmt(&self, f: &mut Formatter<'_>) -> std::fmt::Result {
         write!(

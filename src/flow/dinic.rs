@@ -1,19 +1,26 @@
-//! ディニッツ法
+//! # ディニッツ法
+//! 最大流問題を解く
+//!
+//! ## 計算量
+//! $` O (V^{2} E)`$
+//! ただし、ほとんどの場合さらに高速に動作する
 use crate::prelude::*;
 
+#[snippet(name = "dinic", doc-hidden)]
 struct Edge {
     pub to: usize,
     pub rev: usize,
     pub cap: i64,
 }
 
-///最大フロー問題をO(V^2E)で解くライブラリ
+#[snippet(name = "dinic", doc-hidden)]
 pub struct Dinic {
     g: Vec<Vec<Edge>>,
     level: Vec<i32>,
     iter: Vec<usize>,
 }
 
+#[snippet(name = "dinic", doc-hidden)]
 impl Dinic {
     pub fn new(v: usize) -> Dinic {
         let mut g: Vec<Vec<Edge>> = Vec::new();

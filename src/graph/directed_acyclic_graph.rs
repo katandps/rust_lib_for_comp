@@ -3,10 +3,10 @@
 use crate::graph::GraphTrait;
 use crate::prelude::*;
 
-#[allow(dead_code)]
-struct Dag;
+#[snippet(name = "directed-acyclic-graph", doc_hidden)]
+pub struct Dag;
 
-#[allow(dead_code)]
+#[snippet(name = "directed-acyclic-graph", doc_hidden)]
 impl Dag {
     /// 頂点をトポロジカルソートして返す
     /// グラフがDAGの場合に使用可

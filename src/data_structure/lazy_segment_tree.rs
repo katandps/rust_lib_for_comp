@@ -7,6 +7,7 @@
 use crate::algebra::{Magma, MapMonoid};
 use crate::prelude::*;
 
+#[snippet(name = "lazy-segment-tree", doc_hidden)]
 #[derive(Clone)]
 pub struct LazySegmentTree<M: MapMonoid> {
     m: M,
@@ -16,6 +17,7 @@ pub struct LazySegmentTree<M: MapMonoid> {
     lazy: Vec<<M::Func as Magma>::M>,
 }
 
+#[snippet(name = "lazy-segment-tree", doc_hidden)]
 impl<M: MapMonoid> From<(M, usize)> for LazySegmentTree<M> {
     fn from((m, length): (M, usize)) -> Self {
         let n = (length + 1).next_power_of_two();
@@ -34,6 +36,7 @@ impl<M: MapMonoid> From<(M, usize)> for LazySegmentTree<M> {
     }
 }
 
+#[snippet(name = "lazy-segment-tree", doc_hidden)]
 /// 1-indexedで配列の内容を詰めたセグメント木を生成する
 impl<M: MapMonoid> From<(M, &Vec<<M::Mono as Magma>::M>)> for LazySegmentTree<M> {
     fn from((m, v): (M, &Vec<<M::Mono as Magma>::M>)) -> Self {
@@ -43,6 +46,8 @@ impl<M: MapMonoid> From<(M, &Vec<<M::Mono as Magma>::M>)> for LazySegmentTree<M>
         segtree
     }
 }
+
+#[snippet(name = "lazy-segment-tree", doc_hidden)]
 impl<M: MapMonoid> LazySegmentTree<M> {
     /// 一点更新
     pub fn update_at(&mut self, mut i: usize, f: <M::Func as Magma>::M) {
@@ -163,12 +168,11 @@ impl<M: MapMonoid> LazySegmentTree<M> {
     }
 }
 
-///////////////////////////////////////////////////
-
 #[cfg(test)]
 mod test {
     use super::*;
-    use crate::algebra::binary_operation::addition::{Addition, Segment};
+    use crate::algebra::binary_operation::addition::Addition;
+    use crate::data_structure::segment::Segment;
 
     // これは毎回書く(モノイドとモノイドから作用付きモノイドを作る)
     pub struct AddSum;

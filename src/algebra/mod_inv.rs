@@ -1,9 +1,11 @@
 //! 剰余体における逆元
 
-#[allow(dead_code)]
+use crate::prelude::*;
+
+#[snippet(name = "mod-inv", doc_hidden)]
 pub struct ModInv;
 
-#[allow(dead_code)]
+#[snippet(name = "mod-inv", doc_hidden)]
 impl ModInv {
     ///
     /// numberの逆元をmod moduloで求める
@@ -24,24 +26,19 @@ impl ModInv {
     /// assert_eq!(0, ModInv::inv(13, 13));
     /// assert_eq!(1, ModInv::inv(14, 13));
     /// ```
-    pub fn inv(mut number: isize, modulo: usize) -> usize {
-        use std::mem::swap;
-
-        let mut b = modulo as isize;
-        let mut u: isize = 1;
-        let mut v: isize = 0;
-
+    pub fn inv(mut number: i64, modulo: i64) -> i64 {
+        let (mut b, mut u, mut v) = (modulo, 1, 0);
         while b > 0 {
-            let t: isize = number / b;
+            let t = number / b;
             number -= t * b;
             swap(&mut number, &mut b);
             u -= t * v;
             swap(&mut u, &mut v);
         }
-        u %= modulo as isize;
+        u %= modulo;
         if u < 0 {
-            u += modulo as isize;
+            u += modulo;
         }
-        u as usize
+        u
     }
 }

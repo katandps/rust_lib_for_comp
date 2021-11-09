@@ -1,6 +1,7 @@
 //! Range を半開区間 $`[l, r)`$ に変換する
 use crate::prelude::*;
 
+#[snippet(name = "template", doc_hidden)]
 pub fn to_lr<R: RangeBounds<usize>>(range: &R, length: usize) -> (usize, usize) {
     let l = match range.start_bound() {
         Bound::Unbounded => 0,

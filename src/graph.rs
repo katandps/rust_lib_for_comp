@@ -15,6 +15,7 @@ pub mod retrograde_analysis;
 pub mod strongly_connected_components;
 pub mod warshall_floyd;
 
+#[snippet(name = "graph", doc_hidden)]
 /// Edge 辺
 /// W はWeightで各処理に対応するTraitを実装する
 #[derive(Copy, Clone, Eq, Default)]
@@ -24,36 +25,42 @@ pub struct Edge<W> {
     pub weight: W,
 }
 
+#[snippet(name = "graph", doc_hidden)]
 impl<W: Display> Debug for Edge<W> {
     fn fmt(&self, f: &mut Formatter<'_>) -> std::fmt::Result {
         write!(f, "{} -> {} : {}", self.src, self.dst, self.weight)
     }
 }
 
+#[snippet(name = "graph", doc_hidden)]
 impl<W> Edge<W> {
     pub fn new(src: usize, dst: usize, weight: W) -> Self {
         Edge { src, dst, weight }
     }
 }
 
+#[snippet(name = "graph", doc_hidden)]
 impl<W: PartialEq> PartialEq for Edge<W> {
     fn eq(&self, other: &Self) -> bool {
         self.weight.eq(&other.weight)
     }
 }
 
+#[snippet(name = "graph", doc_hidden)]
 impl<W: PartialOrd> PartialOrd for Edge<W> {
     fn partial_cmp(&self, other: &Self) -> Option<Ordering> {
         self.weight.partial_cmp(&other.weight)
     }
 }
 
+#[snippet(name = "graph", doc_hidden)]
 impl<W: PartialOrd + Eq> Ord for Edge<W> {
     fn cmp(&self, other: &Self) -> Ordering {
         self.weight.partial_cmp(&other.weight).expect("Found NAN")
     }
 }
 
+#[snippet(name = "graph", doc_hidden)]
 pub trait GraphTrait {
     type Weight;
     fn size(&self) -> usize;
@@ -74,6 +81,7 @@ pub trait GraphTrait {
     }
 }
 
+#[snippet(name = "graph", doc_hidden)]
 impl<W: Clone> GraphTrait for Graph<W> {
     type Weight = W;
     fn size(&self) -> usize {
@@ -87,6 +95,7 @@ impl<W: Clone> GraphTrait for Graph<W> {
     }
 }
 
+#[snippet(name = "graph", doc_hidden)]
 /// 辺の情報を使用してグラフの問題を解くためのライブラリ
 pub struct Graph<W> {
     pub n: usize,
@@ -94,6 +103,7 @@ pub struct Graph<W> {
     pub rev_edges: Vec<Vec<Edge<W>>>,
 }
 
+#[snippet(name = "graph", doc_hidden)]
 impl<W: Clone> Clone for Graph<W> {
     fn clone(&self) -> Self {
         Self {
@@ -104,6 +114,7 @@ impl<W: Clone> Clone for Graph<W> {
     }
 }
 
+#[snippet(name = "graph", doc_hidden)]
 /// i64の隣接行列からグラフを生成する O(N^2)
 impl From<&Vec<Vec<i64>>> for Graph<i64> {
     fn from(w: &Vec<Vec<i64>>) -> Self {
@@ -123,6 +134,7 @@ impl From<&Vec<Vec<i64>>> for Graph<i64> {
     }
 }
 
+#[snippet(name = "graph", doc_hidden)]
 impl<W: Clone> Graph<W> {
     /// n: 頂点数
     pub fn new(n: usize) -> Self {

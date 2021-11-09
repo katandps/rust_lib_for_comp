@@ -22,11 +22,13 @@ use crate::algebra::Zero;
 use crate::graph::{Edge, GraphTrait};
 use crate::prelude::*;
 
+#[snippet(name = "prim", doc_hidden)]
 pub struct Prim<W> {
     tree: Vec<Edge<W>>,
     sum: W,
 }
 
+#[snippet(name = "prim", doc_hidden)]
 impl<W, G> From<&G> for Prim<W>
 where
     W: Zero + Ord + Copy + AddAssign,
@@ -58,12 +60,14 @@ where
     }
 }
 
+#[snippet(name = "prim", doc_hidden)]
 impl<W> Prim<W> {
     pub fn tree(&self) -> &Vec<Edge<W>> {
         &self.tree
     }
 }
 
+#[snippet(name = "prim", doc_hidden)]
 impl<W: Copy> Prim<W> {
     pub fn sum(&self) -> W {
         self.sum

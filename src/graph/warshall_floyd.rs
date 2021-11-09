@@ -2,7 +2,13 @@
 use crate::algebra::{BoundedAbove, Zero};
 use crate::graph::GraphTrait;
 use crate::prelude::*;
-use crate::{chmin, min};
+
+macro_rules! chmin {($base:expr, $($cmps:expr),+ $(,)*) => {{let cmp_min = min!($($cmps),+);if $base > cmp_min {$base = cmp_min;true} else {false}}};}
+macro_rules! min {
+    ($a:expr $(,)*) => {{$a}};
+    ($a:expr, $b:expr $(,)*) => {{if $a > $b {$b} else {$a}}};
+    ($a:expr, $($rest:expr),+ $(,)*) => {{let b = min!($($rest),+);if $a > b {b} else {$a}}};
+}
 
 ///
 /// ワーシャルフロイド法で(i,j)間の最短距離を求める
@@ -26,9 +32,12 @@ use crate::{chmin, min};
 /// assert_eq!(12, wf.query(3, 2));
 /// ```
 
+#[snippet(name = "warshall-floyd", doc_hidden)]
 pub struct WarshallFloyd<W> {
     dist: Vec<Vec<W>>,
 }
+
+#[snippet(name = "warshall-floyd", doc_hidden)]
 impl<W, G> From<&G> for WarshallFloyd<W>
 where
     W: Copy + BoundedAbove + Add<Output = W> + Zero + PartialOrd,
@@ -57,6 +66,7 @@ where
     }
 }
 
+#[snippet(name = "warshall-floyd", doc_hidden)]
 impl<W: Clone> WarshallFloyd<W> {
     pub fn query(&self, i: usize, j: usize) -> W {
         self.dist[i][j].clone()

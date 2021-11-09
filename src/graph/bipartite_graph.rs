@@ -1,10 +1,11 @@
-//! 2部グラフ
+//! # 二部グラフ判定
+//! グラフが二部グラフかどうか判定する
+//! 二部グラフだったときはその分割方法を1つ返す
+//! なお、グラフが連結でない場合は正しく判定できない
 use crate::graph::GraphTrait;
+use crate::prelude::*;
 
-/// グラフが二部グラフかどうか判定する
-/// 二部グラフだったときはその分割方法を1つ返す
-/// なお、グラフが連結でない場合は正しく判定できない
-
+#[snippet(name = "judge-bipartite-graph", doc_hidden)]
 impl<W> dyn GraphTrait<Weight = W> {
     pub fn is_bipartite_graph(&self) -> Option<Vec<bool>> {
         let mut dist = vec![None; self.size()];

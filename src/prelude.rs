@@ -1,6 +1,7 @@
 //! # 一括インポート用モジュール
 //! ここでインポートする要素はtemplateで使えるようにしておく
 
+#[snippet(name = "template", doc_hidden)]
 pub use std::{
     cmp::{max, min, Ordering, Reverse},
     collections::{BTreeMap, BTreeSet, BinaryHeap, HashMap, HashSet, VecDeque},

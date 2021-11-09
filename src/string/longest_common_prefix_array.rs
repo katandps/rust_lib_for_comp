@@ -1,11 +1,13 @@
 //! LCP配列 Longest Common Prefix Array
+use crate::prelude::*;
 use crate::string::suffix_array::SuffixArray;
 
-#[allow(dead_code)]
+#[snippet(name = "longest-common-prefix-array", doc_hidden)]
 pub struct LCPArray {
-    lcp: Vec<usize>,
+    _lcp: Vec<usize>,
 }
 
+#[snippet(name = "longest-common-prefix-array", doc_hidden)]
 impl LCPArray {
     pub fn build(sa: &SuffixArray) -> Self {
         let n = sa.source.len();
@@ -32,7 +34,7 @@ impl LCPArray {
             }
             lcp[rank[i]] = h;
         }
-        LCPArray { lcp }
+        LCPArray { _lcp: lcp }
     }
 }
 
@@ -45,6 +47,6 @@ mod test {
         let sa = SuffixArray::build(b"mississippi");
         let lcp = LCPArray::build(&sa);
         assert_eq!(vec![11, 10, 7, 4, 1, 0, 9, 8, 6, 3, 5, 2], sa.sa);
-        assert_eq!(vec![0, 0, 1, 1, 4, 0, 0, 1, 0, 2, 1, 3], lcp.lcp);
+        assert_eq!(vec![0, 0, 1, 1, 4, 0, 0, 1, 0, 2, 1, 3], lcp._lcp);
     }
 }

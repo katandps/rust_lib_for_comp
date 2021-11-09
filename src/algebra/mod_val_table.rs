@@ -3,6 +3,7 @@
 use crate::algebra::mod_int::{Mod, ModInt};
 use crate::prelude::*;
 
+#[snippet(name = "mod-val-table", doc_hidden)]
 #[derive(Debug)]
 pub struct ModValTable<M> {
     fact: Vec<M>,
@@ -10,6 +11,7 @@ pub struct ModValTable<M> {
     inv: Vec<M>,
 }
 
+#[snippet(name = "mod-val-table", doc_hidden)]
 impl<M: Mod> ModValTable<ModInt<M>> {
     ///
     /// あるnについてModValTableを初期化する

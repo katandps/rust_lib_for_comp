@@ -3,12 +3,14 @@
 use crate::algebra::{AbelianGroup, Magma};
 use crate::prelude::*;
 
+#[snippet(name = "binary-indexed-tree", doc_hidden)]
 #[derive(Clone)]
 pub struct BinaryIndexedTree<A: Magma> {
     n: usize,
     bit: Vec<A::M>,
 }
 
+#[snippet(name = "binary-indexed-tree", doc_hidden)]
 impl<A: AbelianGroup> From<usize> for BinaryIndexedTree<A> {
     fn from(length: usize) -> Self {
         Self {
@@ -18,6 +20,7 @@ impl<A: AbelianGroup> From<usize> for BinaryIndexedTree<A> {
     }
 }
 
+#[snippet(name = "binary-indexed-tree", doc_hidden)]
 impl<A: AbelianGroup> From<&[A::M]> for BinaryIndexedTree<A> {
     fn from(src: &[A::M]) -> Self {
         let mut bit = Self::from(src.len());
@@ -28,6 +31,7 @@ impl<A: AbelianGroup> From<&[A::M]> for BinaryIndexedTree<A> {
     }
 }
 
+#[snippet(name = "binary-indexed-tree", doc_hidden)]
 impl<A: AbelianGroup> BinaryIndexedTree<A> {
     /// add x to i
     pub fn add(&mut self, i: usize, x: A::M) {
@@ -62,6 +66,7 @@ impl<A: AbelianGroup> BinaryIndexedTree<A> {
     }
 }
 
+#[snippet(name = "binary-indexed-tree", doc_hidden)]
 impl<A: AbelianGroup> Debug for BinaryIndexedTree<A>
 where
     A::M: Debug,

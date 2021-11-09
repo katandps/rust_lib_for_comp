@@ -4,9 +4,12 @@
 //! std::io::Writeを実装している型を渡して初期化する
 use crate::prelude::*;
 
+#[snippet(name = "template", doc_hidden)]
 pub struct Writer<W: Write> {
     writer: BufWriter<W>,
 }
+
+#[snippet(name = "template", doc_hidden)]
 impl<W: Write> Writer<W> {
     pub fn new(write: W) -> Self {
         Self {

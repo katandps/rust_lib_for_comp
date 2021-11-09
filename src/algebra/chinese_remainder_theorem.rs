@@ -1,9 +1,11 @@
 //! 中国剰余定理
 
-#[allow(dead_code)]
+use crate::prelude::*;
+
+#[snippet(name = "chinese-remainder-theorem", doc_hidden)]
 pub struct CRT;
 
-#[allow(dead_code)]
+#[snippet(name = "chinese-remainder-theorem", doc_hidden)]
 impl CRT {
     /// 中国剰余定理
     /// x === b1 mod m, x === b2 mod m となる整数xを返す(x === r mod m)

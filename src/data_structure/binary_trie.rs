@@ -2,13 +2,16 @@
 /// multiset的な機能を持つ
 use crate::prelude::*;
 
+#[snippet(name = "binary-trie", doc_hidden)]
 type TrieValue = u64;
 
+#[snippet(name = "binary-trie", doc_hidden)]
 #[derive(Clone, Default)]
 pub struct BinaryTrie {
     root: TrieNode,
 }
 
+#[snippet(name = "binary-trie", doc_hidden)]
 impl BinaryTrie {
     /// $`2^{60}`$未満の非負整数を登録できる
     pub const BIT_LEN: i64 = 60;
@@ -47,6 +50,7 @@ impl BinaryTrie {
     }
 }
 
+#[snippet(name = "binary-trie", doc_hidden)]
 impl Debug for BinaryTrie {
     fn fmt(&self, f: &mut Formatter<'_>) -> std::fmt::Result {
         write!(
@@ -60,12 +64,14 @@ impl Debug for BinaryTrie {
     }
 }
 
+#[snippet(name = "binary-trie", doc_hidden)]
 #[derive(Clone)]
 struct TrieNode {
     count: usize,
     child: Vec<Option<TrieNode>>,
 }
 
+#[snippet(name = "binary-trie", doc_hidden)]
 impl Default for TrieNode {
     fn default() -> Self {
         Self {
@@ -75,6 +81,7 @@ impl Default for TrieNode {
     }
 }
 
+#[snippet(name = "binary-trie", doc_hidden)]
 impl TrieNode {
     pub fn add(&mut self, v: TrieValue, b: i64) {
         self.count += 1;

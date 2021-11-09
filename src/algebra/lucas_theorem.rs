@@ -1,9 +1,11 @@
 //! リュカの定理( $`nCr \bmod p`$ を $`O( \log N)`$ で得る )
 
-#[allow(dead_code)]
+use crate::prelude::*;
+
+#[snippet(name = "lucas-theorem", doc_hidden)]
 pub struct LucasTheorem;
 
-#[allow(dead_code)]
+#[snippet(name = "lucas-theorem", doc_hidden)]
 impl LucasTheorem {
     pub fn lucas_theorem(mut n: usize, mut r: usize, p: usize) -> usize {
         if p < 2 {
@@ -23,7 +25,7 @@ impl LucasTheorem {
         ret % p
     }
 
-    pub fn combination(n: usize, k: usize) -> usize {
+    fn combination(n: usize, k: usize) -> usize {
         if n < k {
             return 0;
         }

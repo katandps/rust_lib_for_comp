@@ -11,14 +11,14 @@ use crate::algebra::{BoundedAbove, Zero};
 use crate::graph::GraphTrait;
 use crate::prelude::*;
 
+#[snippet(name = "dijkstra", doc_hidden)]
 pub struct Dijkstra<W> {
     dist: Vec<W>,
     prev: Vec<usize>,
 }
-impl<W> Dijkstra<W>
-where
-    W: Copy + BoundedAbove + Add<Output = W> + PartialEq + Ord + Zero,
-{
+
+#[snippet(name = "dijkstra", doc_hidden)]
+impl<W: Copy + BoundedAbove + Add<Output = W> + PartialEq + Ord + Zero> Dijkstra<W> {
     pub fn calc<G: GraphTrait<Weight = W>>(g: &G, l: usize) -> Self {
         let mut dist = vec![W::max_value(); g.size()];
         let mut prev = vec![g.size(); g.size()];

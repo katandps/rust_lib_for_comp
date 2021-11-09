@@ -1,11 +1,14 @@
 //! 行列
+use crate::algebra::mod_int::*;
 use crate::prelude::*;
 
+#[snippet(name = "matrix", doc_hidden)]
 #[derive(Clone, Eq, PartialEq)]
 pub struct Matrix {
     pub buf: Vec<Vec<Mi>>,
 }
 
+#[snippet(name = "matrix", doc_hidden)]
 impl std::convert::TryFrom<Vec<Vec<Mi>>> for Matrix {
     type Error = &'static str;
     fn try_from(buf: Vec<Vec<Mi>>) -> std::result::Result<Self, Self::Error> {
@@ -17,6 +20,7 @@ impl std::convert::TryFrom<Vec<Vec<Mi>>> for Matrix {
     }
 }
 
+#[snippet(name = "matrix", doc_hidden)]
 impl Matrix {
     /// N行N列の単位行列を生成する
     pub fn identity_matrix(n: usize) -> Self {
@@ -117,6 +121,7 @@ impl Matrix {
     }
 }
 
+#[snippet(name = "matrix", doc_hidden)]
 impl Add<Matrix> for Matrix {
     type Output = Self;
     fn add(mut self, rhs: Self) -> Self {
@@ -129,6 +134,7 @@ impl Add<Matrix> for Matrix {
     }
 }
 
+#[snippet(name = "matrix", doc_hidden)]
 impl Neg for Matrix {
     type Output = Self;
     fn neg(mut self) -> Self {
@@ -141,6 +147,7 @@ impl Neg for Matrix {
     }
 }
 
+#[snippet(name = "matrix", doc_hidden)]
 impl Sub<Matrix> for Matrix {
     type Output = Self;
     fn sub(self, rhs: Self) -> Self {
@@ -148,6 +155,7 @@ impl Sub<Matrix> for Matrix {
     }
 }
 
+#[snippet(name = "matrix", doc_hidden)]
 impl Mul<i64> for Matrix {
     type Output = Self;
     fn mul(mut self, rhs: i64) -> Self {
@@ -161,6 +169,7 @@ impl Mul<i64> for Matrix {
     }
 }
 
+#[snippet(name = "matrix", doc_hidden)]
 impl Mul<Matrix> for Matrix {
     type Output = Option<Matrix>;
     fn mul(self, rhs: Matrix) -> Option<Matrix> {
@@ -178,6 +187,7 @@ impl Mul<Matrix> for Matrix {
     }
 }
 
+#[snippet(name = "matrix", doc_hidden)]
 impl Debug for Matrix {
     fn fmt(&self, f: &mut Formatter<'_>) -> std::fmt::Result {
         write!(
@@ -195,9 +205,6 @@ impl Debug for Matrix {
         )
     }
 }
-////////////////////////////////////////////////////////
-
-use crate::algebra::mod_int::*;
 
 #[cfg(test)]
 mod test {
