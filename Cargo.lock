@@ -144,7 +144,7 @@ dependencies = [
 ]
 
 [[package]]
-name = "rust-competitive-programming"
+name = "rust_lib_for_comp"
 version = "0.1.0"
 dependencies = [
  "cargo-snippet",
