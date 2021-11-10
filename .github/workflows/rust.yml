@@ -23,7 +23,7 @@ jobs:
             ~/.cargo/registry/cache/
             ~/.cargo/git/db/
             target
-          key: ${{ runner.os }}-cargo-${{ hashFiles('**/Cargo.lock') }}
+          key: ${{ runner.os }}-cargo-${{ hashFiles('**/Cargo.lock') }}-${{ hashFiles('**/rust.yml') }}
       - run: rustup install 1.42.0
       - run: rustup install 1.56.0
       - run: rustup component add clippy
@@ -33,4 +33,4 @@ jobs:
       - uses: peaceiris/actions-gh-pages@v3
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
-          publish_dir: ./target/doc/lib
+          publish_dir: ./target/doc/
