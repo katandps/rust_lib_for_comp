@@ -5,8 +5,8 @@
 //! ## 計算量
 //! 頂点数をV、辺数をEとすると $` E \log E`$
 //! ```
-//! use rust_competitive_programming::graph::Graph;
-//! use rust_competitive_programming::graph::kruskal::Kruskal;
+//! use rust_lib_for_comp::graph::Graph;
+//! use rust_lib_for_comp::graph::kruskal::Kruskal;
 //!
 //! let graph = Graph::from(&vec![
 //!     vec![-1, 2, 3, 1, -1],

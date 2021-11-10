@@ -39,8 +39,44 @@ impl<R: BufRead> Reader<R> {
             .expect("Insufficient input.")
     }
 
+    pub fn val2<T1: FromStr, T2: FromStr>(&mut self) -> (T1, T2) {
+        (self.val(), self.val())
+    }
+
+    pub fn val3<T1: FromStr, T2: FromStr, T3: FromStr>(&mut self) -> (T1, T2, T3) {
+        (self.val(), self.val(), self.val())
+    }
+
+    pub fn val4<T1: FromStr, T2: FromStr, T3: FromStr, T4: FromStr>(&mut self) -> (T1, T2, T3, T4) {
+        (self.val(), self.val(), self.val(), self.val())
+    }
+
+    pub fn val5<T1: FromStr, T2: FromStr, T3: FromStr, T4: FromStr, T5: FromStr>(
+        &mut self,
+    ) -> (T1, T2, T3, T4, T5) {
+        (self.val(), self.val(), self.val(), self.val(), self.val())
+    }
+
     pub fn vec<T: FromStr>(&mut self, length: usize) -> Vec<T> {
         (0..length).map(|_| self.val()).collect()
+    }
+
+    pub fn vec2<T1: FromStr, T2: FromStr>(&mut self, length: usize) -> Vec<(T1, T2)> {
+        (0..length).map(|_| self.val2()).collect()
+    }
+
+    pub fn vec3<T1: FromStr, T2: FromStr, T3: FromStr>(
+        &mut self,
+        length: usize,
+    ) -> Vec<(T1, T2, T3)> {
+        (0..length).map(|_| self.val3()).collect()
+    }
+
+    pub fn vec4<T1: FromStr, T2: FromStr, T3: FromStr, T4: FromStr>(
+        &mut self,
+        length: usize,
+    ) -> Vec<(T1, T2, T3, T4)> {
+        (0..length).map(|_| self.val4()).collect()
     }
 
     pub fn chars(&mut self) -> Vec<char> {

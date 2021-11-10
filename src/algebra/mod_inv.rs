@@ -10,7 +10,7 @@ impl ModInv {
     ///
     /// numberの逆元をmod moduloで求める
     /// ```
-    /// use rust_competitive_programming::algebra::mod_inv::ModInv;
+    /// use rust_lib_for_comp::algebra::mod_inv::ModInv;
     /// assert_eq!(1, ModInv::inv(1, 13));
     /// assert_eq!(7, ModInv::inv(2, 13));
     /// assert_eq!(9, ModInv::inv(3, 13));

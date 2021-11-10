@@ -15,8 +15,8 @@ macro_rules! min {
 /// ## 計算量
 /// 頂点数をNとしてO(N^3)
 /// ```
-/// use rust_competitive_programming::graph::Graph;
-/// use rust_competitive_programming::graph::warshall_floyd::WarshallFloyd;
+/// use rust_lib_for_comp::graph::Graph;
+/// use rust_lib_for_comp::graph::warshall_floyd::WarshallFloyd;
 ///
 /// let mut graph = Graph::new(5);
 /// graph.add_arc(0, 1, 1);
