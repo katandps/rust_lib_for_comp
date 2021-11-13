@@ -8,7 +8,7 @@ pub use std::{
     convert::Infallible,
     convert::{TryFrom, TryInto},
     fmt::{Debug, Display, Formatter},
-    io::{stdin, stdout, BufRead, BufWriter, Write},
+    io::{stdin, stdout, BufRead, BufWriter, Read, Write},
     iter::{Product, Sum},
     marker::PhantomData,
     mem::swap,

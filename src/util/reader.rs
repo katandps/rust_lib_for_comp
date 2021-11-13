@@ -8,7 +8,7 @@ pub struct Reader<R> {
 }
 
 #[snippet(name = "template", doc_hidden)]
-impl<R: BufRead> Iterator for Reader<R> {
+impl<R: Read> Iterator for Reader<R> {
     type Item = String;
 
     fn next(&mut self) -> Option<String> {
@@ -25,7 +25,7 @@ impl<R: BufRead> Iterator for Reader<R> {
 }
 
 #[snippet(name = "template", doc_hidden)]
-impl<R: BufRead> Reader<R> {
+impl<R: Read> Reader<R> {
     pub fn new(reader: R) -> Reader<R> {
         Reader {
             reader,
