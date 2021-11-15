@@ -13,6 +13,6 @@ pub fn main() {
 
 #[snippet(name = "solver", doc_hidden)]
 pub fn solve<R: BufRead, W: Write>(mut reader: Reader<R>, mut writer: Writer<W>) {
-    let n = reader.val::<usize>();
-    writer.println(&n);
+    let n: usize = reader.val();
+    writer.println(n);
 }

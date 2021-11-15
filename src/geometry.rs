@@ -1,5 +1,6 @@
 //! # 幾何
 
+pub mod arg_cmp;
 pub mod floor_sum;
 
 use crate::prelude::*;
