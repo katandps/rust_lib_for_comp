@@ -32,7 +32,7 @@ pub fn unite<R: RangeBounds<i64>>(set: &[R]) -> Vec<Range<i64>> {
             (l, r)
         })
         .collect();
-    b.sort();
+    b.sort_unstable();
     let mut iter = b.into_iter();
     if let Some((l1, r1)) = iter.next() {
         let mut v = vec![(l1, r1)];
