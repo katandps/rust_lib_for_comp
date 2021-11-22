@@ -1,5 +1,8 @@
 //! # 自然数の分割
-//!
+//! 降順に次の分割を得るIteratorの実装
+//! ## 使用方法
+//! - `From<usize>`: 入力した数の分割をすべて得る
+//! - `From<&[usize]>`: 入力したスライスの合計の分割を途中から得る
 //! ## verify
 //! [ABC226F](https://atcoder.jp/contests/abc226/submissions/27139567)
 
@@ -8,6 +11,8 @@ use crate::prelude::*;
 #[snippet(name = "split-of-natural-number", doc_hidden)]
 #[derive(Clone, Debug)]
 pub struct SplitOfNumber(Option<Vec<usize>>);
+
+#[snippet(name = "split-of-natural-number", doc_hidden)]
 impl Iterator for SplitOfNumber {
     type Item = Vec<usize>;
     fn next(&mut self) -> Option<Vec<usize>> {
