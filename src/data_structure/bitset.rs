@@ -4,7 +4,7 @@
 use crate::prelude::*;
 
 #[snippet(name = "bit-set", doc_hidden)]
-#[derive(Clone, Debug, Eq, PartialEq)]
+#[derive(Clone, Eq, PartialEq)]
 pub struct BitSet {
     bits: Vec<u64>,
     size: usize,
@@ -15,10 +15,9 @@ impl BitSet {
     const BLOCK_LEN: usize = 1 << Self::BLOCK_LEN_LEN;
     const BLOCK_LEN_LEN: usize = 6;
     pub fn new(size: usize) -> Self {
-        Self {
-            bits: vec![0; (size + Self::BLOCK_LEN - 1) / Self::BLOCK_LEN],
-            size,
-        }
+        let size = max(size, 64);
+        let bits = vec![0; (size + Self::BLOCK_LEN - 1) / Self::BLOCK_LEN];
+        Self { bits, size }
     }
 
     /// indexビット目のビットをbに変える
@@ -36,6 +35,11 @@ impl BitSet {
         self.bits.iter().map(|b| b.count_ones()).sum()
     }
 
+    // 下位64bitをu64として取り出す
+    pub fn get_u64(&self) -> u64 {
+        self.bits[0]
+    }
+
     /// sizeを超えた分を切り捨てる
     fn chomp(&mut self) {
         let r = self.size & (Self::BLOCK_LEN - 1);
@@ -45,6 +49,13 @@ impl BitSet {
                 *x = (*x << d) >> d;
             }
         }
+    }
+}
+
+#[snippet(name = "bit-set", doc_hidden)]
+impl Debug for BitSet {
+    fn fmt(&self, f: &mut Formatter) -> std::fmt::Result {
+        Display::fmt(self, f)
     }
 }
 

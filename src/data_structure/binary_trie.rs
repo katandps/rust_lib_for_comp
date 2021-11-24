@@ -1,5 +1,5 @@
+//! # Binary Trie
 //! 非負整数をBit列とみなしてトライ木に載せたもの
-/// multiset的な機能を持つ
 use crate::prelude::*;
 
 #[snippet(name = "binary-trie", doc_hidden)]
@@ -16,27 +16,37 @@ impl BinaryTrie {
     /// $`2^{60}`$未満の非負整数を登録できる
     pub const BIT_LEN: i64 = 60;
 
-    /// 今までにinsertした個数
+    /// 今までにinsertした個数を取得する
+    /// ## 計算量
+    /// $`O(1)`$
     pub fn size(&self) -> usize {
         self.root.count
     }
 
     /// vをinsertする
+    /// ## 計算量
+    /// $`O(BIT\_LEN)`$
     pub fn insert(&mut self, v: u64) {
         self.root.add(v, Self::BIT_LEN - 1);
     }
 
     /// vを一つ削除する
+    /// ## 計算量
+    /// $`O(BIT\_LEN)`$
     pub fn erase(&mut self, v: TrieValue) {
         self.root.sub(v, Self::BIT_LEN - 1);
     }
 
     /// biasとXORをとったときに最小値となるような値を取得する
+    /// ## 計算量
+    /// $`O(BIT\_LEN)`$
     pub fn min_element(&self, bias: Option<TrieValue>) -> TrieValue {
         self.root.get_min(bias.unwrap_or(0), Self::BIT_LEN - 1)
     }
 
     /// biasとXORをとったときに最大値となるような値を取得する
+    /// ## 計算量
+    /// $`O(BIT\_LEN)`$
     pub fn max_element(&self, bias: Option<TrieValue>) -> TrieValue {
         self.root.get_min(
             bias.map_or((1 << Self::BIT_LEN) - 1, |b| b ^ ((1 << Self::BIT_LEN) - 1)),
@@ -44,6 +54,9 @@ impl BinaryTrie {
         )
     }
 
+    /// 小さい方からk番目の値を取得する
+    /// ## 計算量
+    /// $`O(BIT\_LEN)`$
     pub fn nth(&self, k: usize) -> TrieValue {
         assert!(k <= self.size());
         self.root.get(k, Self::BIT_LEN - 1)
@@ -83,50 +96,43 @@ impl Default for TrieNode {
 
 #[snippet(name = "binary-trie", doc_hidden)]
 impl TrieNode {
-    pub fn add(&mut self, v: TrieValue, b: i64) {
+    fn add(&mut self, v: TrieValue, b: i64) {
         self.count += 1;
-        if b < 0 {
-            return;
-        }
-        let dst = (v >> b & 1) as usize;
-        if let Some(c) = self.child[dst].as_mut() {
-            c.add(v, b - 1);
-        } else {
-            let mut node = TrieNode::default();
-            node.add(v, b - 1);
-            self.child[dst] = Some(node);
+        if b >= 0 {
+            let dst = (v >> b & 1) as usize;
+            if let Some(node) = self.child[dst].as_mut() {
+                node.add(v, b - 1);
+            } else {
+                let mut node = TrieNode::default();
+                node.add(v, b - 1);
+                self.child[dst] = Some(node);
+            }
         }
     }
 
-    pub fn sub(&mut self, v: TrieValue, b: i64) {
+    fn sub(&mut self, v: TrieValue, b: i64) {
         self.count -= 1;
-        if b < 0 {
-            return;
-        }
-        let dst = (v >> b & 1) as usize;
-        assert!(self.child[dst].is_some());
-        if let Some(c) = self.child[dst].as_mut() {
-            c.sub(v, b - 1);
-        } else {
-            unreachable!()
+        if b >= 0 {
+            let dst = (v >> b & 1) as usize;
+            self.child[dst].iter_mut().for_each(|c| c.sub(v, b - 1));
         }
     }
 
-    pub fn get_min(&self, bias: TrieValue, b: i64) -> TrieValue {
+    fn get_min(&self, bias: TrieValue, b: i64) -> TrieValue {
         if b < 0 {
             return 0;
         }
-        let mut dst = (bias >> b & 1) as usize;
-        if self.child[dst].is_none() {
+        let mut dst = bias >> b & 1;
+        if self.child[dst as usize].is_none() {
             dst ^= 1;
         }
-        self.child[dst]
+        self.child[dst as usize]
             .as_ref()
             .map_or(0, |c| c.get_min(bias, b - 1))
-            | (dst << b) as TrieValue
+            | (dst << b)
     }
 
-    pub fn get(&self, k: usize, b: i64) -> TrieValue {
+    fn get(&self, k: usize, b: i64) -> TrieValue {
         if b < 0 {
             return 0;
         }
