@@ -1,5 +1,8 @@
 //! # BitMatrix
-//! 0-1の連立一次方程式を解く
+//! $`\Z_2`$ を要素とする行列
+//!
+//! ## dependency
+//! [bit-set](BitSet)
 //!
 //! ## verify
 //! unverified
@@ -24,6 +27,7 @@ impl BitMatrix {
 
     /// ## ガウス・ジョルダンの消去法
     /// 行基本変形を用いて行階段形に変形し、Rankを返す
+    ///
     /// ## 計算量
     /// $`O(N^3)`$
     pub fn elimination(&mut self, is_extended: bool) -> usize {
@@ -49,7 +53,7 @@ impl BitMatrix {
         rank
     }
 
-    /// ## $`\Z_2`$　上の連立1次方程式を解く
+    /// ## 連立1次方程式を解く
     ///
     /// ## 使い方
     /// 右辺の値をbで与える

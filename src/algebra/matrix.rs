@@ -1,4 +1,8 @@
-//! 行列
+//! # 行列
+//!
+//! ## dependency
+//! [mod-int](Mi)
+//!
 use crate::algebra::mod_int::*;
 use crate::prelude::*;
 

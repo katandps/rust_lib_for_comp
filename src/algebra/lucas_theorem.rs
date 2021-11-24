@@ -1,4 +1,6 @@
-//! # リュカの定理( $`nCr \bmod p`$ を $`O( p^2 \log_p N)`$ で得る )
+//! # リュカの定理
+//! $`nCr \bmod p`$ を $`O( p^2 \log_p N)`$ で得る
+//!
 //! ```
 //! # use rust_lib_for_comp::algebra::lucas_theorem::*;
 //! assert_eq!(1 % 3, lucas_theorem(5, 0, 3));
