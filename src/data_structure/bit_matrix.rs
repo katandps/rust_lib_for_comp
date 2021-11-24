@@ -30,6 +30,10 @@ impl BitMatrix {
     ///
     /// ## 計算量
     /// $`O(N^3)`$
+    ///
+    /// ## 備考
+    /// もとのbit列同士のxorで得られる最大のbit列は、elimination後にすべてのBitSetをxorすることで得られる
+    /// [ABC141F](https://atcoder.jp/contests/abc141/submissions/27476984)
     pub fn elimination(&mut self, is_extended: bool) -> usize {
         let mut rank = 0;
         for col in (0..self.width - if is_extended { 1 } else { 0 }).rev() {
