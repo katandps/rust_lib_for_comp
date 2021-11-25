@@ -1,4 +1,18 @@
-//!標準入力を取得するヘルパー
+//! # 入力ヘルパー
+//! バッファリングされた入力を提供する
+//!
+//! ## 使い方
+//! Readを引数に取り、StringのIteratorを得る
+//!
+//! ```
+//! # use rust_lib_for_comp::util::reader::*;
+//! let mut reader = Reader::new(&b"-123 456.7 12345\nhogehoge\r123 456  789 012  \n 345 678\n"[..]);
+//! assert_eq!(-123, reader.v());
+//! assert_eq!(456.7, reader.v());
+//! assert_eq!(12345, reader.v());
+//! assert_eq!("hogehoge".to_string(), reader.v::<String>());
+//! assert_eq!(vec![123, 456, 789, 12, 345, 678], reader.vec(6));
+//! ```
 use crate::prelude::*;
 
 #[snippet(name = "template", doc_hidden)]
@@ -16,9 +30,7 @@ impl<R: Read> Iterator for Reader<R> {
             let mut buf = Vec::new();
             self.reader.read_to_end(&mut buf).unwrap();
             let s = from_utf8(&buf).expect("Not UTF-8 format input.");
-            s.split_whitespace()
-                .map(ToString::to_string)
-                .for_each(|s| self.buf.push_back(s));
+            self.buf = s.split_whitespace().map(ToString::to_string).collect();
         }
         self.buf.pop_front()
     }
@@ -27,64 +39,61 @@ impl<R: Read> Iterator for Reader<R> {
 #[snippet(name = "template", doc_hidden)]
 impl<R: Read> Reader<R> {
     pub fn new(reader: R) -> Reader<R> {
-        Reader {
-            reader,
-            buf: VecDeque::new(),
-        }
+        let buf = VecDeque::new();
+        Reader { reader, buf }
     }
 
-    pub fn val<T: FromStr>(&mut self) -> T {
-        self.next()
-            .map(|token| token.parse().ok().expect("Failed to parse."))
-            .expect("Insufficient input.")
+    pub fn v<T: FromStr>(&mut self) -> T {
+        let s = self.next().expect("Insufficient input.");
+        s.parse().ok().expect("Failed to parse.")
     }
 
-    pub fn val2<T1: FromStr, T2: FromStr>(&mut self) -> (T1, T2) {
-        (self.val(), self.val())
+    pub fn v2<T1: FromStr, T2: FromStr>(&mut self) -> (T1, T2) {
+        (self.v(), self.v())
     }
 
-    pub fn val3<T1: FromStr, T2: FromStr, T3: FromStr>(&mut self) -> (T1, T2, T3) {
-        (self.val(), self.val(), self.val())
+    pub fn v3<T1: FromStr, T2: FromStr, T3: FromStr>(&mut self) -> (T1, T2, T3) {
+        (self.v(), self.v(), self.v())
     }
 
-    pub fn val4<T1: FromStr, T2: FromStr, T3: FromStr, T4: FromStr>(&mut self) -> (T1, T2, T3, T4) {
-        (self.val(), self.val(), self.val(), self.val())
+    pub fn v4<T1: FromStr, T2: FromStr, T3: FromStr, T4: FromStr>(&mut self) -> (T1, T2, T3, T4) {
+        (self.v(), self.v(), self.v(), self.v())
     }
 
-    pub fn val5<T1: FromStr, T2: FromStr, T3: FromStr, T4: FromStr, T5: FromStr>(
+    pub fn v5<T1: FromStr, T2: FromStr, T3: FromStr, T4: FromStr, T5: FromStr>(
         &mut self,
     ) -> (T1, T2, T3, T4, T5) {
-        (self.val(), self.val(), self.val(), self.val(), self.val())
+        (self.v(), self.v(), self.v(), self.v(), self.v())
     }
 
     pub fn vec<T: FromStr>(&mut self, length: usize) -> Vec<T> {
-        (0..length).map(|_| self.val()).collect()
+        (0..length).map(|_| self.v()).collect()
     }
 
     pub fn vec2<T1: FromStr, T2: FromStr>(&mut self, length: usize) -> Vec<(T1, T2)> {
-        (0..length).map(|_| self.val2()).collect()
+        (0..length).map(|_| self.v2()).collect()
     }
 
     pub fn vec3<T1: FromStr, T2: FromStr, T3: FromStr>(
         &mut self,
         length: usize,
     ) -> Vec<(T1, T2, T3)> {
-        (0..length).map(|_| self.val3()).collect()
+        (0..length).map(|_| self.v3()).collect()
     }
 
     pub fn vec4<T1: FromStr, T2: FromStr, T3: FromStr, T4: FromStr>(
         &mut self,
         length: usize,
     ) -> Vec<(T1, T2, T3, T4)> {
-        (0..length).map(|_| self.val4()).collect()
+        (0..length).map(|_| self.v4()).collect()
     }
 
     pub fn chars(&mut self) -> Vec<char> {
-        self.val::<String>().chars().collect()
+        self.v::<String>().chars().collect()
     }
 
     pub fn digits(&mut self) -> Vec<i64> {
-        self.val::<String>()
+        self.v::<String>()
             .chars()
             .map(|c| (c as u8 - b'0') as i64)
             .collect()
@@ -112,52 +121,21 @@ impl<R: Read> Reader<R> {
 mod tests {
     use super::*;
     use itertools::Itertools;
-    use std::io::Cursor;
-
-    #[test]
-    fn basics() {
-        {
-            let cursor = Cursor::new(b"-123 456.7 12345\nhogehoge\n");
-            let mut reader = Reader::new(cursor);
-
-            assert_eq!(-123, reader.val());
-            assert_eq!(456.7, reader.val());
-            assert_eq!(12345, reader.val());
-            assert_eq!("hogehoge".to_string(), reader.val::<String>());
-        }
-        {
-            let cursor = Cursor::new(b"-123 456.7 12345\rhogehoge\r");
-            let mut reader = Reader::new(cursor);
-
-            assert_eq!(-123, reader.val());
-            assert_eq!(456.7, reader.val());
-            assert_eq!(12345, reader.val());
-            assert_eq!("hogehoge".to_string(), reader.val::<String>());
-        }
-        {
-            let cursor = Cursor::new(b"123 456 789 012 345 678\n");
-            let mut reader = Reader::new(cursor);
-            assert_eq!(vec![123, 456, 789, 12, 345, 678], reader.vec(6));
-        }
-    }
 
     #[test]
     fn edge_cases() {
         {
-            let cursor = Cursor::new(b"8\n");
-            let mut reader = Reader::new(cursor);
-            assert_eq!(8u32, reader.val());
+            let mut reader = Reader::new(&b"8\n"[..]);
+            assert_eq!(8u32, reader.v());
         }
         {
-            let cursor = Cursor::new(b"\n9\n");
-            let mut reader = Reader::new(cursor);
-            assert_eq!(9i32, reader.val());
+            let mut reader = Reader::new(&b"\n9\n"[..]);
+            assert_eq!(9i32, reader.v());
         }
         {
-            let cursor = Cursor::new(b"\n\n10\n11\n");
-            let mut reader = Reader::new(cursor);
-            assert_eq!(10u8, reader.val());
-            assert_eq!(11u8, reader.val());
+            let mut reader = Reader::new(&b"\n\n10\n11\n"[..]);
+            assert_eq!(10u8, reader.v());
+            assert_eq!(11u8, reader.v());
         }
     }
 
@@ -165,8 +143,8 @@ mod tests {
     fn map() {
         {
             let data = vec!["...#..", ".###..", "....##", ""];
-            let cursor = Cursor::new(data.iter().join("\n"));
-            let mut reader = Reader::new(cursor);
+            let s = data.iter().join("\n");
+            let mut reader = Reader::new(s.as_bytes());
             let res = reader.char_map(3);
             for i in 0..3 {
                 let v = data[i].chars().collect_vec();
@@ -177,8 +155,8 @@ mod tests {
         }
         {
             let data = vec!["S..#..", ".###..", "...G##", ""];
-            let cursor = Cursor::new(data.iter().join("\n"));
-            let mut reader = Reader::new(cursor);
+            let s = data.iter().join("\n");
+            let mut reader = Reader::new(s.as_bytes());
             let res = reader.bool_map(3, '#');
             for i in 0..3 {
                 let v = data[i].chars().collect_vec();
@@ -191,8 +169,7 @@ mod tests {
 
     #[test]
     fn digits() {
-        let cursor = Cursor::new("123456\n");
-        let mut reader = Reader::new(cursor);
+        let mut reader = Reader::new(&b"123456\n"[..]);
         let res = reader.digits();
         assert_eq!(res, vec![1, 2, 3, 4, 5, 6]);
     }
