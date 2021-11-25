@@ -6,21 +6,21 @@
 //! ただし、ほとんどの場合さらに高速に動作する
 use crate::prelude::*;
 
-#[snippet(name = "dinic", doc-hidden)]
+#[snippet(name = "dinic", doc_hidden)]
 struct Edge {
     pub to: usize,
     pub rev: usize,
     pub cap: i64,
 }
 
-#[snippet(name = "dinic", doc-hidden)]
+#[snippet(name = "dinic", doc_hidden)]
 pub struct Dinic {
     g: Vec<Vec<Edge>>,
     level: Vec<i32>,
     iter: Vec<usize>,
 }
 
-#[snippet(name = "dinic", doc-hidden)]
+#[snippet(name = "dinic", doc_hidden)]
 impl Dinic {
     pub fn new(v: usize) -> Dinic {
         let mut g: Vec<Vec<Edge>> = Vec::new();

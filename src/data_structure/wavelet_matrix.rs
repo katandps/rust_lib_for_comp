@@ -2,6 +2,16 @@
 //! ## 概要
 //! 正整数列について、構築$`O(N \log V)`$で$`O( \log V)`$ or $`O( \log^2 V)`$のクエリを提供する
 //!
+//! ## 使い方
+//! ```
+//! # use rust_lib_for_comp::data_structure::wavelet_matrix::*;
+//! let src = vec![5, 7, 3, 4, 2, 9];
+//! let wm = WaveletMatrix::from(src.clone());
+//! src.iter()
+//!     .enumerate()
+//!     .for_each(|(i, &src)| assert_eq!(src, wm.access(i)));
+//! ```
+//!
 //! ## dependencies
 //! [完備辞書](crate::data_structure::succinct_indexable_dictionaries)
 //!
@@ -14,7 +24,7 @@
 use crate::data_structure::succinct_indexable_dictionaries::{SIDBuilder, SID};
 use crate::prelude::*;
 
-#[snippet(name = "wavelet-matrix", doc-hidden)]
+#[snippet(name = "wavelet-matrix", doc_hidden)]
 pub struct WaveletMatrix {
     depth: usize,
     _size: usize,
@@ -22,7 +32,7 @@ pub struct WaveletMatrix {
     mid: Vec<usize>,
 }
 
-#[snippet(name = "wavelet-matrix", doc-hidden)]
+#[snippet(name = "wavelet-matrix", doc_hidden)]
 impl From<Vec<u64>> for WaveletMatrix {
     fn from(mut src: Vec<u64>) -> Self {
         let size = src.len();
@@ -60,7 +70,7 @@ impl From<Vec<u64>> for WaveletMatrix {
     }
 }
 
-#[snippet(name = "wavelet-matrix", doc-hidden)]
+#[snippet(name = "wavelet-matrix", doc_hidden)]
 impl WaveletMatrix {
     ///
     /// ## 計算量
@@ -146,19 +156,5 @@ impl WaveletMatrix {
         } else {
             Some(self.kth_smallest(range, cnt))
         }
-    }
-}
-
-#[cfg(test)]
-mod test {
-    use super::*;
-
-    #[test]
-    fn test() {
-        let src = vec![5, 7, 3, 4, 2, 9];
-        let wm = WaveletMatrix::from(src.clone());
-        src.iter()
-            .enumerate()
-            .for_each(|(i, &src)| assert_eq!(src, wm.access(i)));
     }
 }

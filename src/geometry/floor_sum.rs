@@ -4,7 +4,7 @@
 //! $`O( \log \max_{A, M})`$
 use crate::prelude::*;
 
-#[snippet(name = "floor-sum", doc-hidden)]
+#[snippet(name = "floor-sum", doc_hidden)]
 pub fn floor_sum(n: i64, m: i64, mut a: i64, mut b: i64) -> i64 {
     let mut ans = 0;
     if a >= m {

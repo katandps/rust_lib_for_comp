@@ -1,11 +1,31 @@
 //! # ポテンシャル付きUnionFindTree
 //! アーベル群の値をポテンシャルとして、頂点間のポテンシャルを管理する
+//!
+//! ## 使い方
+//! ```
+//! use rust_lib_for_comp::algebra::AbelianGroup;
+//! # use rust_lib_for_comp::data_structure::weighted_union_find::*;
+//! # use rust_lib_for_comp::algebra::binary_operation::addition::*;
+//! let n = 5;
+//! let mut wuf = WeightedUnionFind::<Addition<i64>>::new(n);
+//! wuf.unite(1, 2, 1);
+//! assert_eq!(1, wuf.diff(1, 2));
+//! wuf.unite(1, 3, 2);
+//! assert_eq!(1, wuf.diff(2, 3));
+//! assert_eq!(2, wuf.diff(1, 3));
+//! assert_eq!(-2, wuf.diff(3, 1));
+//! assert_eq!(-1, wuf.diff(2, 1));
+//! ```
+//!
+//! ## dependency
+//! [algebra](AbelianGroup)
+//!
 //! ## verify
 //! [ARC90_D](https://atcoder.jp/contests/arc090/submissions/26701502)
 use crate::algebra::AbelianGroup;
 use crate::prelude::*;
 
-#[snippet(name = "weighted-union-find-tree", doc-hidden)]
+#[snippet(name = "weighted-union-find-tree", doc_hidden)]
 #[derive(Clone, Debug)]
 pub struct WeightedUnionFind<A: AbelianGroup> {
     parent: Vec<usize>,
@@ -13,7 +33,7 @@ pub struct WeightedUnionFind<A: AbelianGroup> {
     weight_diff: Vec<A::M>,
 }
 
-#[snippet(name = "weighted-union-find-tree", doc-hidden)]
+#[snippet(name = "weighted-union-find-tree", doc_hidden)]
 impl<A: AbelianGroup> WeightedUnionFind<A> {
     pub fn new(n: usize) -> Self {
         let parent = (0..n + 1).collect::<Vec<_>>();
@@ -73,24 +93,5 @@ impl<A: AbelianGroup> WeightedUnionFind<A> {
     pub fn diff(&mut self, x: usize, y: usize) -> A::M {
         assert_eq!(self.root(x), self.root(y));
         A::op(&self.weight(y), &A::inv(&self.weight(x)))
-    }
-}
-
-#[cfg(test)]
-mod test {
-    use super::*;
-    use crate::algebra::binary_operation::addition::Addition;
-
-    #[test]
-    fn test() {
-        let n = 5;
-        let mut wuf = WeightedUnionFind::<Addition<i64>>::new(n);
-        wuf.unite(1, 2, 1);
-        assert_eq!(1, wuf.diff(1, 2));
-        wuf.unite(1, 3, 2);
-        assert_eq!(1, wuf.diff(2, 3));
-        assert_eq!(2, wuf.diff(1, 3));
-        assert_eq!(-2, wuf.diff(3, 1));
-        assert_eq!(-1, wuf.diff(2, 1));
     }
 }

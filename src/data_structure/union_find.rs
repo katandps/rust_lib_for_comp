@@ -7,7 +7,7 @@
 
 use crate::prelude::*;
 
-#[snippet(name = "union-find-tree", doc-hidden)]
+#[snippet(name = "union-find-tree", doc_hidden)]
 #[derive(Clone)]
 pub struct UnionFind {
     parent: Vec<usize>,
@@ -15,7 +15,7 @@ pub struct UnionFind {
     size: Vec<usize>,
 }
 
-#[snippet(name = "union-find-tree", doc-hidden)]
+#[snippet(name = "union-find-tree", doc_hidden)]
 impl UnionFind {
     pub fn new(n: usize) -> Self {
         let parent = (0..n + 1).collect::<Vec<_>>();
