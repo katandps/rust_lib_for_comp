@@ -1,4 +1,4 @@
-SNIPPETS_FILE := ../rust_cp_workspace/.vscode/libraries.code-snippets
+SNIPPETS_FILE := .vscode/libraries.code-snippets
 KATEX_FLAG := "--html-in-header katex.html"
 
 fmt:
