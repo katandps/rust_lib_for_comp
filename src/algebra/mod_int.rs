@@ -63,7 +63,10 @@ impl<M: Mod> ModInt<M> {
             _p: PhantomData,
         }
     }
+
     pub fn pow(mut self, mut e: i64) -> ModInt<M> {
+        let m = e < 0;
+        e = e.abs();
         let mut result = Self::new(1);
         while e > 0 {
             if e & 1 == 1 {
@@ -72,8 +75,13 @@ impl<M: Mod> ModInt<M> {
             e >>= 1;
             self *= self.n;
         }
-        result
+        if m {
+            Self::new(1) / result
+        } else {
+            result
+        }
     }
+
     pub fn get(self) -> i64 {
         self.n
     }
@@ -269,6 +277,22 @@ impl<M: Mod> From<ModInt<M>> for i64 {
 impl<M: Mod> Zero for ModInt<M> {
     fn zero() -> Self {
         Self::new(0)
+    }
+}
+
+#[snippet(name = "pow-table", doc_hidden)]
+#[derive(Clone, Debug, Default)]
+/// # 2のべき乗を都度生成するDefaultDict
+pub struct PowTable(HashMap<i64, Mi>);
+impl PowTable {
+    pub fn pow(&mut self, e: i64) -> Mi {
+        if let Some(&r) = self.0.get(&e) {
+            return r;
+        } else {
+            let r = mi(2).pow(e);
+            self.0.insert(e, r);
+            return r;
+        }
     }
 }
 
