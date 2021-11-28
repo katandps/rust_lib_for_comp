@@ -286,13 +286,7 @@ impl<M: Mod> Zero for ModInt<M> {
 pub struct PowTable(HashMap<i64, Mi>);
 impl PowTable {
     pub fn pow(&mut self, e: i64) -> Mi {
-        if let Some(&r) = self.0.get(&e) {
-            return r;
-        } else {
-            let r = mi(2).pow(e);
-            self.0.insert(e, r);
-            return r;
-        }
+        *self.0.entry(e).or_insert_with(|| mi(2).pow(e))
     }
 }
 
