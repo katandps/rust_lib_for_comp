@@ -8,6 +8,8 @@ use crate::prelude::*;
 
 #[snippet(name = "addition", doc_hidden)]
 pub struct Addition<S>(Infallible, PhantomData<fn() -> S>);
+
+#[snippet(name = "addition", doc_hidden)]
 impl<S: Clone + Add<Output = S> + PartialEq> Magma for Addition<S> {
     type M = S;
     fn op(x: &S, y: &S) -> S {

@@ -4,6 +4,8 @@ use crate::prelude::*;
 
 #[snippet(name = "bit-or-operation", doc_hidden)]
 pub struct BitOrOperation<S>(Infallible, PhantomData<fn() -> S>);
+
+#[snippet(name = "bit-or-operation", doc_hidden)]
 impl<S: Clone + BitOr<Output = S> + PartialEq> Magma for BitOrOperation<S> {
     type M = S;
     fn op(x: &Self::M, y: &Self::M) -> Self::M {
