@@ -6,7 +6,7 @@
 //!
 //! ```
 //! # use rust_lib_for_comp::util::reader::*;
-//! let mut reader = Reader::new(&b"-123 456.7 12345\nhogehoge\r123 456  789 012  \n 345 678\n"[..]);
+//! let mut reader = Reader::new(|| &b"-123 456.7 12345\nhogehoge\r123 456  789 012  \n 345 678\n"[..]);
 //! assert_eq!(-123, reader.v());
 //! assert_eq!(456.7, reader.v());
 //! assert_eq!(12345, reader.v());
@@ -16,31 +16,33 @@
 use crate::prelude::*;
 
 #[snippet(name = "template", doc_hidden)]
-pub struct Reader<R> {
-    reader: R,
+pub struct Reader<F> {
+    init: F,
     buf: VecDeque<String>,
 }
 
 #[snippet(name = "template", doc_hidden)]
-impl<R: Read> Iterator for Reader<R> {
+impl<R: BufRead, F: FnMut() -> R> Iterator for Reader<F> {
     type Item = String;
 
     fn next(&mut self) -> Option<String> {
         if self.buf.is_empty() {
-            let mut buf = Vec::new();
-            self.reader.read_to_end(&mut buf).unwrap();
-            let s = from_utf8(&buf).expect("Not UTF-8 format input.");
-            self.buf = s.split_whitespace().map(ToString::to_string).collect();
+            let reader = (self.init)();
+            for l in reader.lines().flatten() {
+                self.buf
+                    .append(&mut l.split_whitespace().map(ToString::to_string).collect());
+            }
         }
         self.buf.pop_front()
     }
 }
 
 #[snippet(name = "template", doc_hidden)]
-impl<R: Read> Reader<R> {
-    pub fn new(reader: R) -> Reader<R> {
+
+impl<R: BufRead, F: FnMut() -> R> Reader<F> {
+    pub fn new(init: F) -> Self {
         let buf = VecDeque::new();
-        Reader { reader, buf }
+        Reader { init, buf }
     }
 
     pub fn v<T: FromStr>(&mut self) -> T {
@@ -121,42 +123,39 @@ impl<R: Read> Reader<R> {
 mod tests {
     use super::*;
     use itertools::Itertools;
+    use std::io::BufReader;
 
     #[test]
     fn edge_cases() {
         {
-            let mut reader = Reader::new(&b"8\n"[..]);
+            let mut reader = Reader::new(|| &b"8\n"[..]);
             assert_eq!(8u32, reader.v());
         }
         {
-            let mut reader = Reader::new(&b"\n9\n"[..]);
+            let mut reader = Reader::new(|| &b"\n9\n"[..]);
             assert_eq!(9i32, reader.v());
-        }
-        {
-            let mut reader = Reader::new(&b"\n\n10\n11\n"[..]);
-            assert_eq!(10u8, reader.v());
-            assert_eq!(11u8, reader.v());
         }
     }
 
     #[test]
     fn map() {
         {
-            let data = vec!["...#..", ".###..", "....##", ""];
-            let s = data.iter().join("\n");
-            let mut reader = Reader::new(s.as_bytes());
+            let data = vec!["...#..\n", ".###..\n", "....##\n"];
+            let mut iter = data.iter();
+            let mut reader = Reader::new(|| BufReader::new(iter.next().unwrap().as_bytes()));
             let res = reader.char_map(3);
+
             for i in 0..3 {
                 let v = data[i].chars().collect_vec();
                 for j in 0..6 {
-                    assert_eq!(v[j], res[i][j]);
+                    assert_eq!(v[j], res[i][j], "i:{} j:{}", i, j);
                 }
             }
         }
         {
             let data = vec!["S..#..", ".###..", "...G##", ""];
-            let s = data.iter().join("\n");
-            let mut reader = Reader::new(s.as_bytes());
+            let mut iter = data.iter();
+            let mut reader = Reader::new(|| BufReader::new(iter.next().unwrap().as_bytes()));
             let res = reader.bool_map(3, '#');
             for i in 0..3 {
                 let v = data[i].chars().collect_vec();
@@ -169,7 +168,7 @@ mod tests {
 
     #[test]
     fn digits() {
-        let mut reader = Reader::new(&b"123456\n"[..]);
+        let mut reader = Reader::new(|| &b"123456\n"[..]);
         let res = reader.digits();
         assert_eq!(res, vec![1, 2, 3, 4, 5, 6]);
     }

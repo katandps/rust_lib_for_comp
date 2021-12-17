@@ -8,11 +8,11 @@ use crate::util::{reader::Reader, writer::Writer};
 pub fn main() {
     let stdin = stdin();
     let stdout = stdout();
-    solve(Reader::new(stdin.lock()), Writer::new(stdout.lock()));
+    solve(Reader::new(|| stdin.lock()), Writer::new(stdout.lock()));
 }
 
 #[snippet(name = "solver", doc_hidden)]
-pub fn solve<R: BufRead, W: Write>(mut reader: Reader<R>, mut writer: Writer<W>) {
+pub fn solve<R: BufRead, W: Write, F: FnMut() -> R>(mut reader: Reader<F>, mut writer: Writer<W>) {
     let n: usize = reader.v();
     writer.ln(n);
 }

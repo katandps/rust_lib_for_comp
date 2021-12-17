@@ -47,4 +47,11 @@ impl<W: Write> Writer<W> {
         });
         writeln!(self.writer).expect("Failed to write.");
     }
+
+    /// バッファをクリアする
+    ///
+    /// 出力の後、さらに入力を要求する場合に使用する
+    pub fn flush(&mut self) {
+        let _ = self.writer.flush();
+    }
 }
