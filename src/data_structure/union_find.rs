@@ -46,11 +46,14 @@ impl UnionFind {
         self.root(x) == self.root(y)
     }
 
-    pub fn unite(&mut self, x: usize, y: usize) {
+    /// # 併合する
+    /// ## 返り値
+    /// 新たに併合したときtrue 何もしなかった場合はfalse
+    pub fn unite(&mut self, x: usize, y: usize) -> bool {
         let mut x = self.root(x);
         let mut y = self.root(y);
         if x == y {
-            return;
+            return false;
         }
         if self.rank(x) < self.rank(y) {
             swap(&mut x, &mut y);
@@ -60,6 +63,7 @@ impl UnionFind {
         }
         self.parent[x] = y;
         self.size[y] += self.size[x];
+        true
     }
 }
 
