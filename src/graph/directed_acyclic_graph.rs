@@ -1,4 +1,5 @@
-//! 有向非巡回グラフ(DAG)
+//! # 有向非巡回グラフ(DAG)
+//! グラフにサイクルがない場合に使用できるアルゴリズム群
 
 use crate::graph::GraphTrait;
 use crate::prelude::*;
@@ -8,8 +9,14 @@ pub struct Dag;
 
 #[snippet(name = "directed-acyclic-graph", doc_hidden)]
 impl Dag {
-    /// 頂点をトポロジカルソートして返す
-    /// グラフがDAGの場合に使用可
+    /// # トポロジカルソート
+    /// DAGをトポロジカルソートし、結果の頂点列を返す
+    ///
+    /// ## 計算量
+    /// $`O(N)`$
+    ///
+    /// ## 備考
+    /// DAGでない場合はグラフの頂点数と頂点列のサイズが一致しない
     pub fn topological_sort<W, G>(g: &G) -> Vec<usize>
     where
         G: GraphTrait<Weight = W>,
@@ -36,8 +43,8 @@ impl Dag {
         ret
     }
 
-    /// lを始点とする各点までの経路数を求める
-    /// グラフがDAGの場合に使用可
+    /// ## 経路の数え上げ
+    /// lを始点とする各点までの経路数をDPで求める
     pub fn path<W, G>(g: &G, l: usize) -> Vec<usize>
     where
         G: GraphTrait<Weight = W>,

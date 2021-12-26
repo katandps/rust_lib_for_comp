@@ -51,7 +51,7 @@ where
 #[cfg(test)]
 mod test {
     use super::*;
-    use crate::graph::Graph;
+    use crate::graph::adjacency_list::Graph;
 
     #[test]
     fn test() {

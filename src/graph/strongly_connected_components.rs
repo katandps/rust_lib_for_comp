@@ -1,6 +1,6 @@
 //! 強連結成分分解(SCC)
-use super::Graph;
 use crate::algebra::One;
+use crate::graph::adjacency_list::Graph;
 use crate::graph::GraphTrait;
 use crate::prelude::*;
 

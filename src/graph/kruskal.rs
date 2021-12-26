@@ -5,7 +5,7 @@
 //! ## 計算量
 //! 頂点数をV、辺数をEとすると $` E \log E`$
 //! ```
-//! use rust_lib_for_comp::graph::Graph;
+//! use rust_lib_for_comp::graph::adjacency_list::Graph;
 //! use rust_lib_for_comp::graph::kruskal::Kruskal;
 //!
 //! let graph = Graph::from(&vec![

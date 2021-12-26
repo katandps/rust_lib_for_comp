@@ -5,7 +5,7 @@
 //!
 //! 二分ヒープによる実装なので頂点数をV、辺数をEとして$` O(E \log V)`$
 //! ```
-//! use rust_lib_for_comp::graph::Graph;
+//! use rust_lib_for_comp::graph::adjacency_list::Graph;
 //! use rust_lib_for_comp::graph::prim::Prim;
 //!
 //! let graph = Graph::from(&vec![

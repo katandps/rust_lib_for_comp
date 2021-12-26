@@ -1,8 +1,10 @@
 //! # グラフ
-//!
+//! 汎用的なグラフのTrait及び辺の構造体
 
 use crate::prelude::*;
 
+pub mod adjacency_list;
+pub mod adjacency_matrix;
 pub mod bellman_ford;
 pub mod bipartite_graph;
 pub mod dijkstra;
@@ -13,11 +15,12 @@ pub mod lowest_common_ancestor;
 pub mod prim;
 pub mod retrograde_analysis;
 pub mod strongly_connected_components;
+pub mod tree;
 pub mod warshall_floyd;
 
-#[snippet(name = "graph", doc_hidden)]
 /// Edge 辺
 /// W はWeightで各処理に対応するTraitを実装する
+#[snippet(name = "graph", doc_hidden)]
 #[derive(Copy, Clone, Eq, Default)]
 pub struct Edge<W> {
     pub src: usize,
@@ -78,83 +81,5 @@ pub trait GraphTrait {
         (0..self.size())
             .map(|src| self.edges(src).len() as i32)
             .collect()
-    }
-}
-
-#[snippet(name = "graph", doc_hidden)]
-impl<W: Clone> GraphTrait for Graph<W> {
-    type Weight = W;
-    fn size(&self) -> usize {
-        self.n
-    }
-    fn edges(&self, src: usize) -> Vec<Edge<W>> {
-        self.edges[src].clone()
-    }
-    fn rev_edges(&self, src: usize) -> Vec<Edge<W>> {
-        self.rev_edges[src].clone()
-    }
-}
-
-#[snippet(name = "graph", doc_hidden)]
-/// 辺の情報を使用してグラフの問題を解くためのライブラリ
-pub struct Graph<W> {
-    pub n: usize,
-    pub edges: Vec<Vec<Edge<W>>>,
-    pub rev_edges: Vec<Vec<Edge<W>>>,
-}
-
-#[snippet(name = "graph", doc_hidden)]
-impl<W: Clone> Clone for Graph<W> {
-    fn clone(&self) -> Self {
-        Self {
-            n: self.n,
-            edges: self.edges.clone(),
-            rev_edges: self.rev_edges.clone(),
-        }
-    }
-}
-
-#[snippet(name = "graph", doc_hidden)]
-/// i64の隣接行列からグラフを生成する O(N^2)
-impl From<&Vec<Vec<i64>>> for Graph<i64> {
-    fn from(w: &Vec<Vec<i64>>) -> Self {
-        let n = w.len();
-        let mut ret = Self::new(n);
-        for i in 0..n {
-            assert_eq!(n, w[i].len());
-            for j in i + 1..n {
-                if w[i][j] == -1 {
-                    continue;
-                }
-                ret.add_edge(i, j, w[i as usize][j as usize]);
-                ret.add_edge(j, i, w[j as usize][i as usize]);
-            }
-        }
-        ret
-    }
-}
-
-#[snippet(name = "graph", doc_hidden)]
-impl<W: Clone> Graph<W> {
-    /// n: 頂点数
-    pub fn new(n: usize) -> Self {
-        Self {
-            n,
-            edges: vec![Vec::new(); n],
-            rev_edges: vec![Vec::new(); n],
-        }
-    }
-    /// 相互に行き来できる辺をつける
-    pub fn add_edge(&mut self, a: usize, b: usize, w: W) {
-        self.edges[a].push(Edge::new(a, b, w.clone()));
-        self.edges[b].push(Edge::new(b, a, w.clone()));
-        self.rev_edges[a].push(Edge::new(a, b, w.clone()));
-        self.rev_edges[b].push(Edge::new(b, a, w));
-    }
-
-    /// 1方向にのみ移動できる辺をつける
-    pub fn add_arc(&mut self, a: usize, b: usize, w: W) {
-        self.edges[a].push(Edge::new(a, b, w.clone()));
-        self.rev_edges[b].push(Edge::new(b, a, w));
     }
 }

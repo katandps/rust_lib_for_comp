@@ -15,7 +15,7 @@ macro_rules! min {
 /// ## 計算量
 /// 頂点数をNとしてO(N^3)
 /// ```
-/// use rust_lib_for_comp::graph::Graph;
+/// use rust_lib_for_comp::graph::adjacency_list::Graph;
 /// use rust_lib_for_comp::graph::warshall_floyd::WarshallFloyd;
 ///
 /// let mut graph = Graph::new(5);
