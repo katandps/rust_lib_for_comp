@@ -3,14 +3,14 @@
 use crate::graph::{Edge, GraphTrait};
 use crate::prelude::*;
 
-#[snippet(name = "graph-adjacency_list", doc_hidden)]
+#[snippet(name = "graph-adjacency-list", doc_hidden)]
 pub struct Graph<W> {
     pub n: usize,
     pub edges: Vec<Vec<Edge<W>>>,
     pub rev_edges: Vec<Vec<Edge<W>>>,
 }
 
-#[snippet(name = "graph", doc_hidden)]
+#[snippet(name = "graph-adjacency-list", doc_hidden)]
 impl<W: Clone> GraphTrait for Graph<W> {
     type Weight = W;
     fn size(&self) -> usize {
@@ -24,7 +24,7 @@ impl<W: Clone> GraphTrait for Graph<W> {
     }
 }
 
-#[snippet(name = "graph-adjacency_list", doc_hidden)]
+#[snippet(name = "graph-adjacency-list", doc_hidden)]
 impl<W: Clone> Clone for Graph<W> {
     fn clone(&self) -> Self {
         Self {
@@ -35,7 +35,7 @@ impl<W: Clone> Clone for Graph<W> {
     }
 }
 
-#[snippet(name = "graph-adjacency_list", doc_hidden)]
+#[snippet(name = "graph-adjacency-list", doc_hidden)]
 impl<W: Clone> Graph<W> {
     /// n: 頂点数
     pub fn new(n: usize) -> Self {
@@ -60,7 +60,7 @@ impl<W: Clone> Graph<W> {
     }
 }
 
-#[snippet(name = "graph-adjacency_list", doc_hidden)]
+#[snippet(name = "graph-adjacency-list", doc_hidden)]
 impl<W: Display> Debug for Graph<W> {
     fn fmt(&self, f: &mut Formatter<'_>) -> std::fmt::Result {
         writeln!(f, "{{").unwrap();

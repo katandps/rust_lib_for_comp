@@ -3,7 +3,7 @@
 use crate::graph::adjacency_list::Graph;
 use crate::prelude::*;
 
-#[snippet(name = "graph-adjacency_matrix", doc_hidden)]
+#[snippet(name = "graph-adjacency-matrix", doc_hidden)]
 /// i64の隣接行列からグラフを生成する O(N^2)
 impl From<&Vec<Vec<i64>>> for Graph<i64> {
     fn from(w: &Vec<Vec<i64>>) -> Self {
