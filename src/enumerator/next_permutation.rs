@@ -29,6 +29,8 @@ impl<T: Clone + PartialOrd> Iterator for NextPermutation<T> {
                 if i == 0 {
                     self.0 = None
                 }
+            } else {
+                self.0 = None
             }
         } else {
             self.0 = None
