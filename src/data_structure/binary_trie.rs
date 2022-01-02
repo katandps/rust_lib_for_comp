@@ -9,6 +9,7 @@ type TrieValue = u64;
 #[derive(Clone, Default)]
 pub struct BinaryTrie {
     root: TrieNode,
+    xor_val: u64,
 }
 
 #[snippet(name = "binary-trie", doc_hidden)]
@@ -37,21 +38,18 @@ impl BinaryTrie {
         self.root.sub(v, Self::BIT_LEN - 1);
     }
 
-    /// biasとXORをとったときに最小値となるような値を取得する
+    /// xor_valとXORをとったときに最小値となるような値を取得する
     /// ## 計算量
     /// $`O(BIT\_LEN)`$
-    pub fn min_element(&self, bias: Option<TrieValue>) -> TrieValue {
-        self.root.get_min(bias.unwrap_or(0), Self::BIT_LEN - 1)
+    pub fn min_element(&self) -> TrieValue {
+        self.root.get_min(self.xor_val, Self::BIT_LEN - 1)
     }
 
     /// biasとXORをとったときに最大値となるような値を取得する
     /// ## 計算量
     /// $`O(BIT\_LEN)`$
-    pub fn max_element(&self, bias: Option<TrieValue>) -> TrieValue {
-        self.root.get_min(
-            bias.map_or((1 << Self::BIT_LEN) - 1, |b| b ^ ((1 << Self::BIT_LEN) - 1)),
-            Self::BIT_LEN - 1,
-        )
+    pub fn max_element(&self) -> TrieValue {
+        self.root.get_min(self.rev_xor_val(), Self::BIT_LEN - 1)
     }
 
     /// 小さい方からk番目の値を取得する
@@ -60,6 +58,15 @@ impl BinaryTrie {
     pub fn nth(&self, k: usize) -> TrieValue {
         assert!(k <= self.size());
         self.root.get(k, Self::BIT_LEN - 1)
+    }
+
+    /// # bias変更
+    pub fn set_xor_val(&mut self, val: u64) {
+        self.xor_val = val
+    }
+
+    fn rev_xor_val(&self) -> u64 {
+        self.xor_val ^ ((1 << Self::BIT_LEN) - 1)
     }
 }
 
@@ -162,8 +169,8 @@ pub mod test {
         assert_eq!(7, trie.nth(2));
         assert_eq!(8, trie.nth(3));
         assert_eq!(9, trie.nth(4));
-        assert_eq!(5, trie.min_element(None));
-        assert_eq!(9, trie.max_element(None));
+        assert_eq!(5, trie.min_element());
+        assert_eq!(9, trie.max_element());
 
         trie.erase(5);
         trie.erase(7);
