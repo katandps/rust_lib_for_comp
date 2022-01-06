@@ -54,8 +54,8 @@ impl<A: AbelianGroup> BinaryIndexedTree<A> {
     }
 
     /// sum of range
-    pub fn fold<R: RangeBounds<usize>>(&self, range: &R) -> A::M {
-        let (a, b) = to_lr(range, self.n);
+    pub fn fold<R: RangeBounds<usize>>(&self, range: R) -> A::M {
+        let (a, b) = to_lr(&range, self.n);
         if b == 0 {
             A::unit()
         } else if a == 0 {
@@ -73,7 +73,7 @@ where
 {
     fn fmt(&self, f: &mut Formatter<'_>) -> std::fmt::Result {
         let v = (0..self.n)
-            .map(|i| format!("{:?}", self.fold(&(i..=i))))
+            .map(|i| format!("{:?}", self.fold(i..=i)))
             .collect::<Vec<_>>()
             .join(" ");
         let v2 = (0..self.n)
