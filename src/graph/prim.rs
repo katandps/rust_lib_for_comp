@@ -19,12 +19,12 @@
 //! ```
 //!
 use crate::algebra::Zero;
-use crate::graph::{Edge, GraphTrait};
+use crate::graph::GraphTrait;
 use crate::prelude::*;
 
 #[snippet(name = "prim", doc_hidden)]
 pub struct Prim<W> {
-    tree: Vec<Edge<W>>,
+    tree: Vec<(usize, usize, W)>,
     sum: W,
 }
 
@@ -40,19 +40,19 @@ where
         let mut sum = W::zero();
         let mut visits = vec![false; graph.size()];
         let mut q = BinaryHeap::new();
-        q.push(Reverse(Edge::new(graph.size(), start, W::zero())));
-        while let Some(Reverse(edge)) = q.pop() {
-            if visits[edge.dst as usize] {
+        q.push((Reverse(W::zero()), graph.size(), start));
+        while let Some((Reverse(weight), src, dst)) = q.pop() {
+            if visits[dst] {
                 continue;
             }
-            visits[edge.dst as usize] = true;
-            sum += edge.weight;
-            if edge.src != graph.size() {
-                tree.push(edge)
+            visits[dst] = true;
+            sum += weight;
+            if src != graph.size() {
+                tree.push((src, dst, weight))
             }
-            for edge in graph.edges(edge.dst) {
-                if !visits[edge.dst as usize] {
-                    q.push(Reverse(edge));
+            for (dst2, weight2) in graph.edges(dst) {
+                if !visits[dst2] {
+                    q.push((Reverse(weight2), dst, dst2));
                 }
             }
         }
@@ -61,8 +61,10 @@ where
 }
 
 #[snippet(name = "prim", doc_hidden)]
+/// # 最小全域木を返す
+/// Vec<(Src, Dst, Weight)> を返す
 impl<W> Prim<W> {
-    pub fn tree(&self) -> &Vec<Edge<W>> {
+    pub fn tree(&self) -> &Vec<(usize, usize, W)> {
         &self.tree
     }
 }

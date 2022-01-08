@@ -1,13 +1,15 @@
 //! # 隣接リスト
 
-use crate::graph::{Edge, GraphTrait};
+use crate::graph::GraphTrait;
 use crate::prelude::*;
 
 #[snippet(name = "graph-adjacency-list", doc_hidden)]
 pub struct Graph<W> {
     pub n: usize,
-    pub edges: Vec<Vec<Edge<W>>>,
-    pub rev_edges: Vec<Vec<Edge<W>>>,
+    /// edges[src][i] = (dst, weight)
+    pub edges: Vec<Vec<(usize, W)>>,
+    /// edges[dst][i] = (src, weight)
+    pub rev_edges: Vec<Vec<(usize, W)>>,
 }
 
 #[snippet(name = "graph-adjacency-list", doc_hidden)]
@@ -16,10 +18,10 @@ impl<W: Clone> GraphTrait for Graph<W> {
     fn size(&self) -> usize {
         self.n
     }
-    fn edges(&self, src: usize) -> Vec<Edge<W>> {
+    fn edges(&self, src: usize) -> Vec<(usize, W)> {
         self.edges[src].clone()
     }
-    fn rev_edges(&self, src: usize) -> Vec<Edge<W>> {
+    fn rev_edges(&self, src: usize) -> Vec<(usize, W)> {
         self.rev_edges[src].clone()
     }
 }
@@ -46,22 +48,22 @@ impl<W: Clone> Graph<W> {
         }
     }
     /// 相互に行き来できる辺をつける
-    pub fn add_edge(&mut self, a: usize, b: usize, w: W) {
-        self.edges[a].push(Edge::new(a, b, w.clone()));
-        self.edges[b].push(Edge::new(b, a, w.clone()));
-        self.rev_edges[a].push(Edge::new(a, b, w.clone()));
-        self.rev_edges[b].push(Edge::new(b, a, w));
+    pub fn add_edge(&mut self, src: usize, dst: usize, w: W) {
+        self.edges[src].push((dst, w.clone()));
+        self.edges[dst].push((src, w.clone()));
+        self.rev_edges[src].push((dst, w.clone()));
+        self.rev_edges[dst].push((src, w));
     }
 
     /// 1方向にのみ移動できる辺をつける
-    pub fn add_arc(&mut self, a: usize, b: usize, w: W) {
-        self.edges[a].push(Edge::new(a, b, w.clone()));
-        self.rev_edges[b].push(Edge::new(b, a, w));
+    pub fn add_arc(&mut self, src: usize, dst: usize, w: W) {
+        self.edges[src].push((dst, w.clone()));
+        self.rev_edges[dst].push((src, w));
     }
 }
 
 #[snippet(name = "graph-adjacency-list", doc_hidden)]
-impl<W: Display> Debug for Graph<W> {
+impl<W: Debug> Debug for Graph<W> {
     fn fmt(&self, f: &mut Formatter<'_>) -> std::fmt::Result {
         writeln!(f, "{{").unwrap();
         for i in 0..self.n {

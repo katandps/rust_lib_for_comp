@@ -25,11 +25,11 @@ pub fn rank<G: GraphTrait>(g: &G) -> Vec<i64> {
 
 #[snippet(name = "tree-graph", doc_hidden)]
 fn rank_dfs<G: GraphTrait>(cur: usize, par: usize, g: &G, rank: &mut Vec<Option<i64>>) {
-    for e in g.edges(cur) {
-        if e.dst == par {
+    for (dst, _weight) in g.edges(cur) {
+        if dst == par {
             continue;
         }
-        rank[e.dst] = rank[e.src].map(|k| k + 1);
-        rank_dfs(e.dst, e.src, g, rank);
+        rank[dst] = rank[cur].map(|k| k + 1);
+        rank_dfs(dst, cur, g, rank);
     }
 }

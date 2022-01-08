@@ -21,12 +21,11 @@
 use super::GraphTrait;
 use crate::algebra::Zero;
 use crate::data_structure::union_find::UnionFind;
-use crate::graph::Edge;
 use crate::prelude::*;
 
 #[snippet(name = "kruskal", doc_hidden)]
 pub struct Kruskal<W> {
-    tree: Vec<Edge<W>>,
+    tree: Vec<(usize, usize, W)>,
     sum: W,
 }
 
@@ -38,20 +37,24 @@ where
 {
     fn from(graph: &G) -> Self {
         let mut edges = Vec::new();
-        for i in 0..graph.size() {
-            for e in graph.edges(i) {
-                edges.push(e);
+        for src in 0..graph.size() {
+            for (dst, weight) in graph.edges(src) {
+                edges.push((src, dst, weight));
             }
         }
-        edges.sort_by(|a, b| a.partial_cmp(b).expect("辺のweightがソートできません"));
+        edges.sort_by(|a, b| {
+            (a.2)
+                .partial_cmp(&b.2)
+                .expect("辺のweightがソートできません")
+        });
         let mut tree = Vec::new();
         let mut sum = W::zero();
         let mut uf = UnionFind::new(graph.size());
-        for edge in edges {
-            if uf.root(edge.src) != uf.root(edge.dst) {
-                uf.unite(edge.src, edge.dst);
-                sum += edge.weight;
-                tree.push(edge);
+        for (src, dst, weight) in edges {
+            if uf.root(src) != uf.root(dst) {
+                uf.unite(src, dst);
+                sum += weight;
+                tree.push((src, dst, weight));
             }
         }
         Self { tree, sum }
@@ -59,8 +62,10 @@ where
 }
 
 #[snippet(name = "kruskal", doc_hidden)]
+/// # 最小全域木を返す
+/// Vec<(Src, Dst, Weight)> を返す
 impl<W> Kruskal<W> {
-    pub fn tree(&self) -> &Vec<Edge<W>> {
+    pub fn tree(&self) -> &Vec<(usize, usize, W)> {
         &self.tree
     }
 }

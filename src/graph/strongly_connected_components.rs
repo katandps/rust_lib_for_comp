@@ -50,8 +50,8 @@ where
         }
 
         for src in 0..g.size() {
-            for edge in &g.edges(src) {
-                let (s, t) = (group[edge.src], group[edge.dst]);
+            for (dst, _weight) in g.edges(src) {
+                let (s, t) = (group[src], group[dst]);
                 if s != t {
                     graph.add_arc(s, t, W::one());
                 }
@@ -72,8 +72,8 @@ where
             return;
         }
         rest.remove(&src);
-        for edge in &g.edges(src) {
-            Self::dfs(g, edge.dst, back_queue, rest);
+        for (dst, _weight) in g.edges(src) {
+            Self::dfs(g, dst, back_queue, rest);
         }
         back_queue.push_front(src);
     }
@@ -83,8 +83,8 @@ where
             return;
         }
         result[src] = Some(flag);
-        for edge in &g.rev_edges(src) {
-            Self::dfs2(g, edge.dst, flag, result);
+        for (dst, _weight) in g.rev_edges(src) {
+            Self::dfs2(g, dst, flag, result);
         }
     }
 }

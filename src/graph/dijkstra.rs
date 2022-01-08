@@ -29,11 +29,11 @@ impl<W: Copy + BoundedAbove + Add<Output = W> + PartialEq + Ord + Zero> Dijkstra
             if dist[src] != d {
                 continue;
             }
-            g.edges(src).iter().for_each(|e| {
-                if dist[e.dst] > dist[src] + e.weight {
-                    dist[e.dst] = dist[src] + e.weight;
-                    prev[e.dst] = src;
-                    heap.push((Reverse(dist[e.dst]), e.dst))
+            g.edges(src).into_iter().for_each(|(dst, weight)| {
+                if dist[dst] > dist[src] + weight {
+                    dist[dst] = dist[src] + weight;
+                    prev[dst] = src;
+                    heap.push((Reverse(dist[dst]), dst))
                 }
             });
         }

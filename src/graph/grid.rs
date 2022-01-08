@@ -1,5 +1,5 @@
 //! グリッドグラフ
-use crate::graph::{Edge, GraphTrait};
+use crate::graph::GraphTrait;
 use crate::prelude::*;
 
 #[snippet(name = "grid-graph", doc_hidden)]
@@ -13,42 +13,42 @@ pub struct Grid<W> {
 
 #[snippet(name = "grid-graph", doc_hidden)]
 impl<W: Clone> GraphTrait for Grid<W> {
-    type Weight = W;
+    type Weight = ();
 
     fn size(&self) -> usize {
         self.size
     }
 
-    fn edges(&self, src: usize) -> Vec<Edge<W>> {
-        let mut ret = Vec::new();
+    fn edges(&self, src: usize) -> Vec<(usize, ())> {
+        let mut ret = Vec::with_capacity(4);
         if self.x(src) + 1 < self.w {
-            ret.push(Edge::new(src, src + 1, self.map[src + 1].clone()));
+            ret.push((src + 1, ()));
         }
         if self.y(src) + 1 < self.h {
-            ret.push(Edge::new(src, src + self.w, self.map[src + self.w].clone()));
+            ret.push((src + self.w, ()));
         }
         if self.x(src) > 0 {
-            ret.push(Edge::new(src, src - 1, self.map[src - 1].clone()));
+            ret.push((src - 1, ()));
         }
         if self.y(src) > 0 {
-            ret.push(Edge::new(src, src - self.w, self.map[src - self.w].clone()));
+            ret.push((src - self.w, ()));
         }
         ret
     }
 
-    fn rev_edges(&self, dst: usize) -> Vec<Edge<W>> {
-        let mut ret = Vec::new();
+    fn rev_edges(&self, dst: usize) -> Vec<(usize, ())> {
+        let mut ret = Vec::with_capacity(4);
         if self.x(dst) + 1 < self.w {
-            ret.push(Edge::new(dst, dst + 1, self.map[dst].clone()));
+            ret.push((dst + 1, ()));
         }
         if self.y(dst) + 1 < self.h {
-            ret.push(Edge::new(dst, dst + self.w, self.map[dst].clone()));
+            ret.push((dst + self.w, ()));
         }
         if self.x(dst) > 0 {
-            ret.push(Edge::new(dst, dst - 1, self.map[dst].clone()));
+            ret.push((dst - 1, ()));
         }
         if self.y(dst) > 0 {
-            ret.push(Edge::new(dst, dst - self.w, self.map[dst].clone()));
+            ret.push((dst - self.w, ()));
         }
         ret
     }
@@ -109,11 +109,7 @@ mod test {
         let e = grid.edges(0);
         let e1 = e[0];
         let e2 = e[1];
-        assert_eq!(0, e1.src);
-        assert_eq!(1, e1.dst);
-        assert_eq!(20, e1.weight);
-        assert_eq!(0, e2.src);
-        assert_eq!(3, e2.dst);
-        assert_eq!(40, e2.weight);
+        assert_eq!(1, e1.0);
+        assert_eq!(3, e2.0);
     }
 }

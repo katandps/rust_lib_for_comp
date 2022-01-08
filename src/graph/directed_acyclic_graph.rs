@@ -32,10 +32,10 @@ impl Dag {
 
         let mut ret = Vec::new();
         while let Some(src) = q.pop_front() {
-            g.edges(src).iter().for_each(|e| {
-                deg[e.dst] -= 1;
-                if deg[e.dst] == 0 {
-                    q.push_back(e.dst)
+            g.edges(src).into_iter().for_each(|(dst, _weight)| {
+                deg[dst] -= 1;
+                if deg[dst] == 0 {
+                    q.push_back(dst)
                 }
             });
             ret.push(src);
@@ -53,8 +53,8 @@ impl Dag {
         let mut dp = vec![0; g.size()];
         dp[l] = 1;
         for src in list {
-            for e in &g.edges(src) {
-                dp[e.dst] += dp[src];
+            for (dst, _weight) in g.edges(src) {
+                dp[dst] += dp[src];
             }
         }
         dp

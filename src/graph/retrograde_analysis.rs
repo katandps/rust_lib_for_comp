@@ -34,15 +34,15 @@ impl RetrogradeAnalysis {
             }
         }
         while let Some(src) = q.pop_front() {
-            g.rev_edges(src).iter().for_each(|e| {
-                if ret[e.dst] == WinLose::DRAW {
-                    deg[e.dst] -= 1;
+            g.rev_edges(src).into_iter().for_each(|(dst, _weight)| {
+                if ret[dst] == WinLose::DRAW {
+                    deg[dst] -= 1;
                     if ret[src] == WinLose::LOSE {
-                        ret[e.dst] = WinLose::WIN;
-                        q.push_back(e.dst);
-                    } else if deg[e.dst] == 0 {
-                        ret[e.dst] = WinLose::LOSE;
-                        q.push_back(e.dst);
+                        ret[dst] = WinLose::WIN;
+                        q.push_back(dst);
+                    } else if deg[dst] == 0 {
+                        ret[dst] = WinLose::LOSE;
+                        q.push_back(dst);
                     }
                 }
             });

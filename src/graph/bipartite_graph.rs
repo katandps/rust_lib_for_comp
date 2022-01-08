@@ -28,13 +28,13 @@ impl BipartiteGraph {
     }
 
     fn dfs<G: GraphTrait>(graph: &G, src: usize, d: &mut Vec<Option<bool>>) -> bool {
-        for edge in graph.edges(src) {
-            if d[edge.dst] == d[src] {
+        for (dst, _weight) in graph.edges(src) {
+            if d[dst] == d[src] {
                 return false;
             }
-            if d[edge.dst].is_none() {
-                d[edge.dst] = d[src].map(|b| !b);
-                if !Self::dfs(graph, edge.dst, d) {
+            if d[dst].is_none() {
+                d[dst] = d[src].map(|b| !b);
+                if !Self::dfs(graph, dst, d) {
                     return false;
                 }
             }

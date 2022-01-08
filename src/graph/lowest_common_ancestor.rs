@@ -47,9 +47,9 @@ where
     fn dfs(&mut self, g: &G, src: usize, p: usize, d: usize) {
         self.parent[0][src] = p;
         self.dist[src] = d;
-        for &to in &g.edges(src) {
-            if to.dst != p {
-                self.dfs(g, to.dst, src, d + 1);
+        for (dst, _weight) in g.edges(src) {
+            if dst != p {
+                self.dfs(g, dst, src, d + 1);
             }
         }
     }

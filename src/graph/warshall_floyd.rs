@@ -48,11 +48,11 @@ where
         dist.iter_mut()
             .enumerate()
             .for_each(|(i, reti)| reti[i] = W::zero());
-        for src in 0..g.size() {
-            for edge in g.edges(src) {
-                chmin!(dist[edge.src][edge.dst], edge.weight);
+        (0..g.size()).for_each(|src| {
+            for (dst, weight) in g.edges(src) {
+                chmin!(dist[src][dst], weight);
             }
-        }
+        });
         for i in 0..g.size() {
             for j in 0..g.size() {
                 for k in 0..g.size() {

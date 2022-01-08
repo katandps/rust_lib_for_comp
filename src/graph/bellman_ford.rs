@@ -24,8 +24,8 @@ where
     for _step1 in 1..g.size() {
         for src in 0..g.size() {
             if dist[src] != W::max_value() {
-                g.edges(src).iter().for_each(|e| {
-                    chmin!(dist[e.dst], dist[src] + e.weight);
+                g.edges(src).into_iter().for_each(|(dst, weight)| {
+                    chmin!(dist[dst], dist[src] + weight);
                 });
             }
         }
@@ -34,9 +34,9 @@ where
     for _step2 in 0..g.size() {
         for src in 0..g.size() {
             if dist[src] != W::max_value() {
-                g.edges(src).iter().for_each(|e| {
-                    if chmin!(dist[e.dst], dist[src] + e.weight) || neg[src] {
-                        neg[e.dst] = true;
+                g.edges(src).into_iter().for_each(|(dst, weight)| {
+                    if chmin!(dist[dst], dist[src] + weight) || neg[src] {
+                        neg[dst] = true;
                     }
                 });
             }
