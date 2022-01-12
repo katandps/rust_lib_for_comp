@@ -21,8 +21,8 @@ impl<W: Clone> GraphTrait for Graph<W> {
     fn edges(&self, src: usize) -> Vec<(usize, W)> {
         self.edges[src].clone()
     }
-    fn rev_edges(&self, src: usize) -> Vec<(usize, W)> {
-        self.rev_edges[src].clone()
+    fn rev_edges(&self, dst: usize) -> Vec<(usize, W)> {
+        self.rev_edges[dst].clone()
     }
 }
 
@@ -75,12 +75,4 @@ impl<W: Debug> Debug for Graph<W> {
         }
         writeln!(f, "}}")
     }
-}
-
-#[test]
-fn debug_test() {
-    let mut graph = Graph::new(3);
-    graph.add_edge(0, 1, 3);
-    graph.add_arc(1, 2, 5);
-    dbg!(graph);
 }
