@@ -57,11 +57,11 @@ pub struct ModInt<M: Mod> {
 
 #[snippet(name = "mod-int", doc_hidden)]
 impl<M: Mod> ModInt<M> {
-    pub fn new(n: i64) -> Self {
-        Self {
-            n: n.rem_euclid(M::get()),
-            _p: PhantomData,
+    pub fn new(mut n: i64) -> Self {
+        if n < 0 || n >= M::get() {
+            n = n.rem_euclid(M::get());
         }
+        Self { n, _p: PhantomData }
     }
 
     pub fn pow(mut self, mut e: i64) -> ModInt<M> {
