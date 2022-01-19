@@ -50,10 +50,7 @@ impl Mod for Mod998244353 {
 
 #[snippet(name = "mod-int", doc_hidden)]
 #[derive(Copy, Clone, Eq, PartialEq)]
-pub struct ModInt<M: Mod> {
-    n: i64,
-    _p: PhantomData<fn() -> M>,
-}
+pub struct ModInt<M: Mod>(i64, PhantomData<fn() -> M>);
 
 #[snippet(name = "mod-int", doc_hidden)]
 impl<M: Mod> ModInt<M> {
@@ -61,7 +58,7 @@ impl<M: Mod> ModInt<M> {
         if n < 0 || n >= M::get() {
             n = n.rem_euclid(M::get());
         }
-        Self { n, _p: PhantomData }
+        Self(n, PhantomData)
     }
 
     pub fn pow(mut self, mut e: i64) -> ModInt<M> {
@@ -70,10 +67,10 @@ impl<M: Mod> ModInt<M> {
         let mut result = Self::new(1);
         while e > 0 {
             if e & 1 == 1 {
-                result *= self.n;
+                result *= self.0;
             }
             e >>= 1;
-            self *= self.n;
+            self *= self.0;
         }
         if m {
             Self::new(1) / result
@@ -83,7 +80,7 @@ impl<M: Mod> ModInt<M> {
     }
 
     pub fn get(self) -> i64 {
-        self.n
+        self.0
     }
 }
 
@@ -91,19 +88,16 @@ impl<M: Mod> ModInt<M> {
 impl<M: Mod> Add<i64> for ModInt<M> {
     type Output = Self;
     fn add(self, rhs: i64) -> Self {
-        self + ModInt::new(rhs.rem_euclid(M::get()))
+        self + ModInt::new(rhs)
     }
 }
 
 #[snippet(name = "mod-int", doc_hidden)]
 impl<M: Mod> Add<ModInt<M>> for ModInt<M> {
     type Output = Self;
-    fn add(self, rhs: Self) -> Self {
-        let mut n = self.n + rhs.n;
-        if n >= M::get() {
-            n -= M::get();
-        }
-        Self { n, _p: self._p }
+    fn add(mut self, rhs: Self) -> Self {
+        self += rhs;
+        self
     }
 }
 
@@ -117,7 +111,11 @@ impl<M: Mod> AddAssign<i64> for ModInt<M> {
 #[snippet(name = "mod-int", doc_hidden)]
 impl<M: Mod> AddAssign<ModInt<M>> for ModInt<M> {
     fn add_assign(&mut self, rhs: Self) {
-        *self = *self + rhs
+        self.0 = if self.0 + rhs.0 >= M::get() {
+            self.0 + rhs.0 - M::get()
+        } else {
+            self.0 + rhs.0
+        }
     }
 }
 
@@ -125,7 +123,7 @@ impl<M: Mod> AddAssign<ModInt<M>> for ModInt<M> {
 impl<M: Mod> Neg for ModInt<M> {
     type Output = Self;
     fn neg(self) -> Self {
-        Self::new(-self.n)
+        Self::new(-self.0)
     }
 }
 
@@ -133,19 +131,16 @@ impl<M: Mod> Neg for ModInt<M> {
 impl<M: Mod> Sub<i64> for ModInt<M> {
     type Output = Self;
     fn sub(self, rhs: i64) -> Self {
-        self - ModInt::new(rhs.rem_euclid(M::get()))
+        self - ModInt::new(rhs)
     }
 }
 
 #[snippet(name = "mod-int", doc_hidden)]
 impl<M: Mod> Sub<ModInt<M>> for ModInt<M> {
     type Output = Self;
-    fn sub(self, rhs: Self) -> Self {
-        let mut n = self.n - rhs.n;
-        if n < 0 {
-            n += M::get();
-        }
-        Self { n, _p: self._p }
+    fn sub(mut self, rhs: Self) -> Self {
+        self -= rhs;
+        self
     }
 }
 
@@ -159,7 +154,11 @@ impl<M: Mod> SubAssign<i64> for ModInt<M> {
 #[snippet(name = "mod-int", doc_hidden)]
 impl<M: Mod> SubAssign<ModInt<M>> for ModInt<M> {
     fn sub_assign(&mut self, rhs: Self) {
-        *self = *self - rhs
+        self.0 = if self.0 >= rhs.0 {
+            self.0 - rhs.0
+        } else {
+            self.0 - rhs.0 + M::get()
+        }
     }
 }
 
@@ -167,7 +166,7 @@ impl<M: Mod> SubAssign<ModInt<M>> for ModInt<M> {
 impl<M: Mod> Mul<i64> for ModInt<M> {
     type Output = Self;
     fn mul(self, rhs: i64) -> Self {
-        ModInt::new(self.n * (rhs % M::get()))
+        ModInt::new(self.0 * (rhs % M::get()))
     }
 }
 
@@ -175,7 +174,7 @@ impl<M: Mod> Mul<i64> for ModInt<M> {
 impl<M: Mod> Mul<ModInt<M>> for ModInt<M> {
     type Output = Self;
     fn mul(self, rhs: Self) -> Self {
-        self * rhs.n
+        self * rhs.0
     }
 }
 
@@ -205,7 +204,7 @@ impl<M: Mod> Div<i64> for ModInt<M> {
 impl<M: Mod> Div<ModInt<M>> for ModInt<M> {
     type Output = Self;
     fn div(self, rhs: Self) -> Self {
-        self / rhs.n
+        self / rhs.0
     }
 }
 
@@ -226,14 +225,14 @@ impl<M: Mod> DivAssign<ModInt<M>> for ModInt<M> {
 #[snippet(name = "mod-int", doc_hidden)]
 impl<M: Mod> Display for ModInt<M> {
     fn fmt(&self, f: &mut Formatter) -> std::fmt::Result {
-        write!(f, "{}", self.n)
+        write!(f, "{}", self.0)
     }
 }
 
 #[snippet(name = "mod-int", doc_hidden)]
 impl<M: Mod> Debug for ModInt<M> {
     fn fmt(&self, f: &mut Formatter) -> std::fmt::Result {
-        write!(f, "{}", self.n)
+        write!(f, "{}", self.0)
     }
 }
 
@@ -241,14 +240,14 @@ impl<M: Mod> Debug for ModInt<M> {
 impl<M: Mod> Deref for ModInt<M> {
     type Target = i64;
     fn deref(&self) -> &Self::Target {
-        &self.n
+        &self.0
     }
 }
 
 #[snippet(name = "mod-int", doc_hidden)]
 impl<M: Mod> DerefMut for ModInt<M> {
     fn deref_mut(&mut self) -> &mut Self::Target {
-        &mut self.n
+        &mut self.0
     }
 }
 
@@ -269,7 +268,7 @@ impl<M: Mod> From<i64> for ModInt<M> {
 #[snippet(name = "mod-int", doc_hidden)]
 impl<M: Mod> From<ModInt<M>> for i64 {
     fn from(m: ModInt<M>) -> Self {
-        m.n
+        m.0
     }
 }
 
