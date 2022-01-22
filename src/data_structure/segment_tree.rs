@@ -1,6 +1,9 @@
 //! # セグメント木
 //! セグメント木(非再帰)
 //! 一点更新$` O(1) `$、区間取得$`O( \log N )`$
+//!
+//! ## verify
+//! [ARC133B](https://atcoder.jp/contests/arc133/submissions/28689143)
 use crate::algebra::Monoid;
 use crate::prelude::*;
 
@@ -46,7 +49,7 @@ impl<M: Monoid> SegmentTree<M> {
         i += self.n;
         self.node[i] = value;
         while i > 0 {
-            i = (i - 1) / 2;
+            i >>= 1;
             self.node[i] = M::op(&self.node[2 * i], &self.node[2 * i + 1]);
         }
     }
