@@ -11,6 +11,7 @@ pub mod mod_inv;
 pub mod mod_pow;
 pub mod mod_val_table;
 pub mod sieve_of_eratosthenes;
+pub mod xor_basis;
 
 #[snippet(name = "algebra", doc_hidden)]
 /// マグマ
