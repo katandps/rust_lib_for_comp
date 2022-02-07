@@ -8,7 +8,6 @@ use crate::prelude::*;
 pub struct ModValTable<M> {
     fact: Vec<M>,
     fact_inv: Vec<M>,
-    inv: Vec<M>,
 }
 
 #[snippet(name = "mod-val-table", doc_hidden)]
@@ -32,11 +31,7 @@ impl<M: Mod> ModValTable<ModInt<M>> {
             inv[i] = inv[0] / i as i64;
             fact_inv[i] = fact_inv[i - 1] * inv[i];
         }
-        Self {
-            fact,
-            fact_inv,
-            inv,
-        }
+        Self { fact, fact_inv }
     }
 
     /// Factorial 階乗 n!
