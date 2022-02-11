@@ -9,7 +9,7 @@ use crate::algebra::Band;
 use crate::prelude::*;
 
 #[snippet(name = "sparse-table", doc_hidden)]
-#[derive(Debug, Clone)]
+#[derive(Clone)]
 pub struct SparseTable<B: Band> {
     size: usize,
     table: Vec<Vec<B::M>>,
@@ -43,5 +43,17 @@ impl<B: Band> SparseTable<B> {
             &self.table[lg as usize][l],
             &self.table[lg as usize][r - (1 << lg)],
         )
+    }
+}
+#[snippet(name = "sparse-table", doc_hidden)]
+impl<B: Band> Debug for SparseTable<B>
+where
+    B::M: Debug,
+{
+    fn fmt(&self, f: &mut Formatter) -> std::fmt::Result {
+        for i in 0..self.size {
+            writeln!(f, "{:?}", self.query(i..=i))?;
+        }
+        Ok(())
     }
 }

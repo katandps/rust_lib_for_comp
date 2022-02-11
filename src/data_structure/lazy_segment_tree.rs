@@ -172,7 +172,7 @@ impl<M: MapMonoid> LazySegmentTree<M> {
 mod test {
     use super::*;
     use crate::algebra::binary_operation::addition::Addition;
-    use crate::data_structure::segment::Segment;
+    use crate::element::segment::Segment;
 
     // これは毎回書く(モノイドとモノイドから作用付きモノイドを作る)
     pub struct AddSum;

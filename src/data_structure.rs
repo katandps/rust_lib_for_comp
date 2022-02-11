@@ -9,7 +9,6 @@ pub mod cumulative_sum;
 pub mod disjoint_sparse_table;
 pub mod dynamic_segment_tree;
 pub mod lazy_segment_tree;
-pub mod segment;
 pub mod segment_tree;
 pub mod sparse_table;
 pub mod succinct_indexable_dictionaries;

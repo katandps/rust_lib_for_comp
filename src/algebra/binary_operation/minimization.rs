@@ -3,6 +3,7 @@ use crate::algebra::{Associative, BoundedAbove, Commutative, Idempotent, Magma, 
 use crate::prelude::*;
 
 #[snippet(name = "minimization", doc_hidden)]
+#[derive(Clone, Debug)]
 pub struct Minimization<S>(Infallible, PhantomData<fn() -> S>);
 
 #[snippet(name = "minimization", doc_hidden)]
