@@ -12,7 +12,6 @@ pub mod directed_acyclic_graph;
 pub mod euler_tour;
 pub mod grid;
 pub mod kruskal;
-pub mod lca_auxiliary_tree;
 pub mod lowest_common_ancestor;
 pub mod prim;
 pub mod retrograde_analysis;
