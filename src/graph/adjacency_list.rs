@@ -6,10 +6,10 @@ use crate::prelude::*;
 #[snippet(name = "graph-adjacency-list", doc_hidden)]
 pub struct Graph<W> {
     pub n: usize,
-    /// edges[src][i] = (dst, weight)
-    pub edges: Vec<Vec<(usize, W)>>,
-    /// edges[dst][i] = (src, weight)
-    pub rev_edges: Vec<Vec<(usize, W)>>,
+    /// edges[index] = (src, dst, weight)
+    pub edges: Vec<(usize, usize, W)>,
+    pub index: Vec<Vec<usize>>,
+    pub rev_index: Vec<Vec<usize>>,
 }
 
 #[snippet(name = "graph-adjacency-list", doc_hidden)]
@@ -19,10 +19,22 @@ impl<W: Clone> GraphTrait for Graph<W> {
         self.n
     }
     fn edges(&self, src: usize) -> Vec<(usize, W)> {
-        self.edges[src].clone()
+        self.index[src]
+            .iter()
+            .map(|i| {
+                let (_src, dst, w) = &self.edges[*i];
+                (*dst, w.clone())
+            })
+            .collect()
     }
     fn rev_edges(&self, dst: usize) -> Vec<(usize, W)> {
-        self.rev_edges[dst].clone()
+        self.rev_index[dst]
+            .iter()
+            .map(|i| {
+                let (_dst, src, w) = &self.edges[*i];
+                (*src, w.clone())
+            })
+            .collect()
     }
 }
 
@@ -32,7 +44,8 @@ impl<W: Clone> Clone for Graph<W> {
         Self {
             n: self.n,
             edges: self.edges.clone(),
-            rev_edges: self.rev_edges.clone(),
+            index: self.index.clone(),
+            rev_index: self.rev_index.clone(),
         }
     }
 }
@@ -43,36 +56,39 @@ impl<W: Clone> Graph<W> {
     pub fn new(n: usize) -> Self {
         Self {
             n,
-            edges: vec![Vec::new(); n],
-            rev_edges: vec![Vec::new(); n],
+            edges: Vec::new(),
+            index: vec![Vec::new(); n],
+            rev_index: vec![Vec::new(); n],
         }
     }
     /// 相互に行き来できる辺をつける
     pub fn add_edge(&mut self, src: usize, dst: usize, w: W) {
-        self.edges[src].push((dst, w.clone()));
-        self.edges[dst].push((src, w.clone()));
-        self.rev_edges[src].push((dst, w.clone()));
-        self.rev_edges[dst].push((src, w));
+        let i = self.edges.len();
+        self.edges.push((src, dst, w.clone()));
+        self.index[src].push(i);
+        let i = self.edges.len();
+        self.edges.push((dst, src, w));
+        self.rev_index[src].push(i);
     }
 
     /// 1方向にのみ移動できる辺をつける
     pub fn add_arc(&mut self, src: usize, dst: usize, w: W) {
-        self.edges[src].push((dst, w.clone()));
-        self.rev_edges[dst].push((src, w));
+        let i = self.edges.len();
+        self.edges.push((src, dst, w));
+        self.index[src].push(i);
+    }
+
+    pub fn all_edges(&self) -> Vec<(usize, usize, W)> {
+        self.edges.clone()
     }
 }
 
 #[snippet(name = "graph-adjacency-list", doc_hidden)]
 impl<W: Debug> Debug for Graph<W> {
     fn fmt(&self, f: &mut Formatter<'_>) -> std::fmt::Result {
-        writeln!(f, "{{").unwrap();
-        for i in 0..self.n {
-            writeln!(f, "  {{").unwrap();
-            for j in 0..self.edges[i].len() {
-                writeln!(f, "    {:?}", self.edges[i][j]).unwrap();
-            }
-            writeln!(f, "  }}").unwrap();
+        for (src, dst, w) in &self.edges {
+            writeln!(f, "{} -> {} {:?}", src, dst, w).unwrap();
         }
-        writeln!(f, "}}")
+        Ok(())
     }
 }
