@@ -86,9 +86,18 @@ impl<W: Clone> Graph<W> {
 #[snippet(name = "graph-adjacency-list", doc_hidden)]
 impl<W: Debug> Debug for Graph<W> {
     fn fmt(&self, f: &mut Formatter<'_>) -> std::fmt::Result {
+        writeln!(f, "n: {}, m: {}", self.n, self.edges.len()).unwrap();
         for (src, dst, w) in &self.edges {
-            writeln!(f, "{} -> {} {:?}", src, dst, w).unwrap();
+            writeln!(f, "({} -> {}): {:?}", src, dst, w).unwrap();
         }
         Ok(())
     }
+}
+
+#[test]
+fn test() {
+    let mut g = Graph::new(5);
+    g.add_edge(1, 2, 3);
+    g.add_arc(3, 4, 10);
+    dbg!(g);
 }
