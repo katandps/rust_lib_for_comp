@@ -4,7 +4,13 @@
 use crate::prelude::*;
 use crate::util::{reader::Reader, writer::Writer};
 
-#[snippet(name = "solver", doc_hidden)]
+#[snippet(name = "template", doc_hidden)]
+#[snippet(include = "reader")]
+#[snippet(include = "writer")]
+#[snippet(include = "algebra")]
+#[snippet(include = "min_max")]
+#[snippet(include = "range")]
+#[snippet(include = "prelude")]
 pub fn main() {
     let stdin = stdin();
     let stdout = stdout();

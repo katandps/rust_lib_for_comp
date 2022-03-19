@@ -15,13 +15,13 @@
 //! ```
 use crate::prelude::*;
 
-#[snippet(name = "template", doc_hidden)]
+#[snippet(name = "reader", doc_hidden)]
 pub struct Reader<F> {
     init: F,
     buf: VecDeque<String>,
 }
 
-#[snippet(name = "template", doc_hidden)]
+#[snippet(name = "reader", doc_hidden)]
 impl<R: BufRead, F: FnMut() -> R> Iterator for Reader<F> {
     type Item = String;
 
@@ -37,7 +37,7 @@ impl<R: BufRead, F: FnMut() -> R> Iterator for Reader<F> {
     }
 }
 
-#[snippet(name = "template", doc_hidden)]
+#[snippet(name = "reader", doc_hidden)]
 
 impl<R: BufRead, F: FnMut() -> R> Reader<F> {
     pub fn new(init: F) -> Self {

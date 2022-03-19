@@ -2,22 +2,22 @@
 
 use crate::prelude::*;
 
-#[snippet(name = "template", doc_hidden)]
+#[snippet(name = "min_max", doc_hidden)]
 #[allow(unused_macros)]
 macro_rules! chmin {($base:expr, $($cmps:expr),+ $(,)*) => {{let cmp_min = min!($($cmps),+);if $base > cmp_min {$base = cmp_min;true} else {false}}};}
 
-#[snippet(name = "template", doc_hidden)]
+#[snippet(name = "min_max", doc_hidden)]
 #[allow(unused_macros)]
 macro_rules! chmax {($base:expr, $($cmps:expr),+ $(,)*) => {{let cmp_max = max!($($cmps),+);if $base < cmp_max {$base = cmp_max;true} else {false}}};}
 
-#[snippet(name = "template", doc_hidden)]
+#[snippet(name = "min_max", doc_hidden)]
 #[allow(unused_macros)]
 macro_rules! max {
     ($a:expr $(,)*) => {{$a}};
     ($a:expr, $b:expr $(,)*) => {{if $a > $b {$a} else {$b}}};
     ($a:expr, $($rest:expr),+ $(,)*) => {{let b = max!($($rest),+);if $a > b {$a} else {b}}};
 }
-#[snippet(name = "template", doc_hidden)]
+#[snippet(name = "min_max", doc_hidden)]
 #[allow(unused_macros)]
 macro_rules! min {
     ($a:expr $(,)*) => {{$a}};

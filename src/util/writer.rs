@@ -16,12 +16,12 @@
 //! ```
 use crate::prelude::*;
 
-#[snippet(name = "template", doc_hidden)]
+#[snippet(name = "writer", doc_hidden)]
 pub struct Writer<W: Write> {
     writer: BufWriter<W>,
 }
 
-#[snippet(name = "template", doc_hidden)]
+#[snippet(name = "writer", doc_hidden)]
 impl<W: Write> Writer<W> {
     pub fn new(write: W) -> Self {
         Self {
@@ -46,6 +46,15 @@ impl<W: Write> Writer<W> {
             separator
         });
         writeln!(self.writer).expect("Failed to write.");
+    }
+
+    /// iをbitごとに出力する
+    pub fn bits(&mut self, i: i64, len: usize) {
+        for b in 0..len {
+            write!(self.writer, "{}", if i >> b & 1 == 1 { 1 } else { 0 })
+                .expect("Failed to write.");
+        }
+        writeln!(self.writer).expect("Failed to write.")
     }
 
     /// バッファをクリアする

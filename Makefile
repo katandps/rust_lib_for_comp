@@ -1,4 +1,5 @@
-SNIPPETS_FILE := ../rust_cp_workspace/.vscode/libraries.code-snippets
+SNIPPETS_DIR := ../rust_cp_workspace/.vscode
+SNIPPETS_FILE := libraries.code-snippets
 KATEX_FLAG := "--html-in-header katex.html"
 
 fmt:
@@ -11,7 +12,8 @@ test:
 	cargo +1.42.0 test
 
 snippet:
-	cargo snippet -t vscode > $(SNIPPETS_FILE)
+	mkdir -p $(SNIPPETS_DIR)
+	cargo snippet -t vscode > $(SNIPPETS_DIR)/$(SNIPPETS_FILE)
 
 build: fmt lint test snippet
 
