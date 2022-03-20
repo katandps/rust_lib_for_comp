@@ -31,7 +31,7 @@ impl<W: Clone> GraphTrait for Graph<W> {
         self.rev_index[dst]
             .iter()
             .map(|i| {
-                let (_dst, src, w) = &self.edges[*i];
+                let (src, _dst, w) = &self.edges[*i];
                 (*src, w.clone())
             })
             .collect()
@@ -66,16 +66,19 @@ impl<W: Clone> Graph<W> {
         let i = self.edges.len();
         self.edges.push((src, dst, w.clone()));
         self.index[src].push(i);
+        self.rev_index[dst].push(i);
         let i = self.edges.len();
         self.edges.push((dst, src, w));
+        self.index[dst].push(i);
         self.rev_index[src].push(i);
     }
 
-    /// 1方向にのみ移動できる辺をつける
+    /// 一方にのみ移動できる辺をつける
     pub fn add_arc(&mut self, src: usize, dst: usize, w: W) {
         let i = self.edges.len();
         self.edges.push((src, dst, w));
         self.index[src].push(i);
+        self.rev_index[dst].push(i);
     }
 
     pub fn all_edges(&self) -> Vec<(usize, usize, W)> {
@@ -99,5 +102,12 @@ fn test() {
     let mut g = Graph::new(5);
     g.add_edge(1, 2, 3);
     g.add_arc(3, 4, 10);
-    dbg!(g);
+    assert_eq!(vec![(2, 3)], g.edges(1));
+    assert_eq!(vec![(2, 3)], g.rev_edges(1));
+    assert_eq!(vec![(1, 3)], g.edges(2));
+    assert_eq!(vec![(1, 3)], g.rev_edges(2));
+    assert_eq!(vec![(4, 10)], g.edges(3));
+    assert_eq!(Vec::<(usize, i32)>::new(), g.rev_edges(3));
+    assert_eq!(Vec::<(usize, i32)>::new(), g.edges(4));
+    assert_eq!(vec![(3, 10)], g.rev_edges(4));
 }
