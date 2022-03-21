@@ -11,8 +11,9 @@
 //!     writer.out(123);
 //!     writer.ln(456);
 //!     writer.join(&[1, 2, 3, 4, 5], " ");
+//!     writer.bits(13, 5);
 //! }
-//! assert_eq!(Ok("123456\n1 2 3 4 5\n"), std::str::from_utf8(&buf));
+//! assert_eq!(Ok("123456\n1 2 3 4 5\n10110\n"), std::str::from_utf8(&buf));
 //! ```
 use crate::prelude::*;
 
@@ -50,10 +51,7 @@ impl<W: Write> Writer<W> {
 
     /// iをbitごとに出力する
     pub fn bits(&mut self, i: i64, len: usize) {
-        for b in 0..len {
-            write!(self.writer, "{}", if i >> b & 1 == 1 { 1 } else { 0 })
-                .expect("Failed to write.");
-        }
+        (0..len).for_each(|b| write!(self.writer, "{}", i >> b & 1).expect("Failed to write."));
         writeln!(self.writer).expect("Failed to write.")
     }
 
