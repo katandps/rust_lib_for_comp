@@ -38,55 +38,46 @@ impl<R: BufRead, F: FnMut() -> R> Iterator for Reader<F> {
 }
 
 #[snippet(name = "reader", doc_hidden)]
-
 impl<R: BufRead, F: FnMut() -> R> Reader<F> {
     pub fn new(init: F) -> Self {
         let buf = VecDeque::new();
         Reader { init, buf }
     }
 
-    pub fn v<T: FromStr>(&mut self) -> T {
+    pub fn v<T: FS>(&mut self) -> T {
         let s = self.next().expect("Insufficient input.");
         s.parse().ok().expect("Failed to parse.")
     }
 
-    pub fn v2<T1: FromStr, T2: FromStr>(&mut self) -> (T1, T2) {
+    pub fn v2<T1: FS, T2: FS>(&mut self) -> (T1, T2) {
         (self.v(), self.v())
     }
 
-    pub fn v3<T1: FromStr, T2: FromStr, T3: FromStr>(&mut self) -> (T1, T2, T3) {
+    pub fn v3<T1: FS, T2: FS, T3: FS>(&mut self) -> (T1, T2, T3) {
         (self.v(), self.v(), self.v())
     }
 
-    pub fn v4<T1: FromStr, T2: FromStr, T3: FromStr, T4: FromStr>(&mut self) -> (T1, T2, T3, T4) {
+    pub fn v4<T1: FS, T2: FS, T3: FS, T4: FS>(&mut self) -> (T1, T2, T3, T4) {
         (self.v(), self.v(), self.v(), self.v())
     }
 
-    pub fn v5<T1: FromStr, T2: FromStr, T3: FromStr, T4: FromStr, T5: FromStr>(
-        &mut self,
-    ) -> (T1, T2, T3, T4, T5) {
+    pub fn v5<T1: FS, T2: FS, T3: FS, T4: FS, T5: FS>(&mut self) -> (T1, T2, T3, T4, T5) {
         (self.v(), self.v(), self.v(), self.v(), self.v())
     }
 
-    pub fn vec<T: FromStr>(&mut self, length: usize) -> Vec<T> {
+    pub fn vec<T: FS>(&mut self, length: usize) -> Vec<T> {
         (0..length).map(|_| self.v()).collect()
     }
 
-    pub fn vec2<T1: FromStr, T2: FromStr>(&mut self, length: usize) -> Vec<(T1, T2)> {
+    pub fn vec2<T1: FS, T2: FS>(&mut self, length: usize) -> Vec<(T1, T2)> {
         (0..length).map(|_| self.v2()).collect()
     }
 
-    pub fn vec3<T1: FromStr, T2: FromStr, T3: FromStr>(
-        &mut self,
-        length: usize,
-    ) -> Vec<(T1, T2, T3)> {
+    pub fn vec3<T1: FS, T2: FS, T3: FS>(&mut self, length: usize) -> Vec<(T1, T2, T3)> {
         (0..length).map(|_| self.v3()).collect()
     }
 
-    pub fn vec4<T1: FromStr, T2: FromStr, T3: FromStr, T4: FromStr>(
-        &mut self,
-        length: usize,
-    ) -> Vec<(T1, T2, T3, T4)> {
+    pub fn vec4<T1: FS, T2: FS, T3: FS, T4: FS>(&mut self, length: usize) -> Vec<(T1, T2, T3, T4)> {
         (0..length).map(|_| self.v4()).collect()
     }
 
@@ -94,13 +85,29 @@ impl<R: BufRead, F: FnMut() -> R> Reader<F> {
         self.v::<String>().chars().collect()
     }
 
-    pub fn digits(&mut self) -> Vec<i64> {
+    fn split(&mut self, zero: u8) -> Vec<usize> {
         self.v::<String>()
             .chars()
-            .map(|c| (c as u8 - b'0') as i64)
+            .map(|c| (c as u8 - zero) as usize)
             .collect()
     }
 
+    /// 英小文字からなる文字列の入力を $`'0' = 0`$ となる数値の配列で得る
+    pub fn digits(&mut self) -> Vec<usize> {
+        self.split(b'0')
+    }
+
+    /// 英小文字からなる文字列の入力を $`'a' = 0`$ となる数値の配列で得る
+    pub fn lowercase(&mut self) -> Vec<usize> {
+        self.split(b'a')
+    }
+
+    /// 英大文字からなる文字列の入力を $`'A' = 0`$ となる数値の配列で得る
+    pub fn uppercase(&mut self) -> Vec<usize> {
+        self.split(b'A')
+    }
+
+    /// 改行された文字列の入力を2次元配列とみなし、charの2次元Vecとして得る
     pub fn char_map(&mut self, h: usize) -> Vec<Vec<char>> {
         (0..h).map(|_| self.chars()).collect()
     }
@@ -113,8 +120,8 @@ impl<R: BufRead, F: FnMut() -> R> Reader<F> {
             .collect()
     }
 
-    /// h*w行列を取得する
-    pub fn matrix<T: FromStr>(&mut self, h: usize, w: usize) -> Vec<Vec<T>> {
+    /// 空白区切りで $`h*w`$ 個の要素を行列として取得する
+    pub fn matrix<T: FS>(&mut self, h: usize, w: usize) -> Vec<Vec<T>> {
         (0..h).map(|_| self.vec(w)).collect()
     }
 }

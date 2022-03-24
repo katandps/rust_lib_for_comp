@@ -17,7 +17,7 @@ pub use std::{
         Deref, DerefMut, Div, DivAssign, Index, IndexMut, Mul, MulAssign, Neg, Not, Range,
         RangeBounds, Rem, RemAssign, Shl, ShlAssign, Shr, ShrAssign, Sub, SubAssign,
     },
-    str::{from_utf8, FromStr},
+    str::{from_utf8, FromStr as FS},
 };
 
 pub use crate::algo::range::to_lr;
