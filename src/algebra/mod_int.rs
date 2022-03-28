@@ -1,51 +1,15 @@
 //! 剰余体
 use crate::algebra::Zero;
 use crate::prelude::*;
+pub use mod1000000007::{mi, Mi};
 
-#[snippet(name = "mod-int", doc_hidden)]
-pub type Mi = ModInt<Mod1e9p7>;
-
-#[snippet(name = "mod-int", doc_hidden)]
-pub fn mi(i: i64) -> Mi {
-    Mi::new(i)
-}
+pub mod mod1000000007;
+pub mod mod1000000009;
+pub mod mod998244353;
 
 #[snippet(name = "mod-int", doc_hidden)]
 pub trait Mod: Copy + Clone + Debug {
     fn get() -> i64;
-}
-
-#[snippet(name = "mod-int", doc_hidden)]
-#[derive(Copy, Clone, Eq, PartialEq, Debug)]
-pub struct Mod1e9p7;
-
-#[snippet(name = "mod-int", doc_hidden)]
-#[derive(Copy, Clone, Eq, PartialEq, Debug)]
-pub struct Mod1e9p9;
-
-#[snippet(name = "mod-int", doc_hidden)]
-#[derive(Copy, Clone, Eq, PartialEq, Debug)]
-pub struct Mod998244353;
-
-#[snippet(name = "mod-int", doc_hidden)]
-impl Mod for Mod1e9p7 {
-    fn get() -> i64 {
-        1_000_000_007
-    }
-}
-
-#[snippet(name = "mod-int", doc_hidden)]
-impl Mod for Mod1e9p9 {
-    fn get() -> i64 {
-        1_000_000_009
-    }
-}
-
-#[snippet(name = "mod-int", doc_hidden)]
-impl Mod for Mod998244353 {
-    fn get() -> i64 {
-        998_244_353
-    }
 }
 
 #[snippet(name = "mod-int", doc_hidden)]

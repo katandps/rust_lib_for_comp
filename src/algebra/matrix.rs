@@ -3,7 +3,7 @@
 //! ## dependency
 //! [mod-int](Mi)
 //!
-use crate::algebra::mod_int::*;
+use crate::algebra::mod_int::mod998244353::Mi;
 use crate::prelude::*;
 
 #[snippet(name = "matrix", doc_hidden)]
@@ -213,6 +213,7 @@ impl Debug for Matrix {
 #[cfg(test)]
 mod test {
     use super::*;
+    use crate::algebra::mod_int::mod998244353::mi;
     use std::convert::TryInto;
 
     #[test]
