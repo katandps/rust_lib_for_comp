@@ -3,6 +3,10 @@
 use crate::graph::GraphTrait;
 use crate::prelude::*;
 
+pub mod euler_tour;
+pub mod heavy_light_decomposition;
+pub mod lowest_common_ancestor;
+
 /// # 頂点の高さ
 /// 適当な頂点を根としたときの頂点の高さを返す
 ///
