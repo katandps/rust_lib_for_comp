@@ -16,45 +16,29 @@ macro_rules! min {
 
 #[snippet(name = "primal_dual", doc_hidden)]
 #[derive(Clone, Debug)]
-pub struct PrimalDual<F: Clone + Debug, C: Clone + Debug> {
-    graph: Graph<(F, C)>,
+pub struct PrimalDual<F: Copy + Debug, C: Copy + Debug> {
+    graph: Graph<(C, F)>,
     rev: Vec<usize>,
 }
 
 #[snippet(name = "primal_dual", doc_hidden)]
-impl<F, C> PrimalDual<F, C>
+impl<C: Copy + Debug, F: Copy + Debug> PrimalDual<C, F>
 where
-    F: Copy
-        + Debug
-        + Ord
-        + Zero
-        + AddAssign
-        + SubAssign
-        + Add<Output = F>
-        + Sub<Output = F>
-        + Mul<C, Output = F>
-        + Display,
-    C: Copy
-        + Debug
-        + Ord
-        + Zero
-        + BoundedAbove
-        + AddAssign
-        + Add<Output = C>
-        + Neg<Output = C>
-        + Sub<Output = C>,
+    F: Ord + Zero + AddAssign + SubAssign + Sub<Output = F> + Mul<C, Output = F>,
+    C: Ord + Zero + BoundedAbove + AddAssign + SubAssign + Add<Output = C> + Sub<Output = C>,
 {
     pub fn new(n: usize) -> Self {
         Self {
             graph: Graph::new(n),
-            rev: Vec::new(),
+            rev: Vec::with_capacity(n),
         }
     }
     pub fn add_edge(&mut self, src: usize, dst: usize, cap: F, cost: C) {
         let i = self.graph.add_arc(src, dst, (cap, cost));
-        let j = self.graph.add_arc(dst, src, (F::zero(), -cost));
-        self.rev.resize(i + 1, 0);
+        let j = self.graph.add_arc(dst, src, (F::zero(), C::zero() - cost));
+        self.rev.resize(j + 1, 0);
         self.rev[i] = j;
+        self.rev[j] = i;
     }
     pub fn min_cost_flow(&mut self, s: usize, t: usize, mut f: F) -> Option<F> {
         let v = self.graph.size();
@@ -101,16 +85,16 @@ where
             let mut cur = t;
             while cur != s {
                 let prev_i = prev_edge[cur].unwrap();
-                let (src, dst, (cap, cost)) = self.graph.edges[prev_i];
-                self.graph.edges[prev_i] = (src, dst, (cap - addflow, cost));
-                let (src, dst, (cap, cost)) = self.graph.edges[self.rev[prev_i]];
-                self.graph.edges[self.rev[prev_i]] = (src, dst, (cap + addflow, cost));
-
-                cur = src;
+                self.graph.edges[prev_i].2 .0 -= addflow;
+                self.graph.edges[self.rev[prev_i]].2 .0 += addflow;
+                cur = self.graph.edges[prev_i].0;
             }
         }
         Some(ret)
     }
+}
+
+impl<F: Copy + Debug, C: Copy + Debug + Add<Output = C> + Display> PrimalDual<F, C> {
     pub fn result(&self) {
         for i in 0..self.graph.size() {
             for &j in &self.graph.index[i] {
