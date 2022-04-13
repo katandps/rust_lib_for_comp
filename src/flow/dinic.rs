@@ -92,7 +92,9 @@ impl Dinic {
         }
     }
 
-    ///最大フロー問題を Dinic's Algorithm を使って解く O(V^2 E)
+    /// # 最大フロー問題を解く
+    /// ## 計算慮
+    /// $`O(V^2E)`$
     pub fn max_flow(&mut self, s: usize, t: usize) -> i64 {
         let v = self.level.len();
         let mut flow: i64 = 0;

@@ -62,25 +62,28 @@ impl<W: Clone> Graph<W> {
         }
     }
     /// 相互に行き来できる辺をつける
-    pub fn add_edge(&mut self, src: usize, dst: usize, w: W) {
+    pub fn add_edge(&mut self, src: usize, dst: usize, w: W) -> (usize, usize) {
         let i = self.edges.len();
         self.edges.push((src, dst, w.clone()));
         self.index[src].push(i);
         self.rev_index[dst].push(i);
-        let i = self.edges.len();
+        let j = self.edges.len();
         self.edges.push((dst, src, w));
-        self.index[dst].push(i);
-        self.rev_index[src].push(i);
+        self.index[dst].push(j);
+        self.rev_index[src].push(j);
+        (i, j)
     }
 
     /// 一方にのみ移動できる辺をつける
-    pub fn add_arc(&mut self, src: usize, dst: usize, w: W) {
+    pub fn add_arc(&mut self, src: usize, dst: usize, w: W) -> usize {
         let i = self.edges.len();
         self.edges.push((src, dst, w));
         self.index[src].push(i);
         self.rev_index[dst].push(i);
+        i
     }
 
+    /// すべての辺を返す
     pub fn all_edges(&self) -> Vec<(usize, usize, W)> {
         self.edges.clone()
     }

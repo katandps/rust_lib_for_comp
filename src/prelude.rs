@@ -20,6 +20,7 @@ pub use std::{
     str::{from_utf8, FromStr as FS},
 };
 
+pub use crate::algebra::*;
 pub use crate::algo::range::to_lr;
 
 pub use cargo_snippet::snippet;
