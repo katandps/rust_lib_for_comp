@@ -16,16 +16,16 @@ macro_rules! min {
 
 #[snippet(name = "primal_dual", doc_hidden)]
 #[derive(Clone, Debug)]
-pub struct PrimalDual<F: Copy + Debug, C: Copy + Debug> {
-    graph: Graph<(C, F)>,
+pub struct PrimalDual<Co: Copy + Debug, Fl: Copy + Debug> {
+    graph: Graph<(Fl, Co)>,
     rev: Vec<usize>,
 }
 
 #[snippet(name = "primal_dual", doc_hidden)]
-impl<C: Copy + Debug, F: Copy + Debug> PrimalDual<C, F>
+impl<Co: Copy + Debug, Fl: Copy + Debug> PrimalDual<Co, Fl>
 where
-    F: Ord + Zero + AddAssign + SubAssign + Sub<Output = F> + Mul<C, Output = F>,
-    C: Ord + Zero + BoundedAbove + AddAssign + SubAssign + Add<Output = C> + Sub<Output = C>,
+    Co: Ord + Zero + AddAssign + SubAssign + Add<Output = Co> + Sub<Output = Co>,
+    Fl: Ord + Zero + AddAssign + SubAssign + Sub<Output = Fl> + Mul<Co, Output = Fl>,
 {
     pub fn new(n: usize) -> Self {
         Self {
@@ -33,45 +33,53 @@ where
             rev: Vec::with_capacity(n),
         }
     }
-    pub fn add_edge(&mut self, src: usize, dst: usize, cap: F, cost: C) {
+    pub fn add_edge(&mut self, src: usize, dst: usize, cap: Fl, cost: Co) {
         let i = self.graph.add_arc(src, dst, (cap, cost));
-        let j = self.graph.add_arc(dst, src, (F::zero(), C::zero() - cost));
+        let j = self
+            .graph
+            .add_arc(dst, src, (Fl::zero(), Co::zero() - cost));
         self.rev.resize(j + 1, 0);
         self.rev[i] = j;
         self.rev[j] = i;
     }
-    pub fn min_cost_flow(&mut self, s: usize, t: usize, mut f: F) -> Option<F> {
+
+    pub fn min_cost_flow(&mut self, s: usize, t: usize, mut f: Fl) -> Option<Fl> {
         let v = self.graph.size();
-        let mut ret = F::zero();
-        let mut pq: BinaryHeap<Reverse<(C, usize)>> = BinaryHeap::new();
-        let mut potential = vec![C::zero(); v];
-        while f > F::zero() {
-            let mut min_cost = vec![C::max_value(); v];
+        let mut ret = Fl::zero();
+        let mut pq: BinaryHeap<Reverse<(Co, usize)>> = BinaryHeap::new();
+        let mut potential = vec![Co::zero(); v];
+        while f > Fl::zero() {
+            let mut min_cost = vec![None; v];
             let mut prev_edge: Vec<Option<usize>> = vec![None; v];
-            min_cost[s] = C::zero();
-            pq.push(Reverse((C::zero(), s)));
+            min_cost[s] = Some(Co::zero());
+            pq.push(Reverse((Co::zero(), s)));
             while let Some(Reverse((cost, src))) = pq.pop() {
-                if min_cost[src] < cost {
+                if min_cost[src] < Some(cost) {
                     continue;
                 }
                 for &i in &self.graph.index[src] {
                     let (_src, dst, (cap, cost)) = self.graph.edges[i];
-                    if min_cost[src] == C::max_value() {
+                    if cap == Fl::zero() {
                         continue;
                     }
-                    let next_cost = min_cost[src] + cost + potential[src] - potential[dst];
-                    if cap > F::zero() && chmin!(min_cost[dst], next_cost) {
-                        prev_edge[dst] = Some(i);
-                        pq.push(Reverse((min_cost[dst], dst)))
+                    if let Some(m) = min_cost[src] {
+                        let next_cost = m + cost + potential[src] - potential[dst];
+                        if min_cost[dst].is_none() || min_cost[dst] > Some(next_cost) {
+                            min_cost[dst] = Some(next_cost);
+                            prev_edge[dst] = Some(i);
+                            pq.push(Reverse((min_cost[dst].unwrap(), dst)))
+                        }
                     }
                 }
             }
-            if min_cost[t] == C::max_value() {
+            if min_cost[t].is_none() {
                 return None;
             }
-            for i in 0..v {
-                potential[i] += min_cost[i];
-            }
+            (0..v).for_each(|i| {
+                if let Some(m) = min_cost[i] {
+                    potential[i] += m
+                }
+            });
             let mut addflow = f;
             let mut cur = t;
             while cur != s {
@@ -92,9 +100,72 @@ where
         }
         Some(ret)
     }
+
+    /// # 流量最大fまでの傾斜を求める
+    /// ## usage
+    /// ## verify
+    /// [ABC247G](https://atcoder.jp/contests/abc247/submissions/30989081)
+    pub fn slope(&mut self, s: usize, t: usize, mut f: Fl) -> Vec<(Fl, Co)> {
+        let v = self.graph.size();
+        let mut ret = vec![(Fl::zero(), Co::zero())];
+        let mut pq: BinaryHeap<Reverse<(Co, usize)>> = BinaryHeap::new();
+        let mut potential = vec![Co::zero(); v];
+        while f > Fl::zero() {
+            let mut min_cost = vec![None; v];
+            let mut prev_edge: Vec<Option<usize>> = vec![None; v];
+            min_cost[s] = Some(Co::zero());
+            pq.push(Reverse((Co::zero(), s)));
+            while let Some(Reverse((cost, src))) = pq.pop() {
+                if min_cost[src] < Some(cost) {
+                    continue;
+                }
+                for &i in &self.graph.index[src] {
+                    let (_src, dst, (cap, cost)) = self.graph.edges[i];
+                    if cap == Fl::zero() {
+                        continue;
+                    }
+                    if let Some(m) = min_cost[src] {
+                        let next_cost = m + cost + potential[src] - potential[dst];
+                        if min_cost[dst].is_none() || min_cost[dst] > Some(next_cost) {
+                            min_cost[dst] = Some(next_cost);
+                            prev_edge[dst] = Some(i);
+                            pq.push(Reverse((min_cost[dst].unwrap(), dst)))
+                        }
+                    }
+                }
+            }
+            if min_cost[t].is_none() {
+                break;
+            }
+            (0..v).for_each(|i| {
+                if let Some(m) = min_cost[i] {
+                    potential[i] += m
+                }
+            });
+            let mut addflow = f;
+            let mut cur = t;
+            while cur != s {
+                let prev_i = prev_edge[cur].unwrap();
+                let (src, _dst, (cap, _cost)) = self.graph.edges[prev_i];
+                chmin!(addflow, cap);
+                cur = src;
+            }
+            f -= addflow;
+            ret.push((addflow, potential[t]));
+            let mut cur = t;
+            while cur != s {
+                let prev_i = prev_edge[cur].unwrap();
+                self.graph.edges[prev_i].2 .0 -= addflow;
+                self.graph.edges[self.rev[prev_i]].2 .0 += addflow;
+                cur = self.graph.edges[prev_i].0;
+            }
+        }
+        ret
+    }
 }
 
-impl<F: Copy + Debug, C: Copy + Debug + Add<Output = C> + Display> PrimalDual<F, C> {
+#[snippet(name = "primal_dual", doc_hidden)]
+impl<Co: Copy + Debug, Fl: Copy + Debug + Add<Output = Fl> + Display> PrimalDual<Co, Fl> {
     pub fn result(&self) {
         for i in 0..self.graph.size() {
             for &j in &self.graph.index[i] {
