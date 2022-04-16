@@ -72,9 +72,7 @@ where
                     }
                 }
             }
-            if min_cost[t].is_none() {
-                return None;
-            }
+            min_cost[t]?;
             (0..v).for_each(|i| {
                 if let Some(m) = min_cost[i] {
                     potential[i] += m
