@@ -5,52 +5,52 @@
 //! [mod_pow](crate::algebra::mod_pow)
 //!
 //! ## verify
-//! [ALDS1_1_C](https://judge.u-aizu.ac.jp/onlinejudge/review.jsp?rid=6496119#2)
+//! [ALDS1_1_C](https://judge.u-aizu.ac.jp/onlinejudge/review.jsp?rid=6496157)
+//! [Q3. 素数判定 (強)](https://algo-method.com/submissions/394744)
 
 use super::mod_pow::pow;
 use crate::prelude::*;
 
 #[snippet(name = "miller-rabin", doc_hidden)]
-pub fn is_prime(n: u64) -> bool {
-    if n == 2 {
-        return true;
+pub trait MillerRabin {
+    fn is_prime(&self) -> bool;
+    fn is_composite(&self, checker: u64, n_1: u64) -> bool;
+}
+
+#[snippet(name = "miller-rabin", doc_hidden)]
+impl MillerRabin for u64 {
+    fn is_prime(&self) -> bool {
+        if *self < 2 || *self & 1 == 0 {
+            return *self == 2; // 偶数は2だけ素数
+        }
+        let d = (*self - 1) >> (*self - 1).trailing_zeros(); // n-1を2で割れるだけ割ったもの
+        vec![
+            vec![2, 7, 61], // self < 2^32まではこっち
+            vec![2, 3, 5, 7, 11, 13, 17, 19, 23, 29, 31, 37],
+        ][if *self < 1 << 32 { 0 } else { 1 }]
+        .iter()
+        .all(|&checker| !self.is_composite(checker, d)) // すべてのcheckerについてすべて合成数と判定されなかった <=> selfが素数
     }
-    if n < 2 || n & 1 == 0 {
-        return false;
-    }
-    let mut d = n - 1;
-    d >>= d.trailing_zeros();
-    fn suspect(a: u64, mut t: u64, n: u64) -> bool {
-        let mut x = pow(a, t, n);
-        while t != n - 1 && x != 1 && x != n - 1 {
-            x = pow(x, 2, n);
+    fn is_composite(&self, a: u64, mut t: u64) -> bool {
+        let mut x = pow(a as u128, t as u128, *self as u128);
+        while t != *self - 1 && x != 1 && x != *self as u128 - 1 {
+            x = pow(x, 2, *self as u128);
             t <<= 1;
         }
-        t & 1 == 1 || x == n - 1
+        a < *self && t & 1 == 0 && x != *self as u128 - 1
     }
-    if n < 1 << 32 {
-        const LIST: [u64; 3] = [2, 7, 61];
-        if LIST.iter().filter(|&&k| k < n && !suspect(k, d, n)).count() > 0 {
-            return false;
-        }
-    } else {
-        const LIST: [u64; 12] = [2, 3, 5, 7, 11, 13, 17, 19, 23, 29, 31, 37];
-        if LIST.iter().filter(|&&k| k < n && !suspect(k, d, n)).count() > 0 {
-            return false;
-        }
-    }
-    true
 }
 
 #[test]
 fn test() {
-    assert_eq!(false, is_prime(0));
-    assert_eq!(false, is_prime(1));
-    assert_eq!(true, is_prime(2));
-    assert_eq!(true, is_prime(3));
-    assert_eq!(false, is_prime(4));
-    assert_eq!(true, is_prime(5));
-    assert_eq!(false, is_prime(99));
-    assert_eq!(false, is_prime(100));
-    assert_eq!(true, is_prime(101));
+    assert_eq!(false, 0.is_prime());
+    assert_eq!(false, 1.is_prime());
+    assert_eq!(true, 2.is_prime());
+    assert_eq!(true, 3.is_prime());
+    assert_eq!(false, 4.is_prime());
+    assert_eq!(true, 5.is_prime());
+    assert_eq!(false, 99.is_prime());
+    assert_eq!(false, 100.is_prime());
+    assert_eq!(true, 101.is_prime());
+    assert_eq!(false, 1565912117761.is_prime());
 }
