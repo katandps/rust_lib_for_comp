@@ -7,3 +7,4 @@ pub mod range;
 pub mod rps;
 pub mod sqrt;
 pub mod union_of_ranges;
+pub mod xor_shift;
