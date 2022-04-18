@@ -8,7 +8,7 @@
 //! [ALDS1_1_C](https://judge.u-aizu.ac.jp/onlinejudge/review.jsp?rid=6496157)
 //! [Q3. 素数判定 (強)](https://algo-method.com/submissions/394744)
 
-use super::mod_pow::pow;
+use super::mod_pow::ModPow;
 use crate::prelude::*;
 
 #[snippet(name = "miller-rabin", doc_hidden)]
@@ -32,9 +32,9 @@ impl MillerRabin for u64 {
         .all(|&checker| !self.is_composite(checker, d)) // すべてのcheckerについてすべて合成数と判定されなかった <=> selfが素数
     }
     fn is_composite(&self, a: u64, mut t: u64) -> bool {
-        let mut x = pow(a as u128, t as u128, *self as u128);
+        let mut x = (a as u128).mod_pow(t as u128, *self as u128);
         while t != *self - 1 && x != 1 && x != *self as u128 - 1 {
-            x = pow(x, 2, *self as u128);
+            x = x.mod_pow(2, *self as u128);
             t <<= 1;
         }
         a < *self && t & 1 == 0 && x != *self as u128 - 1
