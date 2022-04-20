@@ -15,6 +15,7 @@
 
 use crate::{algo::slice_bounds::SliceBounds, prelude::*};
 
+#[allow(clippy::many_single_char_names)]
 pub fn solve<R: BufRead, W: Write, F: FnMut() -> R>(mut reader: Reader<F>, mut writer: Writer<W>) {
     let (n, q) = reader.v2::<usize, usize>();
     let a = reader.vec::<usize>(n);

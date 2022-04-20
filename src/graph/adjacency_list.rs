@@ -6,7 +6,7 @@ use crate::prelude::*;
 #[snippet(name = "graph-adjacency-list", doc_hidden)]
 pub struct Graph<W> {
     pub n: usize,
-    /// edges[index] = (src, dst, weight)
+    /// Vec<(src, dst, weight)>
     pub edges: Vec<(usize, usize, W)>,
     pub index: Vec<Vec<usize>>,
     pub rev_index: Vec<Vec<usize>>,
