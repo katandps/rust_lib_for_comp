@@ -1,16 +1,10 @@
 //! # Static Range Frequency (整数の出現回数)
 //!
 //! ## 入力
-//! ```math
-//! \begin{array}{}
-//! N & Q \\
-//! a_0 & a_1 & a_2 & \cdots & a_{n-1} \\
-//! l_0 & r_0 & x_0 \\
-//! l_1 & r_1 & x_1 \\
-//! \vdots \\
-//! l_{q-1} & r_{q-1} & x_{q-1} \\
-//! \end{array}
-//! ```
+//! - $`N`$: 数列の個数
+//! - $`Q`$: クエリの回数
+//! - $`A`$: 数列
+//! - $`LRX`$: クエリ $`[L, R)`$ に Xがいくつあるか
 //!
 
 use crate::algo::slice_bounds::SliceBounds;
