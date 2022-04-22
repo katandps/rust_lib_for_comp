@@ -9,7 +9,7 @@ pub use std::{
     convert::{TryFrom, TryInto},
     fmt::{Debug, Display, Formatter},
     io::{stdin, stdout, BufRead, BufWriter, Read, Write},
-    iter::{Product, Sum},
+    iter::{repeat, Product, Sum},
     marker::PhantomData,
     mem::swap,
     ops::{
