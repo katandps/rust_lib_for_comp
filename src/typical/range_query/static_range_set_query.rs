@@ -19,9 +19,8 @@ use crate::{
 
 const KINDS: usize = 500_000;
 
-#[allow(clippy::many_single_char_names)]
 pub fn solve(n: usize, q: usize, a: Vec<usize>, lr: Vec<(usize, usize)>) -> Vec<i64> {
-    let mut queries = BinaryHeap::new();
+    let mut queries = BinaryHeap::new(); // Reverse((r, l, i))
     (0..q).for_each(|i| queries.push(Reverse((lr[i].1, lr[i].0, i))));
     let mut ans = vec![0; q];
     let mut last_pos = vec![None; KINDS + 1]; // 最後に見つけた位置
@@ -33,12 +32,12 @@ pub fn solve(n: usize, q: usize, a: Vec<usize>, lr: Vec<(usize, usize)>) -> Vec<
         bit.add(i, 1);
         last_pos[a[i]] = Some(i);
 
-        while let Some(Reverse((r, l, qi))) = queries.pop() {
-            if r > i + 1 {
-                queries.push(Reverse((r, l, qi)));
+        while let Some(Reverse(query)) = queries.pop() {
+            if query.0 > i + 1 {
+                queries.push(Reverse(query));
                 break;
             }
-            ans[qi] = bit.fold(l..r);
+            ans[query.2] = bit.fold(query.1..query.0);
         }
     }
     ans
