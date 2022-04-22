@@ -17,10 +17,8 @@ impl RollingHash {
     const MOD: u64 = (1 << 61) - 1;
     const CHAR_MIN: u64 = 256;
     pub fn hash(&self, l: usize, r: usize) -> u64 {
-        match (self.hash[r], Self::mul(self.hash[l], self.power[r - l])) {
-            (a, b) if a < b => a + Self::MOD - b,
-            (a, b) => a - b,
-        }
+        const POSITIVIZER: u64 = ((1 << 61) - 1) * 4;
+        Self::calc_mod(self.hash[r] + POSITIVIZER - Self::mul(self.hash[l], self.power[r - l]))
     }
     /// a * b % MOD をオーバーフローしないよう計算する
     fn mul(a: u64, b: u64) -> u64 {
@@ -44,14 +42,11 @@ impl RollingHash {
 #[snippet(name = "rolling-hash", doc_hidden)]
 impl From<&[char]> for RollingHash {
     fn from(src: &[char]) -> Self {
-        let mut randomizer = XorShift::default();
-        let b = randomizer.rand((Self::MOD - Self::CHAR_MIN - 1) as u64) + (1 << 8);
+        let b = XorShift::default().rand(Self::MOD - Self::CHAR_MIN - 1) + Self::CHAR_MIN;
         let mut power = vec![1];
-        for i in 0..src.len() {
-            power.push(Self::mul(power[i], b));
-        }
         let mut hash = vec![0];
         for i in 0..src.len() {
+            power.push(Self::mul(power[i], b));
             hash.push(Self::calc_mod(Self::mul(hash[i], b) + src[i] as u64));
         }
         Self { power, hash }
