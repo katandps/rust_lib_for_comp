@@ -15,6 +15,7 @@ impl Default for XorShift {
     }
 }
 
+#[snippet(name = "xor-shift", doc_hidden)]
 impl Iterator for XorShift {
     type Item = u64;
     fn next(&mut self) -> Option<u64> {

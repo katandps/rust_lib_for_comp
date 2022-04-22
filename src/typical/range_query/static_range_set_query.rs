@@ -22,10 +22,7 @@ const KINDS: usize = 500_000;
 #[allow(clippy::many_single_char_names)]
 pub fn solve(n: usize, q: usize, a: Vec<usize>, lr: Vec<(usize, usize)>) -> Vec<i64> {
     let mut queries = BinaryHeap::new();
-    for i in 0..q {
-        let (l, r) = lr[i];
-        queries.push(Reverse((r, l, i)));
-    }
+    (0..q).for_each(|i| queries.push(Reverse((lr[i].1, lr[i].0, i))));
     let mut ans = vec![0; q];
     let mut last_pos = vec![None; KINDS + 1]; // 最後に見つけた位置
     let mut bit = BinaryIndexedTree::<Addition<i64>>::from(n);
