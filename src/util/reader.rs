@@ -6,7 +6,7 @@
 //!
 //! ```
 //! # use rust_lib_for_comp::util::reader::*;
-//! let mut reader = Reader::new(|| &b"-123 456.7 12345\nhogehoge\r123 456  789 012  \n 345 678\n"[..]);
+//! let mut reader = Reader::new(|| &b"-123 456.7 12345 hogehoge 123 456  789 012   345 678"[..]);
 //! assert_eq!(-123, reader.v());
 //! assert_eq!(456.7, reader.v());
 //! assert_eq!(12345, reader.v());
@@ -22,16 +22,16 @@ pub struct Reader<F> {
 }
 
 #[snippet(name = "reader", doc_hidden)]
+
 impl<R: BufRead, F: FnMut() -> R> Iterator for Reader<F> {
     type Item = String;
-
     fn next(&mut self) -> Option<String> {
         if self.buf.is_empty() {
-            let reader = (self.init)();
-            for l in reader.lines().flatten() {
-                self.buf
-                    .append(&mut l.split_whitespace().map(ToString::to_string).collect());
-            }
+            let mut reader = (self.init)();
+            let mut l = String::new();
+            reader.read_line(&mut l).unwrap();
+            self.buf
+                .append(&mut l.split_whitespace().map(ToString::to_string).collect());
         }
         self.buf.pop_front()
     }
@@ -135,11 +135,11 @@ mod tests {
     #[test]
     fn edge_cases() {
         {
-            let mut reader = Reader::new(|| &b"8\n"[..]);
+            let mut reader = Reader::new(|| &b"8"[..]);
             assert_eq!(8u32, reader.v());
         }
         {
-            let mut reader = Reader::new(|| &b"\n9\n"[..]);
+            let mut reader = Reader::new(|| &b"9"[..]);
             assert_eq!(9i32, reader.v());
         }
     }
@@ -147,7 +147,7 @@ mod tests {
     #[test]
     fn map() {
         {
-            let data = vec!["...#..\n", ".###..\n", "....##\n"];
+            let data = vec!["...#.. ", ".###.. ", "....## "];
             let mut iter = data.iter();
             let mut reader = Reader::new(|| BufReader::new(iter.next().unwrap().as_bytes()));
             let res = reader.char_map(3);
@@ -175,7 +175,7 @@ mod tests {
 
     #[test]
     fn digits() {
-        let mut reader = Reader::new(|| &b"123456\n"[..]);
+        let mut reader = Reader::new(|| &b"123456"[..]);
         let res = reader.digits();
         assert_eq!(res, vec![1, 2, 3, 4, 5, 6]);
     }
