@@ -25,6 +25,9 @@ impl<M: Mod> ModInt<M> {
         Self(n, PhantomData)
     }
 
+    /// # 累乗
+    /// ## 計算量
+    /// $`O(\logMOD)`$
     pub fn pow(mut self, mut e: i64) -> ModInt<M> {
         let m = e < 0;
         e = e.abs();
@@ -41,6 +44,26 @@ impl<M: Mod> ModInt<M> {
         } else {
             result
         }
+    }
+
+    /// # 組み合わせnCr
+    /// 前計算なし
+    /// ## 計算量
+    /// $`O(r + \logMOD)`$
+    pub fn comb(n: i64, mut r: i64) -> Mi {
+        if r > n - r {
+            r = n - r;
+        }
+        if r == 0 {
+            return mi(1);
+        }
+        let mut ret = mi(1);
+        let mut rev = mi(1);
+        for k in 0..r {
+            ret *= n - k;
+            rev *= r - k;
+        }
+        ret / rev
     }
 
     pub fn get(self) -> i64 {
