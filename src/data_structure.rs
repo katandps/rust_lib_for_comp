@@ -2,6 +2,7 @@
 
 pub mod binary_indexed_tree;
 pub mod binary_indexed_tree_2d;
+pub mod binary_search_tree;
 pub mod binary_trie;
 pub mod bit_matrix;
 pub mod bitset;
