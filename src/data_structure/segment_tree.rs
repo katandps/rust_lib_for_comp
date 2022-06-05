@@ -11,7 +11,6 @@ use crate::prelude::*;
 #[derive(Clone, Debug)]
 pub struct SegmentTree<M: Monoid> {
     n: usize,
-    log: usize,
     node: Vec<M::M>,
 }
 
@@ -33,9 +32,8 @@ impl<M: Monoid> SegmentTree<M> {
     /// vの長さを要素数とする
     pub fn new(n: usize) -> Self {
         let n = (n + 1).next_power_of_two();
-        let log = n.trailing_zeros() as usize;
         let node = vec![M::unit(); 2 * n];
-        let mut segtree = Self { n, log, node };
+        let mut segtree = Self { n, node };
         for i in (0..segtree.n - 1).rev() {
             segtree.node[i] = M::op(&segtree.node[2 * i], &segtree.node[2 * i + 1]);
         }
