@@ -155,15 +155,15 @@ impl<T: Ord + Copy + Display> Debug for BinaryNode<T> {
                     k = l;
                 }
                 let mut k = t;
-                let mut r = Vec::new();
+                let mut vals = Vec::new();
                 while let Some(s) = self.smaller(k) {
-                    r.push(s);
+                    vals.push(s);
                     k = s;
                 }
-                r.reverse();
-                r.append(&mut v);
+                vals.reverse();
+                vals.append(&mut v);
                 write!(f, "[").expect("Failed to write.");
-                r.iter().fold("", |sep, arg| {
+                vals.iter().fold("", |sep, arg| {
                     write!(f, "{}{}", sep, arg).expect("Failed to write.");
                     " "
                 });
