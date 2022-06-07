@@ -25,13 +25,22 @@ impl<T: PartialOrd + Default> Treap<T> {
     }
 
     /// # 挿入
-    /// 先頭からposの位置にxを挿入
+    /// 先頭からpos(0-indexed)の位置にxを挿入
     ///
     /// ## 計算量
     /// $`O(logN)`$
     pub fn insert(&mut self, pos: usize, x: T) {
         self.node
             .insert(pos, TreapNode::new(x, self.randomizer.next().unwrap()))
+    }
+
+    /// # 削除
+    /// 先頭からpos(0-indexed)の位置の要素を削除して返す
+    ///
+    /// ## 計算量
+    /// $`O(logN)`$
+    pub fn erase(&mut self, pos: usize) -> Option<T> {
+        self.node.erase(pos)
     }
 }
 
@@ -87,30 +96,40 @@ impl<T: PartialOrd + Default> TreapNode<T> {
         }
     }
 
-    fn insert(&mut self, key: usize, mut item: Self) {
+    fn insert(&mut self, pos: usize, mut item: Self) {
         let (mut l, mut r) = (Self::default(), Self::default());
-        self.split(key, &mut l, &mut r);
+        self.split(pos, &mut l, &mut r);
         self.merge(&mut l);
         self.merge(&mut item);
         self.merge(&mut r);
     }
 
-    /// selfを l: $`[0, key)`$ と r: $`[key, n)`$ に分割する
-    fn split(&mut self, key: usize, l: &mut Self, r: &mut Self) {
+    fn erase(&mut self, pos: usize) -> Option<T> {
+        let (mut l, mut r) = (Self::default(), Self::default());
+        self.split(pos, &mut l, &mut r);
+        let (mut res, mut r2) = (Self::default(), Self::default());
+        r.split(1, &mut res, &mut r2);
+        self.merge(&mut l);
+        self.merge(&mut r2);
+        res.0.map(|node| node.key)
+    }
+
+    /// selfを l: $`[0, pos)`$ と r: $`[pos, n)`$ に分割する
+    fn split(&mut self, pos: usize, l: &mut Self, r: &mut Self) {
         self.update();
-        // dbg!(&self, key);
         if let Some(ref mut node) = self.0 {
-            if key <= node.l.size() {
+            if pos < node.l.size() + 1 {
                 // 左側の部分木を分割する 部分木の左側がl
                 let (mut l_temp, mut r_temp) = (Self::default(), Self::default());
-                node.l.split(key, &mut l_temp, &mut r_temp);
+                node.l.split(pos, &mut l_temp, &mut r_temp);
                 swap(l, &mut l_temp);
                 swap(&mut node.l, &mut Box::new(r_temp));
                 swap(r, self);
             } else {
                 // 右側の部分木を分割する
                 let (mut l_temp, mut r_temp) = (Self::default(), Self::default());
-                node.r.split(key - node.l.size(), &mut l_temp, &mut r_temp);
+                node.r
+                    .split(pos - node.l.size() - 1, &mut l_temp, &mut r_temp);
                 swap(r, &mut r_temp);
                 swap(&mut node.r, &mut Box::new(l_temp));
                 swap(l, self);
@@ -120,6 +139,8 @@ impl<T: PartialOrd + Default> TreapNode<T> {
             swap(r, &mut Self::default());
         }
         self.update();
+        l.update();
+        r.update();
     }
 
     // self の右に r をマージする
@@ -145,6 +166,7 @@ impl<T: PartialOrd + Default> TreapNode<T> {
             _ => (),
         }
         self.update();
+        r.update();
     }
 }
 
@@ -181,7 +203,11 @@ impl<T: Display> Display for TreapNode<T> {
 impl<T: Display> Debug for TreapNode<T> {
     fn fmt(&self, f: &mut Formatter<'_>) -> std::fmt::Result {
         match &self.0 {
-            Some(node) => write!(f, "{}:[l:{:?} r:{:?}]", node.key, node.l, node.r),
+            Some(node) => write!(
+                f,
+                "key{}size{}:[l:{:?} r:{:?}]",
+                node.key, node.size, node.l, node.r
+            ),
             _ => write!(f, ""),
         }
     }
@@ -195,4 +221,17 @@ fn size() {
         treap.insert(i, i * 2);
     }
     assert_eq!(1000000, treap.size());
+}
+
+#[test]
+fn test() {
+    let mut treap = Treap::<usize>::new();
+    for i in 0..10 {
+        treap.insert(i, i);
+    }
+    println!("{}", treap);
+
+    let del = treap.erase(5);
+    println!("{:?}", del);
+    println!("{}", treap);
 }
