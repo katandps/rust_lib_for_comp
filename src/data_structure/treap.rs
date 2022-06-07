@@ -4,12 +4,11 @@
 use crate::algo::xor_shift::XorShift;
 use crate::prelude::*;
 
-#[derive(Clone, Debug)]
-pub struct Treap<T: Copy + Display + PartialOrd> {
+pub struct Treap<T> {
     randomizer: XorShift,
     node: Box<TreapNode<T>>,
 }
-impl<T: Copy + Display + PartialOrd> Treap<T> {
+impl<T: PartialOrd + Default> Treap<T> {
     pub fn new() -> Self {
         Treap {
             randomizer: XorShift::default(),
@@ -36,17 +35,25 @@ impl<T: Copy + Display + PartialOrd> Treap<T> {
     }
 }
 
-impl<T: Copy + Debug + PartialOrd + Display> Display for Treap<T> {
+impl<T: Clone> Clone for Treap<T> {
+    fn clone(&self) -> Self {
+        Self {
+            randomizer: self.randomizer.clone(),
+            node: self.node.clone(),
+        }
+    }
+}
+
+impl<T: Display> Display for Treap<T> {
     fn fmt(&self, f: &mut Formatter<'_>) -> std::fmt::Result {
         writeln!(f, "[{}]", self.node)
     }
 }
 
-#[derive(Clone)]
-pub struct TreapNode<T: Copy + Display>(Option<Node<T>>);
+pub struct TreapNode<T>(Option<Node<T>>);
 
 #[derive(Clone)]
-struct Node<T: Copy + Display> {
+struct Node<T> {
     /// キー
     key: T,
     /// 優先度
@@ -59,7 +66,7 @@ struct Node<T: Copy + Display> {
     r: Box<TreapNode<T>>,
 }
 
-impl<T: PartialOrd + Copy + Display> TreapNode<T> {
+impl<T: PartialOrd + Default> TreapNode<T> {
     fn new(key: T, p: u64) -> Self {
         Self(Some(Node {
             key,
@@ -71,11 +78,7 @@ impl<T: PartialOrd + Copy + Display> TreapNode<T> {
     }
 
     fn size(&self) -> usize {
-        if let Some(node) = &self.0 {
-            node.size
-        } else {
-            0
-        }
+        self.0.as_ref().map_or(0, |node| node.size)
     }
 
     fn update(&mut self) {
@@ -84,13 +87,9 @@ impl<T: PartialOrd + Copy + Display> TreapNode<T> {
         }
     }
 
-    fn insert(&mut self, key: usize, mut item: Self)
-    where
-        T: Display,
-    {
-        let (mut l, mut r) = (Self(None), Self(None));
+    fn insert(&mut self, key: usize, mut item: Self) {
+        let (mut l, mut r) = (Self::default(), Self::default());
         self.split(key, &mut l, &mut r);
-        println!("[{}] [{}] [{}] [{}]", &self, &l, &item, &r);
         self.merge(&mut l);
         self.merge(&mut item);
         self.merge(&mut r);
@@ -103,24 +102,22 @@ impl<T: PartialOrd + Copy + Display> TreapNode<T> {
         if let Some(ref mut node) = self.0 {
             if key <= node.l.size() {
                 // 左側の部分木を分割する 部分木の左側がl
-                let mut l_temp = Self(None);
-                let mut r_temp = Self(None);
+                let (mut l_temp, mut r_temp) = (Self::default(), Self::default());
                 node.l.split(key, &mut l_temp, &mut r_temp);
                 swap(l, &mut l_temp);
                 swap(&mut node.l, &mut Box::new(r_temp));
                 swap(r, self);
             } else {
                 // 右側の部分木を分割する
-                let mut l_temp = Self(None);
-                let mut r_temp = Self(None);
+                let (mut l_temp, mut r_temp) = (Self::default(), Self::default());
                 node.r.split(key - node.l.size(), &mut l_temp, &mut r_temp);
                 swap(r, &mut r_temp);
                 swap(&mut node.r, &mut Box::new(l_temp));
                 swap(l, self);
             }
         } else {
-            swap(l, &mut Self(None));
-            swap(r, &mut Self(None));
+            swap(l, &mut Self::default());
+            swap(r, &mut Self::default());
         }
         self.update();
     }
@@ -136,7 +133,7 @@ impl<T: PartialOrd + Copy + Display> TreapNode<T> {
                     // 左の根のほうが優先度が大きいとき、左の木の右の子と右の木をマージする
                     left_node.r.merge(r);
                 } else {
-                    let mut temp = TreapNode(None);
+                    let mut temp = Self::default();
                     swap(&mut temp, &mut right_node.l);
                     self.merge(&mut temp);
                     swap(self, &mut right_node.l);
@@ -151,7 +148,28 @@ impl<T: PartialOrd + Copy + Display> TreapNode<T> {
     }
 }
 
-impl<T: PartialOrd + Copy + Display> Display for TreapNode<T> {
+impl<T: Clone> Clone for TreapNode<T> {
+    fn clone(&self) -> Self {
+        match &self.0 {
+            Some(node) => Self(Some(Node {
+                key: node.key.clone(),
+                p: node.p,
+                size: node.size,
+                l: node.l.clone(),
+                r: node.r.clone(),
+            })),
+            _ => Self(None),
+        }
+    }
+}
+
+impl<T: Default> Default for TreapNode<T> {
+    fn default() -> Self {
+        Self(None)
+    }
+}
+
+impl<T: Display> Display for TreapNode<T> {
     fn fmt(&self, f: &mut Formatter<'_>) -> std::fmt::Result {
         match &self.0 {
             Some(node) => write!(f, "{} {} {}", node.l, node.key, node.r),
@@ -160,7 +178,7 @@ impl<T: PartialOrd + Copy + Display> Display for TreapNode<T> {
     }
 }
 
-impl<T: PartialOrd + Copy + Display> Debug for TreapNode<T> {
+impl<T: Display> Debug for TreapNode<T> {
     fn fmt(&self, f: &mut Formatter<'_>) -> std::fmt::Result {
         match &self.0 {
             Some(node) => write!(f, "{}:[l:{:?} r:{:?}]", node.key, node.l, node.r),
@@ -177,14 +195,4 @@ fn size() {
         treap.insert(i, i * 2);
     }
     assert_eq!(1000000, treap.size());
-}
-
-#[test]
-fn format() {
-    let mut treap = Treap::new();
-    for i in 0..15 {
-        treap.insert(i, i);
-        println!("{}", treap);
-    }
-    dbg!(treap);
 }
