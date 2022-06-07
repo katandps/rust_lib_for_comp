@@ -2,7 +2,7 @@
 use crate::prelude::*;
 
 #[snippet(name = "xor-shift", doc_hidden)]
-#[derive(Debug)]
+#[derive(Clone, Debug)]
 pub struct XorShift {
     seed: u64,
 }

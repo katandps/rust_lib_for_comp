@@ -4,12 +4,12 @@
 use crate::algo::xor_shift::XorShift;
 use crate::prelude::*;
 
-#[allow(dead_code)]
-pub struct Treap<T: Copy + Debug> {
+#[derive(Clone, Debug)]
+pub struct Treap<T: Copy + Display + PartialOrd> {
     randomizer: XorShift,
     node: Box<TreapNode<T>>,
 }
-impl<T: Copy + Debug + PartialOrd> Treap<T> {
+impl<T: Copy + Display + PartialOrd> Treap<T> {
     pub fn new() -> Self {
         Treap {
             randomizer: XorShift::default(),
@@ -17,10 +17,19 @@ impl<T: Copy + Debug + PartialOrd> Treap<T> {
         }
     }
 
+    /// # サイズ
+    ///
+    /// ## 計算量
+    /// $`O(1)`$
     pub fn size(&self) -> usize {
         self.node.size()
     }
 
+    /// # 挿入
+    /// 先頭からposの位置にxを挿入
+    ///
+    /// ## 計算量
+    /// $`O(logN)`$
     pub fn insert(&mut self, pos: usize, x: T) {
         self.node
             .insert(pos, TreapNode::new(x, self.randomizer.next().unwrap()))
@@ -33,11 +42,11 @@ impl<T: Copy + Debug + PartialOrd + Display> Display for Treap<T> {
     }
 }
 
-#[derive(Debug, Clone)]
-pub struct TreapNode<T: Copy + Debug>(Option<Node<T>>);
+#[derive(Clone)]
+pub struct TreapNode<T: Copy + Display>(Option<Node<T>>);
 
-#[derive(Debug, Clone)]
-struct Node<T: Copy + Debug> {
+#[derive(Clone)]
+struct Node<T: Copy + Display> {
     /// キー
     key: T,
     /// 優先度
@@ -50,7 +59,7 @@ struct Node<T: Copy + Debug> {
     r: Box<TreapNode<T>>,
 }
 
-impl<T: PartialOrd + Copy + Debug> TreapNode<T> {
+impl<T: PartialOrd + Copy + Display> TreapNode<T> {
     fn new(key: T, p: u64) -> Self {
         Self(Some(Node {
             key,
@@ -75,9 +84,13 @@ impl<T: PartialOrd + Copy + Debug> TreapNode<T> {
         }
     }
 
-    fn insert(&mut self, key: usize, mut item: Self) {
+    fn insert(&mut self, key: usize, mut item: Self)
+    where
+        T: Display,
+    {
         let (mut l, mut r) = (Self(None), Self(None));
         self.split(key, &mut l, &mut r);
+        println!("[{}] [{}] [{}] [{}]", &self, &l, &item, &r);
         self.merge(&mut l);
         self.merge(&mut item);
         self.merge(&mut r);
@@ -88,7 +101,7 @@ impl<T: PartialOrd + Copy + Debug> TreapNode<T> {
         self.update();
         // dbg!(&self, key);
         if let Some(ref mut node) = self.0 {
-            if key < node.l.size() {
+            if key <= node.l.size() {
                 // 左側の部分木を分割する 部分木の左側がl
                 let mut l_temp = Self(None);
                 let mut r_temp = Self(None);
@@ -123,7 +136,10 @@ impl<T: PartialOrd + Copy + Debug> TreapNode<T> {
                     // 左の根のほうが優先度が大きいとき、左の木の右の子と右の木をマージする
                     left_node.r.merge(r);
                 } else {
-                    right_node.l.merge(self);
+                    let mut temp = TreapNode(None);
+                    swap(&mut temp, &mut right_node.l);
+                    self.merge(&mut temp);
+                    swap(self, &mut right_node.l);
                     swap(self, r);
                 }
             }
@@ -135,7 +151,7 @@ impl<T: PartialOrd + Copy + Debug> TreapNode<T> {
     }
 }
 
-impl<T: PartialOrd + Copy + Debug + Display> Display for TreapNode<T> {
+impl<T: PartialOrd + Copy + Display> Display for TreapNode<T> {
     fn fmt(&self, f: &mut Formatter<'_>) -> std::fmt::Result {
         match &self.0 {
             Some(node) => write!(f, "{} {} {}", node.l, node.key, node.r),
@@ -144,12 +160,31 @@ impl<T: PartialOrd + Copy + Debug + Display> Display for TreapNode<T> {
     }
 }
 
+impl<T: PartialOrd + Copy + Display> Debug for TreapNode<T> {
+    fn fmt(&self, f: &mut Formatter<'_>) -> std::fmt::Result {
+        match &self.0 {
+            Some(node) => write!(f, "{}:[l:{:?} r:{:?}]", node.key, node.l, node.r),
+            _ => write!(f, ""),
+        }
+    }
+}
+
 #[test]
-fn format() {
+fn size() {
     let mut treap = Treap::<usize>::new();
 
     for i in 0..1000000 {
         treap.insert(i, i * 2);
     }
     assert_eq!(1000000, treap.size());
+}
+
+#[test]
+fn format() {
+    let mut treap = Treap::new();
+    for i in 0..15 {
+        treap.insert(i, i);
+        println!("{}", treap);
+    }
+    dbg!(treap);
 }
