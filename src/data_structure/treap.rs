@@ -17,6 +17,14 @@ impl<T: PartialOrd + Default> Treap<T> {
         self.node.len()
     }
 
+    /// # 空かどうか
+    ///
+    /// ## 計算量
+    /// $`O(1)`$
+    pub fn is_empty(&self) -> bool {
+        self.len() == 0
+    }
+
     /// # 挿入
     /// 先頭からpos(0-indexed)の位置にxを挿入
     ///
@@ -128,9 +136,9 @@ impl<T: PartialOrd + Default> TreapNode<T> {
     fn split(&mut self, pos: usize, l: &mut Self, r: &mut Self) {
         self.update();
         if let Some(ref mut node) = self.0 {
+            let (mut l_temp, mut r_temp) = (Self::default(), Self::default());
             if pos < node.l.len() + 1 {
                 // 左側の部分木を分割する 部分木の左側がl
-                let (mut l_temp, mut r_temp) = (Self::default(), Self::default());
                 node.l.split(pos, &mut l_temp, &mut r_temp);
                 swap(l, &mut l_temp);
                 swap(&mut node.l, &mut Box::new(r_temp));
@@ -186,14 +194,10 @@ impl<T> Index<usize> for TreapNode<T> {
         assert!(index < self.len());
         self.0
             .as_ref()
-            .map(|node| {
-                if node.l.len() > index {
-                    node.l.index(index)
-                } else if node.l.len() == index {
-                    &node.key
-                } else {
-                    node.r.index(index - node.l.len() - 1)
-                }
+            .map(|node| match () {
+                () if node.l.len() > index => node.l.index(index),
+                () if node.l.len() < index => node.r.index(index - node.l.len() - 1),
+                _ => &node.key,
             })
             .unwrap()
     }
