@@ -9,19 +9,12 @@ pub struct Treap<T> {
     node: Box<TreapNode<T>>,
 }
 impl<T: PartialOrd + Default> Treap<T> {
-    pub fn new() -> Self {
-        Treap {
-            randomizer: XorShift::default(),
-            node: Box::new(TreapNode(None)),
-        }
-    }
-
     /// # サイズ
     ///
     /// ## 計算量
     /// $`O(1)`$
-    pub fn size(&self) -> usize {
-        self.node.size()
+    pub fn len(&self) -> usize {
+        self.node.len()
     }
 
     /// # 挿入
@@ -41,6 +34,22 @@ impl<T: PartialOrd + Default> Treap<T> {
     /// $`O(logN)`$
     pub fn erase(&mut self, pos: usize) -> Option<T> {
         self.node.erase(pos)
+    }
+}
+
+impl<T> Default for Treap<T> {
+    fn default() -> Self {
+        Treap {
+            randomizer: XorShift::default(),
+            node: Box::new(TreapNode(None)),
+        }
+    }
+}
+
+impl<T> Index<usize> for Treap<T> {
+    type Output = T;
+    fn index(&self, index: usize) -> &T {
+        self.node.index(index)
     }
 }
 
@@ -74,8 +83,7 @@ struct Node<T> {
     /// 右の子
     r: Box<TreapNode<T>>,
 }
-
-impl<T: PartialOrd + Default> TreapNode<T> {
+impl<T> TreapNode<T> {
     fn new(key: T, p: u64) -> Self {
         Self(Some(Node {
             key,
@@ -86,16 +94,18 @@ impl<T: PartialOrd + Default> TreapNode<T> {
         }))
     }
 
-    fn size(&self) -> usize {
+    fn len(&self) -> usize {
         self.0.as_ref().map_or(0, |node| node.size)
     }
 
     fn update(&mut self) {
         if let Some(node) = self.0.as_mut() {
-            node.size = 1 + node.l.size() + node.r.size()
+            node.size = 1 + node.l.len() + node.r.len()
         }
     }
+}
 
+impl<T: PartialOrd + Default> TreapNode<T> {
     fn insert(&mut self, pos: usize, mut item: Self) {
         let (mut l, mut r) = (Self::default(), Self::default());
         self.split(pos, &mut l, &mut r);
@@ -118,7 +128,7 @@ impl<T: PartialOrd + Default> TreapNode<T> {
     fn split(&mut self, pos: usize, l: &mut Self, r: &mut Self) {
         self.update();
         if let Some(ref mut node) = self.0 {
-            if pos < node.l.size() + 1 {
+            if pos < node.l.len() + 1 {
                 // 左側の部分木を分割する 部分木の左側がl
                 let (mut l_temp, mut r_temp) = (Self::default(), Self::default());
                 node.l.split(pos, &mut l_temp, &mut r_temp);
@@ -129,7 +139,7 @@ impl<T: PartialOrd + Default> TreapNode<T> {
                 // 右側の部分木を分割する
                 let (mut l_temp, mut r_temp) = (Self::default(), Self::default());
                 node.r
-                    .split(pos - node.l.size() - 1, &mut l_temp, &mut r_temp);
+                    .split(pos - node.l.len() - 1, &mut l_temp, &mut r_temp);
                 swap(r, &mut r_temp);
                 swap(&mut node.r, &mut Box::new(l_temp));
                 swap(l, self);
@@ -167,6 +177,25 @@ impl<T: PartialOrd + Default> TreapNode<T> {
         }
         self.update();
         r.update();
+    }
+}
+
+impl<T> Index<usize> for TreapNode<T> {
+    type Output = T;
+    fn index(&self, index: usize) -> &T {
+        assert!(index < self.len());
+        self.0
+            .as_ref()
+            .map(|node| {
+                if node.l.len() > index {
+                    node.l.index(index)
+                } else if node.l.len() == index {
+                    &node.key
+                } else {
+                    node.r.index(index - node.l.len() - 1)
+                }
+            })
+            .unwrap()
     }
 }
 
@@ -215,23 +244,27 @@ impl<T: Display> Debug for TreapNode<T> {
 
 #[test]
 fn size() {
-    let mut treap = Treap::<usize>::new();
+    let mut treap = Treap::<usize>::default();
 
     for i in 0..1000000 {
         treap.insert(i, i * 2);
     }
-    assert_eq!(1000000, treap.size());
+    assert_eq!(1000000, treap.len());
 }
 
 #[test]
 fn test() {
-    let mut treap = Treap::<usize>::new();
+    let mut treap = Treap::<usize>::default();
     for i in 0..10 {
         treap.insert(i, i);
     }
-    println!("{}", treap);
-
     let del = treap.erase(5);
-    println!("{:?}", del);
-    println!("{}", treap);
+    assert_eq!(Some(5), del);
+    treap.erase(3);
+
+    let mut v = Vec::new();
+    for i in 0..treap.len() {
+        v.push(treap[i]);
+    }
+    assert_eq!(vec![0, 1, 2, 4, 6, 7, 8, 9], v);
 }
