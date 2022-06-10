@@ -4,6 +4,7 @@
 use crate::algo::xor_shift::XorShift;
 use crate::prelude::*;
 
+#[derive(Default, Clone, Debug)]
 pub struct Treap<T> {
     randomizer: XorShift,
     root: Box<TreapNode<T>>,
@@ -32,9 +33,9 @@ impl<T: PartialOrd + Default> Treap<T> {
     ///
     /// ## 計算量
     /// $`O(logN)`$
-    pub fn insert(&mut self, pos: usize, x: T) {
+    pub fn insert(&mut self, x: T) {
         self.root
-            .insert(pos, TreapNode::new(x, self.randomizer.next().unwrap()))
+            .insert(TreapNode::new(x, self.randomizer.next().unwrap()))
     }
 
     /// # 削除
@@ -42,70 +43,17 @@ impl<T: PartialOrd + Default> Treap<T> {
     ///
     /// ## 計算量
     /// $`O(logN)`$
-    pub fn erase(&mut self, pos: usize) -> Option<T> {
-        self.root.erase(pos)
+    pub fn remove(&mut self, key: &T) -> Option<T> {
+        self.root.erase(key)
     }
 
-    /// # 反転
-    /// rangeの範囲を反転する
-    pub fn reverse<R: RangeBounds<usize>>(&mut self, range: R) {
-        let (l, r) = to_lr(&range, self.len());
-        self.root.reverse(l, r);
-    }
-
-    /// # 回転
-    /// rangeの範囲をtopが先頭に来るように回転する
-    pub fn rotate<R: RangeBounds<usize>>(&mut self, range: R, top: usize) {
-        let (l, r) = to_lr(&range, self.len());
-        assert!(l <= top && top < r);
-        self.root.rotate(l, r, top);
-    }
-
-    /// # 先頭の要素を取る
+    /// # 検索
+    /// keyが含まれるかどうかを返す
+    ///
+    /// ## 計算量
     /// $`O(logN)`$
-    pub fn pop_front(&mut self) -> Option<T> {
-        self.root.erase(0)
-    }
-
-    /// # 最後尾の要素を取る
-    /// $`O(logN)`$
-    pub fn pop_back(&mut self) -> Option<T> {
-        self.root.erase(self.len() - 1)
-    }
-
-    /// # 配列に変換する
-    /// $`O(NlogN)`$
-    pub fn to_vec(mut self) -> Vec<T> {
-        let mut v = Vec::new();
-        while let Some(t) = self.pop_front() {
-            v.push(t);
-        }
-        v
-    }
-}
-
-impl<T> Default for Treap<T> {
-    fn default() -> Self {
-        Treap {
-            randomizer: XorShift::default(),
-            root: Box::new(TreapNode(None)),
-        }
-    }
-}
-
-impl<T> Index<usize> for Treap<T> {
-    type Output = T;
-    fn index(&self, index: usize) -> &T {
-        self.root.index(index)
-    }
-}
-
-impl<T: Clone> Clone for Treap<T> {
-    fn clone(&self) -> Self {
-        Self {
-            randomizer: self.randomizer.clone(),
-            root: self.root.clone(),
-        }
+    pub fn find(&self, key: &T) -> bool {
+        self.root.find(key)
     }
 }
 
@@ -115,20 +63,20 @@ impl<T: Display> Display for Treap<T> {
     }
 }
 
-impl<T: Clone + PartialOrd + Default> From<&[T]> for Treap<T> {
+impl<T: Clone + PartialOrd + Default + Debug> From<&[T]> for Treap<T> {
     fn from(src: &[T]) -> Self {
         let mut ret = Self::default();
         for t in src {
-            ret.insert(ret.len(), t.clone())
+            ret.insert(t.clone())
         }
         ret
     }
 }
 
-#[derive(Default)]
+#[derive(Debug)]
 pub struct TreapNode<T>(Option<Node<T>>);
 
-#[derive(Clone, Default)]
+#[derive(Clone, Debug, Default)]
 struct Node<T> {
     /// キー
     key: T,
@@ -145,6 +93,17 @@ struct Node<T> {
 }
 
 impl<T> TreapNode<T> {
+    fn new(key: T, p: u64) -> Self {
+        Self(Some(Node {
+            key,
+            p,
+            size: 1,
+            rev: false,
+            l: Box::new(Self(None)),
+            r: Box::new(Self(None)),
+        }))
+    }
+
     fn len(&self) -> usize {
         self.0.as_ref().map_or(0, |node| node.size)
     }
@@ -172,53 +131,60 @@ impl<T> TreapNode<T> {
     }
 }
 
-impl<T: Default> TreapNode<T> {
-    fn new(key: T, p: u64) -> Self {
-        Self(Some(Node {
-            key,
-            p,
-            ..Default::default()
-        }))
-    }
-}
-
-impl<T: PartialOrd + Default> TreapNode<T> {
-    fn insert(&mut self, pos: usize, mut item: Self) {
-        let (mut l, mut r) = (Self::default(), Self::default());
-        self.split(pos, &mut l, &mut r);
-        self.merge(&mut l);
-        self.merge(&mut item);
-        self.merge(&mut r);
-    }
-
-    fn erase(&mut self, pos: usize) -> Option<T> {
-        let (mut l, mut r) = (Self::default(), Self::default());
-        self.split(pos, &mut l, &mut r);
-        let (mut res, mut r2) = (Self::default(), Self::default());
-        r.split(1, &mut res, &mut r2);
-        self.merge(&mut l);
-        self.merge(&mut r2);
-        res.0.map(|node| node.key)
+impl<T: PartialOrd> TreapNode<T> {
+    fn insert(&mut self, mut item: Self) {
+        match (self.0.as_mut(), item.0.as_mut()) {
+            (Some(tree_node), Some(item_node)) => {
+                if item_node.p > tree_node.p {
+                    self.split(&item_node.key, &mut item_node.l, &mut item_node.r);
+                    swap(self, &mut item);
+                } else if item_node.key < tree_node.key {
+                    tree_node.l.insert(item)
+                } else {
+                    tree_node.r.insert(item)
+                }
+            }
+            (None, Some(_)) => swap(&mut self.0, &mut item.0),
+            (Some(_), None) => (),
+            (None, None) => (),
+        }
     }
 
-    /// selfを l: $`[0, pos)`$ と r: $`[pos, n)`$ に分割する
-    fn split(&mut self, pos: usize, l: &mut Self, r: &mut Self) {
+    fn erase(&mut self, key: &T) -> Option<T> {
+        if let Some(node) = self.0.as_mut() {
+            match &node.key.partial_cmp(key) {
+                Some(Ordering::Equal) => {
+                    let mut temp = Self::default();
+                    temp.merge(&mut node.l);
+                    temp.merge(&mut node.r);
+                    swap(self, &mut temp);
+                    temp.0.map(|node| node.key)
+                }
+                Some(Ordering::Greater) => node.l.erase(key),
+                Some(Ordering::Less) => node.r.erase(key),
+                _ => panic!("Ordering failed"),
+            }
+        } else {
+            None
+        }
+    }
+
+    /// selfを l: $`[0, key)`$ と r: $`[key, n)`$ に分割する
+    fn split(&mut self, key: &T, l: &mut Self, r: &mut Self) {
         self.propagate_to_children();
         r.propagate_to_children();
         l.propagate_to_children();
         if let Some(ref mut node) = self.0 {
             let (mut l_temp, mut r_temp) = (Self::default(), Self::default());
-            if pos < node.l.len() + 1 {
+            if key < &node.key {
                 // 左側の部分木を分割する 部分木の左側がl
-                node.l.split(pos, &mut l_temp, &mut r_temp);
+                node.l.split(key, &mut l_temp, &mut r_temp);
                 swap(l, &mut l_temp);
                 swap(&mut node.l, &mut Box::new(r_temp));
                 swap(r, self);
             } else {
                 // 右側の部分木を分割する
-                let (mut l_temp, mut r_temp) = (Self::default(), Self::default());
-                node.r
-                    .split(pos - node.l.len() - 1, &mut l_temp, &mut r_temp);
+                node.r.split(key, &mut l_temp, &mut r_temp);
                 swap(r, &mut r_temp);
                 swap(&mut node.r, &mut Box::new(l_temp));
                 swap(l, self);
@@ -232,7 +198,6 @@ impl<T: PartialOrd + Default> TreapNode<T> {
         r.propagate_from_children();
     }
 
-    // self の右に r をマージする
     fn merge(&mut self, r: &mut Self) {
         self.propagate_to_children();
         r.propagate_to_children();
@@ -257,44 +222,23 @@ impl<T: PartialOrd + Default> TreapNode<T> {
         r.propagate_from_children();
     }
 
-    pub fn reverse(&mut self, l: usize, r: usize) {
-        // println!("{} {}", l, r);
-        let (mut l_tree, mut c_tree, mut r_tree, mut temp) = (
-            Self::default(),
-            Self::default(),
-            Self::default(),
-            Self::default(),
-        );
-        self.split(r, &mut temp, &mut r_tree);
-        temp.split(l, &mut l_tree, &mut c_tree);
-        if let Some(node) = c_tree.0.as_mut() {
-            node.rev ^= true;
+    fn find(&self, key: &T) -> bool {
+        if let Some(node) = &self.0 {
+            match &node.key.partial_cmp(key) {
+                Some(Ordering::Equal) => true,
+                Some(Ordering::Greater) => node.l.find(key),
+                Some(Ordering::Less) => node.r.find(key),
+                _ => panic!("Ordering failed"),
+            }
+        } else {
+            false
         }
-        self.merge(&mut l_tree);
-        self.merge(&mut c_tree);
-        self.merge(&mut r_tree);
-    }
-
-    pub fn rotate(&mut self, l: usize, r: usize, top: usize) {
-        // println!("{} {} {} {}", l, r, top, l + r - top);
-        self.reverse(l, r);
-        self.reverse(l, l + r - top);
-        self.reverse(l + r - top, r);
     }
 }
 
-impl<T> Index<usize> for TreapNode<T> {
-    type Output = T;
-    fn index(&self, index: usize) -> &T {
-        assert!(index < self.len());
-        self.0
-            .as_ref()
-            .map(|node| match () {
-                () if node.l.len() > index => node.l.index(index),
-                () if node.l.len() < index => node.r.index(index - node.l.len() - 1),
-                _ => &node.key,
-            })
-            .unwrap()
+impl<T> Default for TreapNode<T> {
+    fn default() -> Self {
+        Self(None)
     }
 }
 
@@ -323,25 +267,12 @@ impl<T: Display> Display for TreapNode<T> {
     }
 }
 
-impl<T: Display> Debug for TreapNode<T> {
-    fn fmt(&self, f: &mut Formatter<'_>) -> std::fmt::Result {
-        match &self.0 {
-            Some(node) => write!(
-                f,
-                "key{}size{}:[l:{:?} r:{:?}]",
-                node.key, node.size, node.l, node.r
-            ),
-            _ => write!(f, ""),
-        }
-    }
-}
-
 #[test]
 fn size() {
-    let mut treap = Treap::<usize>::default();
+    let mut treap = Treap::default();
 
     for i in 0..1000000 {
-        treap.insert(i, i * 2);
+        treap.insert(i * 2);
     }
     assert_eq!(1000000, treap.len());
 }
@@ -349,22 +280,14 @@ fn size() {
 #[test]
 fn test() {
     let mut treap = Treap::from(&vec![0, 1, 2, 3, 4, 5, 6, 7, 8, 9][..]);
+    for i in 0..10 {
+        assert!(treap.find(&i));
+    }
 
-    let del = treap.erase(5);
+    let del = treap.remove(&5);
     assert_eq!(Some(5), del);
-    treap.erase(3);
-    assert_eq!(vec![0, 1, 2, 4, 6, 7, 8, 9], treap.clone().to_vec());
-
-    treap.reverse(2..6);
-    assert_eq!(vec![0, 1, 7, 6, 4, 2, 8, 9], treap.clone().to_vec());
-
-    let del2 = treap.erase(0);
-    assert_eq!(Some(0), del2);
-    assert_eq!(vec![1, 7, 6, 4, 2, 8, 9], treap.clone().to_vec());
-    treap.rotate(2..6, 4);
-    assert_eq!(vec![1, 7, 2, 8, 6, 4, 9], treap.to_vec());
-
-    treap = Treap::from(&vec![0, 1, 2, 3, 4, 5, 6, 7, 8][..]);
-    treap.rotate(2..7, 4);
-    assert_eq!(vec![0, 1, 4, 5, 6, 2, 3, 7, 8], treap.to_vec());
+    treap.remove(&3);
+    for v in vec![0, 1, 2, 4, 6, 7, 8, 9] {
+        assert!(treap.find(&v));
+    }
 }

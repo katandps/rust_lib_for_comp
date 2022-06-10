@@ -9,6 +9,7 @@ pub mod bitset;
 pub mod cumulative_sum;
 pub mod disjoint_sparse_table;
 pub mod dynamic_segment_tree;
+pub mod implicit_treap;
 pub mod lazy_segment_tree;
 pub mod segment_tree;
 pub mod sparse_table;
