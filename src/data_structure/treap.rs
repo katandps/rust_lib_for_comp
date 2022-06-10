@@ -8,7 +8,7 @@ pub struct Treap<T> {
     randomizer: XorShift,
     root: Box<TreapNode<T>>,
 }
-impl<T: PartialOrd + Default> Treap<T> {
+impl<T> Treap<T> {
     /// # サイズ
     ///
     /// ## 計算量
@@ -24,7 +24,9 @@ impl<T: PartialOrd + Default> Treap<T> {
     pub fn is_empty(&self) -> bool {
         self.len() == 0
     }
+}
 
+impl<T: PartialOrd + Default> Treap<T> {
     /// # 挿入
     /// 先頭からpos(0-indexed)の位置にxを挿入
     ///
@@ -45,9 +47,40 @@ impl<T: PartialOrd + Default> Treap<T> {
     }
 
     /// # 反転
-    /// [l, r)の範囲を反転する
-    pub fn reverse(&mut self, l: usize, r: usize) {
+    /// rangeの範囲を反転する
+    pub fn reverse<R: RangeBounds<usize>>(&mut self, range: R) {
+        let (l, r) = to_lr(&range, self.len());
         self.root.reverse(l, r);
+    }
+
+    /// # 回転
+    /// rangeの範囲をtopが先頭に来るように回転する
+    pub fn rotate<R: RangeBounds<usize>>(&mut self, range: R, top: usize) {
+        let (l, r) = to_lr(&range, self.len());
+        assert!(l <= top && top < r);
+        self.root.rotate(l, r, top);
+    }
+
+    /// # 先頭の要素を取る
+    /// $`O(logN)`$
+    pub fn pop_front(&mut self) -> Option<T> {
+        self.root.erase(0)
+    }
+
+    /// # 最後尾の要素を取る
+    /// $`O(logN)`$
+    pub fn pop_back(&mut self) -> Option<T> {
+        self.root.erase(self.len() - 1)
+    }
+
+    /// # 配列に変換する
+    /// $`O(NlogN)`$
+    pub fn to_vec(mut self) -> Vec<T> {
+        let mut v = Vec::new();
+        while let Some(t) = self.pop_front() {
+            v.push(t);
+        }
+        v
     }
 }
 
@@ -79,6 +112,16 @@ impl<T: Clone> Clone for Treap<T> {
 impl<T: Display> Display for Treap<T> {
     fn fmt(&self, f: &mut Formatter<'_>) -> std::fmt::Result {
         writeln!(f, "[{}]", self.root)
+    }
+}
+
+impl<T: Clone + PartialOrd + Default> From<&[T]> for Treap<T> {
+    fn from(src: &[T]) -> Self {
+        let mut ret = Self::default();
+        for t in src {
+            ret.insert(ret.len(), t.clone())
+        }
+        ret
     }
 }
 
@@ -131,10 +174,11 @@ impl<T> TreapNode<T> {
 
 impl<T: Default> TreapNode<T> {
     fn new(key: T, p: u64) -> Self {
-        let mut node = Node::default();
-        node.key = key;
-        node.p = p;
-        Self(Some(node))
+        Self(Some(Node {
+            key,
+            p,
+            ..Default::default()
+        }))
     }
 }
 
@@ -160,6 +204,8 @@ impl<T: PartialOrd + Default> TreapNode<T> {
     /// selfを l: $`[0, pos)`$ と r: $`[pos, n)`$ に分割する
     fn split(&mut self, pos: usize, l: &mut Self, r: &mut Self) {
         self.propagate_to_children();
+        r.propagate_to_children();
+        l.propagate_to_children();
         if let Some(ref mut node) = self.0 {
             let (mut l_temp, mut r_temp) = (Self::default(), Self::default());
             if pos < node.l.len() + 1 {
@@ -182,6 +228,8 @@ impl<T: PartialOrd + Default> TreapNode<T> {
             swap(r, &mut Self::default());
         }
         self.propagate_from_children();
+        l.propagate_from_children();
+        r.propagate_from_children();
     }
 
     // self の右に r をマージする
@@ -206,9 +254,11 @@ impl<T: PartialOrd + Default> TreapNode<T> {
             _ => (),
         }
         self.propagate_from_children();
+        r.propagate_from_children();
     }
 
     pub fn reverse(&mut self, l: usize, r: usize) {
+        // println!("{} {}", l, r);
         let (mut l_tree, mut c_tree, mut r_tree, mut temp) = (
             Self::default(),
             Self::default(),
@@ -223,6 +273,13 @@ impl<T: PartialOrd + Default> TreapNode<T> {
         self.merge(&mut l_tree);
         self.merge(&mut c_tree);
         self.merge(&mut r_tree);
+    }
+
+    pub fn rotate(&mut self, l: usize, r: usize, top: usize) {
+        // println!("{} {} {} {}", l, r, top, l + r - top);
+        self.reverse(l, r);
+        self.reverse(l, l + r - top);
+        self.reverse(l + r - top, r);
     }
 }
 
@@ -291,24 +348,23 @@ fn size() {
 
 #[test]
 fn test() {
-    let mut treap = Treap::<usize>::default();
-    for i in 0..10 {
-        treap.insert(i, i);
-    }
+    let mut treap = Treap::from(&vec![0, 1, 2, 3, 4, 5, 6, 7, 8, 9][..]);
+
     let del = treap.erase(5);
     assert_eq!(Some(5), del);
     treap.erase(3);
+    assert_eq!(vec![0, 1, 2, 4, 6, 7, 8, 9], treap.clone().to_vec());
 
-    let mut v = Vec::new();
-    for i in 0..treap.len() {
-        v.push(treap[i]);
-    }
-    assert_eq!(vec![0, 1, 2, 4, 6, 7, 8, 9], v);
-    treap.reverse(2, 6);
+    treap.reverse(2..6);
+    assert_eq!(vec![0, 1, 7, 6, 4, 2, 8, 9], treap.clone().to_vec());
 
-    let mut v = Vec::new();
-    for i in 0..treap.len() {
-        v.push(treap[i]);
-    }
-    assert_eq!(vec![0, 1, 7, 6, 4, 2, 8, 9], v);
+    let del2 = treap.erase(0);
+    assert_eq!(Some(0), del2);
+    assert_eq!(vec![1, 7, 6, 4, 2, 8, 9], treap.clone().to_vec());
+    treap.rotate(2..6, 4);
+    assert_eq!(vec![1, 7, 2, 8, 6, 4, 9], treap.to_vec());
+
+    treap = Treap::from(&vec![0, 1, 2, 3, 4, 5, 6, 7, 8][..]);
+    treap.rotate(2..7, 4);
+    assert_eq!(vec![0, 1, 4, 5, 6, 2, 3, 7, 8], treap.to_vec());
 }
