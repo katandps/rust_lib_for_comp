@@ -6,7 +6,7 @@ use crate::prelude::*;
 
 pub struct Treap<T> {
     randomizer: XorShift,
-    node: Box<TreapNode<T>>,
+    root: Box<TreapNode<T>>,
 }
 impl<T: PartialOrd + Default> Treap<T> {
     /// # サイズ
@@ -14,7 +14,7 @@ impl<T: PartialOrd + Default> Treap<T> {
     /// ## 計算量
     /// $`O(1)`$
     pub fn len(&self) -> usize {
-        self.node.len()
+        self.root.len()
     }
 
     /// # 空かどうか
@@ -31,7 +31,7 @@ impl<T: PartialOrd + Default> Treap<T> {
     /// ## 計算量
     /// $`O(logN)`$
     pub fn insert(&mut self, pos: usize, x: T) {
-        self.node
+        self.root
             .insert(pos, TreapNode::new(x, self.randomizer.next().unwrap()))
     }
 
@@ -41,7 +41,13 @@ impl<T: PartialOrd + Default> Treap<T> {
     /// ## 計算量
     /// $`O(logN)`$
     pub fn erase(&mut self, pos: usize) -> Option<T> {
-        self.node.erase(pos)
+        self.root.erase(pos)
+    }
+
+    /// # 反転
+    /// [l, r)の範囲を反転する
+    pub fn reverse(&mut self, l: usize, r: usize) {
+        self.root.reverse(l, r);
     }
 }
 
@@ -49,7 +55,7 @@ impl<T> Default for Treap<T> {
     fn default() -> Self {
         Treap {
             randomizer: XorShift::default(),
-            node: Box::new(TreapNode(None)),
+            root: Box::new(TreapNode(None)),
         }
     }
 }
@@ -57,7 +63,7 @@ impl<T> Default for Treap<T> {
 impl<T> Index<usize> for Treap<T> {
     type Output = T;
     fn index(&self, index: usize) -> &T {
-        self.node.index(index)
+        self.root.index(index)
     }
 }
 
@@ -65,20 +71,21 @@ impl<T: Clone> Clone for Treap<T> {
     fn clone(&self) -> Self {
         Self {
             randomizer: self.randomizer.clone(),
-            node: self.node.clone(),
+            root: self.root.clone(),
         }
     }
 }
 
 impl<T: Display> Display for Treap<T> {
     fn fmt(&self, f: &mut Formatter<'_>) -> std::fmt::Result {
-        writeln!(f, "[{}]", self.node)
+        writeln!(f, "[{}]", self.root)
     }
 }
 
+#[derive(Default)]
 pub struct TreapNode<T>(Option<Node<T>>);
 
-#[derive(Clone)]
+#[derive(Clone, Default)]
 struct Node<T> {
     /// キー
     key: T,
@@ -86,30 +93,48 @@ struct Node<T> {
     p: u64,
     /// 部分木のサイズ
     size: usize,
+    /// 左右反転フラグ
+    rev: bool,
     /// 左の子
     l: Box<TreapNode<T>>,
     /// 右の子
     r: Box<TreapNode<T>>,
 }
-impl<T> TreapNode<T> {
-    fn new(key: T, p: u64) -> Self {
-        Self(Some(Node {
-            key,
-            p,
-            size: 1,
-            l: Box::new(Self(None)),
-            r: Box::new(Self(None)),
-        }))
-    }
 
+impl<T> TreapNode<T> {
     fn len(&self) -> usize {
         self.0.as_ref().map_or(0, |node| node.size)
     }
 
-    fn update(&mut self) {
+    fn propagate_from_children(&mut self) {
         if let Some(node) = self.0.as_mut() {
             node.size = 1 + node.l.len() + node.r.len()
         }
+    }
+
+    fn propagate_to_children(&mut self) {
+        if let Some(node) = self.0.as_mut() {
+            if node.rev {
+                node.rev = false;
+                swap(&mut node.r, &mut node.l);
+                if let Some(r_node) = node.r.0.as_mut() {
+                    r_node.rev ^= true;
+                }
+                if let Some(l_node) = node.l.0.as_mut() {
+                    l_node.rev ^= true;
+                }
+            }
+        }
+        self.propagate_from_children()
+    }
+}
+
+impl<T: Default> TreapNode<T> {
+    fn new(key: T, p: u64) -> Self {
+        let mut node = Node::default();
+        node.key = key;
+        node.p = p;
+        Self(Some(node))
     }
 }
 
@@ -134,7 +159,7 @@ impl<T: PartialOrd + Default> TreapNode<T> {
 
     /// selfを l: $`[0, pos)`$ と r: $`[pos, n)`$ に分割する
     fn split(&mut self, pos: usize, l: &mut Self, r: &mut Self) {
-        self.update();
+        self.propagate_to_children();
         if let Some(ref mut node) = self.0 {
             let (mut l_temp, mut r_temp) = (Self::default(), Self::default());
             if pos < node.l.len() + 1 {
@@ -156,16 +181,13 @@ impl<T: PartialOrd + Default> TreapNode<T> {
             swap(l, &mut Self::default());
             swap(r, &mut Self::default());
         }
-        self.update();
-        l.update();
-        r.update();
+        self.propagate_from_children();
     }
 
     // self の右に r をマージする
     fn merge(&mut self, r: &mut Self) {
-        // dbg!(&self, &r);
-        self.update();
-        r.update();
+        self.propagate_to_children();
+        r.propagate_to_children();
         match (self.0.as_mut(), r.0.as_mut()) {
             (Some(left_node), Some(right_node)) => {
                 if left_node.p > right_node.p {
@@ -183,8 +205,24 @@ impl<T: PartialOrd + Default> TreapNode<T> {
             (None, Some(_)) => swap(self, r),
             _ => (),
         }
-        self.update();
-        r.update();
+        self.propagate_from_children();
+    }
+
+    pub fn reverse(&mut self, l: usize, r: usize) {
+        let (mut l_tree, mut c_tree, mut r_tree, mut temp) = (
+            Self::default(),
+            Self::default(),
+            Self::default(),
+            Self::default(),
+        );
+        self.split(r, &mut temp, &mut r_tree);
+        temp.split(l, &mut l_tree, &mut c_tree);
+        if let Some(node) = c_tree.0.as_mut() {
+            node.rev ^= true;
+        }
+        self.merge(&mut l_tree);
+        self.merge(&mut c_tree);
+        self.merge(&mut r_tree);
     }
 }
 
@@ -210,17 +248,12 @@ impl<T: Clone> Clone for TreapNode<T> {
                 key: node.key.clone(),
                 p: node.p,
                 size: node.size,
+                rev: node.rev,
                 l: node.l.clone(),
                 r: node.r.clone(),
             })),
             _ => Self(None),
         }
-    }
-}
-
-impl<T: Default> Default for TreapNode<T> {
-    fn default() -> Self {
-        Self(None)
     }
 }
 
@@ -271,4 +304,11 @@ fn test() {
         v.push(treap[i]);
     }
     assert_eq!(vec![0, 1, 2, 4, 6, 7, 8, 9], v);
+    treap.reverse(2, 6);
+
+    let mut v = Vec::new();
+    for i in 0..treap.len() {
+        v.push(treap[i]);
+    }
+    assert_eq!(vec![0, 1, 7, 6, 4, 2, 8, 9], v);
 }
