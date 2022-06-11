@@ -84,8 +84,6 @@ struct Node<T> {
     p: u64,
     /// 部分木のサイズ
     size: usize,
-    /// 左右反転フラグ
-    rev: bool,
     /// 左の子
     l: Box<TreapNode<T>>,
     /// 右の子
@@ -98,7 +96,6 @@ impl<T> TreapNode<T> {
             key,
             p,
             size: 1,
-            rev: false,
             l: Box::new(Self(None)),
             r: Box::new(Self(None)),
         }))
@@ -115,18 +112,6 @@ impl<T> TreapNode<T> {
     }
 
     fn propagate_to_children(&mut self) {
-        if let Some(node) = self.0.as_mut() {
-            if node.rev {
-                node.rev = false;
-                swap(&mut node.r, &mut node.l);
-                if let Some(r_node) = node.r.0.as_mut() {
-                    r_node.rev ^= true;
-                }
-                if let Some(l_node) = node.l.0.as_mut() {
-                    l_node.rev ^= true;
-                }
-            }
-        }
         self.propagate_from_children()
     }
 }
@@ -148,6 +133,7 @@ impl<T: PartialOrd> TreapNode<T> {
             (Some(_), None) => (),
             (None, None) => (),
         }
+        self.propagate_from_children();
     }
 
     fn erase(&mut self, key: &T) -> Option<T> {
@@ -249,7 +235,6 @@ impl<T: Clone> Clone for TreapNode<T> {
                 key: node.key.clone(),
                 p: node.p,
                 size: node.size,
-                rev: node.rev,
                 l: node.l.clone(),
                 r: node.r.clone(),
             })),
