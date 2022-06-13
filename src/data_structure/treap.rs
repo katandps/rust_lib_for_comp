@@ -4,11 +4,13 @@
 use crate::algo::xor_shift::XorShift;
 use crate::prelude::*;
 
+#[snippet(name = "treap", doc_hidden)]
 #[derive(Default, Clone, Debug)]
 pub struct Treap<T> {
     randomizer: XorShift,
-    root: Box<TreapNode<T>>,
+    root: Box<treap_node::OptionalNode<T>>,
 }
+#[snippet(name = "treap", doc_hidden)]
 impl<T> Treap<T> {
     /// # サイズ
     ///
@@ -27,6 +29,7 @@ impl<T> Treap<T> {
     }
 }
 
+#[snippet(name = "treap", doc_hidden)]
 impl<T: PartialOrd + Default> Treap<T> {
     /// # 挿入
     /// 先頭からpos(0-indexed)の位置にxを挿入
@@ -34,8 +37,10 @@ impl<T: PartialOrd + Default> Treap<T> {
     /// ## 計算量
     /// $`O(logN)`$
     pub fn insert(&mut self, x: T) {
-        self.root
-            .insert(TreapNode::new(x, self.randomizer.next().unwrap()))
+        self.root.insert(treap_node::OptionalNode::new(
+            x,
+            self.randomizer.next().unwrap(),
+        ))
     }
 
     /// # 削除
@@ -57,12 +62,14 @@ impl<T: PartialOrd + Default> Treap<T> {
     }
 }
 
+#[snippet(name = "treap", doc_hidden)]
 impl<T: Display> Display for Treap<T> {
     fn fmt(&self, f: &mut Formatter<'_>) -> std::fmt::Result {
         writeln!(f, "[{}]", self.root)
     }
 }
 
+#[snippet(name = "treap", doc_hidden)]
 impl<T: Clone + PartialOrd + Default + Debug> From<&[T]> for Treap<T> {
     fn from(src: &[T]) -> Self {
         let mut ret = Self::default();
@@ -73,181 +80,186 @@ impl<T: Clone + PartialOrd + Default + Debug> From<&[T]> for Treap<T> {
     }
 }
 
-#[derive(Debug)]
-pub struct TreapNode<T>(Option<Node<T>>);
+#[snippet(name = "treap", doc_hidden)]
+mod treap_node {
+    use super::*;
 
-#[derive(Clone, Debug, Default)]
-struct Node<T> {
-    /// キー
-    key: T,
-    /// 優先度
-    p: u64,
-    /// 部分木のサイズ
-    size: usize,
-    /// 左の子
-    l: Box<TreapNode<T>>,
-    /// 右の子
-    r: Box<TreapNode<T>>,
-}
+    #[derive(Debug)]
+    pub struct OptionalNode<T>(Option<Node<T>>);
 
-impl<T> TreapNode<T> {
-    fn new(key: T, p: u64) -> Self {
-        Self(Some(Node {
-            key,
-            p,
-            size: 1,
-            l: Box::new(Self(None)),
-            r: Box::new(Self(None)),
-        }))
+    #[derive(Clone, Debug, Default)]
+    struct Node<T> {
+        /// キー
+        key: T,
+        /// 優先度
+        p: u64,
+        /// 部分木のサイズ
+        size: usize,
+        /// 左の子
+        l: Box<OptionalNode<T>>,
+        /// 右の子
+        r: Box<OptionalNode<T>>,
     }
 
-    fn len(&self) -> usize {
-        self.0.as_ref().map_or(0, |node| node.size)
-    }
-
-    fn propagate_from_children(&mut self) {
-        if let Some(node) = self.0.as_mut() {
-            node.size = 1 + node.l.len() + node.r.len()
+    impl<T> OptionalNode<T> {
+        pub fn new(key: T, p: u64) -> Self {
+            Self(Some(Node {
+                key,
+                p,
+                size: 1,
+                l: Box::new(Self(None)),
+                r: Box::new(Self(None)),
+            }))
         }
-    }
 
-    fn propagate_to_children(&mut self) {
-        self.propagate_from_children()
-    }
-}
+        pub fn len(&self) -> usize {
+            self.0.as_ref().map_or(0, |node| node.size)
+        }
 
-impl<T: PartialOrd> TreapNode<T> {
-    fn insert(&mut self, mut item: Self) {
-        match (self.0.as_mut(), item.0.as_mut()) {
-            (Some(tree_node), Some(item_node)) => {
-                if item_node.p > tree_node.p {
-                    self.split(&item_node.key, &mut item_node.l, &mut item_node.r);
-                    swap(self, &mut item);
-                } else if item_node.key < tree_node.key {
-                    tree_node.l.insert(item)
-                } else {
-                    tree_node.r.insert(item)
-                }
+        fn propagate_from_children(&mut self) {
+            if let Some(node) = self.0.as_mut() {
+                node.size = 1 + node.l.len() + node.r.len()
             }
-            (None, Some(_)) => swap(&mut self.0, &mut item.0),
-            (Some(_), None) => (),
-            (None, None) => (),
         }
-        self.propagate_from_children();
+
+        fn propagate_to_children(&mut self) {
+            self.propagate_from_children()
+        }
     }
 
-    fn erase(&mut self, key: &T) -> Option<T> {
-        if let Some(node) = self.0.as_mut() {
-            match &node.key.partial_cmp(key) {
-                Some(Ordering::Equal) => {
-                    let mut temp = Self::default();
-                    temp.merge(&mut node.l);
-                    temp.merge(&mut node.r);
-                    swap(self, &mut temp);
-                    temp.0.map(|node| node.key)
+    impl<T: PartialOrd> OptionalNode<T> {
+        pub fn insert(&mut self, mut item: Self) {
+            match (self.0.as_mut(), item.0.as_mut()) {
+                (Some(tree_node), Some(item_node)) => {
+                    if item_node.p > tree_node.p {
+                        self.split(&item_node.key, &mut item_node.l, &mut item_node.r);
+                        swap(self, &mut item);
+                    } else if item_node.key < tree_node.key {
+                        tree_node.l.insert(item)
+                    } else {
+                        tree_node.r.insert(item)
+                    }
                 }
-                Some(Ordering::Greater) => node.l.erase(key),
-                Some(Ordering::Less) => node.r.erase(key),
-                _ => panic!("Ordering failed"),
+                (None, Some(_)) => swap(&mut self.0, &mut item.0),
+                (Some(_), None) => (),
+                (None, None) => (),
             }
-        } else {
-            None
+            self.propagate_from_children();
         }
-    }
 
-    /// selfを l: $`[0, key)`$ と r: $`[key, n)`$ に分割する
-    fn split(&mut self, key: &T, l: &mut Self, r: &mut Self) {
-        self.propagate_to_children();
-        r.propagate_to_children();
-        l.propagate_to_children();
-        if let Some(ref mut node) = self.0 {
-            let (mut l_temp, mut r_temp) = (Self::default(), Self::default());
-            if key < &node.key {
-                // 左側の部分木を分割する 部分木の左側がl
-                node.l.split(key, &mut l_temp, &mut r_temp);
-                swap(l, &mut l_temp);
-                swap(&mut node.l, &mut Box::new(r_temp));
-                swap(r, self);
+        pub fn erase(&mut self, key: &T) -> Option<T> {
+            if let Some(node) = self.0.as_mut() {
+                match &node.key.partial_cmp(key) {
+                    Some(Ordering::Equal) => {
+                        let mut temp = Self::default();
+                        temp.merge(&mut node.l);
+                        temp.merge(&mut node.r);
+                        swap(self, &mut temp);
+                        temp.0.map(|node| node.key)
+                    }
+                    Some(Ordering::Greater) => node.l.erase(key),
+                    Some(Ordering::Less) => node.r.erase(key),
+                    _ => panic!("Ordering failed"),
+                }
             } else {
-                // 右側の部分木を分割する
-                node.r.split(key, &mut l_temp, &mut r_temp);
-                swap(r, &mut r_temp);
-                swap(&mut node.r, &mut Box::new(l_temp));
-                swap(l, self);
+                None
             }
-        } else {
-            swap(l, &mut Self::default());
-            swap(r, &mut Self::default());
         }
-        self.propagate_from_children();
-        l.propagate_from_children();
-        r.propagate_from_children();
-    }
 
-    fn merge(&mut self, r: &mut Self) {
-        self.propagate_to_children();
-        r.propagate_to_children();
-        match (self.0.as_mut(), r.0.as_mut()) {
-            (Some(left_node), Some(right_node)) => {
-                if left_node.p > right_node.p {
-                    // 左の根のほうが優先度が大きいとき、左の木の右の子と右の木をマージする
-                    left_node.r.merge(r);
+        /// selfを l: $`[0, key)`$ と r: $`[key, n)`$ に分割する
+        fn split(&mut self, key: &T, l: &mut Self, r: &mut Self) {
+            self.propagate_to_children();
+            r.propagate_to_children();
+            l.propagate_to_children();
+            if let Some(ref mut node) = self.0 {
+                let (mut l_temp, mut r_temp) = (Self::default(), Self::default());
+                if key < &node.key {
+                    // 左側の部分木を分割する 部分木の左側がl
+                    node.l.split(key, &mut l_temp, &mut r_temp);
+                    swap(l, &mut l_temp);
+                    swap(&mut node.l, &mut Box::new(r_temp));
+                    swap(r, self);
                 } else {
-                    let mut temp = Self::default();
-                    swap(&mut temp, &mut right_node.l);
-                    self.merge(&mut temp);
-                    swap(self, &mut right_node.l);
-                    swap(self, r);
+                    // 右側の部分木を分割する
+                    node.r.split(key, &mut l_temp, &mut r_temp);
+                    swap(r, &mut r_temp);
+                    swap(&mut node.r, &mut Box::new(l_temp));
+                    swap(l, self);
                 }
+            } else {
+                swap(l, &mut Self::default());
+                swap(r, &mut Self::default());
             }
-            (Some(_), None) => (),
-            (None, Some(_)) => swap(self, r),
-            _ => (),
+            self.propagate_from_children();
+            l.propagate_from_children();
+            r.propagate_from_children();
         }
-        self.propagate_from_children();
-        r.propagate_from_children();
-    }
 
-    fn find(&self, key: &T) -> bool {
-        if let Some(node) = &self.0 {
-            match &node.key.partial_cmp(key) {
-                Some(Ordering::Equal) => true,
-                Some(Ordering::Greater) => node.l.find(key),
-                Some(Ordering::Less) => node.r.find(key),
-                _ => panic!("Ordering failed"),
+        fn merge(&mut self, r: &mut Self) {
+            self.propagate_to_children();
+            r.propagate_to_children();
+            match (self.0.as_mut(), r.0.as_mut()) {
+                (Some(left_node), Some(right_node)) => {
+                    if left_node.p > right_node.p {
+                        // 左の根のほうが優先度が大きいとき、左の木の右の子と右の木をマージする
+                        left_node.r.merge(r);
+                    } else {
+                        let mut temp = Self::default();
+                        swap(&mut temp, &mut right_node.l);
+                        self.merge(&mut temp);
+                        swap(self, &mut right_node.l);
+                        swap(self, r);
+                    }
+                }
+                (Some(_), None) => (),
+                (None, Some(_)) => swap(self, r),
+                _ => (),
             }
-        } else {
-            false
+            self.propagate_from_children();
+            r.propagate_from_children();
+        }
+
+        pub fn find(&self, key: &T) -> bool {
+            if let Some(node) = &self.0 {
+                match &node.key.partial_cmp(key) {
+                    Some(Ordering::Equal) => true,
+                    Some(Ordering::Greater) => node.l.find(key),
+                    Some(Ordering::Less) => node.r.find(key),
+                    _ => panic!("Ordering failed"),
+                }
+            } else {
+                false
+            }
         }
     }
-}
 
-impl<T> Default for TreapNode<T> {
-    fn default() -> Self {
-        Self(None)
-    }
-}
-
-impl<T: Clone> Clone for TreapNode<T> {
-    fn clone(&self) -> Self {
-        match &self.0 {
-            Some(node) => Self(Some(Node {
-                key: node.key.clone(),
-                p: node.p,
-                size: node.size,
-                l: node.l.clone(),
-                r: node.r.clone(),
-            })),
-            _ => Self(None),
+    impl<T> Default for OptionalNode<T> {
+        fn default() -> Self {
+            Self(None)
         }
     }
-}
 
-impl<T: Display> Display for TreapNode<T> {
-    fn fmt(&self, f: &mut Formatter<'_>) -> std::fmt::Result {
-        match &self.0 {
-            Some(node) => write!(f, "{} {} {}", node.l, node.key, node.r),
-            _ => write!(f, ""),
+    impl<T: Clone> Clone for OptionalNode<T> {
+        fn clone(&self) -> Self {
+            match &self.0 {
+                Some(node) => Self(Some(Node {
+                    key: node.key.clone(),
+                    p: node.p,
+                    size: node.size,
+                    l: node.l.clone(),
+                    r: node.r.clone(),
+                })),
+                _ => Self(None),
+            }
+        }
+    }
+
+    impl<T: Display> Display for OptionalNode<T> {
+        fn fmt(&self, f: &mut Formatter<'_>) -> std::fmt::Result {
+            match &self.0 {
+                Some(node) => write!(f, "{} {} {}", node.l, node.key, node.r),
+                _ => write!(f, ""),
+            }
         }
     }
 }
