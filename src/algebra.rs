@@ -19,7 +19,7 @@ pub mod xor_basis;
 /// 二項演算: $`M \circ M \to M`$
 pub trait Magma {
     /// マグマを構成する集合$`M`$
-    type M: Clone + PartialEq;
+    type M: Clone + PartialEq + Debug;
     /// マグマを構成する演算$`op`$
     fn op(x: &Self::M, y: &Self::M) -> Self::M;
 }

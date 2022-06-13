@@ -22,7 +22,7 @@ use crate::prelude::*;
 pub struct Gcd<S>(Infallible, PhantomData<fn() -> S>);
 
 #[snippet(name = "gcd-operation", doc_hidden)]
-impl<S: Clone + RemAssign + PartialOrd + Zero> Magma for Gcd<S> {
+impl<S: Clone + Debug + RemAssign + PartialOrd + Zero> Magma for Gcd<S> {
     type M = S;
     fn op(x: &S, y: &S) -> S {
         let (mut x, mut y) = (x.clone(), y.clone());
@@ -38,17 +38,17 @@ impl<S: Clone + RemAssign + PartialOrd + Zero> Magma for Gcd<S> {
 }
 
 #[snippet(name = "gcd-operation", doc_hidden)]
-impl<S: Clone + RemAssign + PartialOrd + Zero> Associative for Gcd<S> {}
+impl<S: Clone + Debug + RemAssign + PartialOrd + Zero> Associative for Gcd<S> {}
 
 #[snippet(name = "gcd-operation", doc_hidden)]
-impl<S: Clone + RemAssign + PartialOrd + Zero> Unital for Gcd<S> {
+impl<S: Clone + Debug + RemAssign + PartialOrd + Zero> Unital for Gcd<S> {
     fn unit() -> S {
         S::zero()
     }
 }
 
 #[snippet(name = "gcd-operation", doc_hidden)]
-impl<S: Clone + RemAssign + PartialOrd + Zero> Commutative for Gcd<S> {}
+impl<S: Clone + Debug + RemAssign + PartialOrd + Zero> Commutative for Gcd<S> {}
 
 #[snippet(name = "gcd-operation", doc_hidden)]
-impl<S: Clone + RemAssign + PartialOrd + Zero> Idempotent for Gcd<S> {}
+impl<S: Clone + Debug + RemAssign + PartialOrd + Zero> Idempotent for Gcd<S> {}

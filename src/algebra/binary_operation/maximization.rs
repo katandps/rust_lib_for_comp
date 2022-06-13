@@ -3,10 +3,11 @@ use crate::algebra::{Associative, BoundedBelow, Commutative, Idempotent, Magma, 
 use crate::prelude::*;
 
 #[snippet(name = "maximization", doc_hidden)]
+#[derive(Debug)]
 pub struct Maximization<S>(Infallible, PhantomData<fn() -> S>);
 
 #[snippet(name = "maximization", doc_hidden)]
-impl<S: Clone + PartialOrd> Magma for Maximization<S> {
+impl<S: Clone + Debug + PartialOrd> Magma for Maximization<S> {
     type M = S;
     fn op(x: &Self::M, y: &Self::M) -> Self::M {
         if x >= y {
@@ -18,17 +19,17 @@ impl<S: Clone + PartialOrd> Magma for Maximization<S> {
 }
 
 #[snippet(name = "maximization", doc_hidden)]
-impl<S: Clone + PartialOrd + BoundedBelow> Unital for Maximization<S> {
+impl<S: Clone + Debug + PartialOrd + BoundedBelow> Unital for Maximization<S> {
     fn unit() -> Self::M {
         S::min_value()
     }
 }
 
 #[snippet(name = "maximization", doc_hidden)]
-impl<S: Clone + PartialOrd> Associative for Maximization<S> {}
+impl<S: Clone + Debug + PartialOrd> Associative for Maximization<S> {}
 
 #[snippet(name = "maximization", doc_hidden)]
-impl<S: Clone + PartialOrd> Commutative for Maximization<S> {}
+impl<S: Clone + Debug + PartialOrd> Commutative for Maximization<S> {}
 
 #[snippet(name = "maximization", doc_hidden)]
-impl<S: Clone + PartialOrd> Idempotent for Maximization<S> {}
+impl<S: Clone + Debug + PartialOrd> Idempotent for Maximization<S> {}

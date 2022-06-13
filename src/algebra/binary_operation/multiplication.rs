@@ -6,7 +6,7 @@ use crate::prelude::*;
 pub struct Multiplication<S>(Infallible, PhantomData<fn() -> S>);
 
 #[snippet(name = "multiplication", doc_hidden)]
-impl<S: Clone + Mul<Output = S> + PartialEq> Magma for Multiplication<S> {
+impl<S: Clone + Debug + Mul<Output = S> + PartialEq> Magma for Multiplication<S> {
     type M = S;
     fn op(x: &S, y: &S) -> S {
         x.clone() * y.clone()
@@ -14,20 +14,20 @@ impl<S: Clone + Mul<Output = S> + PartialEq> Magma for Multiplication<S> {
 }
 
 #[snippet(name = "multiplication", doc_hidden)]
-impl<S: Clone + Mul<Output = S> + PartialEq> Associative for Multiplication<S> {}
+impl<S: Clone + Debug + Mul<Output = S> + PartialEq> Associative for Multiplication<S> {}
 
 #[snippet(name = "multiplication", doc_hidden)]
-impl<S: Clone + Mul<Output = S> + PartialEq + One> Unital for Multiplication<S> {
+impl<S: Clone + Debug + Mul<Output = S> + PartialEq + One> Unital for Multiplication<S> {
     fn unit() -> S {
         S::one()
     }
 }
 
 #[snippet(name = "multiplication", doc_hidden)]
-impl<S: Clone + Mul<Output = S> + PartialEq> Commutative for Multiplication<S> {}
+impl<S: Clone + Debug + Mul<Output = S> + PartialEq> Commutative for Multiplication<S> {}
 
 #[snippet(name = "multiplication", doc_hidden)]
-impl<S: Clone + Mul<Output = S> + PartialEq + One + Div<Output = S>> Invertible
+impl<S: Clone + Debug + Mul<Output = S> + PartialEq + One + Div<Output = S>> Invertible
     for Multiplication<S>
 {
     fn inv(x: &S) -> S {

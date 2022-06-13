@@ -10,7 +10,7 @@ use crate::prelude::*;
 pub struct Addition<S>(Infallible, PhantomData<fn() -> S>);
 
 #[snippet(name = "addition", doc_hidden)]
-impl<S: Clone + Add<Output = S> + PartialEq> Magma for Addition<S> {
+impl<S: Clone + Debug + Add<Output = S> + PartialEq> Magma for Addition<S> {
     type M = S;
     fn op(x: &S, y: &S) -> S {
         x.clone() + y.clone()
@@ -18,20 +18,20 @@ impl<S: Clone + Add<Output = S> + PartialEq> Magma for Addition<S> {
 }
 
 #[snippet(name = "addition", doc_hidden)]
-impl<S: Clone + Add<Output = S> + PartialEq> Associative for Addition<S> {}
+impl<S: Clone + Debug + Add<Output = S> + PartialEq> Associative for Addition<S> {}
 
 #[snippet(name = "addition", doc_hidden)]
-impl<S: Clone + Add<Output = S> + PartialEq + Zero> Unital for Addition<S> {
+impl<S: Clone + Debug + Add<Output = S> + PartialEq + Zero> Unital for Addition<S> {
     fn unit() -> S {
         S::zero()
     }
 }
 
 #[snippet(name = "addition", doc_hidden)]
-impl<S: Clone + Add<Output = S> + PartialEq> Commutative for Addition<S> {}
+impl<S: Clone + Debug + Add<Output = S> + PartialEq> Commutative for Addition<S> {}
 
 #[snippet(name = "addition", doc_hidden)]
-impl<S: Clone + Add<Output = S> + PartialEq + Neg<Output = S>> Invertible for Addition<S> {
+impl<S: Clone + Debug + Add<Output = S> + PartialEq + Neg<Output = S>> Invertible for Addition<S> {
     fn inv(x: &S) -> S {
         x.clone().neg()
     }

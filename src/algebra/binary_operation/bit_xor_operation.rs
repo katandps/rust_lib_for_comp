@@ -6,7 +6,7 @@ use crate::prelude::*;
 pub struct BitXorOperation<S>(Infallible, PhantomData<fn() -> S>);
 
 #[snippet(name = "bit-xor-operation", doc_hidden)]
-impl<S: Clone + BitXor<Output = S> + PartialEq> Magma for BitXorOperation<S> {
+impl<S: Clone + Debug + BitXor<Output = S> + PartialEq> Magma for BitXorOperation<S> {
     type M = S;
     fn op(x: &Self::M, y: &Self::M) -> Self::M {
         x.clone() ^ y.clone()
@@ -14,14 +14,14 @@ impl<S: Clone + BitXor<Output = S> + PartialEq> Magma for BitXorOperation<S> {
 }
 
 #[snippet(name = "bit-xor-operation", doc_hidden)]
-impl<S: Clone + BitXor<Output = S> + PartialEq + Zero> Unital for BitXorOperation<S> {
+impl<S: Clone + Debug + BitXor<Output = S> + PartialEq + Zero> Unital for BitXorOperation<S> {
     fn unit() -> Self::M {
         S::zero()
     }
 }
 
 #[snippet(name = "bit-xor-operation", doc_hidden)]
-impl<S: Clone + BitXor<Output = S> + PartialEq> Associative for BitXorOperation<S> {}
+impl<S: Clone + Debug + BitXor<Output = S> + PartialEq> Associative for BitXorOperation<S> {}
 
 #[snippet(name = "bit-xor-operation", doc_hidden)]
-impl<S: Clone + BitXor<Output = S> + PartialEq> Commutative for BitXorOperation<S> {}
+impl<S: Clone + Debug + BitXor<Output = S> + PartialEq> Commutative for BitXorOperation<S> {}

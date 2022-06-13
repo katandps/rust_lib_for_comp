@@ -10,6 +10,7 @@ pub struct Treap<T> {
     randomizer: XorShift,
     root: Box<treap_node::OptionalNode<T>>,
 }
+
 #[snippet(name = "treap", doc_hidden)]
 impl<T> Treap<T> {
     /// # サイズ
