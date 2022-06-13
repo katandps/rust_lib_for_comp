@@ -2,16 +2,19 @@
 use crate::prelude::*;
 
 #[snippet(name = "range", doc_hidden)]
-pub fn to_lr<R: RangeBounds<usize>>(range: &R, length: usize) -> (usize, usize) {
+pub fn to_lr<T, R: RangeBounds<T>>(range: &R, length: T) -> (T, T)
+where
+    T: Copy + One + Zero + Add<Output = T> + PartialOrd,
+{
     use Bound::{Excluded, Included, Unbounded};
     let l = match range.start_bound() {
-        Unbounded => 0,
+        Unbounded => T::zero(),
         Included(&s) => s,
-        Excluded(&s) => s + 1,
+        Excluded(&s) => s + T::one(),
     };
     let r = match range.end_bound() {
         Unbounded => length,
-        Included(&e) => e + 1,
+        Included(&e) => e + T::one(),
         Excluded(&e) => e,
     };
     assert!(l <= r && r <= length);
