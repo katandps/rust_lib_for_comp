@@ -5,4 +5,5 @@ pub mod longest_increasing_subsequence;
 pub mod manachar;
 pub mod rolling_hash;
 pub mod suffix_array;
+pub mod trie;
 pub mod z_algorithm;
