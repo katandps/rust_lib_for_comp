@@ -15,40 +15,36 @@
 //!
 //! ## dependency
 //! [algebra](crate::algebra)
-use crate::algebra::{Associative, Commutative, Idempotent, Magma, Unital, Zero};
 use crate::prelude::*;
 
 #[snippet(name = "gcd-operation", doc_hidden)]
+#[derive(Clone, Debug)]
 pub struct Gcd<S>(Infallible, PhantomData<fn() -> S>);
-
 #[snippet(name = "gcd-operation", doc_hidden)]
-impl<S: Clone + Debug + RemAssign + PartialOrd + Zero> Magma for Gcd<S> {
-    type M = S;
-    fn op(x: &S, y: &S) -> S {
-        let (mut x, mut y) = (x.clone(), y.clone());
-        if y > x {
-            swap(&mut x, &mut y);
+mod gcd_impl {
+    use super::{
+        swap, Associative, Commutative, Debug, Gcd, Idempotent, Magma, RemAssign, Unital, Zero,
+    };
+    impl<S: Clone + Debug + RemAssign + PartialOrd + Zero> Magma for Gcd<S> {
+        type M = S;
+        fn op(x: &S, y: &S) -> S {
+            let (mut x, mut y) = (x.clone(), y.clone());
+            if y > x {
+                swap(&mut x, &mut y);
+            }
+            while y != S::zero() {
+                x %= y.clone();
+                swap(&mut x, &mut y);
+            }
+            x
         }
-        while y != S::zero() {
-            x %= y.clone();
-            swap(&mut x, &mut y);
+    }
+    impl<S: Clone + Debug + RemAssign + PartialOrd + Zero> Associative for Gcd<S> {}
+    impl<S: Clone + Debug + RemAssign + PartialOrd + Zero> Unital for Gcd<S> {
+        fn unit() -> S {
+            S::zero()
         }
-        x
     }
+    impl<S: Clone + Debug + RemAssign + PartialOrd + Zero> Commutative for Gcd<S> {}
+    impl<S: Clone + Debug + RemAssign + PartialOrd + Zero> Idempotent for Gcd<S> {}
 }
-
-#[snippet(name = "gcd-operation", doc_hidden)]
-impl<S: Clone + Debug + RemAssign + PartialOrd + Zero> Associative for Gcd<S> {}
-
-#[snippet(name = "gcd-operation", doc_hidden)]
-impl<S: Clone + Debug + RemAssign + PartialOrd + Zero> Unital for Gcd<S> {
-    fn unit() -> S {
-        S::zero()
-    }
-}
-
-#[snippet(name = "gcd-operation", doc_hidden)]
-impl<S: Clone + Debug + RemAssign + PartialOrd + Zero> Commutative for Gcd<S> {}
-
-#[snippet(name = "gcd-operation", doc_hidden)]
-impl<S: Clone + Debug + RemAssign + PartialOrd + Zero> Idempotent for Gcd<S> {}
