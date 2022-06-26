@@ -75,22 +75,19 @@ impl<M: MapMonoid> LazySegmentTree<M> {
             }
         }
         {
-            let l2 = l;
-            let r2 = r;
-            while l < r {
-                if l & 1 != 0 {
-                    self.eval(l, f.clone());
-                    l += 1;
+            let (mut l2, mut r2) = (l, r);
+            while l2 < r2 {
+                if l2 & 1 != 0 {
+                    self.eval(l2, f.clone());
+                    l2 += 1;
                 }
-                if r & 1 != 0 {
-                    r -= 1;
-                    self.eval(r, f.clone());
+                if r2 & 1 != 0 {
+                    r2 -= 1;
+                    self.eval(r2, f.clone());
                 }
-                l >>= 1;
-                r >>= 1;
+                l2 >>= 1;
+                r2 >>= 1;
             }
-            l = l2;
-            r = r2;
         }
         for i in 1..=self.log {
             if ((l >> i) << i) != l {
@@ -129,8 +126,7 @@ impl<M: MapMonoid> LazySegmentTree<M> {
                 self.propagate(r >> i);
             }
         }
-        let mut sml = M::unit();
-        let mut smr = M::unit();
+        let (mut sml, mut smr) = (M::unit(), M::unit());
         while l < r {
             if l & 1 != 0 {
                 sml = self.m.op(&sml, &self.node[l]);
