@@ -1,4 +1,4 @@
-//! # 加算 $`a \circ b \to sum(a, b)`$
+//! # 加算 $a \circ b \to sum(a, b)$
 //!
 //! ## verify
 //! [ABL E](https://atcoder.jp/contests/abl/submissions/26979080)

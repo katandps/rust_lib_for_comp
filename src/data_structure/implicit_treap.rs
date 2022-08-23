@@ -16,7 +16,7 @@ impl<T> ImplicitTreap<T> {
     /// # サイズ
     ///
     /// ## 計算量
-    /// $`O(1)`$
+    /// $O(1)$
     pub fn len(&self) -> usize {
         self.root.len()
     }
@@ -24,7 +24,7 @@ impl<T> ImplicitTreap<T> {
     /// # 空かどうか
     ///
     /// ## 計算量
-    /// $`O(1)`$
+    /// $O(1)$
     pub fn is_empty(&self) -> bool {
         self.len() == 0
     }
@@ -36,7 +36,7 @@ impl<T: PartialOrd + Default> ImplicitTreap<T> {
     /// 先頭からpos(0-indexed)の位置にxを挿入
     ///
     /// ## 計算量
-    /// $`O(logN)`$
+    /// $O(logN)$
     pub fn insert(&mut self, pos: usize, x: T) {
         self.root.insert(
             pos,
@@ -48,7 +48,7 @@ impl<T: PartialOrd + Default> ImplicitTreap<T> {
     /// 先頭からpos(0-indexed)の位置の要素を削除して返す
     ///
     /// ## 計算量
-    /// $`O(logN)`$
+    /// $O(logN)$
     pub fn erase(&mut self, pos: usize) -> Option<T> {
         self.root.erase(pos)
     }
@@ -69,19 +69,19 @@ impl<T: PartialOrd + Default> ImplicitTreap<T> {
     }
 
     /// # 先頭の要素を取る
-    /// $`O(logN)`$
+    /// $O(logN)$
     pub fn pop_front(&mut self) -> Option<T> {
         self.root.erase(0)
     }
 
     /// # 最後尾の要素を取る
-    /// $`O(logN)`$
+    /// $O(logN)$
     pub fn pop_back(&mut self) -> Option<T> {
         self.root.erase(self.len() - 1)
     }
 
     /// # 配列に変換する
-    /// $`O(NlogN)`$
+    /// $O(NlogN)$
     pub fn to_vec(mut self) -> Vec<T> {
         let mut v = Vec::new();
         while let Some(t) = self.pop_front() {
@@ -197,7 +197,7 @@ mod implicit_treap_node {
             res.0.map(|node| node.key)
         }
 
-        /// selfを l: $`[0, pos)`$ と r: $`[pos, n)`$ に分割する
+        /// selfを l: $[0, pos)$ と r: $[pos, n)$ に分割する
         pub fn split(&mut self, pos: usize, l: &mut Self, r: &mut Self) {
             self.propagate_to_children();
             r.propagate_to_children();

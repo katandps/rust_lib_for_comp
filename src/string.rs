@@ -1,5 +1,6 @@
 //! 文字列/数列解析
 
+pub mod knuth_morris_pratt;
 pub mod longest_common_prefix_array;
 pub mod longest_increasing_subsequence;
 pub mod manachar;

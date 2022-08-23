@@ -3,6 +3,7 @@ use crate::prelude::*;
 
 pub mod binary_operation;
 pub mod chinese_remainder_theorem;
+pub mod complete_permutations;
 pub mod complex_number;
 pub mod lucas_theorem;
 pub mod matrix;
@@ -16,23 +17,23 @@ pub mod xor_basis;
 
 #[snippet(name = "algebra", doc_hidden)]
 /// マグマ
-/// 二項演算: $`M \circ M \to M`$
+/// 二項演算: $M \circ M \to M$
 pub trait Magma {
-    /// マグマを構成する集合$`M`$
+    /// マグマを構成する集合$M$
     type M: Clone + PartialEq + Debug;
-    /// マグマを構成する演算$`op`$
+    /// マグマを構成する演算$op$
     fn op(x: &Self::M, y: &Self::M) -> Self::M;
 }
 
 #[snippet(name = "algebra", doc_hidden)]
 /// 結合則
-/// $`\forall a,\forall b, \forall c \in T, (a \circ b) \circ c = a \circ (b \circ c)`$
+/// $\forall a,\forall b, \forall c \in T, (a \circ b) \circ c = a \circ (b \circ c)$
 pub trait Associative {}
 
 #[snippet(name = "algebra", doc_hidden)]
 /// 単位的
 pub trait Unital: Magma {
-    /// 単位元 identity element: $`e`$
+    /// 単位元 identity element: $e$
     fn unit() -> Self::M;
 }
 
@@ -42,9 +43,9 @@ pub trait Commutative: Magma {}
 
 #[snippet(name = "algebra", doc_hidden)]
 /// 可逆的
-/// $`\exists e \in T, \forall a \in T, \exists b,c \in T, b \circ a = a \circ c = e`$
+/// $\exists e \in T, \forall a \in T, \exists b,c \in T, b \circ a = a \circ c = e$
 pub trait Invertible: Magma {
-    /// $`a`$ where $`a \circ x = e`$
+    /// $a$ where $a \circ x = e$
     fn inv(x: &Self::M) -> Self::M;
 }
 
@@ -63,7 +64,7 @@ impl<M: Magma + Associative> SemiGroup for M {}
 /// 1. 結合則
 /// 1. 単位元
 pub trait Monoid: Magma + Associative + Unital {
-    /// $`x^n = x\circ\cdots\circ x`$
+    /// $x^n = x\circ\cdots\circ x$
     fn pow(&self, x: Self::M, mut n: usize) -> Self::M {
         let mut res = Self::unit();
         let mut base = x;
@@ -137,7 +138,7 @@ pub trait MapMonoid {
         Self::Func::unit()
     }
     /// composition:
-    /// $`h() = f(g())`$
+    /// $h() = f(g())$
     fn compose(
         &self,
         f: &<Self::Func as Magma>::M,

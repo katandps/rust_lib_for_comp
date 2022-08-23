@@ -1,7 +1,7 @@
 //! # 最長回文半径 Manachar's Algorithm
 //!
 //! ## 計算量
-//! $`O(N)`$
+//! $O(N)$
 
 use crate::prelude::*;
 

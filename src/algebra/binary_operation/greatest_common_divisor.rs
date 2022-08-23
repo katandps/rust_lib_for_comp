@@ -1,4 +1,4 @@
-//! # GCD $`a \circ b \to gcd(a, b)`$
+//! # GCD $a \circ b \to gcd(a, b)$
 //! 最小公倍数をユークリッドの互除法で求める
 //!
 //! ## 使い方

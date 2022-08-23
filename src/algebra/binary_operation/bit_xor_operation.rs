@@ -1,4 +1,4 @@
-//! # BitXor $`a \circ b \to xor(a, b)`$
+//! # BitXor $a \circ b \to xor(a, b)$
 use crate::prelude::*;
 
 #[snippet(name = "bit-xor-operation", doc_hidden)]

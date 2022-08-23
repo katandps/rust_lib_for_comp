@@ -1,7 +1,7 @@
 //! # 直線と格子点
-//! $` y = \frac{Ax + B}{M} (0 \leq x \leq N) `$  の下にある格子点の数を求める
+//! $y = \frac{Ax + B}{M} (0 \leq x \leq N) $  の下にある格子点の数を求める
 //! ## 計算量
-//! $`O( \log \max_{A, M})`$
+//! $O(\log \max_{A, M})$
 use crate::prelude::*;
 
 #[snippet(name = "floor-sum", doc_hidden)]

@@ -3,7 +3,7 @@
 //!
 //! Kruskal法でMinimumSpanningTree(最小全域木)を求める
 //! ## 計算量
-//! 頂点数をV、辺数をEとすると $` E \log E`$
+//! 頂点数をV、辺数をEとすると $E\log E$
 //! ```
 //! use rust_lib_for_comp::graph::adjacency_matrix::GraphMatrix;
 //! use rust_lib_for_comp::graph::kruskal::Kruskal;

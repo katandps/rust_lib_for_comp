@@ -1,4 +1,4 @@
-//! # 上書き $`a \circ b \to a`$
+//! # 上書き $a \circ b \to a$
 //!
 //! ## verify
 //! [ABL E](https://atcoder.jp/contests/abl/submissions/26979080)

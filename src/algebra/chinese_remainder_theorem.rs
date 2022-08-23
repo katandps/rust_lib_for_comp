@@ -1,5 +1,5 @@
 //! # 中国剰余定理
-//! x === b1 mod m, x === b2 mod m となる整数xを得る(x === r mod m)
+//! $x \equiv b1 \bmod m1$, $x \equiv b2 \bmod m2$ となる整数$x$, $m$を得る $(x \equiv r \bmod m)$
 //! ```
 //! # use rust_lib_for_comp::algebra::chinese_remainder_theorem::*;
 //!

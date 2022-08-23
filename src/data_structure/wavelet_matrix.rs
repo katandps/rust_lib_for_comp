@@ -1,6 +1,6 @@
 //! # ウェーブレット行列
 //! ## 概要
-//! 正整数列について、構築$`O(N \log V)`$で$`O( \log V)`$ or $`O( \log^2 V)`$のクエリを提供する
+//! 正整数列について、構築$O(N\log V)$で$O(\log V)$ or $O(\log^2 V)$のクエリを提供する
 //!
 //! ## 使い方
 //! ```
@@ -16,8 +16,8 @@
 //! [完備辞書](crate::data_structure::succinct_indexable_dictionaries)
 //!
 //! ## 計算量
-//! - 構築: $`O(N \log V)`$
-//! - クエリ: $`O( \log^2 V)`$
+//! - 構築: $O(N \log V)$
+//! - クエリ: $O( \log^2 V)$
 //!
 //! ## verify
 //! unverified
@@ -74,7 +74,7 @@ impl From<Vec<u64>> for WaveletMatrix {
 impl WaveletMatrix {
     ///
     /// ## 計算量
-    /// $`O( \log N)`$
+    /// $O(\log N)$
     pub fn access(&self, mut k: usize) -> u64 {
         let mut ret = 0;
         (0..self.depth).rev().for_each(|level| {
@@ -94,7 +94,7 @@ impl WaveletMatrix {
         )
     }
 
-    /// $`[0 <= i < r) かつ v[i] == x`$ であるようなiの個数
+    /// $[0 <= i < r) かつ v[i] == x$ であるようなiの個数
     pub fn rank(&self, x: u64, r: usize) -> usize {
         let (_l, r) = (0..self.depth).rev().fold((0, r), |(l, r), level| {
             self.succ((x >> level) & 1 > 0, l, r, level)

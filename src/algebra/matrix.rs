@@ -75,7 +75,7 @@ impl Matrix {
 
     /// 行列式detを計算する
     /// 平方行列でない場合はNoneを返す
-    /// 計算量は O(size^3)
+    /// 計算量は $O(size^3)$
     pub fn determinant(&self) -> Option<Mi> {
         let (n, m) = self.size();
         let zero = Mi::new(0);

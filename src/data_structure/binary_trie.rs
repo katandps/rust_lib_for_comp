@@ -14,47 +14,47 @@ pub struct BinaryTrie {
 
 #[snippet(name = "binary-trie", doc_hidden)]
 impl BinaryTrie {
-    /// $`2^{60}`$未満の非負整数を登録できる
+    /// $2^{60}$ 未満の非負整数を登録できる
     pub const BIT_LEN: i64 = 60;
 
     /// 今までにinsertした個数を取得する
     /// ## 計算量
-    /// $`O(1)`$
+    /// $O(1)$
     pub fn size(&self) -> usize {
         self.root.count
     }
 
     /// vをinsertする
     /// ## 計算量
-    /// $`O(BIT\_LEN)`$
+    /// $O(\text{BIT\textunderscore LEN})$
     pub fn insert(&mut self, v: u64) {
         self.root.add(v, Self::BIT_LEN - 1);
     }
 
     /// vを一つ削除する
     /// ## 計算量
-    /// $`O(BIT\_LEN)`$
+    /// $O(\text{BIT\textunderscore LEN})$
     pub fn erase(&mut self, v: TrieValue) {
         self.root.sub(v, Self::BIT_LEN - 1);
     }
 
     /// xor_valとXORをとったときに最小値となるような値を取得する
     /// ## 計算量
-    /// $`O(BIT\_LEN)`$
+    /// $O(\text{BIT\textunderscore LEN})$
     pub fn min_element(&self) -> TrieValue {
         self.root.get_min(self.xor_val, Self::BIT_LEN - 1)
     }
 
     /// biasとXORをとったときに最大値となるような値を取得する
     /// ## 計算量
-    /// $`O(BIT\_LEN)`$
+    /// $O(\text{BIT\textunderscore LEN})$
     pub fn max_element(&self) -> TrieValue {
         self.root.get_min(self.rev_xor_val(), Self::BIT_LEN - 1)
     }
 
     /// 小さい方からk番目の値を取得する
     /// ## 計算量
-    /// $`O(BIT\_LEN)`$
+    /// $O(\text{BIT\textunderscore LEN})$
     pub fn nth(&self, k: usize) -> TrieValue {
         assert!(k <= self.size());
         self.root.get(k, Self::BIT_LEN - 1)

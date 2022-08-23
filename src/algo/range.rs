@@ -1,4 +1,4 @@
-//! Range を半開区間 $`[l, r)`$ に変換する
+//! Range を半開区間 $[l, r)$ に変換する
 use crate::prelude::*;
 
 #[snippet(name = "range", doc_hidden)]

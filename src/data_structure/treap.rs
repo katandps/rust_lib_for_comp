@@ -16,7 +16,7 @@ impl<T> Treap<T> {
     /// # サイズ
     ///
     /// ## 計算量
-    /// $`O(1)`$
+    /// $O(1)$
     pub fn len(&self) -> usize {
         self.root.len()
     }
@@ -24,7 +24,7 @@ impl<T> Treap<T> {
     /// # 空かどうか
     ///
     /// ## 計算量
-    /// $`O(1)`$
+    /// $O(1)$
     pub fn is_empty(&self) -> bool {
         self.len() == 0
     }
@@ -36,7 +36,7 @@ impl<T: PartialOrd + Default> Treap<T> {
     /// 先頭からpos(0-indexed)の位置にxを挿入
     ///
     /// ## 計算量
-    /// $`O(logN)`$
+    /// $O(logN)$
     pub fn insert(&mut self, x: T) {
         self.root.insert(treap_node::OptionalNode::new(
             x,
@@ -48,7 +48,7 @@ impl<T: PartialOrd + Default> Treap<T> {
     /// 先頭からpos(0-indexed)の位置の要素を削除して返す
     ///
     /// ## 計算量
-    /// $`O(logN)`$
+    /// $O(logN)$
     pub fn remove(&mut self, key: &T) -> Option<T> {
         self.root.erase(key)
     }
@@ -57,7 +57,7 @@ impl<T: PartialOrd + Default> Treap<T> {
     /// keyが含まれるかどうかを返す
     ///
     /// ## 計算量
-    /// $`O(logN)`$
+    /// $O(logN)$
     pub fn find(&self, key: &T) -> bool {
         self.root.find(key)
     }
@@ -167,7 +167,7 @@ mod treap_node {
             }
         }
 
-        /// selfを l: $`[0, key)`$ と r: $`[key, n)`$ に分割する
+        /// selfを l: $[0, key)$ と r: $[key, n)$ に分割する
         fn split(&mut self, key: &T, l: &mut Self, r: &mut Self) {
             self.propagate_to_children();
             r.propagate_to_children();

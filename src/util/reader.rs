@@ -92,17 +92,17 @@ impl<R: BufRead, F: FnMut() -> R> Reader<F> {
             .collect()
     }
 
-    /// 英小文字からなる文字列の入力を $`'0' = 0`$ となる数値の配列で得る
+    /// 英小文字からなる文字列の入力を $'0' = 0$ となる数値の配列で得る
     pub fn digits(&mut self) -> Vec<usize> {
         self.split(b'0')
     }
 
-    /// 英小文字からなる文字列の入力を $`'a' = 0`$ となる数値の配列で得る
+    /// 英小文字からなる文字列の入力を $'a' = 0$ となる数値の配列で得る
     pub fn lowercase(&mut self) -> Vec<usize> {
         self.split(b'a')
     }
 
-    /// 英大文字からなる文字列の入力を $`'A' = 0`$ となる数値の配列で得る
+    /// 英大文字からなる文字列の入力を $'A' = 0$ となる数値の配列で得る
     pub fn uppercase(&mut self) -> Vec<usize> {
         self.split(b'A')
     }
@@ -120,7 +120,7 @@ impl<R: BufRead, F: FnMut() -> R> Reader<F> {
             .collect()
     }
 
-    /// 空白区切りで $`h*w`$ 個の要素を行列として取得する
+    /// 空白区切りで $h*w$ 個の要素を行列として取得する
     pub fn matrix<T: FS>(&mut self, h: usize, w: usize) -> Vec<Vec<T>> {
         (0..h).map(|_| self.vec(w)).collect()
     }

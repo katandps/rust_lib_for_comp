@@ -1,4 +1,4 @@
-//! # $`p^e \bmod m`$
+//! # $p^e \bmod m$
 //! 繰り返し二乗法を使用して値を求める
 //! ## verified by
 //! [ATC002B](https://atcoder.jp/contests/atc002/submissions/26825488)

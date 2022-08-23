@@ -1,5 +1,5 @@
-//! # 最小化 $`a \circ b \to min(a, b)`$
-//! $`a > b`$ のとき b
+//! # 最小化 $a \circ b \to min(a, b)$
+//! $a > b$ のとき b
 use crate::prelude::*;
 
 #[snippet(name = "minimization", doc_hidden)]

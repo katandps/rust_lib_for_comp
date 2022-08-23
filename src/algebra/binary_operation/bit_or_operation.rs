@@ -1,4 +1,4 @@
-//! # BitOr $`a \circ b \to or(a, b)`$
+//! # BitOr $a \circ b \to or(a, b)$
 use crate::prelude::*;
 
 #[snippet(name = "bit-or-operation", doc_hidden)]

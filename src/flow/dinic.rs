@@ -2,8 +2,8 @@
 //! 最大流問題を解く
 //!
 //! ## 計算量
-//! 頂点数を$`V`$、辺数を$`E`$として
-//! $` O (V^{2} E)`$
+//! 頂点数を$V$、辺数を$E$として
+//! $O(V^{2}E)$
 //! ただし、ほとんどの場合さらに高速に動作する
 //!
 //! ## verify
@@ -45,7 +45,7 @@ impl<C: Copy + Debug + Zero + Ord + BoundedAbove + AddAssign + SubAssign> Dinic<
 
     /// # 最大フロー問題を解く
     /// ## 計算量
-    /// $`O(V^2E)`$
+    /// $O(V^2E)$
     pub fn max_flow(&mut self, s: usize, t: usize) -> C {
         let v = self.level.len();
         let mut flow = C::zero();

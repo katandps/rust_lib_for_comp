@@ -1,7 +1,7 @@
-//! 素集合データ構造 (UnionFind)
+//! # 素集合データ構造 (UnionFind)
 //! size圧縮かつrank圧縮を行うUnionFindTree
 //! ## 計算量
-//!  - クエリ: $`O( \alpha )`$
+//!  - クエリ: $O( \alpha )$
 //! ## verify
 //! [ARC056B](https://atcoder.jp/contests/arc056/submissions/26705121)
 

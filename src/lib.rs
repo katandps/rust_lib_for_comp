@@ -4,6 +4,7 @@ pub mod algebra;
 pub mod algo;
 pub mod convolution;
 pub mod data_structure;
+pub mod dynamic_programming;
 pub mod element;
 pub mod enumerator;
 pub mod flow;

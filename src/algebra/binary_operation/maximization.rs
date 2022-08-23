@@ -1,5 +1,5 @@
-//! # 最大化 $`a \circ b \to max(a, b)`$
-//! $`a < b`$ のとき b
+//! # 最大化 $a \circ b \to max(a, b)$
+//! $a < b$ のとき b
 use crate::prelude::*;
 
 #[snippet(name = "maximization", doc_hidden)]

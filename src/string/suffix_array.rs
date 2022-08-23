@@ -51,7 +51,7 @@ impl SuffixArray {
 /// SA-IS法によるSuffixArrayの構築
 ///
 /// ## 計算量
-/// `$O(N)$`
+/// $O(N)$
 #[derive(Debug, Clone)]
 struct Sais {
     pos: Vec<usize>,

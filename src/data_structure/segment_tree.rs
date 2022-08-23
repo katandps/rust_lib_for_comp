@@ -1,6 +1,6 @@
 //! # セグメント木
 //! セグメント木(非再帰)
-//! 一点更新$` O(1) `$、区間取得$`O( \log N )`$
+//! 一点更新$O(1)$、区間取得$O(\log N)$
 //!
 //! ## verify
 //! [ARC133B](https://atcoder.jp/contests/arc133/submissions/28689143)
@@ -42,7 +42,7 @@ impl<M: Monoid> SegmentTree<M> {
 
     /// 値iをvalueに更新する
     /// ## 計算量
-    /// $`O( \log N)`$
+    /// $O(\log N)$
     pub fn update_at(&mut self, mut i: usize, value: M::M) {
         i += self.n;
         self.node[i] = value;
@@ -54,7 +54,7 @@ impl<M: Monoid> SegmentTree<M> {
 
     /// Rangeで与えられた区間の値を取得する
     /// ## 計算量
-    /// $`O( \log N)`$
+    /// $O(\log N)$
     pub fn prod<R: RangeBounds<usize>>(&self, range: R) -> M::M {
         let (mut l, mut r) = to_lr(&range, self.n);
         l += self.n;
@@ -80,7 +80,7 @@ impl<M: Monoid> SegmentTree<M> {
 #[snippet(name = "segment-tree", doc_hidden)]
 /// indexの値を取得する
 /// ## 計算量
-/// $` O(1)`$
+/// $O(1)$
 impl<M: Monoid> Index<usize> for SegmentTree<M> {
     type Output = M::M;
 

@@ -1,7 +1,7 @@
 //! # ベルマンフォード法
 //! 単一始点の最短経路問題を解く
 //! ## 計算量
-//! 頂点数$`N`$, 辺数$`M`$のとき$`O(NM)`$
+//! 頂点数$N$, 辺数$M$のとき$O(NM)$
 use crate::algebra::{BoundedAbove, BoundedBelow, Zero};
 use crate::graph::GraphTrait;
 use crate::prelude::*;

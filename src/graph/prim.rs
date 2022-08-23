@@ -3,7 +3,7 @@
 //! startと連結でない点は無視する
 //! ## 計算量
 //!
-//! 二分ヒープによる実装なので頂点数をV、辺数をEとして$` O(E \log V)`$
+//! 二分ヒープによる実装なので頂点数をV、辺数をEとして$O(E\log V)$
 //! ```
 //! use rust_lib_for_comp::graph::adjacency_matrix::GraphMatrix;
 //! use rust_lib_for_comp::graph::prim::Prim;
@@ -17,6 +17,9 @@
 //! ]);
 //! assert_eq!(5, Prim::from(&graph).sum());
 //! ```
+//!
+//! ## todo
+//! フィボナッチヒープによる実装
 //!
 use crate::algebra::Zero;
 use crate::graph::GraphTrait;

@@ -1,5 +1,5 @@
 //! # 遅延評価セグメント木
-//! 区間更新 $`O(\log N)`$、区間取得 $`O(\log N)`
+//! 区間更新 $O(\log N)$、区間取得 $O(\log N)$
 //!
 //! ## verify
 //! [ABL E](https://atcoder.jp/contests/abl/submissions/26979080)
@@ -109,8 +109,8 @@ impl<M: MapMonoid> LazySegmentTree<M> {
         self.node[i].clone()
     }
 
-    /// 区間 $`[l, r)`$ の値を取得する
-    /// $`l == r`$ のときは $`unit`$ を返す
+    /// 区間 $[l, r)$ の値を取得する
+    /// $l == r$ のときは $unit$ を返す
     pub fn prod<R: RangeBounds<usize>>(&mut self, range: R) -> <M::Mono as Magma>::M {
         let (mut l, mut r) = to_lr(&range, self.n);
         if l == r {

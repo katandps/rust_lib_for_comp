@@ -1,5 +1,5 @@
 //! # DisjointSparseTable
-//! 静的データ構造 半群への区間クエリを構築$`O(N \log N)`$、クエリ$`O(1)`$で処理する
+//! 静的データ構造 半群への区間クエリを構築$O(N \log N)$、クエリ$O(1)$で処理する
 //!
 //! ## verify
 //! [Static RMQ](https://judge.yosupo.jp/submission/65663)

@@ -1,4 +1,4 @@
-//! # 乗算 $`a \circ b \to prod(a, b)`$
+//! # 乗算 $a \circ b \to prod(a, b)$
 use crate::prelude::*;
 
 #[snippet(name = "multiplication", doc_hidden)]

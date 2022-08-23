@@ -1,6 +1,6 @@
 //! # Sparse Table
 //! 静的データ構造
-//! 事前計算 $`O(N \log N)`$で、foldを$`O(1)`$で計算できる
+//! 事前計算 $O(N\log N)$で、foldを$O(1)$で計算できる
 //!
 //! Bandが載る
 //! ## verify

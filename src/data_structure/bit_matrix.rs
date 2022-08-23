@@ -1,5 +1,5 @@
 //! # BitMatrix
-//! $`\Z_2`$ を要素とする行列
+//! $\Z_2$ を要素とする行列
 //!
 //! ## dependency
 //! [bit-set](BitSet)
@@ -29,7 +29,7 @@ impl BitMatrix {
     /// 行基本変形を用いて行階段形に変形し、Rankを返す
     ///
     /// ## 計算量
-    /// $`O(N^3)`$
+    /// $O(N^3)$
     ///
     /// ## 備考
     /// もとのbit列同士のxorで得られる最大のbit列は、elimination後にすべてのBitSetをxorすることで得られる

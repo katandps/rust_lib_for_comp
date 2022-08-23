@@ -1,4 +1,4 @@
-//! # 座標圧縮 O( N \log N)
+//! # 座標圧縮 $O( N \log N)$
 
 use crate::prelude::*;
 

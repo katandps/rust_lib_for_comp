@@ -1,6 +1,6 @@
 //! # 最近共通祖先
 //! LowestCommonAncestor(LCA)を求めるライブラリ
-//! 事前処理 $`N \log N`$、クエリ$` \log N `$
+//! 事前処理 $N\log N$、クエリ$\log N$
 use super::euler_tour::EulerTour;
 use crate::algebra::binary_operation::minimization::Minimization;
 use crate::data_structure::sparse_table::SparseTable;
@@ -18,7 +18,7 @@ pub struct LowestCommonAncestor {
 impl LowestCommonAncestor {
     /// # 構築
     /// ## 計算量
-    /// $`O(N\logN)`$
+    /// $O(N\logN)$
     pub fn new<G: GraphTrait>(g: &G, root: usize) -> Self {
         let tour = EulerTour::new(g, root);
         let depth = SparseTable::<Minimization<IntWithIndex<usize>>>::from(
@@ -36,7 +36,7 @@ impl LowestCommonAncestor {
     /// # LCAを求める
     /// u,vの最近共通祖先(LCA)を求める
     /// ## 計算量
-    /// $`O(1)`$
+    /// $O(1)$
     pub fn query(&self, u: usize, v: usize) -> usize {
         let (mut l, mut r) = (self.tour.time_in[u], self.tour.time_out[v]);
         if l > r {
@@ -47,7 +47,7 @@ impl LowestCommonAncestor {
 
     /// # 2頂点u,v間の距離
     /// ## 計算量
-    /// $`O(1)`$
+    /// $O(1)$
     pub fn dist(&self, u: usize, v: usize) -> usize {
         let lca = self.query(u, v);
         self.tour.depth[u] + self.tour.depth[v] - 2 * self.tour.depth[lca]
@@ -55,7 +55,7 @@ impl LowestCommonAncestor {
 
     /// # u,vを結ぶパス上に頂点aが存在するかどうか
     /// ## 計算量
-    /// $`O(1)`$
+    /// $O(1)$
     pub fn on_path(&self, u: usize, v: usize, a: usize) -> bool {
         self.dist(u, a) + self.dist(a, v) == self.dist(u, v)
     }
@@ -66,7 +66,7 @@ impl LowestCommonAncestor {
     /// vsに必要になる頂点を追加し、グラフの隣接リストを返す
     /// ## 計算量
     /// 元となるvsの長さをkとして
-    /// $`KlogK`$
+    /// $KlogK$
     /// ## verify
     /// [典型90 035](https://atcoder.jp/contests/typical90/submissions/29216435)
     pub fn auxiliary_tree(&self, vs: &mut Vec<usize>) -> Vec<(usize, usize)> {

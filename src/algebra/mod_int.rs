@@ -31,7 +31,7 @@ mod mod_int_impl {
 
         /// # 累乗
         /// ## 計算量
-        /// $`O(\logMOD)`$
+        /// $M$を法として $ O(\log M) $
         pub fn pow(mut self, mut e: i64) -> Self {
             let m = e < 0;
             e = e.abs();
@@ -53,7 +53,7 @@ mod mod_int_impl {
         /// # 組み合わせnCr
         /// 前計算なし
         /// ## 計算量
-        /// $`O(r + \logMOD)`$
+        /// $M$を法として $O(r + \log M)$
         pub fn comb(n: i64, mut r: i64) -> Self {
             if r > n - r {
                 r = n - r;
