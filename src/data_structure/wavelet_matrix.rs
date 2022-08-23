@@ -94,7 +94,7 @@ impl WaveletMatrix {
         )
     }
 
-    /// $[0 <= i < r) かつ v[i] == x$ であるようなiの個数
+    /// $[0 <= i < r) かつ v\[i\] == x$ であるようなiの個数
     pub fn rank(&self, x: u64, r: usize) -> usize {
         let (_l, r) = (0..self.depth).rev().fold((0, r), |(l, r), level| {
             self.succ((x >> level) & 1 > 0, l, r, level)
