@@ -1,6 +1,7 @@
 //! 基本的なアルゴリズム/役に立つライブラリ
 
 pub mod binary_search;
+pub mod boyer_moore_majority_vote_algorithm;
 pub mod compress;
 pub mod dbg_print;
 pub mod range;
