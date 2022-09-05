@@ -8,8 +8,11 @@ fmt:
 lint:
 	cargo clippy -- -D warnings
 
+check:
+	cargo +1.42.0 check
+
 test:
-	cargo +1.42.0 test
+	cargo test
 
 snippet:
 	mkdir -p $(SNIPPETS_DIR)
