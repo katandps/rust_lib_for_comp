@@ -1,5 +1,6 @@
 //! # BinaryIndexedTree(Fenwick Tree)
 //! アーベル群の二項演算を載せることができる
+//! 計算量は各$\log(N)$
 use crate::algebra::{AbelianGroup, Magma};
 use crate::prelude::*;
 
@@ -11,6 +12,7 @@ pub struct BinaryIndexedTree<A: Magma> {
 }
 
 #[snippet(name = "binary-indexed-tree", doc_hidden)]
+/// サイズを指定して作成する
 impl<A: AbelianGroup> From<usize> for BinaryIndexedTree<A> {
     fn from(length: usize) -> Self {
         Self {
@@ -20,6 +22,7 @@ impl<A: AbelianGroup> From<usize> for BinaryIndexedTree<A> {
     }
 }
 
+/// ソースを指定して作成する
 #[snippet(name = "binary-indexed-tree", doc_hidden)]
 impl<A: AbelianGroup> From<&[A::M]> for BinaryIndexedTree<A> {
     fn from(src: &[A::M]) -> Self {
@@ -33,7 +36,7 @@ impl<A: AbelianGroup> From<&[A::M]> for BinaryIndexedTree<A> {
 
 #[snippet(name = "binary-indexed-tree", doc_hidden)]
 impl<A: AbelianGroup> BinaryIndexedTree<A> {
-    /// add x to i
+    /// add $x$ to $i$
     pub fn add(&mut self, i: usize, x: A::M) {
         let mut idx = i as i32 + 1;
         while idx <= self.n as i32 {
@@ -42,7 +45,7 @@ impl<A: AbelianGroup> BinaryIndexedTree<A> {
         }
     }
 
-    /// sum of [0, i)
+    /// sum of $[0, i)$
     pub fn sum(&self, i: usize) -> A::M {
         let mut ret = A::unit();
         let mut idx = i as i32 + 1;
@@ -63,6 +66,54 @@ impl<A: AbelianGroup> BinaryIndexedTree<A> {
         } else {
             A::op(&self.sum(b - 1), &A::inv(&self.sum(a - 1)))
         }
+    }
+
+    /// sumが初めてlbを超える位置を返す
+    /// 二項演算の結果が単調増加するときに使える
+    pub fn lower_bound(&self, lb: A::M) -> usize
+    where
+        A::M: PartialOrd,
+    {
+        if lb <= A::unit() {
+            return 0;
+        }
+        let (mut ret, mut len) = (0, 1);
+        while len < self.n {
+            len <<= 1;
+        }
+        let mut sum = A::unit();
+        while len > 0 {
+            if ret + len <= self.n && A::op(&sum, &self.bit[ret + len]) < lb {
+                sum = A::op(&sum, &self.bit[ret + len]);
+                ret += len;
+            }
+            len >>= 1;
+        }
+        ret
+    }
+
+    /// sumが初めてubを下回る位置を返す
+    /// 二項演算の結果が単調減少するときに使える
+    pub fn upper_bound(&self, ub: A::M) -> usize
+    where
+        A::M: PartialOrd,
+    {
+        if ub >= A::unit() {
+            return 0;
+        }
+        let (mut ret, mut len) = (0, 1);
+        while len < self.n {
+            len <<= 1;
+        }
+        let mut sum = A::unit();
+        while len > 0 {
+            if ret + len <= self.n && A::op(&sum, &self.bit[ret + len]) > ub {
+                sum = A::op(&sum, &self.bit[ret + len]);
+                ret += len;
+            }
+            len >>= 1;
+        }
+        ret
     }
 }
 
@@ -126,6 +177,48 @@ mod test {
 
         for i in 0..LEN {
             assert_eq!(v[i], bit.sum(i));
+        }
+    }
+
+    #[test]
+    fn test_lower_bound() {
+        const LEN: usize = 6;
+        let mut bit = BinaryIndexedTree::<Addition<i64>>::from(LEN);
+
+        for i in 2..4 {
+            bit.add(i, i as i64);
+        }
+        for i in -3..=7 {
+            let lb = bit.lower_bound(i);
+            if lb == 0 {
+                assert!(bit.sum(lb) >= i);
+            } else if lb == bit.n {
+                assert!(bit.sum(lb - 1) < i);
+            } else {
+                assert!(bit.sum(lb) >= i);
+                assert!(bit.sum(lb - 1) < i);
+            }
+        }
+    }
+
+    #[test]
+    fn test_upper_bound() {
+        const LEN: usize = 6;
+        let mut bit = BinaryIndexedTree::<Addition<i64>>::from(LEN);
+
+        for i in 2..4 {
+            bit.add(i, -(i as i64));
+        }
+        for i in -3..=7 {
+            let lb = bit.upper_bound(i);
+            if lb == 0 {
+                assert!(bit.sum(lb) <= i);
+            } else if lb == bit.n {
+                assert!(bit.sum(lb - 1) > i);
+            } else {
+                assert!(bit.sum(lb) <= i);
+                assert!(bit.sum(lb - 1) > i);
+            }
         }
     }
 }
