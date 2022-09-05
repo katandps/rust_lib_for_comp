@@ -8,7 +8,7 @@ use crate::prelude::*;
 /// # 要素
 pub trait SliceBounds {
     type Item: Ord;
-    /// k以上の要素となる最小のindexを返す
+    /// k以上の要素となる最小のindexを返す 存在しない場合はスライスの長さを返す
     fn lower_bound(&self, k: &Self::Item) -> usize;
     /// kより大きい要素となる最小のindexを返す
     fn upper_bound(&self, k: &Self::Item) -> usize;
@@ -30,7 +30,7 @@ pub trait SliceBoundsByKey {
 #[snippet(name = "slice-bounds", doc_hidden)]
 impl<T: Ord> SliceBounds for [T] {
     type Item = T;
-    fn lower_bound(&self, k: &Self::Item) -> usize {
+    fn lower_bound(&self, k: &T) -> usize {
         self.lower_bound_by(|p| p.cmp(k))
     }
     fn upper_bound(&self, k: &T) -> usize {
@@ -63,7 +63,11 @@ impl<T> SliceBoundsByKey for [T] {
 #[test]
 fn test() {
     let src = vec![1, 1, 1, 2, 2, 5, 8];
+    let expect_lower = vec![0, 0, 3, 5, 5, 5, 6, 6, 6, 7, 7];
+    let expect_upper = vec![0, 3, 5, 5, 5, 6, 6, 6, 7, 7, 7];
+
     for i in 0..=10 {
-        println!("{} {} {}", i, src.lower_bound(&i), src.upper_bound(&i));
+        assert_eq!(expect_lower[i], src.lower_bound(&i));
+        assert_eq!(expect_upper[i], src.upper_bound(&i));
     }
 }
