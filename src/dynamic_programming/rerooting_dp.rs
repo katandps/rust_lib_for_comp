@@ -58,14 +58,15 @@ impl<M: Monoid> RerootingDP<M> {
     fn dfs2<G: GraphTrait>(
         &mut self,
         src: usize,
-        parent: usize,
+        _parent: usize,
         graph: &G,
-        val: &M::M,
+        _val: &M::M,
         apply: fn(usize, usize, G::Weight, &M::M) -> M::M,
     ) {
         let mut ds = Vec::new();
         for (dst, val) in graph.edges(src) {
             ds.push(apply(dst, src, val, &self.subtree[dst]))
         }
+        todo!()
     }
 }

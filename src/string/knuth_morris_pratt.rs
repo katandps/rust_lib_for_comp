@@ -1,44 +1,38 @@
 //! # KMP法(クヌース・モリス・プラット法)
-//! $O(N)$で単語検索を行う
 //!
-//! 未完成
-
+//! 文字列Sが与えられる。
+//! 先頭から各iまでの文字列について、接頭辞と接尾辞が何文字一致しているかをborderと呼ぶ。
+//! 接頭辞Pのtagged borderとは、Pのborder Wのうち、P[|W|] != 残りの文字列[0] であるもの
+//! この値をならし計算量$O(N)$ですべて求める。
+//!
 use crate::prelude::*;
 
-pub struct KMP<T> {
-    word: Vec<T>,
-    table: Vec<Option<usize>>,
-}
-
-mod kmp_impl {
-    use super::KMP;
-    impl<T: PartialEq + Clone> KMP<T> {
-        pub fn new(word: &[T]) -> Self {
-            let l = word.len();
-            let mut table = vec![Some(0); l + 1];
-            table[0] = None;
-            let mut c = Some(0);
-            for p in 0..l {
-                if c.is_some() && word[p] == word[c.unwrap()] {
-                    table[p] = table[c.unwrap()];
-                } else {
-                    table[p] = c;
-                    if let Some(v) = c {
-                        c = table[v];
-                    }
-                    while let Some(v) = c {
-                        if word[p] != word[v] {
-                            c = table[v]
-                        }
-                    }
-                }
-                c = Some(c.map_or(0, |c| c + 1));
-            }
-            table[l] = c;
-            Self {
-                table,
-                word: word.to_vec(),
-            }
+#[snippet(name = "knuth-morris-pratt", doc_hidden)]
+pub fn tagged_border<T: PartialEq>(src: &[T]) -> Vec<i64> {
+    let mut ret = vec![0; src.len() + 1];
+    ret[0] = -1;
+    let mut j = -1;
+    for i in 0..src.len() {
+        while j >= 0 && src[i] != src[j as usize] {
+            j = ret[j as usize]
+        }
+        j += 1;
+        if i + 1 < src.len() && src[i + 1] == src[j as usize] {
+            ret[i + 1] = ret[j as usize]
+        } else {
+            ret[i + 1] = j;
         }
     }
+    ret
+}
+
+pub fn search<T: PartialEq>(_src: &[T], _word: &[T]) {
+    todo!()
+}
+
+#[test]
+fn test_kmp() {
+    let src = "GCAGAGAG".chars().collect::<Vec<_>>();
+    let ret = tagged_border(&src);
+    assert_eq!(ret, vec![-1, 0, 0, -1, 1, -1, 1, -1, 1]);
 }
