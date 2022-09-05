@@ -1,5 +1,9 @@
 //! # Binary Trie
 //! 非負整数をBit列とみなしてトライ木に載せたもの
+//! set的な機能を持つ
+//!
+//! ## verify
+//! [ARC033_C](https://atcoder.jp/contests/arc033/submissions/34635956)
 use crate::prelude::*;
 
 #[snippet(name = "binary-trie", doc_hidden)]
