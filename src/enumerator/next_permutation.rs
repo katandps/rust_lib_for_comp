@@ -16,25 +16,17 @@ impl<T: Clone + PartialOrd> Iterator for NextPermutation<T> {
         let ret = self.0.clone();
         if let Some(v) = &mut self.0 {
             if v.len() >= 2 {
-                let mut i = v.len() - 1;
-                while i > 0 {
+                for i in (1..v.len()).rev() {
                     if v[i - 1] < v[i] {
                         let j = (0..v.len()).rev().find(|j| v[*j] > v[i - 1]).unwrap();
                         v.swap(i - 1, j);
                         v[i..].reverse();
-                        break;
+                        return ret;
                     }
-                    i -= 1;
                 }
-                if i == 0 {
-                    self.0 = None
-                }
-            } else {
-                self.0 = None
             }
-        } else {
-            self.0 = None
-        };
+        }
+        self.0 = None;
         ret
     }
 }
@@ -42,12 +34,12 @@ impl<T: Clone + PartialOrd> Iterator for NextPermutation<T> {
 /// ```
 /// # use rust_lib_for_comp::enumerator::next_permutation::*;
 /// let mut s = 0;
-/// for p in NextPermutation::from(10) {
+/// for p in NextPermutation::from(5) {
 ///     for pi in p {
 ///         s += pi;
 ///     }
 /// }
-/// assert_eq!(s, 3628800 * 45);
+/// assert_eq!(s, 120 * 10);
 /// ```
 #[snippet(name = "next-permutation", doc_hidden)]
 impl From<usize> for NextPermutation<usize> {
@@ -66,4 +58,24 @@ impl<T: Clone + PartialOrd> From<&[T]> for NextPermutation<T> {
     fn from(src: &[T]) -> Self {
         NextPermutation(Some(src.to_vec()))
     }
+}
+
+#[test]
+fn test() {
+    let v = vec![1, 2, 3];
+    let mut b = Vec::new();
+    for p in NextPermutation::from(&v[..]) {
+        b.push(p);
+    }
+    assert_eq!(
+        b,
+        vec![
+            vec![1, 2, 3],
+            vec![1, 3, 2],
+            vec![2, 1, 3],
+            vec![2, 3, 1],
+            vec![3, 1, 2],
+            vec![3, 2, 1]
+        ]
+    )
 }
