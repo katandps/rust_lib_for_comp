@@ -47,14 +47,18 @@ pub trait TreeGraph: GraphTrait {
     }
     /// # いくつかの辺を使って到達できる点のうち、最も遠い点を求める
     ///
-    /// l - rが直径
     /// ```
     /// use rust_lib_for_comp::graph::adjacency_list::Graph;
     /// use crate::rust_lib_for_comp::graph::tree::TreeGraph;
     /// let graph = Graph::<i32>::new(5);
+    ///
+    /// // l to rが直径
     /// let l = graph.farthest_vertex(0);
     /// let r = graph.farthest_vertex(l);
     /// ```
+    ///
+    /// ## verify
+    /// [ABC267F](https://atcoder.jp/contests/abc267/submissions/34679847)
     fn farthest_vertex(&self, src: usize) -> usize {
         let mut rank = vec![None; self.size()];
         rank[src] = Some(0);
