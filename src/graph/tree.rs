@@ -6,6 +6,7 @@ use crate::prelude::*;
 
 pub mod euler_tour;
 pub mod heavy_light_decomposition;
+pub mod lcm_auxiliary_tree;
 pub mod lowest_common_ancestor;
 
 #[snippet(name = "min_max", doc_hidden)]

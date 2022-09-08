@@ -1,3 +1,4 @@
+//! # 階乗の前計算
 //! ModInt上での階乗や組み合わせの数え上げ
 //! 剰余類Modについて、組み合わせや順列を数え上げる
 use crate::algebra::mod_int::{Mod, ModInt};

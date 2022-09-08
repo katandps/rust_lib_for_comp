@@ -1,3 +1,3 @@
-// 典型DP
+//! # DPの典型問題
 
 pub mod rerooting_dp;
