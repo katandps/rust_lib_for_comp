@@ -3,7 +3,6 @@ use crate::prelude::*;
 
 pub mod binary_operation;
 pub mod chinese_remainder_theorem;
-pub mod complete_permutations;
 pub mod complex_number;
 pub mod lucas_theorem;
 pub mod matrix;
