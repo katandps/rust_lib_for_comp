@@ -1,37 +1,21 @@
-//! 剰余体における逆元
+//! # 剰余体における逆元
+//!
+//! ## 計算量
+//! $O(\log N)$
 
 use crate::prelude::*;
 
-#[snippet(name = "mod-inv", doc_hidden)]
-pub struct ModInv;
+pub trait ModInv {
+    fn inv(self, modulo: Self) -> Self;
+}
 
-#[snippet(name = "mod-inv", doc_hidden)]
-impl ModInv {
-    ///
-    /// numberの逆元をmod moduloで求める
-    /// ```
-    /// use rust_lib_for_comp::algebra::mod_inv::ModInv;
-    /// assert_eq!(1, ModInv::inv(1, 13));
-    /// assert_eq!(7, ModInv::inv(2, 13));
-    /// assert_eq!(9, ModInv::inv(3, 13));
-    /// assert_eq!(10, ModInv::inv(4, 13));
-    /// assert_eq!(8, ModInv::inv(5, 13));
-    /// assert_eq!(11, ModInv::inv(6, 13));
-    /// assert_eq!(2, ModInv::inv(7, 13));
-    /// assert_eq!(5, ModInv::inv(8, 13));
-    /// assert_eq!(3, ModInv::inv(9, 13));
-    /// assert_eq!(4, ModInv::inv(10, 13));
-    /// assert_eq!(6, ModInv::inv(11, 13));
-    /// assert_eq!(12, ModInv::inv(12, 13));
-    /// assert_eq!(0, ModInv::inv(13, 13));
-    /// assert_eq!(1, ModInv::inv(14, 13));
-    /// ```
-    pub fn inv(mut number: i64, modulo: i64) -> i64 {
+impl ModInv for i64 {
+    fn inv(mut self, modulo: Self) -> Self {
         let (mut b, mut u, mut v) = (modulo, 1, 0);
         while b > 0 {
-            let t = number / b;
-            number -= t * b;
-            swap(&mut number, &mut b);
+            let t = self / b;
+            self -= t * b;
+            swap(&mut self, &mut b);
             u -= t * v;
             swap(&mut u, &mut v);
         }
@@ -41,4 +25,22 @@ impl ModInv {
         }
         u
     }
+}
+
+#[test]
+fn test() {
+    assert_eq!(1, 1.inv(13));
+    assert_eq!(7, 2.inv(13));
+    assert_eq!(9, 3.inv(13));
+    assert_eq!(10, 4.inv(13));
+    assert_eq!(8, 5.inv(13));
+    assert_eq!(11, 6.inv(13));
+    assert_eq!(2, 7.inv(13));
+    assert_eq!(5, 8.inv(13));
+    assert_eq!(3, 9.inv(13));
+    assert_eq!(4, 10.inv(13));
+    assert_eq!(6, 11.inv(13));
+    assert_eq!(12, 12.inv(13));
+    assert_eq!(0, 13.inv(13));
+    assert_eq!(1, 14.inv(13));
 }
