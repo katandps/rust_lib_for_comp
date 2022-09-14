@@ -1,4 +1,4 @@
-//! 代数
+//! # 代数
 use crate::prelude::*;
 
 pub mod binary_operation;
@@ -12,11 +12,12 @@ pub mod mod_int;
 pub mod mod_inv;
 pub mod mod_pow;
 pub mod mod_val_table;
+pub mod pollard_rho;
 pub mod sieve_of_eratosthenes;
 pub mod xor_basis;
 
 #[snippet(name = "algebra", doc_hidden)]
-/// マグマ
+/// # マグマ
 /// 二項演算: $M \circ M \to M$
 pub trait Magma {
     /// マグマを構成する集合$M$
@@ -26,23 +27,23 @@ pub trait Magma {
 }
 
 #[snippet(name = "algebra", doc_hidden)]
-/// 結合則
+/// # 結合則
 /// $\forall a,\forall b, \forall c \in T, (a \circ b) \circ c = a \circ (b \circ c)$
 pub trait Associative {}
 
 #[snippet(name = "algebra", doc_hidden)]
-/// 単位的
+/// # 単位的
 pub trait Unital: Magma {
     /// 単位元 identity element: $e$
     fn unit() -> Self::M;
 }
 
 #[snippet(name = "algebra", doc_hidden)]
-/// 可換
+/// # 可換
 pub trait Commutative: Magma {}
 
 #[snippet(name = "algebra", doc_hidden)]
-/// 可逆的
+/// # 可逆的
 /// $\exists e \in T, \forall a \in T, \exists b,c \in T, b \circ a = a \circ c = e$
 pub trait Invertible: Magma {
     /// $a$ where $a \circ x = e$
@@ -50,17 +51,17 @@ pub trait Invertible: Magma {
 }
 
 #[snippet(name = "algebra", doc_hidden)]
-/// 冪等性
+/// # 冪等性
 pub trait Idempotent: Magma {}
 
 #[snippet(name = "algebra", doc_hidden)]
-/// 半群
+/// # 半群
 /// 1. 結合則
 pub trait SemiGroup: Magma + Associative {}
 impl<M: Magma + Associative> SemiGroup for M {}
 
 #[snippet(name = "algebra", doc_hidden)]
-/// モノイド
+/// # モノイド
 /// 1. 結合則
 /// 1. 単位元
 pub trait Monoid: Magma + Associative + Unital {
@@ -82,13 +83,13 @@ pub trait Monoid: Magma + Associative + Unital {
 impl<M: Magma + Associative + Unital> Monoid for M {}
 
 #[snippet(name = "algebra", doc_hidden)]
-/// 可換モノイド
+/// # 可換モノイド
 pub trait CommutativeMonoid: Magma + Associative + Unital + Commutative {}
 #[snippet(name = "algebra", doc_hidden)]
 impl<M: Magma + Associative + Unital + Commutative> CommutativeMonoid for M {}
 
 #[snippet(name = "algebra", doc_hidden)]
-/// 群
+/// # 群
 /// 1. 結合法則
 /// 1. 単位元
 /// 1. 逆元
@@ -97,13 +98,13 @@ pub trait Group: Magma + Associative + Unital + Invertible {}
 impl<M: Magma + Associative + Unital + Invertible> Group for M {}
 
 #[snippet(name = "algebra", doc_hidden)]
-/// アーベル群
+/// # アーベル群
 pub trait AbelianGroup: Magma + Associative + Unital + Commutative + Invertible {}
 #[snippet(name = "algebra", doc_hidden)]
 impl<M: Magma + Associative + Unital + Commutative + Invertible> AbelianGroup for M {}
 
 #[snippet(name = "algebra", doc_hidden)]
-/// Band
+/// # Band
 /// 1. 結合法則
 /// 1. 冪等律
 pub trait Band: Magma + Associative + Idempotent {}
@@ -111,7 +112,7 @@ pub trait Band: Magma + Associative + Idempotent {}
 impl<M: Magma + Associative + Idempotent> Band for M {}
 
 #[snippet(name = "algebra", doc_hidden)]
-/// 作用付きモノイド
+/// # 作用付きモノイド
 pub trait MapMonoid {
     /// モノイドM
     type Mono: Monoid;
@@ -149,25 +150,25 @@ pub trait MapMonoid {
 }
 
 #[snippet(name = "algebra", doc_hidden)]
-/// 加算の単位元
+/// # 加算の単位元
 pub trait Zero {
     fn zero() -> Self;
 }
 
 #[snippet(name = "algebra", doc_hidden)]
-/// 乗算の単位元
+/// # 乗算の単位元
 pub trait One {
     fn one() -> Self;
 }
 
 #[snippet(name = "algebra", doc_hidden)]
-/// 下に有界
+/// # 下に有界
 pub trait BoundedBelow {
     fn min_value() -> Self;
 }
 
 #[snippet(name = "algebra", doc_hidden)]
-/// 上に有界
+/// # 上に有界
 pub trait BoundedAbove {
     fn max_value() -> Self;
 }

@@ -13,31 +13,32 @@ use crate::prelude::*;
 
 #[snippet(name = "miller-rabin", doc_hidden)]
 pub trait MillerRabin {
+    /// 素数判定
     fn is_prime(&self) -> bool;
-    fn is_composite(&self, checker: u64, n_1: u64) -> bool;
 }
 
 #[snippet(name = "miller-rabin", doc_hidden)]
 impl MillerRabin for u64 {
     fn is_prime(&self) -> bool {
+        /// (あるcheckerについて)nが合成数と判定されるか
+        fn is_composite(n: u64, checker: u64, mut t: u64) -> bool {
+            let mut x = (checker as u128).mod_pow(t as u128, n as u128);
+            while t != n - 1 && x != 1 && x != n as u128 - 1 {
+                x = x.mod_pow(2, n as u128);
+                t <<= 1;
+            }
+            checker < n && t & 1 == 0 && x != n as u128 - 1
+        }
         if *self < 2 || *self & 1 == 0 {
             return *self == 2; // 偶数は2だけ素数
         }
         let d = (*self - 1) >> (*self - 1).trailing_zeros(); // n-1を2で割れるだけ割ったもの
         vec![
             vec![2, 7, 61], // self < 2^32まではこっち
-            vec![2, 3, 5, 7, 11, 13, 17, 19, 23, 29, 31, 37],
+            vec![2, 325, 9375, 28178, 450775, 9780504, 1795265022],
         ][if *self < 1 << 32 { 0 } else { 1 }]
         .iter()
-        .all(|&checker| !self.is_composite(checker, d)) // すべてのcheckerについてすべて合成数と判定されなかった <=> selfが素数
-    }
-    fn is_composite(&self, a: u64, mut t: u64) -> bool {
-        let mut x = (a as u128).mod_pow(t as u128, *self as u128);
-        while t != *self - 1 && x != 1 && x != *self as u128 - 1 {
-            x = x.mod_pow(2, *self as u128);
-            t <<= 1;
-        }
-        a < *self && t & 1 == 0 && x != *self as u128 - 1
+        .all(|&checker| !is_composite(*self, checker, d)) // すべてのcheckerについてすべて合成数と判定されなかった <=> selfが素数
     }
 }
 
