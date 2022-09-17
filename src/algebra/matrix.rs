@@ -233,7 +233,7 @@ mod matrix_impl {
                 bufi.iter_mut().enumerate().for_each(|(j, bufij)| {
                     *bufij = (0..self_col)
                         .map(|k| self.0[i][k].clone() * rhs.0[k][j].clone())
-                        .fold(T::zero(), |x, a| x + a);
+                        .fold(T::zero(), |x, a| x.add(a));
                 });
             });
             Some(ret)
