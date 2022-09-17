@@ -349,4 +349,10 @@ mod test {
         a /= std::i64::MAX;
         assert_eq!((a * std::i64::MAX).get(), 1_000_000_000);
     }
+
+    #[test]
+    fn comb() {
+        assert_eq!(mi(10), Mi::comb(5, 2));
+        assert_eq!(mi(1) * 1000000007 * 1000000008 * 1000000009 / 6, Mi::comb(MOD + 2, 3));
+    }
 }
