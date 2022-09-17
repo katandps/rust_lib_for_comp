@@ -2,8 +2,8 @@
 use crate::prelude::*;
 
 #[snippet(name = "bit-xor-operation", doc_hidden)]
-#[derive(Clone, Debug)]
-pub struct BitXorOperation<S>(Infallible, PhantomData<fn() -> S>);
+#[derive(Clone, Debug, Default)]
+pub struct BitXorOperation<S>(PhantomData<fn() -> S>);
 #[snippet(name = "bit-xor-operation", doc_hidden)]
 mod bit_xor_operation_impl {
     use super::{Associative, BitXor, BitXorOperation, Commutative, Debug, Magma, Unital, Zero};

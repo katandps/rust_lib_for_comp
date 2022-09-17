@@ -2,8 +2,8 @@
 use crate::prelude::*;
 
 #[snippet(name = "bit-or-operation", doc_hidden)]
-#[derive(Clone, Debug)]
-pub struct BitOrOperation<S>(Infallible, PhantomData<fn() -> S>);
+#[derive(Clone, Debug, Default)]
+pub struct BitOrOperation<S>(PhantomData<fn() -> S>);
 #[snippet(name = "bit-or-operation", doc_hidden)]
 mod bit_or_opration_impl {
     use super::{

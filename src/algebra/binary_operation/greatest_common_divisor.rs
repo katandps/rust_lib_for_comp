@@ -18,8 +18,8 @@
 use crate::prelude::*;
 
 #[snippet(name = "gcd-operation", doc_hidden)]
-#[derive(Clone, Debug)]
-pub struct Gcd<S>(Infallible, PhantomData<fn() -> S>);
+#[derive(Clone, Debug, Default)]
+pub struct Gcd<S>(PhantomData<fn() -> S>);
 #[snippet(name = "gcd-operation", doc_hidden)]
 mod gcd_impl {
     use super::{

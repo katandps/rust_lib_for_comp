@@ -6,49 +6,39 @@
 use crate::prelude::*;
 
 #[snippet(name = "dynamic-segment-tree", doc_hidden)]
-#[derive(Clone, Debug)]
+#[derive(Clone, Debug, Default)]
 pub struct DynamicSegmentTree<M: Monoid> {
-    root: dynamic_segment_tree_node::OptionalNode<M>,
+    root: dynamic_segment_tree_impl::OptionalNode<M>,
 }
 
 #[snippet(name = "dynamic-segment-tree", doc_hidden)]
-impl<M: Monoid> Default for DynamicSegmentTree<M> {
-    fn default() -> Self {
-        Self {
-            root: dynamic_segment_tree_node::OptionalNode::default(),
+mod dynamic_segment_tree_impl {
+    use super::{swap, to_lr, DynamicSegmentTree, Monoid, RangeBounds};
+    impl<M: Monoid> DynamicSegmentTree<M> {
+        /// 最大幅を $2^{BIT_LEN}$ とする
+        const BIT_LEN: i32 = 62;
+        const MAX: u64 = 1 << Self::BIT_LEN;
+        /// # 値iをvalueに更新する
+        /// ## 計算量
+        /// $O( \log N)$
+        pub fn set(&mut self, i: u64, value: M::M) {
+            self.root.set(i, Self::BIT_LEN - 1, value);
+        }
+        /// # 値iを取得する
+        /// ## 計算量
+        /// $O( \log N)$
+        pub fn get(&self, i: u64) -> M::M {
+            self.root.get(i, Self::BIT_LEN - 1)
+        }
+        /// Rangeで与えられた区間の値を取得する
+        /// ## 計算量
+        /// $O( \log N)$
+        pub fn prod<R: RangeBounds<u64>>(&self, range: R) -> M::M {
+            let (l, r) = to_lr(&range, Self::MAX);
+            self.root.prod(l, r, 0, Self::MAX)
         }
     }
-}
 
-#[snippet(name = "dynamic-segment-tree", doc_hidden)]
-impl<M: Monoid> DynamicSegmentTree<M> {
-    /// 最大幅を $2^{BIT_LEN}$ とする
-    const BIT_LEN: i32 = 62;
-    const MAX: u64 = 1 << Self::BIT_LEN;
-    /// 値iをvalueに更新する
-    /// ## 計算量
-    /// $O( \log N)$
-    pub fn set(&mut self, i: u64, value: M::M) {
-        self.root.set(i, Self::BIT_LEN - 1, value);
-    }
-    /// 値iをvalueに更新する
-    /// ## 計算量
-    /// $O( \log N)$
-    pub fn get(&self, i: u64) -> M::M {
-        self.root.get(i, Self::BIT_LEN - 1)
-    }
-    /// Rangeで与えられた区間の値を取得する
-    /// ## 計算量
-    /// $O( \log N)$
-    pub fn prod<R: RangeBounds<u64>>(&self, range: R) -> M::M {
-        let (l, r) = to_lr(&range, Self::MAX);
-        self.root.prod(l, r, 0, Self::MAX)
-    }
-}
-
-#[snippet(name = "dynamic-segment-tree", doc_hidden)]
-mod dynamic_segment_tree_node {
-    use super::*;
     #[derive(Clone, Debug)]
     pub struct OptionalNode<M: Monoid>(Option<Node<M>>);
 

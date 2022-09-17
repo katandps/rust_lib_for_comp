@@ -5,8 +5,8 @@
 use crate::prelude::*;
 
 #[snippet(name = "overwrite_operation", doc_hidden)]
-#[derive(Clone, Debug)]
-pub struct OverwriteOperation<S>(Infallible, PhantomData<fn() -> S>);
+#[derive(Clone, Debug, Default)]
+pub struct OverwriteOperation<S>(PhantomData<fn() -> S>);
 #[snippet(name = "overwrite_operation", doc_hidden)]
 mod overwrite_operation_mod {
     use super::{Associative, Debug, Idempotent, Magma, OverwriteOperation, Unital};

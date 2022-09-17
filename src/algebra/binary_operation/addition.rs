@@ -6,8 +6,8 @@
 use crate::prelude::*;
 
 #[snippet(name = "addition", doc_hidden)]
-#[derive(Clone, Debug)]
-pub struct Addition<S>(Infallible, PhantomData<fn() -> S>);
+#[derive(Clone, Debug, Default)]
+pub struct Addition<S>(PhantomData<fn() -> S>);
 #[snippet(name = "addition", doc_hidden)]
 mod addition_impl {
     use super::{

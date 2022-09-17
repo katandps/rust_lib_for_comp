@@ -3,8 +3,8 @@
 use crate::prelude::*;
 
 #[snippet(name = "maximization", doc_hidden)]
-#[derive(Clone, Debug)]
-pub struct Maximization<S>(Infallible, PhantomData<fn() -> S>);
+#[derive(Clone, Debug, Default)]
+pub struct Maximization<S>(PhantomData<fn() -> S>);
 #[snippet(name = "maximization", doc_hidden)]
 mod maximization_impl {
     use super::{

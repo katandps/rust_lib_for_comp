@@ -2,8 +2,8 @@
 use crate::prelude::*;
 
 #[snippet(name = "multiplication", doc_hidden)]
-#[derive(Clone, Debug)]
-pub struct Multiplication<S>(Infallible, PhantomData<fn() -> S>);
+#[derive(Clone, Debug, Default)]
+pub struct Multiplication<S>(PhantomData<fn() -> S>);
 #[snippet(name = "multiplication", doc_hidden)]
 mod multiplication_impl {
     use super::{
