@@ -353,6 +353,9 @@ mod test {
     #[test]
     fn comb() {
         assert_eq!(mi(10), Mi::comb(5, 2));
-        assert_eq!(mi(1) * 1000000007 * 1000000008 * 1000000009 / 6, Mi::comb(MOD + 2, 3));
+        assert_eq!(
+            mi(1) * 1000000007 * 1000000008 * 1000000009 / 6,
+            Mi::comb(MOD + 2, 3)
+        );
     }
 }

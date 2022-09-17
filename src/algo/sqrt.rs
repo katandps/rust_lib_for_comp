@@ -1,25 +1,24 @@
-//! 整数範囲での平方根(切り捨て)
-
+//! # 平方根
+//! (二乗して$x$以下になる最大の値, 二乗して$x$以上になる最小の値)
 use crate::prelude::*;
 
 #[snippet(name = "sqrt", doc_hidden)]
-pub fn sqrt(a: i64) -> i64 {
-    let mut ng = std::i32::MAX as i64 / 8;
-    let mut ok = -1;
-    while (ok - ng).abs() > 1 {
-        let mid = (ok + ng) / 2;
-        if mid * mid <= a {
-            ok = mid;
-        } else {
-            ng = mid;
-        }
+pub fn sqrt(a: i64) -> (i64, i64) {
+    let x = (a as f64).sqrt() as i64;
+    match a.cmp(&(x * x)) {
+        Ordering::Greater => (x, x + 1),
+        Ordering::Less => (x - 1, x),
+        Ordering::Equal => (x, x),
     }
-    ok
 }
 
 #[test]
 fn test() {
-    assert_eq!(10, sqrt(100));
-    assert_eq!(9, sqrt(81));
-    assert_eq!(9, sqrt(99));
+    for i in 1..30000000 {
+        let (l, u) = sqrt(i);
+        assert!(l * l <= i);
+        assert!((l + 1) * (l + 1) > i);
+        assert!(u * u >= i);
+        assert!((u - 1) * (u - 1) < i);
+    }
 }
