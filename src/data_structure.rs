@@ -6,6 +6,7 @@ pub mod binary_search_tree;
 pub mod binary_trie;
 pub mod bit_matrix;
 pub mod bitset;
+pub mod convex_hull_trick;
 pub mod cumulative_sum;
 pub mod disjoint_sparse_table;
 pub mod dynamic_segment_tree;

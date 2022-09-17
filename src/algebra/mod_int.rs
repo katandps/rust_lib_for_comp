@@ -12,14 +12,14 @@ pub trait Mod: Copy + Clone + Debug {
 }
 
 #[snippet(name = "mod-int", doc_hidden)]
-#[derive(Copy, Clone, Eq, PartialEq)]
+#[derive(Copy, Clone, Eq, PartialEq, Default)]
 pub struct ModInt<M: Mod>(i64, PhantomData<fn() -> M>);
 
 #[snippet(name = "mod-int", doc_hidden)]
 mod mod_int_impl {
     use super::{
         Add, AddAssign, Debug, Deref, DerefMut, Display, Div, DivAssign, Formatter, Mod, ModInt,
-        Mul, MulAssign, Neg, PhantomData, Sub, SubAssign, Sum, Zero,
+        Mul, MulAssign, Neg, One, PhantomData, Sub, SubAssign, Sum, Zero,
     };
     impl<M: Mod> ModInt<M> {
         pub fn new(mut n: i64) -> Self {
@@ -216,6 +216,11 @@ mod mod_int_impl {
     impl<M: Mod> Zero for ModInt<M> {
         fn zero() -> Self {
             Self::new(0)
+        }
+    }
+    impl<M: Mod> One for ModInt<M> {
+        fn one() -> Self {
+            Self::new(1)
         }
     }
 }
