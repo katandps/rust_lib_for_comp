@@ -11,7 +11,7 @@ pub struct Matrix<T>(Vec<Vec<T>>);
 mod matrix_impl {
     use super::{
         Add, AddAssign, Debug, Div, Formatter, Matrix, Mul, MulAssign, Neg, One, Sub, SubAssign,
-        Sum, Zero,
+        Zero,
     };
     impl<T> std::convert::TryFrom<Vec<Vec<T>>> for Matrix<T> {
         type Error = &'static str;
@@ -25,8 +25,9 @@ mod matrix_impl {
     }
 
     impl<T> Matrix<T> {
-        /// (y, x)
-        fn size(&self) -> (usize, usize) {
+        /// # 行列のサイズ
+        /// (rows, columns)
+        pub fn size(&self) -> (usize, usize) {
             if self.0.is_empty() {
                 (0, 0)
             } else {
@@ -37,11 +38,11 @@ mod matrix_impl {
 
     /// # 零行列
     pub trait ZeroMatrix {
-        fn zero_matrix(x: usize, y: usize) -> Self;
+        fn zero_matrix(cols: usize, rows: usize) -> Self;
     }
     impl<T: Clone + Zero> ZeroMatrix for Matrix<T> {
-        fn zero_matrix(x: usize, y: usize) -> Self {
-            Self(vec![vec![T::zero(); x]; y])
+        fn zero_matrix(cols: usize, rows: usize) -> Self {
+            Self(vec![vec![T::zero(); cols]; rows])
         }
     }
 
@@ -96,28 +97,28 @@ mod matrix_impl {
         > Determinant<T> for Matrix<T>
     {
         fn determinant(&self) -> Option<T> {
-            let (n, m) = self.size();
-            if n != m {
+            let (rows, cols) = self.size();
+            if rows != cols {
                 return None;
             }
-            if n == 0 {
+            if rows == 0 {
                 return Some(T::zero());
             }
 
             let zero = T::zero();
             let mut res = T::one();
             let mut buf = self.0.clone();
-            for i in 0..n {
-                match (i..n).find(|&ni| buf[ni][i] != zero) {
+            for i in 0..rows {
+                match (i..rows).find(|&ni| buf[ni][i] != zero) {
                     Some(ni) => buf.swap(i, ni),
                     None => return Some(zero),
                 }
                 res *= buf[i][i].clone();
                 let diag = T::one() / buf[i][i].clone();
-                (i..n).for_each(|j| buf[i][j] *= diag.clone());
-                for ni in (0..n).filter(|&ni| ni != i) {
+                (i..rows).for_each(|j| buf[i][j] *= diag.clone());
+                for ni in (0..rows).filter(|&ni| ni != i) {
                     let c = buf[ni][i].clone();
-                    for j in i..n {
+                    for j in i..rows {
                         let d = c.clone() * buf[i][j].clone();
                         buf[ni][j] -= d;
                     }
@@ -133,7 +134,7 @@ mod matrix_impl {
         where
             Self: Sized;
     }
-    impl<T: Clone + Zero + One + Mul<Output = T> + Sum> Pow for Matrix<T> {
+    impl<T: Clone + Zero + One + Mul<Output = T> + Add<Output = T>> Pow for Matrix<T> {
         fn pow(mut self, mut e: i64) -> Option<Self> {
             let (n, m) = self.size();
             if n != m {
@@ -155,10 +156,10 @@ mod matrix_impl {
         /// y行目、x列目を除いた 余因子行列を計算する
         /// x, y は 0-indexed
         pub fn sub_matrix(&self, x: usize, y: usize) -> Self {
-            let (n, m) = self.size();
-            let mut buf = vec![vec![T::default(); m - 1]; n - 1];
-            for yi in (0..n).filter(|&yi| yi != y) {
-                for xi in (0..m).filter(|&xi| xi != x) {
+            let (rows, cols) = self.size();
+            let mut buf = vec![vec![T::default(); cols - 1]; rows - 1];
+            for yi in (0..rows).filter(|&yi| yi != y) {
+                for xi in (0..cols).filter(|&xi| xi != x) {
                     buf[yi - if yi < y { 0 } else { 1 }][xi - if xi < x { 0 } else { 1 }] =
                         self.0[yi][xi].clone();
                 }
@@ -189,9 +190,9 @@ mod matrix_impl {
     impl<T: Neg<Output = T> + Clone> Neg for Matrix<T> {
         type Output = Self;
         fn neg(mut self) -> Self {
-            for i in 0..self.0.len() {
-                for j in 0..self.0[0].len() {
-                    self.0[i][j] = -self.0[i][j].clone()
+            for r in 0..self.size().0 {
+                for c in 0..self.size().1 {
+                    self.0[r][c] = -self.0[r][c].clone()
                 }
             }
             self
@@ -220,19 +221,19 @@ mod matrix_impl {
         }
     }
 
-    impl<T: Mul<Output = T> + Sum<T> + Zero + Clone> Mul<Matrix<T>> for Matrix<T> {
+    impl<T: Mul<Output = T> + Add<Output = T> + Zero + Clone> Mul<Matrix<T>> for Matrix<T> {
         type Output = Option<Self>;
         fn mul(self, rhs: Self) -> Option<Self> {
-            let ((self_y, self_x), (rhs_y, rhs_x)) = (self.size(), rhs.size());
-            if self_x != rhs_y {
+            let ((self_row, self_col), (rhs_row, rhs_col)) = (self.size(), rhs.size());
+            if self_col != rhs_row {
                 return None;
             }
-            let mut ret = Self::zero_matrix(rhs_x, self_y);
+            let mut ret = Self::zero_matrix(rhs_col, self_row);
             ret.0.iter_mut().enumerate().for_each(|(i, bufi)| {
                 bufi.iter_mut().enumerate().for_each(|(j, bufij)| {
-                    *bufij = (0..self_x)
+                    *bufij = (0..self_col)
                         .map(|k| self.0[i][k].clone() * rhs.0[k][j].clone())
-                        .sum();
+                        .fold(T::zero(), |x, a| x + a);
                 });
             });
             Some(ret)
