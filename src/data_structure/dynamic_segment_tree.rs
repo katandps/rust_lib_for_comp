@@ -39,16 +39,10 @@ mod dynamic_segment_tree_impl {
         }
     }
 
-    #[derive(Clone, Debug)]
+    #[derive(Clone, Debug, Default)]
     pub struct OptionalNode<M: Monoid>(Option<Node<M>>);
 
-    impl<M: Monoid> Default for OptionalNode<M> {
-        fn default() -> Self {
-            Self(None)
-        }
-    }
-
-    #[derive(Clone, Debug)]
+    #[derive(Clone, Debug, Default)]
     struct Node<M: Monoid> {
         value: M::M,
         l: Box<OptionalNode<M>>,
