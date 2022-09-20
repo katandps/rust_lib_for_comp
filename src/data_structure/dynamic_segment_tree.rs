@@ -6,6 +6,7 @@
 //!
 //! ## verify
 //! [ARC008D](https://atcoder.jp/contests/arc008/submissions/32453987)
+//! [JSC2021F](https://atcoder.jp/contests/jsc2021/submissions/35010310)
 use crate::prelude::*;
 
 #[snippet(name = "dynamic-segment-tree", doc_hidden)]
