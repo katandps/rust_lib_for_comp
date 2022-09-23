@@ -37,7 +37,7 @@ impl<B: Band> From<&[B::M]> for SparseTable<B> {
 #[snippet(name = "sparse-table", doc_hidden)]
 impl<B: Band> SparseTable<B> {
     pub fn query<R: RangeBounds<usize>>(&self, range: R) -> B::M {
-        let (l, r) = to_lr(&range, self.size);
+        let (l, r) = range.to_lr();
         let lg = 63 - (r - l).leading_zeros();
         B::op(
             &self.table[lg as usize][l],

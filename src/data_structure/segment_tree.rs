@@ -56,7 +56,7 @@ impl<M: Monoid> SegmentTree<M> {
     /// ## 計算量
     /// $O(\log N)$
     pub fn prod<R: RangeBounds<usize>>(&self, range: R) -> M::M {
-        let (mut l, mut r) = to_lr(&range, self.n);
+        let (mut l, mut r) = range.to_lr();
         l += self.n;
         r += self.n;
         let mut sml = M::unit();

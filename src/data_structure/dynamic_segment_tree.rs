@@ -17,7 +17,7 @@ pub struct DynamicSegmentTree<M: Monoid> {
 
 #[snippet(name = "dynamic-segment-tree", doc_hidden)]
 mod dynamic_segment_tree_impl {
-    use super::{swap, to_lr, Debug, DynamicSegmentTree, Monoid, RangeBounds};
+    use super::{swap, Debug, DynamicSegmentTree, Monoid, RangeBounds, ToLR};
     type IndexType = i64;
     impl<M: Monoid> DynamicSegmentTree<M> {
         /// 最大幅を $2^{BIT_LEN}$ とする
@@ -43,7 +43,7 @@ mod dynamic_segment_tree_impl {
         /// ## 計算量
         /// $O( \log N)$
         pub fn prod<R: RangeBounds<IndexType>>(&self, range: R) -> M::M {
-            let (l, r) = to_lr(&range, Self::MAX);
+            let (l, r) = range.to_lr();
             self.root.prod(l, r, 0, Self::MAX)
         }
     }

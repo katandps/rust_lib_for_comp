@@ -58,7 +58,7 @@ impl<A: AbelianGroup> BinaryIndexedTree<A> {
 
     /// sum of range
     pub fn fold<R: RangeBounds<usize>>(&self, range: R) -> A::M {
-        let (a, b) = to_lr(&range, self.n);
+        let (a, b) = range.to_lr();
         if b == 0 {
             A::unit()
         } else if a == 0 {

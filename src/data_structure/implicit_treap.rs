@@ -56,14 +56,14 @@ impl<T: PartialOrd + Default> ImplicitTreap<T> {
     /// # 反転
     /// rangeの範囲を反転する
     pub fn reverse<R: RangeBounds<usize>>(&mut self, range: R) {
-        let (l, r) = to_lr(&range, self.len());
+        let (l, r) = range.to_lr();
         self.root.reverse(l, r);
     }
 
     /// # 回転
     /// rangeの範囲をtopが先頭に来るように回転する
     pub fn rotate<R: RangeBounds<usize>>(&mut self, range: R, top: usize) {
-        let (l, r) = to_lr(&range, self.len());
+        let (l, r) = range.to_lr();
         assert!(l <= top && top < r);
         self.root.rotate(l, r, top);
     }

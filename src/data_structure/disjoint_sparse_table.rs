@@ -8,7 +8,7 @@ use crate::prelude::*;
 
 #[snippet(name = "disjoint-sparse-table", doc_hidden)]
 pub struct DisjointSparseTable<S: SemiGroup> {
-    len: usize,
+    _len: usize,
     table: Vec<Vec<S::M>>,
     lookup: Vec<usize>,
 }
@@ -44,14 +44,18 @@ impl<S: SemiGroup> From<&[S::M]> for DisjointSparseTable<S> {
         });
         let mut lookup = vec![0; 1 << log];
         (2..lookup.len()).for_each(|i| lookup[i] = lookup[i >> 1] + 1);
-        Self { len, table, lookup }
+        Self {
+            _len: len,
+            table,
+            lookup,
+        }
     }
 }
 
 #[snippet(name = "disjoint-sparse-table", doc_hidden)]
 impl<S: SemiGroup> DisjointSparseTable<S> {
     pub fn fold<R: RangeBounds<usize>>(&self, range: R) -> S::M {
-        let (l, r) = to_lr(&range, self.len);
+        let (l, r) = range.to_lr();
         let p = self.lookup[l ^ r];
         S::op(&self.table[p][l], &self.table[p][r])
     }

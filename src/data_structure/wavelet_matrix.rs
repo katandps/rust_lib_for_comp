@@ -104,7 +104,7 @@ impl WaveletMatrix {
 
     /// range のうち、小さい方からk番目の数
     pub fn kth_smallest<R: RangeBounds<usize>>(&self, range: &R, mut k: usize) -> u64 {
-        let (l, r) = to_lr(range, std::usize::MAX);
+        let (l, r) = range.to_lr();
         assert!(k < r - l);
         let mut ret = 0;
         (0..self.depth).rev().fold((l, r), |(l, r), level| {
@@ -119,13 +119,13 @@ impl WaveletMatrix {
     }
     /// range のうち、大きい方からk番目の数
     pub fn kth_largest<R: RangeBounds<usize>>(&self, range: &R, k: usize) -> u64 {
-        let (l, r) = to_lr(range, std::usize::MAX);
+        let (l, r) = range.to_lr();
         self.kth_smallest(range, r - l - k - 1)
     }
 
     /// range のうち、upper未満のものの個数
     pub fn range_freq<R: RangeBounds<usize>>(&self, range: &R, upper: u64) -> usize {
-        let (l, r) = to_lr(range, std::usize::MAX);
+        let (l, r) = range.to_lr();
         let mut ret = 0;
         (0..self.depth).rev().fold((l, r), |(l, r), level| {
             let b = upper >> level & 1 == 1;
@@ -149,7 +149,7 @@ impl WaveletMatrix {
 
     /// rangeのうち、lower以上の要素で最小のもの
     pub fn next<R: RangeBounds<usize>>(&self, range: &R, lower: u64) -> Option<u64> {
-        let (l, r) = to_lr(range, std::usize::MAX);
+        let (l, r) = range.to_lr();
         let cnt = self.range_freq(range, lower);
         if cnt == r - l {
             None

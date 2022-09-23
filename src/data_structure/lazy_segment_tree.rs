@@ -19,7 +19,7 @@ pub struct LazySegmentTree<M: MapMonoid> {
 
 #[snippet(name = "lazy-segment-tree", doc_hidden)]
 mod lazy_segment_tree_impl {
-    use super::{to_lr, LazySegmentTree, Magma, MapMonoid, RangeBounds};
+    use super::{LazySegmentTree, Magma, MapMonoid, RangeBounds, ToLR};
     impl<M: MapMonoid> From<(M, usize)> for LazySegmentTree<M> {
         fn from((m, length): (M, usize)) -> Self {
             let n = (length + 1).next_power_of_two();
@@ -60,7 +60,7 @@ mod lazy_segment_tree_impl {
 
         /// 区間更新 [l, r)
         pub fn update_range<R: RangeBounds<usize>>(&mut self, range: R, f: <M::Func as Magma>::M) {
-            let (mut l, mut r) = to_lr(&range, self.n);
+            let (mut l, mut r) = range.to_lr();
             if l == r {
                 return;
             }
@@ -112,7 +112,7 @@ mod lazy_segment_tree_impl {
         /// 区間 $[l, r)$ の値を取得する
         /// $l == r$ のときは $unit$ を返す
         pub fn prod<R: RangeBounds<usize>>(&mut self, range: R) -> <M::Mono as Magma>::M {
-            let (mut l, mut r) = to_lr(&range, self.n);
+            let (mut l, mut r) = range.to_lr();
             if l == r {
                 return M::unit();
             }

@@ -18,11 +18,13 @@
 use crate::prelude::*;
 
 #[snippet(name = "writer", doc_hidden)]
+#[rustfmt::skip]
 pub struct Writer<W: Write> {
     writer: BufWriter<W>,
 }
 
 #[snippet(name = "writer", doc_hidden)]
+#[rustfmt::skip]
 impl<W: Write> Writer<W> {
     pub fn new(write: W) -> Self {
         Self {
