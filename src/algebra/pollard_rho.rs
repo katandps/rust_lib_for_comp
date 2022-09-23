@@ -10,10 +10,13 @@
 //! [miller_rabin](crate::algebra::miller_rabin)
 //!
 //! ## verify
-//! [ポラードのロー素因数分解法](https://algo-method.com/submissions/600248)
+//! [ポラードのロー素因数分解法](https://algo-method.com/submissions/611854)
 
 use crate::{
-    algebra::{binary_operation::greatest_common_divisor::Gcd, miller_rabin::MillerRabin},
+    algebra::{
+        binary_operation::greatest_common_divisor::Gcd, miller_rabin::MillerRabin,
+        montgomery_multiplication::MontgomeryU64,
+    },
     prelude::*,
 };
 
@@ -23,39 +26,57 @@ pub trait PollardRho {
 }
 
 #[snippet(name = "pollard-rho", doc_hidden)]
+#[allow(clippy::many_single_char_names)]
 impl PollardRho for u64 {
     fn prime_factorize(&self) -> Vec<u64> {
         if self <= &1 {
             return Vec::new();
         }
-        // 素因数を一つ得る
-        fn pollard(n: u64) -> u64 {
+        fn find_cycle_by_brent(n: u64) -> u64 {
             if n % 2 == 0 {
                 return 2;
             }
             if n.is_prime() {
                 return n;
             }
-            let sqplus1 = |x: u64| -> u64 { ((x as i128 * x as i128 + 1) % n as i128) as u64 };
-            let mut step = 0;
-            loop {
-                step += 1;
-                let (mut x, mut y) = (step, sqplus1(step));
-                loop {
-                    let p = Gcd::op(&((y as i128 - x as i128 + n as i128) as u64), &n);
-                    if p == 0 || p == n {
-                        break;
+            let mul = MontgomeryU64::new(n);
+            const LIMIT: u64 = 256;
+            for epoch in 1..LIMIT {
+                let prng_next = |x| mul.add(mul.mul(x, x), epoch);
+                let m = 1 << ((0u64.leading_zeros() - n.leading_zeros()) >> 3);
+                let (mut y, mut r, mut q, mut g) = (2, 1, 1, 1);
+                let (mut x, mut ys) = (0, 0);
+                while g == 1 {
+                    x = y;
+                    for _ in 0..r {
+                        y = prng_next(y);
                     }
-                    if p != 1 {
-                        return p;
+                    let mut k = 0;
+                    while k < r && g == 1 {
+                        ys = y;
+                        for _ in 0..min(m, r - k) {
+                            y = prng_next(y);
+                            q = mul.mul(q, max(x, y) - min(x, y));
+                        }
+                        g = Gcd::op(&q, &n);
+                        k += m;
                     }
-                    x = sqplus1(x);
-                    y = sqplus1(sqplus1(y));
+                    r <<= 1;
+                }
+                if g == n {
+                    g = 1;
+                    while g == 1 {
+                        ys = prng_next(ys);
+                        g = Gcd::op(&(max(x, ys) - min(x, ys)), &n);
+                    }
+                }
+                if g < n {
+                    return g;
                 }
             }
+            panic!("not found cycle.")
         }
-
-        let p = pollard(*self);
+        let p = find_cycle_by_brent(*self);
         if &p == self {
             return vec![p];
         }
@@ -65,7 +86,6 @@ impl PollardRho for u64 {
         ret
     }
 }
-
 #[test]
 fn test() {
     assert_eq!(

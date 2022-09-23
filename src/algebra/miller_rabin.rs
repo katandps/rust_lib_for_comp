@@ -33,13 +33,13 @@ impl MillerRabin for u64 {
             if checker == 0 {
                 return false;
             }
-            let mut tr = mont.pow(mont.ar(checker), mont.d);
-            if tr == mont.r || tr == mont.rn {
+            let mut tr = mont.pow(checker, mont.d);
+            if tr == mont.r || tr == mont.r_neg {
                 return false;
             }
             (1..mont.k).all(|_| {
-                tr = mont.mrmul(tr, tr);
-                tr != mont.rn
+                tr = mont.mul(tr, tr);
+                tr != mont.r_neg
             })
         };
         const MILLER_RABIN_BASES_32: [u64; 3] = [2, 7, 61];
