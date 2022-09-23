@@ -229,6 +229,7 @@ mod mod_int_impl {
 #[derive(Clone, Debug, Default)]
 /// # 2のべき乗を都度生成するDefaultDict
 pub struct PowTable(HashMap<i64, Mi>);
+#[snippet(name = "pow-table", doc_hidden)]
 impl PowTable {
     pub fn pow(&mut self, e: i64) -> Mi {
         *self.0.entry(e).or_insert_with(|| mi(2).pow(e))
