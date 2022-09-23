@@ -10,6 +10,7 @@ pub mod convex_hull_trick;
 pub mod cumulative_sum;
 pub mod disjoint_sparse_table;
 pub mod dynamic_segment_tree;
+pub mod extend_map;
 pub mod implicit_treap;
 pub mod lazy_segment_tree;
 pub mod segment_tree;

@@ -4,10 +4,13 @@
 #[snippet(name = "prelude", doc_hidden)]
 pub use std::{
     cmp::{max, min, Ordering, Reverse},
-    collections::{BTreeMap, BTreeSet, BinaryHeap, HashMap, HashSet, VecDeque},
+    collections::{
+        hash_map::RandomState, BTreeMap, BTreeSet, BinaryHeap, HashMap, HashSet, VecDeque,
+    },
     convert::Infallible,
     convert::{TryFrom, TryInto},
     fmt::{Debug, Display, Formatter},
+    hash::Hash,
     io::{stdin, stdout, BufRead, BufWriter, Read, Write},
     iter::{repeat, Product, Sum},
     marker::PhantomData,
