@@ -11,6 +11,7 @@ use crate::util::{reader::Reader, writer::Writer};
 #[snippet(include = "min_max")]
 #[snippet(include = "range")]
 #[snippet(include = "prelude")]
+#[snippet(include = "debug")]
 pub fn main() {
     let stdin = stdin();
     let stdout = stdout();
