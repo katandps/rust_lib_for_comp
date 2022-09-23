@@ -42,11 +42,13 @@ impl MillerRabin for u64 {
                 tr != mont.rn
             })
         };
-        vec![
-            vec![2, 7, 61], // self < 2^32まではこっち
-            vec![2, 325, 9375, 28178, 450775, 9780504, 1795265022],
-        ][if *self < 1 << 32 { 0 } else { 1 }]
-        .iter()
+        const MILLER_RABIN_BASES_32: [u64; 3] = [2, 7, 61];
+        const MILLER_RABIN_BASES_64: [u64; 7] = [2, 325, 9375, 28178, 450775, 9780504, 1795265022];
+        if *self < 1 << 32 {
+            MILLER_RABIN_BASES_32.iter()
+        } else {
+            MILLER_RABIN_BASES_64.iter()
+        }
         .all(|&checker| !is_composite(checker)) // すべてのcheckerについてすべて合成数と判定されなかった <=> selfが素数
     }
 }
