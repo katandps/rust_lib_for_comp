@@ -1,4 +1,4 @@
-//! ワーシャルフロイド法
+//! # ワーシャルフロイド法
 use crate::algebra::{BoundedAbove, Zero};
 use crate::graph::GraphTrait;
 use crate::prelude::*;
@@ -24,51 +24,41 @@ macro_rules! min {
 /// graph.add_arc(2, 3, 3);
 /// graph.add_arc(3, 4, 4);
 /// graph.add_arc(4, 0, 5);
-/// let wf = WarshallFloyd::from(&graph);
-/// assert_eq!(1, wf.query(0, 1));
-/// assert_eq!(3, wf.query(0, 2));
-/// assert_eq!(6, wf.query(0, 3));
-/// assert_eq!(10, wf.query(0, 4));
-/// assert_eq!(12, wf.query(3, 2));
+/// let wf = graph.warshall_froyd();
+/// assert_eq!(1, wf[0][1]);
+/// assert_eq!(3, wf[0][2]);
+/// assert_eq!(6, wf[0][3]);
+/// assert_eq!(10, wf[0][4]);
+/// assert_eq!(12, wf[3][2]);
 /// ```
-
 #[snippet(name = "warshall-floyd", doc_hidden)]
-pub struct WarshallFloyd<W> {
-    dist: Vec<Vec<W>>,
+pub trait WarshallFloyd<W> {
+    fn warshall_froyd(&self) -> Vec<Vec<W>>;
 }
 
 #[snippet(name = "warshall-floyd", doc_hidden)]
-impl<W, G> From<&G> for WarshallFloyd<W>
-where
-    W: Copy + BoundedAbove + Add<Output = W> + Zero + PartialOrd,
-    G: GraphTrait<Weight = W>,
+impl<G: GraphTrait<Weight = W>, W: Copy + PartialOrd + BoundedAbove + Add<Output = W> + Zero>
+    WarshallFloyd<W> for G
 {
-    fn from(g: &G) -> Self {
-        let mut dist = vec![vec![W::max_value(); g.size()]; g.size()];
+    fn warshall_froyd(&self) -> Vec<Vec<W>> {
+        let mut dist = vec![vec![W::max_value(); self.size()]; self.size()];
         dist.iter_mut()
             .enumerate()
             .for_each(|(i, reti)| reti[i] = W::zero());
-        (0..g.size()).for_each(|src| {
-            for (dst, weight) in g.edges(src) {
+        (0..self.size()).for_each(|src| {
+            for (dst, weight) in self.edges(src) {
                 chmin!(dist[src][dst], weight);
             }
         });
-        for i in 0..g.size() {
-            for j in 0..g.size() {
-                for k in 0..g.size() {
+        for i in 0..self.size() {
+            for j in 0..self.size() {
+                for k in 0..self.size() {
                     if dist[j][i] < W::max_value() && dist[i][k] < W::max_value() {
                         chmin!(dist[j][k], dist[j][i] + dist[i][k]);
                     }
                 }
             }
         }
-        WarshallFloyd { dist }
-    }
-}
-
-#[snippet(name = "warshall-floyd", doc_hidden)]
-impl<W: Clone> WarshallFloyd<W> {
-    pub fn query(&self, i: usize, j: usize) -> W {
-        self.dist[i][j].clone()
+        dist
     }
 }
