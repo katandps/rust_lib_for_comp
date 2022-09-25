@@ -21,7 +21,8 @@ pub mod xor_basis;
 #[rustfmt::skip]
 pub use algebra_traits::{
     AbelianGroup, Associative, Band, BoundedAbove, BoundedBelow, Commutative, CommutativeMonoid,
-    Group, Idempotent, Invertible, Magma, MapMonoid, Monoid, One, SemiGroup, Unital, Zero,
+    Group, Idempotent, Invertible, Magma, MapMonoid, Monoid, One, Pow, PrimitiveRoot, SemiGroup,
+    Unital, Zero,
 };
 
 #[snippet(name = "algebra", doc_hidden)]
@@ -162,5 +163,13 @@ mod algebra_traits {
     /// # 上に有界
     pub trait BoundedAbove {
         fn max_value() -> Self;
+    }
+
+    pub trait Pow {
+        fn pow(self, exp: i64) -> Self;
+    }
+
+    pub trait PrimitiveRoot {
+        fn primitive_root() -> Self;
     }
 }

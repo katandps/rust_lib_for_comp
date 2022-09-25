@@ -17,9 +17,10 @@ pub struct ModInt<M: Mod>(i64, PhantomData<fn() -> M>);
 
 #[snippet(name = "mod-int", doc_hidden)]
 mod mod_int_impl {
+
     use super::{
         Add, AddAssign, Debug, Deref, DerefMut, Display, Div, DivAssign, Formatter, Mod, ModInt,
-        Mul, MulAssign, Neg, One, PhantomData, Sub, SubAssign, Sum, Zero,
+        Mul, MulAssign, Neg, One, PhantomData, Pow, Sub, SubAssign, Sum, Zero,
     };
     impl<M: Mod> ModInt<M> {
         pub fn new(mut n: i64) -> Self {
@@ -27,27 +28,6 @@ mod mod_int_impl {
                 n = n.rem_euclid(M::get());
             }
             Self(n, PhantomData)
-        }
-
-        /// # 累乗
-        /// ## 計算量
-        /// $M$を法として $ O(\log M) $
-        pub fn pow(mut self, mut e: i64) -> Self {
-            let m = e < 0;
-            e = e.abs();
-            let mut result = Self::new(1);
-            while e > 0 {
-                if e & 1 == 1 {
-                    result *= self.0;
-                }
-                e >>= 1;
-                self *= self.0;
-            }
-            if m {
-                Self::new(1) / result
-            } else {
-                result
-            }
         }
 
         /// # 組み合わせnCr
@@ -71,6 +51,29 @@ mod mod_int_impl {
 
         pub fn get(self) -> i64 {
             self.0
+        }
+    }
+
+    /// # 累乗
+    /// ## 計算量
+    /// $M$を法として $ O(\log M) $
+    impl<M: Mod> Pow for ModInt<M> {
+        fn pow(mut self, mut e: i64) -> Self {
+            let m = e < 0;
+            e = e.abs();
+            let mut result = Self::new(1);
+            while e > 0 {
+                if e & 1 == 1 {
+                    result *= self.0;
+                }
+                e >>= 1;
+                self *= self.0;
+            }
+            if m {
+                Self::new(1) / result
+            } else {
+                result
+            }
         }
     }
     impl<M: Mod> Add<i64> for ModInt<M> {

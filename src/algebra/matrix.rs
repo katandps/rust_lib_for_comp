@@ -10,8 +10,8 @@ pub struct Matrix<T>(Vec<Vec<T>>);
 #[snippet(name = "matrix", doc_hidden)]
 mod matrix_impl {
     use super::{
-        Add, AddAssign, Debug, Div, Formatter, Matrix, Mul, MulAssign, Neg, One, Sub, SubAssign,
-        Zero,
+        Add, AddAssign, Debug, Div, Formatter, Matrix, Mul, MulAssign, Neg, One, Pow, Sub,
+        SubAssign, Zero,
     };
     impl<T> std::convert::TryFrom<Vec<Vec<T>>> for Matrix<T> {
         type Error = &'static str;
@@ -129,17 +129,10 @@ mod matrix_impl {
         }
     }
 
-    pub trait Pow {
-        fn pow(self, e: i64) -> Option<Self>
-        where
-            Self: Sized;
-    }
     impl<T: Clone + Zero + One + Mul<Output = T> + Add<Output = T>> Pow for Matrix<T> {
-        fn pow(mut self, mut e: i64) -> Option<Self> {
+        fn pow(mut self, mut e: i64) -> Self {
             let (n, m) = self.size();
-            if n != m {
-                return None;
-            }
+            assert_eq!(n, m);
             let mut result = Self::identity_matrix(n);
             while e > 0 {
                 if e & 1 == 1 {
@@ -148,7 +141,7 @@ mod matrix_impl {
                 e >>= 1;
                 self = (self.clone() * self).unwrap();
             }
-            Some(result)
+            result
         }
     }
 
