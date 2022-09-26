@@ -1,5 +1,8 @@
 //! # 高速フーリエ変換
 //!
+//! ## todo
+//! - [高速化]バタフライ演算を使用した非再帰での実装
+//! - [一般化]Garnerのアルゴリズムによる任意modでの畳み込みの実装
 
 use crate::{
     algebra::mod_int::{mod998244353::Mod998244353, ModInt},
@@ -25,20 +28,8 @@ impl<
             + Pow,
     > FFT<T>
 {
-    const DIVIDE_LIMIT: usize = 23;
-
-    pub fn setup() -> Self {
-        let mut root = vec![T::zero(); Self::DIVIDE_LIMIT + 1];
-        let mut root_inv = vec![T::zero(); Self::DIVIDE_LIMIT + 1];
-        root[Self::DIVIDE_LIMIT] = T::primitive_root();
-        root_inv[Self::DIVIDE_LIMIT] = T::one() / root[Self::DIVIDE_LIMIT];
-        for i in (0..Self::DIVIDE_LIMIT).rev() {
-            root[i] = root[i + 1] * root[i + 1];
-            root_inv[i] = root_inv[i + 1] * root_inv[i + 1];
-        }
-        Self { root, root_inv }
-    }
     fn ntt(&self, f: &[T], inverse: bool, log2_f: usize, divide_cnt: usize) -> Vec<T> {
+        debug_assert!(log2_f < self.root.len());
         if log2_f == 0 || divide_cnt == 0 {
             let mut ret = vec![T::zero(); f.len()];
             let mut zeta = T::one();
@@ -79,6 +70,19 @@ impl<
 
 #[snippet(name = "fast-fourier-transform", doc_hidden)]
 impl FFT<ModInt<Mod998244353>> {
+    const DIVIDE_LIMIT: usize = 23;
+
+    pub fn setup() -> Self {
+        let mut root = vec![ModInt::zero(); Self::DIVIDE_LIMIT + 1];
+        let mut root_inv = vec![ModInt::zero(); Self::DIVIDE_LIMIT + 1];
+        root[Self::DIVIDE_LIMIT] = PrimitiveRoot::primitive_root();
+        root_inv[Self::DIVIDE_LIMIT] = ModInt::one() / root[Self::DIVIDE_LIMIT];
+        for i in (0..Self::DIVIDE_LIMIT).rev() {
+            root[i] = root[i + 1] * root[i + 1];
+            root_inv[i] = root_inv[i + 1] * root_inv[i + 1];
+        }
+        Self { root, root_inv }
+    }
     pub fn convolution(&self, f: &[i64], g: &[i64]) -> Vec<ModInt<Mod998244353>> {
         let dim = (f.len() + g.len()).next_power_of_two();
         let log2_dim = dim.trailing_zeros() as usize;
