@@ -17,7 +17,10 @@ pub struct UnionFind {
 
 #[snippet(name = "union-find-tree", doc_hidden)]
 impl UnionFind {
+    /// # 初期化
+    /// 1-indexedで$n$まで初期化される
     pub fn new(n: usize) -> Self {
+        // 0-indexedでも1-indexedでも使えるよう、1拡張しておく
         let parent = (0..n + 1).collect::<Vec<_>>();
         let rank = vec![0; n + 1];
         let size = vec![1; n + 1];
@@ -61,8 +64,8 @@ impl UnionFind {
         if self.rank(x) == self.rank(y) {
             self.rank[x] += 1;
         }
-        self.parent[x] = y;
-        self.size[y] += self.size[x];
+        self.parent[y] = x;
+        self.size[x] += self.size[y];
         true
     }
 }

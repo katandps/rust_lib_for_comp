@@ -13,6 +13,7 @@ pub mod dynamic_segment_tree;
 pub mod extend_map;
 pub mod implicit_treap;
 pub mod lazy_segment_tree;
+pub mod partially_persistent_union_find;
 pub mod segment_tree;
 pub mod sparse_table;
 pub mod succinct_indexable_dictionaries;
