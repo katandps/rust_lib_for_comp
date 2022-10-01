@@ -25,6 +25,8 @@ use crate::prelude::*;
 pub trait ToLR<T> {
     fn to_lr(&self) -> (T, T);
 }
+#[snippet(name = "range", doc_hidden)]
+#[rustfmt::skip]
 impl<R: RangeBounds<T>, T: Copy + BoundedAbove + BoundedBelow + One + Add<Output = T>> ToLR<T>
     for R
 {
