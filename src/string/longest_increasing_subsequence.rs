@@ -1,13 +1,10 @@
 //! # 最長増加部分列 (Longest Increasing Subsequence)
-//! $長さ L の数列 A の最長増加部分列とは、
-//! 1 \leq i_1 < i_2 < ... < i_M \leq L
-//! かつ A_{i_1} < A_{i_2} < ... < A_{i_M} を満たす部分列 A_{i_1} , A_{i_2} , ... , A_{i_M} の中で、
-//! 最も M が大きいもの のこと$
+//! 長さ$L$の数列$A$の最長増加部分列とは、
+//! $1 \leq i_1 < i_2 < \cdots < i_M \leq L$
+//! かつ $A_{i_1} < A_{i_2} < \cdots < A_{i_M}$ を満たす部分列 $A_{i_1} , A_{i_2} , \cdots , A_{i_M}$ の中で、
+//! 最も$M$が大きいもののこと
 
 use crate::prelude::*;
-
-#[snippet(name = "longest-increasing-subsequence", doc_hidden)]
-const INF: i64 = 1 << 60;
 
 #[snippet(name = "longest-increasing-subsequence", doc_hidden)]
 #[derive(Debug, Clone)]
@@ -19,15 +16,19 @@ pub struct LIS {
 
 #[snippet(name = "longest-increasing-subsequence", doc_hidden)]
 impl LIS {
+    const INF: i64 = 1 << 60;
     pub fn new(n: usize) -> LIS {
         LIS {
             n,
-            dp: vec![INF; n],
+            dp: vec![Self::INF; n],
             stack: VecDeque::new(),
         }
     }
 
-    /// LISを更新する
+    /// # 計算対象の数列の末尾に項を追加する
+    ///
+    /// ## 計算量
+    /// 項一つ挿入するたびに $O(\log N)$
     pub fn insert(&mut self, a: i64) {
         let mut ok = self.n as i64;
         let mut ng = -1;
@@ -43,13 +44,16 @@ impl LIS {
         self.dp[ok as usize] = a;
     }
 
-    /// 最長増加部分列の長さを返す
+    /// # 最長増加部分列の長さ
+    ///
+    /// ## 計算量
+    /// $O(\log N)$
     pub fn calc(&self) -> usize {
         let mut ok = 0;
         let mut ng = self.n as i64;
         while (ok - ng).abs() > 1 {
             let mid = (ok + ng) / 2;
-            if self.dp[mid as usize] < INF {
+            if self.dp[mid as usize] < Self::INF {
                 ok = mid;
             } else {
                 ng = mid;
@@ -58,7 +62,10 @@ impl LIS {
         ok as usize + 1
     }
 
-    /// 更新をひとつ分巻き戻す
+    /// # 更新をひとつ分巻き戻す
+    ///
+    /// ## 計算量
+    /// $O(1)$
     pub fn rollback(&mut self) {
         if let Some((pos, val)) = self.stack.pop_front() {
             self.dp[pos] = val;
