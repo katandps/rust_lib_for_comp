@@ -5,7 +5,6 @@ use crate::graph::GraphTrait;
 use crate::prelude::*;
 
 #[snippet(name = "directed-acyclic-graph", doc_hidden)]
-
 pub trait Dag {
     /// # トポロジカルソート
     /// DAGをトポロジカルソートし、結果の頂点列を返す

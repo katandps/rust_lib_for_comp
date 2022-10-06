@@ -9,6 +9,7 @@ pub mod bellman_ford;
 pub mod bipartite_graph;
 pub mod dijkstra;
 pub mod directed_acyclic_graph;
+pub mod find_cycle;
 pub mod grid;
 pub mod kruskal;
 pub mod prim;
