@@ -9,11 +9,9 @@ pub mod heavy_light_decomposition;
 pub mod lcm_auxiliary_tree;
 pub mod lowest_common_ancestor;
 
-#[snippet(name = "min_max", doc_hidden)]
 #[allow(unused_macros)]
 macro_rules! chmax {($base:expr, $($cmps:expr),+ $(,)*) => {{let cmp_max = max!($($cmps),+);if $base < cmp_max {$base = cmp_max;true} else {false}}};}
 
-#[snippet(name = "min_max", doc_hidden)]
 #[allow(unused_macros)]
 macro_rules! max {($a:expr $(,)*) => {{$a}};($a:expr, $b:expr $(,)*) => {{if $a > $b {$a} else {$b}}};($a:expr, $($rest:expr),+ $(,)*) => {{let b = max!($($rest),+);if $a > b {$a} else {b}}};}
 
