@@ -45,6 +45,28 @@ impl LowestCommonAncestor {
         self.tour.tour[self.depth.query(l..=r).index]
     }
 
+    /// # u-v間のpathを求める
+    ///
+    /// ## 計算量
+    /// $O(N)$ (パスの長さ)
+    pub fn path(&self, mut u: usize, mut v: usize) -> Vec<usize> {
+        let lca = self.query(u, v);
+        let mut left = Vec::new();
+        while u != lca {
+            left.push(u);
+            u = self.tour.parent[u];
+        }
+        left.push(lca);
+        let mut right = Vec::new();
+        while v != lca {
+            right.push(v);
+            v = self.tour.parent[v];
+        }
+        right.reverse();
+        left.append(&mut right);
+        left
+    }
+
     /// # 2頂点u,v間の距離
     /// ## 計算量
     /// $O(1)$
@@ -132,6 +154,8 @@ mod test {
 
         assert_eq!(true, lca.on_path(5, 8, 1));
         assert_eq!(false, lca.on_path(5, 8, 3));
+
+        assert_eq!(vec![2, 0, 1, 3, 7], lca.path(2, 7));
     }
 
     #[test]
