@@ -1,6 +1,8 @@
 //! # 最近共通祖先
-//! LowestCommonAncestor(LCA)を求めるライブラリ
-//! 事前処理 $N\log N$、クエリ$\log N$
+//! オイラーツアーを使用してLowestCommonAncestor(LCA)を求めるライブラリ
+//!
+//! ## verify
+//! [ABC152F](https://atcoder.jp/contests/abc152/submissions/35593034)
 use super::euler_tour::EulerTour;
 use crate::algebra::binary_operation::minimization::Minimization;
 use crate::data_structure::sparse_table::SparseTable;
@@ -42,7 +44,7 @@ impl LowestCommonAncestor {
         if l > r {
             swap(&mut l, &mut r)
         }
-        self.tour.tour[self.depth.query(l..=r).index]
+        self.tour.tour[self.depth.query(l..r).index]
     }
 
     /// # u-v間のpathを求める
@@ -84,11 +86,14 @@ impl LowestCommonAncestor {
 
     /// # 木構造の圧縮
     /// 木を指定した部分集合とそのLCAだけの木に変形する
+    ///
     /// ## 概要
     /// vsに必要になる頂点を追加し、グラフの隣接リストを返す
+    ///
     /// ## 計算量
     /// 元となるvsの長さをkとして
     /// $KlogK$
+    ///
     /// ## verify
     /// [典型90 035](https://atcoder.jp/contests/typical90/submissions/29216435)
     pub fn auxiliary_tree(&self, vs: &mut Vec<usize>) -> Vec<(usize, usize)> {
@@ -156,6 +161,20 @@ mod test {
         assert_eq!(false, lca.on_path(5, 8, 3));
 
         assert_eq!(vec![2, 0, 1, 3, 7], lca.path(2, 7));
+    }
+
+    #[test]
+    fn big() {
+        let mut graph = Graph::new(10000);
+        for i in 0..9999 {
+            graph.add_edge(i, i + 1, ());
+        }
+        let lca = LowestCommonAncestor::new(&graph, 0);
+        for i in 0..10000 {
+            for j in 0..10000 {
+                assert_eq!(std::cmp::min(i, j), lca.query(i, j))
+            }
+        }
     }
 
     #[test]
