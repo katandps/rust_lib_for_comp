@@ -12,10 +12,17 @@ use crate::util::{reader::Reader, writer::Writer};
 #[snippet(include = "range")]
 #[snippet(include = "prelude")]
 #[snippet(include = "debug")]
+#[rustfmt::skip]
 pub fn main() {
     let stdin = stdin();
     let stdout = stdout();
-    solve(Reader::new(|| stdin.lock()), Writer::new(stdout.lock()));
+    std::thread::Builder::new()
+        .name("extend stack size".into())
+        .stack_size(32 * 1024 * 1024)
+        .spawn(move || solve(Reader::new(|| stdin.lock()), Writer::new(stdout.lock())))
+        .unwrap()
+        .join()
+        .unwrap()
 }
 
 #[snippet(name = "solver", doc_hidden)]
