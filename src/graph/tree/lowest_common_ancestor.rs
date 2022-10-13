@@ -19,24 +19,26 @@ pub struct LowestCommonAncestor {
 #[snippet(name = "lowest-common-ancestor", doc_hidden)]
 impl LowestCommonAncestor {
     /// # 構築
+    /// オイラーツアーを行い、時刻に対応する根からの距離を前計算する
+    ///
     /// ## 計算量
-    /// $O(N\logN)$
+    /// $O(N\log N)$
     pub fn new<G: GraphTrait>(g: &G, root: usize) -> Self {
         let tour = EulerTour::new(g, root);
         let depth = SparseTable::<Minimization<IntWithIndex<usize>>>::from(
-            &tour
-                .tour
-                .iter()
-                .map(|i| tour.depth[*i])
-                .enumerate()
-                .map(IntWithIndex::from)
+            &(0..tour.tour.len())
+                .map(|i| IntWithIndex::from((i, tour.depth[tour.tour[i]])))
                 .collect::<Vec<_>>()[..],
         );
         Self { tour, depth }
     }
 
     /// # LCAを求める
-    /// u,vの最近共通祖先(LCA)を求める
+    /// $u$,$v$の最近共通祖先(LCA)を求める
+    ///
+    /// オイラーツアー上で $u \to v$ の順に訪れているとする。
+    /// $u$に初めて訪れた時刻から$v$を抜けた時刻までにアクセスした頂点のうち、最も根に近いものがLCA
+    ///
     /// ## 計算量
     /// $O(1)$
     pub fn query(&self, u: usize, v: usize) -> usize {
@@ -47,10 +49,10 @@ impl LowestCommonAncestor {
         self.tour.tour[self.depth.query(l..r).index]
     }
 
-    /// # u-v間のpathを求める
+    /// # $u \to v$のパスを求める
     ///
     /// ## 計算量
-    /// $O(N)$ (パスの長さ)
+    /// $O(パスの長さ)$
     pub fn path(&self, mut u: usize, mut v: usize) -> Vec<usize> {
         let lca = self.query(u, v);
         let mut left = Vec::new();
@@ -69,7 +71,7 @@ impl LowestCommonAncestor {
         left
     }
 
-    /// # 2頂点u,v間の距離
+    /// # 2頂点$u$,$v$間の距離
     /// ## 計算量
     /// $O(1)$
     pub fn dist(&self, u: usize, v: usize) -> usize {
@@ -77,7 +79,7 @@ impl LowestCommonAncestor {
         self.tour.depth[u] + self.tour.depth[v] - 2 * self.tour.depth[lca]
     }
 
-    /// # u,vを結ぶパス上に頂点aが存在するかどうか
+    /// # $u$,$v$を結ぶパス上に頂点$a$が存在するかどうか
     /// ## 計算量
     /// $O(1)$
     pub fn on_path(&self, u: usize, v: usize, a: usize) -> bool {
@@ -92,7 +94,7 @@ impl LowestCommonAncestor {
     ///
     /// ## 計算量
     /// 元となるvsの長さをkとして
-    /// $KlogK$
+    /// $O(K\log K)$
     ///
     /// ## verify
     /// [典型90 035](https://atcoder.jp/contests/typical90/submissions/29216435)

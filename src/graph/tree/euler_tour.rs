@@ -1,7 +1,5 @@
 //! # オイラーツアー
 //! 木の頂点をdfsでたどって、通った頂点を記録する
-//! ## 応用
-//! depthの
 use super::GraphTrait;
 use crate::prelude::*;
 
