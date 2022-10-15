@@ -12,6 +12,7 @@ use crate::util::{reader::Reader, writer::Writer};
 #[snippet(include = "range")]
 #[snippet(include = "prelude")]
 #[snippet(include = "debug")]
+#[snippet(include = "faster-hashmap")]
 #[rustfmt::skip]
 pub fn main() {
     let stdin = stdin();

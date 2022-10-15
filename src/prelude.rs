@@ -6,12 +6,12 @@
 pub use std::{
     cmp::{max, min, Ordering, Reverse},
     collections::{
-        hash_map::RandomState, BTreeMap, BTreeSet, BinaryHeap, HashMap, HashSet, VecDeque,
+        hash_map::RandomState, BTreeMap, BTreeSet, BinaryHeap, VecDeque,
     },
     convert::Infallible,
     convert::{TryFrom, TryInto},
     fmt::{Debug, Display, Formatter},
-    hash::Hash,
+    hash::{Hash, BuildHasherDefault, Hasher},
     io::{stdin, stdout, BufRead, BufWriter, Read, Write},
     iter::{repeat, Product, Sum},
     marker::PhantomData,
@@ -25,6 +25,7 @@ pub use std::{
 };
 
 pub use crate::algebra::*;
+pub use crate::algo::fxhasher::*;
 pub use crate::algo::range::ToLR;
 pub use crate::util::{reader::*, writer::*};
 pub use cargo_snippet::snippet;

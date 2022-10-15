@@ -2,12 +2,12 @@
 
 use crate::prelude::*;
 
-pub struct ExtendMap<K, V, H = RandomState> {
-    map: HashMap<K, V, H>,
+pub struct ExtendMap<K, V> {
+    map: HashMap<K, V>,
     offset: K,
 }
 
-impl<K: Clone, V: Clone> Clone for ExtendMap<K, V, RandomState> {
+impl<K: Clone, V: Clone> Clone for ExtendMap<K, V> {
     fn clone(&self) -> Self {
         Self {
             map: self.map.clone(),
@@ -16,7 +16,7 @@ impl<K: Clone, V: Clone> Clone for ExtendMap<K, V, RandomState> {
     }
 }
 
-impl<K: Default + Eq + Hash, V: Default> Default for ExtendMap<K, V, RandomState> {
+impl<K: Default + Eq + Hash, V: Default> Default for ExtendMap<K, V> {
     fn default() -> Self {
         Self {
             map: Default::default(),
@@ -25,7 +25,7 @@ impl<K: Default + Eq + Hash, V: Default> Default for ExtendMap<K, V, RandomState
     }
 }
 
-impl<K: Eq + Hash + Add<Output = K> + Sub<Output = K> + Copy, V> ExtendMap<K, V, RandomState> {
+impl<K: Eq + Hash + Add<Output = K> + Sub<Output = K> + Copy, V> ExtendMap<K, V> {
     /// # entry interface
     pub fn entry(&mut self, key: K) -> std::collections::hash_map::Entry<K, V> {
         self.map.entry(key)
@@ -47,7 +47,7 @@ impl<K: Eq + Hash + Add<Output = K> + Sub<Output = K> + Copy, V> ExtendMap<K, V,
     }
 }
 impl<K: Eq + Display + Debug + Hash + Add<Output = K> + Sub<Output = K> + Copy, V: Debug> Debug
-    for ExtendMap<K, V, RandomState>
+    for ExtendMap<K, V>
 {
     fn fmt(&self, f: &mut Formatter<'_>) -> std::fmt::Result {
         write!(
