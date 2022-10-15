@@ -1,5 +1,8 @@
 //! # Treap
-//! 乱数を利用して平衡を保つ二分探索木Tree + Heap
+//! 乱数を利用して平衡を保つ二分探索木 Tree + Heap
+//!
+//! ## dependency
+//! [xor-shift](crate::algo::xor_shift::XorShift)
 
 use crate::algo::xor_shift::XorShift;
 use crate::prelude::*;
@@ -8,82 +11,75 @@ use crate::prelude::*;
 #[derive(Default, Clone, Debug)]
 pub struct Treap<T> {
     randomizer: XorShift,
-    root: Box<treap_node::OptionalNode<T>>,
+    root: Box<treap_impl::OptionalNode<T>>,
 }
 
 #[snippet(name = "treap", doc_hidden)]
-impl<T> Treap<T> {
-    /// # サイズ
-    ///
-    /// ## 計算量
-    /// $O(1)$
-    pub fn len(&self) -> usize {
-        self.root.len()
-    }
-
-    /// # 空かどうか
-    ///
-    /// ## 計算量
-    /// $O(1)$
-    pub fn is_empty(&self) -> bool {
-        self.len() == 0
-    }
-}
-
-#[snippet(name = "treap", doc_hidden)]
-impl<T: PartialOrd + Default> Treap<T> {
-    /// # 挿入
-    /// 先頭からpos(0-indexed)の位置にxを挿入
-    ///
-    /// ## 計算量
-    /// $O(logN)$
-    pub fn insert(&mut self, x: T) {
-        self.root.insert(treap_node::OptionalNode::new(
-            x,
-            self.randomizer.next().unwrap(),
-        ))
-    }
-
-    /// # 削除
-    /// 先頭からpos(0-indexed)の位置の要素を削除して返す
-    ///
-    /// ## 計算量
-    /// $O(logN)$
-    pub fn remove(&mut self, key: &T) -> Option<T> {
-        self.root.erase(key)
-    }
-
-    /// # 検索
-    /// keyが含まれるかどうかを返す
-    ///
-    /// ## 計算量
-    /// $O(logN)$
-    pub fn find(&self, key: &T) -> bool {
-        self.root.find(key)
-    }
-}
-
-#[snippet(name = "treap", doc_hidden)]
-impl<T: Display> Display for Treap<T> {
-    fn fmt(&self, f: &mut Formatter<'_>) -> std::fmt::Result {
-        writeln!(f, "[{}]", self.root)
-    }
-}
-
-#[snippet(name = "treap", doc_hidden)]
-impl<T: Clone + PartialOrd + Default + Debug> From<&[T]> for Treap<T> {
-    fn from(src: &[T]) -> Self {
-        let mut ret = Self::default();
-        for t in src {
-            ret.insert(t.clone())
+mod treap_impl {
+    use super::{swap, Debug, Display, Formatter, Ordering, Treap};
+    impl<T> Treap<T> {
+        /// # サイズ
+        ///
+        /// ## 計算量
+        /// $O(1)$
+        pub fn len(&self) -> usize {
+            self.root.len()
         }
-        ret
-    }
-}
 
-#[snippet(name = "treap", doc_hidden)]
-mod treap_node {
-    use super::*;
+        /// # 空かどうか
+        ///
+        /// ## 計算量
+        /// $O(1)$
+        pub fn is_empty(&self) -> bool {
+            self.len() == 0
+        }
+    }
+
+    impl<T: PartialOrd + Default> Treap<T> {
+        /// # 挿入
+        /// 先頭からpos(0-indexed)の位置にxを挿入
+        ///
+        /// ## 計算量
+        /// $O(logN)$
+        pub fn insert(&mut self, x: T) {
+            self.root
+                .insert(OptionalNode::new(x, self.randomizer.next().unwrap()))
+        }
+
+        /// # 削除
+        /// 先頭からpos(0-indexed)の位置の要素を削除して返す
+        ///
+        /// ## 計算量
+        /// $O(logN)$
+        pub fn remove(&mut self, key: &T) -> Option<T> {
+            self.root.erase(key)
+        }
+
+        /// # 検索
+        /// keyが含まれるかどうかを返す
+        ///
+        /// ## 計算量
+        /// $O(logN)$
+        pub fn find(&self, key: &T) -> bool {
+            self.root.find(key)
+        }
+    }
+
+    impl<T: Display> Display for Treap<T> {
+        fn fmt(&self, f: &mut Formatter<'_>) -> std::fmt::Result {
+            writeln!(f, "[{}]", self.root)
+        }
+    }
+
+    impl<T: Clone + PartialOrd + Default + Debug> From<&[T]> for Treap<T> {
+        fn from(src: &[T]) -> Self {
+            let mut ret = Self::default();
+            for t in src {
+                ret.insert(t.clone())
+            }
+            ret
+        }
+    }
 
     #[derive(Debug)]
     pub struct OptionalNode<T>(Option<Node<T>>);
@@ -264,7 +260,6 @@ mod treap_node {
         }
     }
 }
-
 #[test]
 fn size() {
     let mut treap = Treap::default();
