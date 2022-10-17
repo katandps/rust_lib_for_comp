@@ -28,12 +28,23 @@ impl Iterator for XorShift {
 
 #[snippet(name = "xor-shift", doc_hidden)]
 impl XorShift {
+    /// # シードを指定して初期化
     pub fn with_seed(seed: u64) -> Self {
         Self { seed }
     }
+    /// # 乱数を生成
+    /// 0..mの範囲で乱数を生成する
     pub fn rand(&mut self, m: u64) -> u64 {
         self.next().unwrap() % m
     }
+    /// # 範囲指定して乱数を生成
+    /// rangeの範囲で乱数を生成する
+    pub fn rand_range<R: RangeBounds<i64>>(&mut self, range: R) -> i64 {
+        let (l, r) = range.to_lr();
+        let k = self.next().unwrap() as i64;
+        k.rem_euclid(r - l) + l
+    }
+    /// # 浮動小数点数の乱数を生成
     pub fn randf(&mut self) -> f64 {
         const UPPER_MASK: u64 = 0x3FF0000000000000;
         const LOWER_MASK: u64 = 0xFFFFFFFFFFFFF;
