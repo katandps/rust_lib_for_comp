@@ -58,14 +58,14 @@ mod dynamic_segment_tree_impl {
     }
 
     impl<M: Monoid> OptionalNode<M> {
-        pub fn new(value: M::M) -> Self {
+        fn new(value: M::M) -> Self {
             Self(Some(Node {
                 value,
                 l: Box::new(Self(None)),
                 r: Box::new(Self(None)),
             }))
         }
-        pub fn set(&mut self, idx: IndexType, bit: i32, value: M::M) {
+        fn set(&mut self, idx: IndexType, bit: i32, value: M::M) {
             match self.0.as_mut() {
                 Some(node) if bit < 0 => node.value = value,
                 Some(node) => {
@@ -82,7 +82,7 @@ mod dynamic_segment_tree_impl {
                 }
             }
         }
-        pub fn apply<F: Fn(M::M) -> M::M>(&mut self, idx: IndexType, bit: i32, f: F) {
+        fn apply<F: Fn(M::M) -> M::M>(&mut self, idx: IndexType, bit: i32, f: F) {
             match self.0.as_mut() {
                 Some(node) if bit < 0 => node.value = f(node.value.clone()),
                 Some(node) => {
@@ -99,14 +99,14 @@ mod dynamic_segment_tree_impl {
                 }
             }
         }
-        pub fn get(&self, idx: IndexType, bit: i32) -> M::M {
+        fn get(&self, idx: IndexType, bit: i32) -> M::M {
             match &self.0 {
                 Some(node) if bit < 0 => node.value.clone(),
                 Some(node) => node.child(idx, bit).get(idx, bit - 1),
                 None => M::unit(),
             }
         }
-        pub fn prod(&self, l: IndexType, r: IndexType, lb: IndexType, ub: IndexType) -> M::M {
+        fn prod(&self, l: IndexType, r: IndexType, lb: IndexType, ub: IndexType) -> M::M {
             match &self.0 {
                 Some(node) if l <= lb && ub <= r => node.value.clone(),
                 Some(node) if lb < r && l < ub => M::op(

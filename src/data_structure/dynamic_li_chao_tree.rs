@@ -1,4 +1,4 @@
-//! # Dynamic Li-Chao Tree
+//! # Dynamic Li-Chao Tree (for CHT)
 //! Convex-hull-trick問題を解く
 //! 複数の直線のうち、各$x$座標について最小の$y$をオンラインで求める
 //!
