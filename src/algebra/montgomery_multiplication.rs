@@ -9,7 +9,7 @@ use crate::prelude::*;
 
 #[snippet(name = "montgomery-multiplication", doc_hidden)]
 #[derive(Clone, Debug)]
-pub struct MontgomeryU64 {
+pub struct MontgomeryReduction {
     /// 奇数$N$
     pub n: u64,
     /// $nn^{-1} \equiv 1 \pmod{2^{64}}$
@@ -29,14 +29,20 @@ pub struct MontgomeryU64 {
 }
 
 #[snippet(name = "montgomery-multiplication", doc_hidden)]
-impl MontgomeryU64 {
+impl MontgomeryReduction {
+    /// # 初期化
+    /// $\pmod n$ で初期化する
+    /// nは奇数である必要がある
     #[inline]
-    pub fn new(n: u64) -> Self {
-        debug_assert_eq!(n & 1, 1);
-        let n_inv = (0..5).fold(n, |x, _a| {
-            x.wrapping_mul(2u64.wrapping_sub(n.wrapping_mul(x)))
-        });
-        debug_assert_eq!(n.wrapping_mul(n_inv), 1);
+    pub const fn new(n: u64) -> Self {
+        let mut n_inv = n;
+        // 5 times
+        n_inv = n_inv.wrapping_mul(2u64.wrapping_sub(n.wrapping_mul(n_inv)));
+        n_inv = n_inv.wrapping_mul(2u64.wrapping_sub(n.wrapping_mul(n_inv)));
+        n_inv = n_inv.wrapping_mul(2u64.wrapping_sub(n.wrapping_mul(n_inv)));
+        n_inv = n_inv.wrapping_mul(2u64.wrapping_sub(n.wrapping_mul(n_inv)));
+        n_inv = n_inv.wrapping_mul(2u64.wrapping_sub(n.wrapping_mul(n_inv)));
+
         let nh = (n >> 1) + 1;
         let r = n.wrapping_neg() % n;
         let r_neg = n - r;
@@ -84,16 +90,30 @@ impl MontgomeryU64 {
     }
 
     /// # $A$のモンゴメリ表現への変換
-    /// $ar(a) = a*r \mod N$
+    /// return $a * R \mod N$
     #[inline]
-    pub fn ar(&self, a: u64) -> u64 {
+    pub fn generate(&self, a: u64) -> u64 {
         debug_assert!(a < self.n);
-        self.mul(a, self.r_pow2)
+        self.mrmul(a, self.r_pow2)
     }
 
-    /// $mul(a, b) == (a * b) \mod N$
+    /// # モンゴメリ表現 $AR$ から $A$の復元
+    /// return $a \frac R \mod N$
     #[inline]
-    pub fn mul(&self, ar: u64, br: u64) -> u64 {
+    pub fn reduce(&self, ar: u64) -> u64 {
+        debug_assert!(ar < self.n, "{} {}", self.n, ar);
+        let (t, f) = (((((ar.wrapping_mul(self.n_inv)) as u128) * (self.n as u128)) >> 64) as u64)
+            .overflowing_neg();
+        if f {
+            t.wrapping_add(self.n)
+        } else {
+            t
+        }
+    }
+
+    /// # $mul(ar, br) == (a * b) * r \mod N$
+    #[inline]
+    pub fn mrmul(&self, ar: u64, br: u64) -> u64 {
         debug_assert!(ar < self.n);
         debug_assert!(br < self.n);
         let t: u128 = (ar as u128) * (br as u128);
@@ -107,17 +127,23 @@ impl MontgomeryU64 {
         }
     }
 
+    /// # $mul_prim(a, b) == (a * b) \mod N$
+    #[inline]
+    pub fn mul_prim(&self, a: u64, b: u64) -> u64 {
+        self.reduce(self.mrmul(self.generate(a), self.generate(b)))
+    }
+
     /// # 累乗 $\pmod n$
     #[inline]
     pub fn pow(&self, a: u64, mut b: u64) -> u64 {
         debug_assert!(a < self.n);
-        let mut ar = self.ar(a);
+        let mut ar = self.generate(a);
         let mut t = if b & 1 == 0 { self.r } else { ar };
         b >>= 1;
         while b != 0 {
-            ar = self.mul(ar, ar);
+            ar = self.mrmul(ar, ar);
             if b & 1 != 0 {
-                t = self.mul(t, ar);
+                t = self.mrmul(t, ar);
             }
             b >>= 1;
         }
@@ -127,15 +153,25 @@ impl MontgomeryU64 {
 
 #[test]
 fn test() {
-    const MOD: u64 = 255;
-    let mont = MontgomeryU64::new(MOD);
-    for i in 0..MOD {
-        assert_eq!(mont.ar(i), i * mont.r % MOD);
-        for j in 0..MOD {
-            assert_eq!(mont.mul(i, j) * mont.r % MOD, i * j % MOD);
-            assert_eq!(mont.add(i, j), (i + j) % MOD);
-            assert_eq!(mont.sub(i, j), (MOD + i - j) % MOD);
-            assert_eq!(mont.mul(i, j), i * j % MOD);
+    use crate::algo::xor_shift::XorShift;
+    let mut xorshift = XorShift::default();
+    let m = xorshift.rand(2000) * 2 + 1;
+    debug_assert_eq!(m & 1, 1);
+    let mont = MontgomeryReduction::new(m);
+    debug_assert_eq!(mont.n.wrapping_mul(mont.n_inv), 1);
+
+    for i in 0..m {
+        assert_eq!(mont.generate(i), i * mont.r % m);
+    }
+    for i in 0..m {
+        assert_eq!(mont.reduce(i * mont.r % m), i);
+    }
+    for i in 0..m {
+        for j in 0..m {
+            assert_eq!(mont.mrmul(i, j) * mont.r % m, i * j % m);
+            assert_eq!(mont.add(i, j), (i + j) % m);
+            assert_eq!(mont.sub(i, j), (m + i - j) % m);
+            assert_eq!(mont.mul_prim(i, j), i * j % m);
         }
     }
 }

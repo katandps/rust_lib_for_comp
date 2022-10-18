@@ -15,7 +15,7 @@
 use crate::{
     algebra::{
         binary_operation::greatest_common_divisor::Gcd, miller_rabin::MillerRabin,
-        montgomery_multiplication::MontgomeryU64,
+        montgomery_multiplication::MontgomeryReduction,
     },
     prelude::*,
 };
@@ -39,10 +39,10 @@ impl PollardRho for u64 {
             if n.is_prime() {
                 return n;
             }
-            let mul = MontgomeryU64::new(n);
+            let mul = MontgomeryReduction::new(n);
             const LIMIT: u64 = 256;
             for epoch in 1..LIMIT {
-                let prng_next = |x| mul.add(mul.mul(x, x), epoch);
+                let prng_next = |x| mul.add(mul.mrmul(x, x), epoch);
                 let m = 1 << ((0u64.leading_zeros() - n.leading_zeros()) >> 3);
                 let (mut y, mut r, mut q, mut g) = (2, 1, 1, 1);
                 let (mut x, mut ys) = (0, 0);
@@ -56,7 +56,7 @@ impl PollardRho for u64 {
                         ys = y;
                         for _ in 0..min(m, r - k) {
                             y = prng_next(y);
-                            q = mul.mul(q, max(x, y) - min(x, y));
+                            q = mul.mrmul(q, max(x, y) - min(x, y));
                         }
                         g = Gcd::op(&q, &n);
                         k += m;

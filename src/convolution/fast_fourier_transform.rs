@@ -5,7 +5,7 @@
 //! - \[一般化]Garnerのアルゴリズムによる任意modでの畳み込みの実装
 
 use crate::{
-    algebra::mod_int::{mod998244353::Mod998244353, ModInt},
+    algebra::mod_int::{mod998244353::mod_998_244_353_impl::Mod998_244_353, ModInt},
     prelude::*,
 };
 #[snippet(name = "fast-fourier-transform", doc_hidden)]
@@ -69,7 +69,7 @@ impl<
 }
 
 #[snippet(name = "fast-fourier-transform", doc_hidden)]
-impl FFT<ModInt<Mod998244353>> {
+impl FFT<ModInt<Mod998_244_353>> {
     const DIVIDE_LIMIT: usize = 23;
 
     pub fn setup() -> Self {
@@ -83,7 +83,7 @@ impl FFT<ModInt<Mod998244353>> {
         }
         Self { root, root_inv }
     }
-    pub fn convolution(&self, f: &[i64], g: &[i64]) -> Vec<ModInt<Mod998244353>> {
+    pub fn convolution(&self, f: &[i64], g: &[i64]) -> Vec<ModInt<Mod998_244_353>> {
         let dim = (f.len() + g.len()).next_power_of_two();
         let log2_dim = dim.trailing_zeros() as usize;
         let (mut nf, mut ng) = (

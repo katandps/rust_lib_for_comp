@@ -10,7 +10,7 @@
 //! [Q3. 素数判定 (強)](https://algo-method.com/submissions/611523)
 //! [ミラー・ラビン素数判定法のテスト](https://yukicoder.me/submissions/799899)
 
-use super::montgomery_multiplication::MontgomeryU64;
+use super::montgomery_multiplication::MontgomeryReduction;
 use crate::prelude::*;
 
 #[snippet(name = "miller-rabin", doc_hidden)]
@@ -25,7 +25,7 @@ impl MillerRabin for u64 {
         if *self < 2 || *self & 1 == 0 {
             return *self == 2; // 偶数は2だけ素数
         }
-        let mont = MontgomeryU64::new(*self);
+        let mont = MontgomeryReduction::new(*self);
         let is_composite = |mut checker: u64| -> bool {
             if checker >= *self {
                 checker %= self;
@@ -38,7 +38,7 @@ impl MillerRabin for u64 {
                 return false;
             }
             (1..mont.k).all(|_| {
-                tr = mont.mul(tr, tr);
+                tr = mont.mrmul(tr, tr);
                 tr != mont.r_neg
             })
         };
