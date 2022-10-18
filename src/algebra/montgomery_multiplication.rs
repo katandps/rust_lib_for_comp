@@ -133,7 +133,7 @@ impl MontgomeryReduction {
         self.reduce(self.mrmul(self.generate(a), self.generate(b)))
     }
 
-    /// # 累乗 $\pmod n$
+    /// # $pow(a, b) == a^b * r \mod N$
     #[inline]
     pub fn pow(&self, a: u64, mut b: u64) -> u64 {
         debug_assert!(a < self.n);
@@ -172,6 +172,13 @@ fn test() {
             assert_eq!(mont.add(i, j), (i + j) % m);
             assert_eq!(mont.sub(i, j), (m + i - j) % m);
             assert_eq!(mont.mul_prim(i, j), i * j % m);
+        }
+    }
+
+    for i in 0..m {
+        for k in 1..100 {
+            let t = (0..k).fold(1, |x, _| x * i % m);
+            assert_eq!(mont.pow(i, k), t * mont.r % m);
         }
     }
 }

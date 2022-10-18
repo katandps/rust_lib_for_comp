@@ -64,21 +64,14 @@ mod mod_int_impl {
     /// ## 計算量
     /// $M$を法として $ O(\log M) $
     impl<M: Mod> Pow for ModInt<M> {
-        fn pow(mut self, mut e: i64) -> Self {
+        fn pow(self, mut e: i64) -> Self {
             let m = e < 0;
             e = e.abs();
-            let mut result = Self::new(1);
-            while e > 0 {
-                if e & 1 == 1 {
-                    result *= self.0;
-                }
-                e >>= 1;
-                self *= self.0;
-            }
+            let t = M::mont().reduce(M::mont().pow(self.0 as u64, e as u64));
             if m {
-                Self::new(1) / result
+                Self::new(1) / t as i64
             } else {
-                result
+                Self::new(t as i64)
             }
         }
     }
@@ -387,9 +380,5 @@ mod test {
             mi(1) * 1000000007 * 1000000008 * 1000000009 / 6,
             Mi::comb(MOD + 2, 3)
         );
-    }
-    #[test]
-    fn t() {
-        dbg!(mi(5) * mi(10));
     }
 }
