@@ -27,9 +27,12 @@ impl<M: Mod> ModValTable<ModInt<M>> {
         let mut fact = vec![ModInt::<M>::new(1); n + 1];
         let mut fact_inv = vec![ModInt::<M>::new(1); n + 1];
         let mut inv = vec![ModInt::<M>::new(1); n + 1];
+        inv[0] = ModInt::zero();
+        for i in 2..=n {
+            inv[i] = ModInt::zero() - inv[M::get() as usize % i] * (M::get() / i as i64);
+        }
         for i in 2..=n {
             fact[i] = fact[i - 1] * i as i64;
-            inv[i] = inv[0] / i as i64;
             fact_inv[i] = fact_inv[i - 1] * inv[i];
         }
         Self { fact, fact_inv }
