@@ -8,118 +8,110 @@ use crate::prelude::*;
 #[derive(Clone, Debug, Default)]
 pub struct ImplicitTreap<T> {
     randomizer: XorShift,
-    root: Box<implicit_treap_node::OptionalNode<T>>,
+    root: Box<implicit_treap_impl::OptionalNode<T>>,
 }
 
 #[snippet(name = "implicit_treap", doc_hidden)]
-impl<T> ImplicitTreap<T> {
-    /// # サイズ
-    ///
-    /// ## 計算量
-    /// $O(1)$
-    pub fn len(&self) -> usize {
-        self.root.len()
-    }
-
-    /// # 空かどうか
-    ///
-    /// ## 計算量
-    /// $O(1)$
-    pub fn is_empty(&self) -> bool {
-        self.len() == 0
-    }
-}
-
-#[snippet(name = "implicit_treap", doc_hidden)]
-impl<T: PartialOrd + Default> ImplicitTreap<T> {
-    /// # 挿入
-    /// 先頭からpos(0-indexed)の位置にxを挿入
-    ///
-    /// ## 計算量
-    /// $O(logN)$
-    pub fn insert(&mut self, pos: usize, x: T) {
-        self.root.insert(
-            pos,
-            implicit_treap_node::OptionalNode::new(x, self.randomizer.next().unwrap()),
-        )
-    }
-
-    /// # 削除
-    /// 先頭からpos(0-indexed)の位置の要素を削除して返す
-    ///
-    /// ## 計算量
-    /// $O(logN)$
-    pub fn erase(&mut self, pos: usize) -> Option<T> {
-        self.root.erase(pos)
-    }
-
-    /// # 反転
-    /// rangeの範囲を反転する
-    pub fn reverse<R: RangeBounds<usize>>(&mut self, range: R) {
-        let (l, r) = range.to_lr();
-        self.root.reverse(l, r);
-    }
-
-    /// # 回転
-    /// rangeの範囲をtopが先頭に来るように回転する
-    pub fn rotate<R: RangeBounds<usize>>(&mut self, range: R, top: usize) {
-        let (l, r) = range.to_lr();
-        assert!(l <= top && top < r);
-        self.root.rotate(l, r, top);
-    }
-
-    /// # 先頭の要素を取る
-    /// $O(logN)$
-    pub fn pop_front(&mut self) -> Option<T> {
-        self.root.erase(0)
-    }
-
-    /// # 最後尾の要素を取る
-    /// $O(logN)$
-    pub fn pop_back(&mut self) -> Option<T> {
-        self.root.erase(self.len() - 1)
-    }
-
-    /// # 配列に変換する
-    /// $O(NlogN)$
-    pub fn to_vec(mut self) -> Vec<T> {
-        let mut v = Vec::new();
-        while let Some(t) = self.pop_front() {
-            v.push(t);
+mod implicit_treap_impl {
+    use super::{swap, Display, Formatter, ImplicitTreap, Index, RangeBounds, ToLR};
+    impl<T> ImplicitTreap<T> {
+        /// # サイズ
+        ///
+        /// ## 計算量
+        /// $O(1)$
+        pub fn len(&self) -> usize {
+            self.root.len()
         }
-        v
-    }
-}
 
-#[snippet(name = "implicit_treap", doc_hidden)]
-impl<T> Index<usize> for ImplicitTreap<T> {
-    type Output = T;
-    fn index(&self, index: usize) -> &T {
-        self.root.index(index)
-    }
-}
-
-#[snippet(name = "implicit_treap", doc_hidden)]
-impl<T: Display> Display for ImplicitTreap<T> {
-    fn fmt(&self, f: &mut Formatter<'_>) -> std::fmt::Result {
-        writeln!(f, "[{}]", self.root)
-    }
-}
-
-#[snippet(name = "implicit_treap", doc_hidden)]
-impl<T: Clone + PartialOrd + Default> From<&[T]> for ImplicitTreap<T> {
-    fn from(src: &[T]) -> Self {
-        let mut ret = Self::default();
-        for t in src {
-            ret.insert(ret.len(), t.clone())
+        /// # 空かどうか
+        ///
+        /// ## 計算量
+        /// $O(1)$
+        pub fn is_empty(&self) -> bool {
+            self.len() == 0
         }
-        ret
     }
-}
 
-#[snippet(name = "implicit_treap", doc_hidden)]
-mod implicit_treap_node {
-    use super::*;
+    impl<T: PartialOrd + Default> ImplicitTreap<T> {
+        /// # 挿入
+        /// 先頭からpos(0-indexed)の位置にxを挿入
+        ///
+        /// ## 計算量
+        /// $O(logN)$
+        pub fn insert(&mut self, pos: usize, x: T) {
+            self.root
+                .insert(pos, OptionalNode::new(x, self.randomizer.next().unwrap()))
+        }
+
+        /// # 削除
+        /// 先頭からpos(0-indexed)の位置の要素を削除して返す
+        ///
+        /// ## 計算量
+        /// $O(logN)$
+        pub fn erase(&mut self, pos: usize) -> Option<T> {
+            self.root.erase(pos)
+        }
+
+        /// # 反転
+        /// rangeの範囲を反転する
+        pub fn reverse<R: RangeBounds<usize>>(&mut self, range: R) {
+            let (l, r) = range.to_lr();
+            self.root.reverse(l, r);
+        }
+
+        /// # 回転
+        /// rangeの範囲をtopが先頭に来るように回転する
+        pub fn rotate<R: RangeBounds<usize>>(&mut self, range: R, top: usize) {
+            let (l, r) = range.to_lr();
+            assert!(l <= top && top < r);
+            self.root.rotate(l, r, top);
+        }
+
+        /// # 先頭の要素を取る
+        /// $O(logN)$
+        pub fn pop_front(&mut self) -> Option<T> {
+            self.root.erase(0)
+        }
+
+        /// # 最後尾の要素を取る
+        /// $O(logN)$
+        pub fn pop_back(&mut self) -> Option<T> {
+            self.root.erase(self.len() - 1)
+        }
+
+        /// # 配列に変換する
+        /// $O(NlogN)$
+        pub fn to_vec(mut self) -> Vec<T> {
+            let mut v = Vec::new();
+            while let Some(t) = self.pop_front() {
+                v.push(t);
+            }
+            v
+        }
+    }
+
+    impl<T> Index<usize> for ImplicitTreap<T> {
+        type Output = T;
+        fn index(&self, index: usize) -> &T {
+            self.root.index(index)
+        }
+    }
+
+    impl<T: Display> Display for ImplicitTreap<T> {
+        fn fmt(&self, f: &mut Formatter<'_>) -> std::fmt::Result {
+            writeln!(f, "[{}]", self.root)
+        }
+    }
+
+    impl<T: Clone + PartialOrd + Default> From<&[T]> for ImplicitTreap<T> {
+        fn from(src: &[T]) -> Self {
+            let mut ret = Self::default();
+            for t in src {
+                ret.insert(ret.len(), t.clone())
+            }
+            ret
+        }
+    }
 
     #[derive(Clone, Debug, Default)]
     pub struct OptionalNode<T>(Option<Node<T>>);
