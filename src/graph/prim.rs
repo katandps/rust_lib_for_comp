@@ -15,7 +15,7 @@
 //!     vec![1, 4, 1, -1, 3],
 //!     vec![-1, -1, 1, 3, -1],
 //! ]);
-//! assert_eq!(5, Prim::from(&graph).sum());
+//! assert_eq!(5, Prim::from(&graph).sum);
 //! ```
 //!
 //! ## todo
@@ -27,8 +27,10 @@ use crate::prelude::*;
 
 #[snippet(name = "prim", doc_hidden)]
 pub struct Prim<W> {
-    tree: Vec<(usize, usize, W)>,
-    sum: W,
+    /// # 最小全域木(のうちの一つ) Vec<(Src, Dst, Weight)>
+    pub tree: Vec<(usize, usize, W)>,
+    /// # 最小全域木の辺の重みの総和
+    pub sum: W,
 }
 
 #[snippet(name = "prim", doc_hidden)]
@@ -60,21 +62,5 @@ where
             }
         }
         Prim { tree, sum }
-    }
-}
-
-#[snippet(name = "prim", doc_hidden)]
-/// # 最小全域木を返す
-/// Vec<(Src, Dst, Weight)> を返す
-impl<W> Prim<W> {
-    pub fn tree(&self) -> &Vec<(usize, usize, W)> {
-        &self.tree
-    }
-}
-
-#[snippet(name = "prim", doc_hidden)]
-impl<W: Copy> Prim<W> {
-    pub fn sum(&self) -> W {
-        self.sum
     }
 }

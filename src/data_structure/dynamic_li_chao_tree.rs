@@ -177,6 +177,7 @@ mod dynamic_li_chao_tree_impl {
             let mut v = Vec::new();
             while let Some((node, l, r)) = deq.pop_front() {
                 let m = (l + r) / 2;
+                v.push((l, r, self.nodes[node].line.a, self.nodes[node].line.b));
                 match (self.nodes[node].l, self.nodes[node].r) {
                     (Some(left), Some(right)) => {
                         deq.push_back((left, l, m));
@@ -184,13 +185,11 @@ mod dynamic_li_chao_tree_impl {
                     }
                     (Some(left), _) => {
                         deq.push_back((left, l, m));
-                        v.push((m, r, self.nodes[node].line.a, self.nodes[node].line.b));
                     }
                     (_, Some(right)) => {
-                        v.push((l, m, self.nodes[node].line.a, self.nodes[node].line.b));
                         deq.push_back((right, m, r));
                     }
-                    (_, _) => v.push((l, r, self.nodes[node].line.a, self.nodes[node].line.b)),
+                    (_, _) => (),
                 }
             }
             v.sort_unstable();

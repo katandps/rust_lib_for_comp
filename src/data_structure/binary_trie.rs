@@ -28,7 +28,7 @@ mod binary_trie_impl {
             self.root.count
         }
 
-        /// vをinsertする
+        /// # insert V
         /// ## 計算量
         /// $O(\text{BIT\textunderscore LEN})$
         pub fn insert(&mut self, v: u64) {

@@ -37,7 +37,7 @@ mod treap_impl {
 
     impl<T: PartialOrd + Default> Treap<T> {
         /// # 挿入
-        /// 先頭からpos(0-indexed)の位置にxを挿入
+        /// xを挿入
         ///
         /// ## 計算量
         /// $O(logN)$
@@ -47,7 +47,7 @@ mod treap_impl {
         }
 
         /// # 削除
-        /// 先頭からpos(0-indexed)の位置の要素を削除して返す
+        /// keyを削除して返す
         ///
         /// ## 計算量
         /// $O(logN)$
