@@ -1,7 +1,6 @@
 //! # 剰余体
 //!
-//! ## dependency
-//! [MontgomeryMultiplication](super::montgomery_multiplication)
+//! $2^{32}$を$R$とするモンゴメリ乗算を使用して実装
 use crate::prelude::*;
 pub use mod1000000007::{mi, Mi};
 

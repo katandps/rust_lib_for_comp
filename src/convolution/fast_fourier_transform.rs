@@ -5,6 +5,7 @@
 //! - \[一般化]Garnerのアルゴリズムによる任意modでの畳み込みの実装
 //!
 //! ## verify
+//! [ACLPracticeContestF](https://atcoder.jp/contests/practice2/submissions/35782670)
 
 use crate::{
     algebra::mod_int::{mod998244353::mod_998_244_353_impl::Mod998_244_353, ModInt},
