@@ -101,3 +101,34 @@ impl FFT<ModInt<Mod998_244_353>> {
         f
     }
 }
+
+#[cfg(test)]
+mod test {
+    use super::FFT;
+    use crate::algebra::mod_int::mod998244353::mi;
+    use crate::algo::xor_shift::XorShift;
+    #[test]
+    fn test() {
+        let mut xor_shift = XorShift::default();
+        let fft = FFT::setup();
+        for _ in 0..100 {
+            let a_len = xor_shift.rand_range(1000..2000) as usize;
+            let b_len = xor_shift.rand_range(1000..2000) as usize;
+            let a = (0..a_len)
+                .map(|_| xor_shift.rand_range(0..998244353).into())
+                .collect::<Vec<_>>();
+            let b = (0..b_len)
+                .map(|_| xor_shift.rand_range(0..998244353).into())
+                .collect::<Vec<_>>();
+            let size = a_len + b_len - 1;
+            let mut expect = vec![mi(0); size];
+            for i in 0..a_len {
+                for j in 0..b_len {
+                    expect[i + j] += a[i] * b[j];
+                }
+            }
+            let result = fft.convolution(a, b);
+            assert_eq!(expect, result);
+        }
+    }
+}
