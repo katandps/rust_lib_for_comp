@@ -6,89 +6,97 @@
 //! ## verify
 //! [ACLPracticeContestF](https://atcoder.jp/contests/practice2/submissions/35796056)
 
-use crate::{
-    algebra::mod_int::{mod998244353::mod_998_244_353_impl::Mod998_244_353, ModInt},
-    prelude::*,
-};
+use crate::prelude::*;
 #[snippet(name = "fast-fourier-transform", doc_hidden)]
 pub struct FFT<T> {
-    root: Vec<T>,
-    root_inv: Vec<T>,
+    rate: Vec<T>,
+    rate_inv: Vec<T>,
 }
 
 #[snippet(name = "fast-fourier-transform", doc_hidden)]
 mod fast_fourier_transform_impl {
-    use super::{
-        Add, Div, Mod998_244_353, ModInt, Mul, MulAssign, One, Pow, PrimitiveRoot, Sum, Zero, FFT,
-    };
+    use super::{Add, Div, DivAssign, Mul, MulAssign, One, PrimitiveRoot, Sub, Zero, FFT};
 
     impl<
             T: Copy
-                + Zero
                 + One
                 + Add<Output = T>
+                + Sub<Output = T>
                 + Mul<Output = T>
                 + Div<Output = T>
                 + MulAssign
-                + Sum
+                + DivAssign<i64>
                 + PrimitiveRoot
-                + Pow,
+                + Zero
+                + One,
         > FFT<T>
     {
-        fn fft(&self, src: &mut Vec<T>, bit: usize, inv: bool) {
-            let mut zeta = vec![T::one(); src.len()];
-            let mask1 = src.len() - 1;
-            assert!(src.len() == 1 << bit);
-            assert!(bit <= 23);
-            let root = if inv { &self.root_inv } else { &self.root }[bit];
-            for i in 1..src.len() {
-                zeta[i] = zeta[i - 1] * root;
-            }
-            for i in 0..bit {
-                let mask2 = mask1 >> (i + 1);
-                *src = (0..src.len())
-                    .map(|j| {
-                        let lower = j & mask2;
-                        let upper = j ^ lower;
-                        let shifted = upper << 1 & mask1;
-                        src[shifted | lower] + zeta[upper] * src[shifted | (mask2 + 1) | lower]
-                    })
-                    .collect::<Vec<_>>();
+        fn fft(&self, src: &mut Vec<T>, height: usize, rate: &[T]) {
+            assert!(src.len() == 1 << height);
+            for phase in 1..=height {
+                let (w, p) = (1 << (phase - 1), 1 << (height - phase));
+                let mut zeta = T::one();
+                for s in 0..w {
+                    let offset = s << (height - phase + 1);
+                    for i in 0..p {
+                        let (l, r) = (src[i + offset], src[i + offset + p] * zeta);
+                        src[i + offset] = l + r;
+                        src[i + offset + p] = l - r;
+                    }
+                    zeta *= rate[(!s).trailing_zeros() as usize];
+                }
             }
         }
-    }
-
-    impl FFT<ModInt<Mod998_244_353>> {
-        const DIVIDE_LIMIT: usize = 23;
+        fn ifft(&self, src: &mut Vec<T>, height: usize, rate_inv: &[T]) {
+            for phase in (1..=height).rev() {
+                let (w, p) = (1 << (phase - 1), 1 << (height - phase));
+                let mut zeta = T::one();
+                for s in 0..w {
+                    let offset = s << (height - phase + 1);
+                    for i in 0..p {
+                        let (l, r) = (src[i + offset], src[i + offset + p]);
+                        src[i + offset] = l + r;
+                        src[i + offset + p] = (l - r) * zeta;
+                    }
+                    zeta *= rate_inv[(!s).trailing_zeros() as usize];
+                }
+            }
+        }
 
         pub fn setup() -> Self {
-            let mut root = vec![ModInt::zero(); Self::DIVIDE_LIMIT + 1];
-            let mut root_inv = vec![ModInt::zero(); Self::DIVIDE_LIMIT + 1];
-            root[Self::DIVIDE_LIMIT] = PrimitiveRoot::primitive_root();
-            root_inv[Self::DIVIDE_LIMIT] = ModInt::one() / root[Self::DIVIDE_LIMIT];
-            for i in (0..Self::DIVIDE_LIMIT).rev() {
+            // root[i] ^ (2^i) == 1
+            let mut root = vec![T::zero(); T::DIVIDE_LIMIT + 1];
+            // root[i] * root_inv[i] == 1
+            let mut root_inv = vec![T::zero(); T::DIVIDE_LIMIT + 1];
+            root[T::DIVIDE_LIMIT] = T::primitive_root();
+            root_inv[T::DIVIDE_LIMIT] = T::one() / root[T::DIVIDE_LIMIT];
+            for i in (0..T::DIVIDE_LIMIT).rev() {
                 root[i] = root[i + 1] * root[i + 1];
                 root_inv[i] = root_inv[i + 1] * root_inv[i + 1];
             }
-            Self { root, root_inv }
+            let mut rate = vec![T::zero(); T::DIVIDE_LIMIT - 2 + 1];
+            let mut rate_inv = vec![T::zero(); T::DIVIDE_LIMIT - 2 + 1];
+            let (mut prod, mut prod_inv) = (T::one(), T::one());
+            for i in 0..=T::DIVIDE_LIMIT - 2 {
+                rate[i] = root[i + 2] * prod;
+                rate_inv[i] = root_inv[i + 2] * prod_inv;
+                prod *= root_inv[i + 2];
+                prod_inv *= root[i + 2];
+            }
+            Self { rate, rate_inv }
         }
 
-        pub fn convolution(
-            &self,
-            mut f: Vec<ModInt<Mod998_244_353>>,
-            mut g: Vec<ModInt<Mod998_244_353>>,
-        ) -> Vec<ModInt<Mod998_244_353>> {
+        pub fn convolution(&self, mut f: Vec<T>, mut g: Vec<T>) -> Vec<T> {
             let size = f.len() + g.len() - 1;
             let dim = size.next_power_of_two();
             let log2_dim = dim.trailing_zeros() as usize;
-
-            f.resize(dim, ModInt::zero());
-            g.resize(dim, ModInt::zero());
-            self.fft(&mut f, log2_dim, false);
-            self.fft(&mut g, log2_dim, false);
+            f.resize(dim, T::zero());
+            g.resize(dim, T::zero());
+            self.fft(&mut f, log2_dim, &self.rate);
+            self.fft(&mut g, log2_dim, &self.rate);
             f.iter_mut().enumerate().for_each(|(i, a)| *a *= g[i]);
-            self.fft(&mut f, log2_dim, true);
-            f.resize(size, ModInt::zero());
+            self.ifft(&mut f, log2_dim, &self.rate_inv);
+            f.resize(size, T::zero());
             f.iter_mut().for_each(|c| *c /= dim as i64);
             f
         }
@@ -123,5 +131,20 @@ mod test {
             let result = fft.convolution(a, b);
             assert_eq!(expect, result);
         }
+    }
+
+    #[test]
+    fn hand() {
+        let fft = FFT::setup();
+        let a = (1..=4).map(mi).collect();
+        let b = (5..=9).map(mi).collect();
+        let result = fft.convolution(a, b);
+        assert_eq!(
+            result,
+            vec![5, 16, 34, 60, 70, 70, 59, 36]
+                .into_iter()
+                .map(mi)
+                .collect::<Vec<_>>()
+        );
     }
 }

@@ -17,39 +17,6 @@ pub trait Mod: Copy + Clone + Debug {
     const R: u32;
     /// # $(2^{64})^2 \pmod N$
     const R_POW2: u32;
-    /// # モンゴメリ表現への変換
-    #[inline]
-    fn generate(a: u32) -> u32 {
-        Self::mrmul(a, Self::R_POW2)
-    }
-    /// # モンゴメリ表現同士の積
-    /// # $mul(ar, br) == (a * b) * r \mod N$
-    #[inline]
-    fn mrmul(ar: u32, br: u32) -> u32 {
-        let t: u64 = (ar as u64) * (br as u64);
-        let (t, f) = ((t >> 32) as u32).overflowing_sub(
-            ((((t as u32).wrapping_mul(Self::MOD_INV) as u128) * Self::MOD as u128) >> 32) as u32,
-        );
-        if f {
-            t.wrapping_add(Self::MOD)
-        } else {
-            t
-        }
-    }
-
-    /// # モンゴメリ表現 $AR$ から $A$の復元
-    /// return $a \frac R \mod N$
-    #[inline]
-    fn reduce(ar: u32) -> u32 {
-        let (t, f) = (((((ar.wrapping_mul(Self::MOD_INV)) as u128) * (Self::MOD as u128)) >> 32)
-            as u32)
-            .overflowing_neg();
-        if f {
-            t.wrapping_add(Self::MOD)
-        } else {
-            t
-        }
-    }
 }
 
 #[snippet(name = "mod-int", doc_hidden)]
@@ -65,12 +32,45 @@ mod mod_int_impl {
         MulAssign, Neg, One, PhantomData, Pow, Sub, SubAssign, Sum, Zero,
     };
 
+    /// # モンゴメリ表現への変換
+    #[inline]
+    pub const fn generate(a: u32, r2: u32, m: u32, m_inv: u32) -> u32 {
+        mrmul(a, r2, m, m_inv)
+    }
+
+    /// # モンゴメリ表現同士の積
+    /// # $mul(ar, br) == (a * b) * r \mod N$
+    #[inline]
+    pub const fn mrmul(ar: u32, br: u32, m: u32, m_inv: u32) -> u32 {
+        let t: u64 = (ar as u64) * (br as u64);
+        let (t, f) = ((t >> 32) as u32)
+            .overflowing_sub(((((t as u32).wrapping_mul(m_inv) as u128) * m as u128) >> 32) as u32);
+        if f {
+            t.wrapping_add(m)
+        } else {
+            t
+        }
+    }
+
+    /// # モンゴメリ表現 $AR$ から $A$の復元
+    /// return $a \frac R \mod N$
+    #[inline]
+    pub const fn reduce(ar: u32, m: u32, m_inv: u32) -> u32 {
+        let (t, f) =
+            (((((ar.wrapping_mul(m_inv)) as u128) * (m as u128)) >> 32) as u32).overflowing_neg();
+        if f {
+            t.wrapping_add(m)
+        } else {
+            t
+        }
+    }
     impl<M: Mod> ModInt<M> {
+        #[inline]
         pub fn new(mut n: u32) -> Self {
             if n >= M::MOD {
                 n = n.rem_euclid(M::MOD);
             }
-            Self(M::generate(n), PhantomData)
+            Self(generate(n, M::R_POW2, M::MOD, M::MOD_INV), PhantomData)
         }
 
         /// # 組み合わせnCr
@@ -92,8 +92,9 @@ mod mod_int_impl {
             ret / rev
         }
 
+        #[inline]
         pub fn get(self) -> u32 {
-            M::reduce(self.0)
+            reduce(self.0, M::MOD, M::MOD_INV)
         }
     }
 
@@ -107,9 +108,9 @@ mod mod_int_impl {
             let mut t = if e & 1 == 0 { M::R } else { self.0 };
             e >>= 1;
             while e != 0 {
-                self.0 = M::mrmul(self.0, self.0);
+                self.0 = mrmul(self.0, self.0, M::MOD, M::MOD_INV);
                 if e & 1 != 0 {
-                    t = M::mrmul(t, self.0);
+                    t = mrmul(t, self.0, M::MOD, M::MOD_INV);
                 }
                 e >>= 1;
             }
@@ -211,7 +212,7 @@ mod mod_int_impl {
     impl<M: Mod> MulAssign<ModInt<M>> for ModInt<M> {
         #[inline]
         fn mul_assign(&mut self, rhs: Self) {
-            self.0 = M::mrmul(self.0, rhs.0)
+            self.0 = mrmul(self.0, rhs.0, M::MOD, M::MOD_INV)
         }
     }
     impl<M: Mod> Div<i64> for ModInt<M> {
@@ -243,34 +244,40 @@ mod mod_int_impl {
         }
     }
     impl<M: Mod> Display for ModInt<M> {
+        #[inline]
         fn fmt(&self, f: &mut Formatter) -> std::fmt::Result {
-            write!(f, "{}", M::reduce(self.0))
+            write!(f, "{}", self.get())
         }
     }
     impl<M: Mod> Debug for ModInt<M> {
+        #[inline]
         fn fmt(&self, f: &mut Formatter) -> std::fmt::Result {
-            write!(f, "{}", M::reduce(self.0))
+            write!(f, "{}", self.get())
         }
     }
     impl<M: Mod> Sum for ModInt<M> {
+        #[inline]
         fn sum<I: Iterator<Item = Self>>(iter: I) -> Self {
             iter.fold(Self::zero(), |x, a| x + a)
         }
     }
     impl<M: Mod> FromStr for ModInt<M> {
         type Err = ParseIntError;
+        #[inline]
         fn from_str(s: &str) -> Result<Self, Self::Err> {
             Ok(Self::new(s.parse::<u32>()?))
         }
     }
     impl<M: Mod> From<i64> for ModInt<M> {
+        #[inline]
         fn from(i: i64) -> Self {
             Self::new(i.rem_euclid(M::MOD as i64) as u32)
         }
     }
     impl<M: Mod> From<ModInt<M>> for i64 {
+        #[inline]
         fn from(m: ModInt<M>) -> Self {
-            M::reduce(m.0) as i64
+            m.get() as i64
         }
     }
     impl<M: Mod> Zero for ModInt<M> {
@@ -282,7 +289,7 @@ mod mod_int_impl {
     impl<M: Mod> One for ModInt<M> {
         #[inline]
         fn one() -> Self {
-            Self::zero() + 1
+            Self::new(1)
         }
     }
 }

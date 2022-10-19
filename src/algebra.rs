@@ -169,7 +169,11 @@ mod algebra_traits {
         fn pow(self, exp: i64) -> Self;
     }
 
+    /// # 原始根の存在
     pub trait PrimitiveRoot {
+        /// # $2^{DIVIDE_LIMIT}$乗根まで存在する
+        const DIVIDE_LIMIT: usize;
+        /// # 原始根
         fn primitive_root() -> Self;
     }
 }

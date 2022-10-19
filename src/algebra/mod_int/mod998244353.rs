@@ -24,6 +24,8 @@ pub mod mod_998_244_353_impl {
         const R_POW2: u32 = 932_051_910;
     }
     impl PrimitiveRoot for Mi {
+        const DIVIDE_LIMIT: usize = 23;
+        #[inline]
         fn primitive_root() -> Self {
             let exp = (Mi::zero() - 1) / Self::new(2).pow(23);
             Mi::pow(Self::new(3), exp.into())
@@ -51,4 +53,12 @@ fn const_test() {
 
     let r2 = ((n as u64).wrapping_neg() % n as u64) as u32;
     assert_eq!(r2, Mod::R_POW2);
+}
+
+#[test]
+fn a() {
+    let exp = (Mi::zero() - 1) / Mi::new(2).pow(23);
+    dbg!(exp);
+    dbg!(Mi::new(3).pow(exp.into()));
+    dbg!(Mi::new(998244352).pow(2));
 }
