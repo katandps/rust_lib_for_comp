@@ -29,7 +29,7 @@ impl<M: Mod> ModValTable<ModInt<M>> {
         let mut inv = vec![ModInt::<M>::new(1); n + 1];
         inv[0] = ModInt::zero();
         for i in 2..=n {
-            inv[i] = ModInt::zero() - inv[M::get() as usize % i] * (M::get() / i as i64);
+            inv[i] = ModInt::zero() - inv[M::MOD as usize % i] * (M::MOD / i as u32) as i64;
         }
         for i in 2..=n {
             fact[i] = fact[i - 1] * i as i64;
@@ -133,11 +133,11 @@ impl<M: Mod> ModValTable<ModInt<M>> {
     /// $O(N)$
     /// N番目まですべて求めても $O(N)$ なので、必要な時は改造する
     pub fn montmort_number(&self, n: usize) -> ModInt<M> {
-        if n < 1 {
-            0.into()
+        if n <= 1 {
+            ModInt::zero()
         } else {
-            let mut ret = ModInt::<M>::new(0);
-            for k in 0..=n {
+            let mut ret = ModInt::zero();
+            for k in 2..=n {
                 ret += if k & 1 == 0 {
                     self.fact_inv[k]
                 } else {
