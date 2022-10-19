@@ -82,9 +82,9 @@ mod mod_int_impl {
                 r = n - r;
             }
             if r == 0 {
-                return Self::new(1);
+                return Self::one();
             }
-            let (mut ret, mut rev) = (Self::new(1), Self::new(1));
+            let (mut ret, mut rev) = (Self::one(), Self::one());
             for k in 0..r {
                 ret *= n - k;
                 rev *= r - k;
@@ -254,7 +254,7 @@ mod mod_int_impl {
     }
     impl<M: Mod> Sum for ModInt<M> {
         fn sum<I: Iterator<Item = Self>>(iter: I) -> Self {
-            iter.fold(Self::new(0), |x, a| x + a)
+            iter.fold(Self::zero(), |x, a| x + a)
         }
     }
     impl<M: Mod> FromStr for ModInt<M> {
@@ -274,13 +274,15 @@ mod mod_int_impl {
         }
     }
     impl<M: Mod> Zero for ModInt<M> {
+        #[inline]
         fn zero() -> Self {
-            Self::new(0)
+            Self(0, PhantomData)
         }
     }
     impl<M: Mod> One for ModInt<M> {
+        #[inline]
         fn one() -> Self {
-            Self::new(1)
+            Self::zero() + 1
         }
     }
 }
@@ -370,7 +372,7 @@ mod test {
     #[test]
     fn div_test() {
         for i in 1..100000 {
-            let mut a = Mi::new(1);
+            let mut a = Mi::one();
             a /= i;
             a *= i;
             assert_eq!(a.get(), 1);
