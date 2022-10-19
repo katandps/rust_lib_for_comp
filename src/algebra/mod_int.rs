@@ -22,9 +22,11 @@ pub struct ModInt<M: Mod>(mod_int_impl::InnerType, PhantomData<fn() -> M>);
 
 #[snippet(name = "mod-int", doc_hidden)]
 mod mod_int_impl {
+    use std::num::ParseIntError;
+
     use super::{
-        Add, AddAssign, Debug, Deref, DerefMut, Display, Div, DivAssign, Formatter, Mod, ModInt,
-        Mul, MulAssign, Neg, One, PhantomData, Pow, Sub, SubAssign, Sum, Zero,
+        Add, AddAssign, Debug, Deref, DerefMut, Display, Div, DivAssign, Formatter, FromStr, Mod,
+        ModInt, Mul, MulAssign, Neg, One, PhantomData, Pow, Sub, SubAssign, Sum, Zero,
     };
 
     pub type InnerType = i64;
@@ -223,6 +225,12 @@ mod mod_int_impl {
     impl<M: Mod> Sum for ModInt<M> {
         fn sum<I: Iterator<Item = Self>>(iter: I) -> Self {
             iter.fold(Self::new(0), |x, a| x + a)
+        }
+    }
+    impl<M: Mod> FromStr for ModInt<M> {
+        type Err = ParseIntError;
+        fn from_str(s: &str) -> Result<Self, Self::Err> {
+            Ok(Self::new(s.parse::<i64>()?))
         }
     }
     impl<M: Mod> From<i64> for ModInt<M> {

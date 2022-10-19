@@ -4,7 +4,7 @@ use crate::algebra::montgomery_multiplication::MontgomeryReduction;
 use crate::prelude::*;
 
 #[snippet(name = "mod1000000007", doc_hidden)]
-pub use mod_1_000_000_007_impl::{mi, Mi};
+pub use mod_1_000_000_007_impl::{mi, Mi, Mod1_000_000_007};
 
 #[snippet(name = "mod1000000007", doc_hidden)]
 mod mod_1_000_000_007_impl {

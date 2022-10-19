@@ -3,6 +3,8 @@
 //! ## todo
 //! - \[高速化]バタフライ演算を使用した非再帰での実装
 //! - \[一般化]Garnerのアルゴリズムによる任意modでの畳み込みの実装
+//!
+//! ## verify
 
 use crate::{
     algebra::mod_int::{mod998244353::mod_998_244_353_impl::Mod998_244_353, ModInt},
@@ -28,13 +30,12 @@ impl<
             + Pow,
     > FFT<T>
 {
-    fn ntt(&self, f: &[T], inverse: bool, log2_f: usize, divide_cnt: usize) -> Vec<T> {
+    fn ntt(&self, f: &mut [T], inverse: bool, log2_f: usize, divide_cnt: usize) {
         debug_assert!(log2_f < self.root.len());
         if log2_f == 0 || divide_cnt == 0 {
-            let mut ret = vec![T::zero(); f.len()];
             let mut zeta = T::one();
             for i in 0..f.len() {
-                ret[i] = (0..f.len())
+                f[i] = (0..f.len())
                     .scan(zeta, |zeta, i| {
                         let ret = f[i] * *zeta;
                         *zeta *= *zeta;
@@ -43,7 +44,6 @@ impl<
                     .sum();
                 zeta *= if inverse { &self.root } else { &self.root_inv }[0];
             }
-            ret
         } else {
             let (mut f1, mut f2) = (
                 Vec::with_capacity(f.len() / 2),
@@ -53,17 +53,13 @@ impl<
                 f1.push(f[i * 2]);
                 f2.push(f[i * 2 + 1]);
             }
-            let (f1_dft, f2_dft) = (
-                self.ntt(&f1, inverse, log2_f - 1, divide_cnt - 1),
-                self.ntt(&f2, inverse, log2_f - 1, divide_cnt - 1),
-            );
-            (0..f.len())
-                .scan(T::one(), |zeta, i| {
-                    let ret = Some(f1_dft[i % f1_dft.len()] + *zeta * f2_dft[i % f2_dft.len()]);
-                    *zeta *= if inverse { &self.root } else { &self.root_inv }[log2_f];
-                    ret
-                })
-                .collect()
+            self.ntt(&mut f1, inverse, log2_f - 1, divide_cnt - 1);
+            self.ntt(&mut f2, inverse, log2_f - 1, divide_cnt - 1);
+            let mut zeta = T::one();
+            for i in 0..f.len() {
+                f[i] = f1[i % f1.len()] + zeta * f2[i % f2.len()];
+                zeta *= if inverse { &self.root } else { &self.root_inv }[log2_f];
+            }
         }
     }
 }
@@ -83,21 +79,24 @@ impl FFT<ModInt<Mod998_244_353>> {
         }
         Self { root, root_inv }
     }
-    pub fn convolution(&self, f: &[i64], g: &[i64]) -> Vec<ModInt<Mod998_244_353>> {
-        let dim = (f.len() + g.len()).next_power_of_two();
+
+    pub fn convolution(
+        &self,
+        mut f: Vec<ModInt<Mod998_244_353>>,
+        mut g: Vec<ModInt<Mod998_244_353>>,
+    ) -> Vec<ModInt<Mod998_244_353>> {
+        let size = f.len() + g.len() - 1;
+        let dim = size.next_power_of_two();
         let log2_dim = dim.trailing_zeros() as usize;
-        let (mut nf, mut ng) = (
-            f.iter().map(|fi| ModInt::new(*fi)).collect::<Vec<_>>(),
-            g.iter().map(|gi| ModInt::new(*gi)).collect::<Vec<_>>(),
-        );
-        nf.resize(dim, ModInt::zero());
-        ng.resize(dim, ModInt::zero());
-        let (f_dft, g_dft) = (
-            self.ntt(&nf, true, log2_dim, Self::DIVIDE_LIMIT),
-            self.ntt(&ng, true, log2_dim, Self::DIVIDE_LIMIT),
-        );
-        let fg_dft = (0..dim).map(|i| f_dft[i] * g_dft[i]).collect::<Vec<_>>();
-        let fg = self.ntt(&fg_dft, false, log2_dim, Self::DIVIDE_LIMIT);
-        fg.into_iter().map(|c| c / dim as i64).collect()
+
+        f.resize(dim, ModInt::zero());
+        g.resize(dim, ModInt::zero());
+        self.ntt(&mut f, true, log2_dim, Self::DIVIDE_LIMIT);
+        self.ntt(&mut g, true, log2_dim, Self::DIVIDE_LIMIT);
+        f.iter_mut().enumerate().for_each(|(i, a)| *a *= g[i]);
+        self.ntt(&mut f, false, log2_dim, Self::DIVIDE_LIMIT);
+        f.resize(size, ModInt::zero());
+        f.iter_mut().for_each(|c| *c /= dim as i64);
+        f
     }
 }

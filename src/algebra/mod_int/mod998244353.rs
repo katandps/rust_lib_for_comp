@@ -4,7 +4,7 @@ use super::{Mod, ModInt};
 use crate::{algebra::montgomery_multiplication::MontgomeryReduction, prelude::*};
 
 #[snippet(name = "mod998244353", doc_hidden)]
-pub use mod_998_244_353_impl::{mi, Mi};
+pub use mod_998_244_353_impl::{mi, Mi, Mod998_244_353};
 
 #[snippet(name = "mod998244353", doc_hidden)]
 pub mod mod_998_244_353_impl {
