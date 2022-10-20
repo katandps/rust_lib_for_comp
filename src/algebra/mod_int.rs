@@ -34,14 +34,14 @@ mod mod_int_impl {
 
     /// # モンゴメリ表現への変換
     #[inline]
-    pub const fn generate(a: u32, r2: u32, m: u32, m_inv: u32) -> u32 {
+    pub fn generate(a: u32, r2: u32, m: u32, m_inv: u32) -> u32 {
         mrmul(a, r2, m, m_inv)
     }
 
     /// # モンゴメリ表現同士の積
     /// # $mul(ar, br) == (a * b) * r \mod N$
     #[inline]
-    pub const fn mrmul(ar: u32, br: u32, m: u32, m_inv: u32) -> u32 {
+    pub fn mrmul(ar: u32, br: u32, m: u32, m_inv: u32) -> u32 {
         let t: u64 = (ar as u64) * (br as u64);
         let (t, f) = ((t >> 32) as u32)
             .overflowing_sub(((((t as u32).wrapping_mul(m_inv) as u128) * m as u128) >> 32) as u32);
@@ -55,7 +55,7 @@ mod mod_int_impl {
     /// # モンゴメリ表現 $AR$ から $A$の復元
     /// return $a \frac R \mod N$
     #[inline]
-    pub const fn reduce(ar: u32, m: u32, m_inv: u32) -> u32 {
+    pub fn reduce(ar: u32, m: u32, m_inv: u32) -> u32 {
         let (t, f) =
             (((((ar.wrapping_mul(m_inv)) as u128) * (m as u128)) >> 32) as u32).overflowing_neg();
         if f {

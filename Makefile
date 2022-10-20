@@ -12,7 +12,7 @@ check:
 	cargo +1.42.0 check
 
 test:
-	cargo test
+	cargo +1.42.0 test
 
 snippet:
 	mkdir -p $(SNIPPETS_DIR)
