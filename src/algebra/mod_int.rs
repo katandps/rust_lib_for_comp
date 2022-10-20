@@ -14,6 +14,7 @@ pub trait Mod: Copy + Clone + Debug {
     /// # $NN^{-1}$ \equiv 1 \pmod{2^32}}$ となる$N^{-1}$
     const MOD_INV: u32;
     /// # $2^{64} \pmod N$
+    /// すなわち、$1$のモンゴメリ表現
     const R: u32;
     /// # $(2^{64})^2 \pmod N$
     const R_POW2: u32;
@@ -142,10 +143,9 @@ mod mod_int_impl {
     impl<M: Mod> AddAssign<ModInt<M>> for ModInt<M> {
         #[inline]
         fn add_assign(&mut self, rhs: Self) {
-            self.0 = if self.0 + rhs.0 >= M::MOD {
-                self.0 + rhs.0 - M::MOD
-            } else {
-                self.0 + rhs.0
+            self.0 = self.0 + rhs.0;
+            if self.0 >= M::MOD {
+                self.0 -= M::MOD
             }
         }
     }
@@ -289,7 +289,7 @@ mod mod_int_impl {
     impl<M: Mod> One for ModInt<M> {
         #[inline]
         fn one() -> Self {
-            Self::new(1)
+            Self(M::R, PhantomData)
         }
     }
 }
