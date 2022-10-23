@@ -6,7 +6,11 @@
 //!
 //! ## メモ
 //! 無向グラフに辺を順番に追加していってサイクルができた瞬間を検出するようなものはunion-findを使う
+//!
+//! ## verify
+//! [Cycle Detection](https://judge.yosupo.jp/submission/109527)
 
+use super::adjacency_list::Graph;
 use super::GraphTrait;
 use crate::prelude::*;
 
@@ -18,18 +22,23 @@ pub trait FindCycle {
     fn dfs(
         &self,
         src: usize,
+        // 頂点に対する訪問フラグ (0 => 未達, 1 => 到達済み, 2 => 処理済み)
         used: &mut Vec<u8>,
+        // 頂点に到達するために通った辺
         pre: &mut Vec<usize>,
+        // サイクルをなす辺
         cycle: &mut Vec<usize>,
+        // 無向グラフの時 true
         is_undirected_graph: bool,
     ) -> bool;
 }
 
 #[snippet(name = "find-cycle", doc_hidden)]
-impl<G: GraphTrait> FindCycle for G {
+impl<C: Clone> FindCycle for Graph<C> {
+    /// サイクルは辺の番号で表現される
     fn find_cycle(&self, is_undirected_graph: bool) -> Option<Vec<usize>> {
         let mut used = vec![0; self.size()];
-        let mut pre = vec![self.size(); self.size()];
+        let mut pre = vec![self.edges.len(); self.size()];
         let mut cycle = Vec::new();
         for i in 0..self.size() {
             if used[i] == 0 && self.dfs(i, &mut used, &mut pre, &mut cycle, is_undirected_graph) {
@@ -48,12 +57,13 @@ impl<G: GraphTrait> FindCycle for G {
         is_undirected_graph: bool,
     ) -> bool {
         used[src] = 1;
-        for (dst, _) in self.edges(src) {
-            if is_undirected_graph && pre[src] == dst {
+        for next in &self.index[src] {
+            let dst = self.edges[*next].1;
+            if is_undirected_graph && Some(pre[src]) == self.rev[*next] {
                 continue;
             }
             if used[dst] == 0 {
-                pre[dst] = src;
+                pre[dst] = *next;
                 if self.dfs(dst, used, pre, cycle, is_undirected_graph) {
                     return true;
                 }
@@ -61,9 +71,9 @@ impl<G: GraphTrait> FindCycle for G {
                 let mut cur = src;
                 while cur != dst {
                     cycle.push(pre[cur]);
-                    cur = pre[cur];
+                    cur = self[pre[cur]].0;
                 }
-                cycle.push(src);
+                cycle.push(*next);
                 return true;
             }
         }
@@ -82,12 +92,19 @@ fn test() {
     graph.add_arc(3, 4, ());
     assert_eq!(None, graph.find_cycle(false));
     graph.add_arc(3, 1, ());
-    assert_eq!(Some(vec![3, 1, 2]), graph.find_cycle(false));
+    if let Some(cycle) = graph.find_cycle(false) {
+        for i in 0..cycle.len() {
+            let (_, dst, ()) = graph[cycle[i]];
+            let (src, _, ()) = graph[cycle[(i + 1) % cycle.len()]];
+            assert_eq!(dst, src);
+        }
+    } else {
+        assert!(false, "must be found")
+    }
 }
 
 #[test]
 fn test2() {
-    // 無向グラフの場合は改造してね
     use super::adjacency_list::Graph;
     let mut graph = Graph::new(5);
     graph.add_edge(0, 1, ());
@@ -98,5 +115,20 @@ fn test2() {
     graph.add_edge(2, 3, ());
     graph.add_edge(0, 3, ());
     graph.add_edge(3, 4, ());
-    assert_eq!(Some(vec![3, 0, 1, 2]), graph.find_cycle(true));
+    if let Some(cycle) = graph.find_cycle(false) {
+        for i in 0..cycle.len() {
+            let (_, dst, ()) = graph[cycle[i]];
+            let (src, _, ()) = graph[cycle[(i + 1) % cycle.len()]];
+            assert_eq!(dst, src);
+        }
+    } else {
+        assert!(false, "must be found")
+    }
+}
+
+#[test]
+fn undirected_graph() {
+    let mut graph = Graph::new(2);
+    graph.add_edge(1, 0, ());
+    assert!(graph.find_cycle(true).is_none());
 }
