@@ -5,7 +5,7 @@
 //! - \[一般化]Garnerのアルゴリズムによる任意modでの畳み込みの実装
 //!
 //! ## verify
-//! [ACLPracticeContestF](https://atcoder.jp/contests/practice2/submissions/35810817)
+//! [ACLPracticeContestF](https://atcoder.jp/contests/practice2/submissions/36009124)
 
 use crate::prelude::*;
 #[snippet(name = "fast-fourier-transform", doc_hidden)]
@@ -48,10 +48,10 @@ mod fast_fourier_transform_impl {
                     let p = 1 << (height - phase);
                     for s in 0..1 << (phase - 1) {
                         let offset = s << (height - phase + 1);
-                        for i in 0..p {
-                            let (l, r) = (src[i + offset], src[i + offset + p] * rot);
-                            src[i + offset] = l + r;
-                            src[i + offset + p] = l - r;
+                        for i in offset..offset + p {
+                            let (l, r) = (src[i], src[i + p] * rot);
+                            src[i] = l + r;
+                            src[i + p] = l - r;
                         }
                         rot *= self.rate2[(!s).trailing_zeros() as usize];
                     }
@@ -63,17 +63,16 @@ mod fast_fourier_transform_impl {
                         let rot2 = rot * rot;
                         let rot3 = rot2 * rot;
                         let offset = s << (height - phase + 1);
-                        for i in 0..p {
-                            let (a0, a1, a2, a3) = (
-                                src[i + offset],
-                                src[i + offset + p] * rot,
-                                src[i + offset + 2 * p] * rot2,
-                                src[i + offset + 3 * p] * rot3,
-                            );
-                            src[i + offset] = a0 + a1 + a2 + a3;
-                            src[i + offset + p] = a0 + a2 - (a1 + a3);
-                            src[i + offset + 2 * p] = a0 - a2 + (a1 - a3) * imag;
-                            src[i + offset + 3 * p] = a0 - a2 - (a1 - a3) * imag;
+                        for i in offset..offset + p {
+                            let (p1, p2, p3, p4) = (i, i + p, i + 2 * p, i + 3 * p);
+                            let (a0, a1, a2, a3) =
+                                (src[p1], src[p2] * rot, src[p3] * rot2, src[p4] * rot3);
+                            let (a0a2, a0na2, a1a3, a1na3) =
+                                (a0 + a2, a0 - a2, a1 + a3, (a1 - a3) * imag);
+                            src[p1] = a0a2 + a1a3;
+                            src[p2] = a0a2 - a1a3;
+                            src[p3] = a0na2 + a1na3;
+                            src[p4] = a0na2 - a1na3;
                         }
                         rot *= self.rate3[(!s).trailing_zeros() as usize];
                     }
@@ -91,10 +90,10 @@ mod fast_fourier_transform_impl {
                     // 基数2
                     for s in 0..1 << (phase - 1) {
                         let offset = s << (height - phase + 1);
-                        for i in 0..p {
-                            let (l, r) = (src[i + offset], src[i + offset + p]);
-                            src[i + offset] = l + r;
-                            src[i + offset + p] = (l - r) * rot_inv;
+                        for i in offset..offset + p {
+                            let (l, r) = (src[i], src[i + p]);
+                            src[i] = l + r;
+                            src[i + p] = (l - r) * rot_inv;
                         }
                         rot_inv *= self.rate2_inv[(!s).trailing_zeros() as usize];
                     }
@@ -105,17 +104,15 @@ mod fast_fourier_transform_impl {
                         let rot2_inv = rot_inv * rot_inv;
                         let rot3_inv = rot2_inv * rot_inv;
                         let offset = s << (height - phase + 2);
-                        for i in 0..p {
-                            let (a0, a1, a2, a3) = (
-                                src[i + offset],
-                                src[i + offset + p],
-                                src[i + offset + 2 * p],
-                                src[i + offset + 3 * p],
-                            );
-                            src[i + offset] = a0 + a1 + a2 + a3;
-                            src[i + offset + p] = (a0 - a1 + (a2 - a3) * imag_inv) * rot_inv;
-                            src[i + offset + 2 * p] = (a0 + a1 - a2 - a3) * rot2_inv;
-                            src[i + offset + 3 * p] = (a0 - a1 - (a2 - a3) * imag_inv) * rot3_inv;
+                        for i in offset..offset + p {
+                            let (p1, p2, p3, p4) = (i, i + p, i + 2 * p, i + 3 * p);
+                            let (a0, a1, a2, a3) = (src[p1], src[p2], src[p3], src[p4]);
+                            let (a0a1, a0na1, a2a3, a2na3) =
+                                (a0 + a1, a0 - a1, a2 + a3, (a2 - a3) * imag_inv);
+                            src[p1] = a0a1 + a2a3;
+                            src[p2] = (a0na1 + a2na3) * rot_inv;
+                            src[p3] = (a0a1 - a2a3) * rot2_inv;
+                            src[p4] = (a0na1 - a2na3) * rot3_inv;
                         }
                         rot_inv *= self.rate3_inv[(!s).trailing_zeros() as usize];
                     }
@@ -189,7 +186,8 @@ mod fast_fourier_transform_impl {
 #[cfg(test)]
 mod test {
     use super::FFT;
-    use crate::algebra::mod_int::mod998244353::mi;
+    use crate::algebra::mod_int::mod998244353::{mi, Mod998_244_353};
+    use crate::algebra::mod_int::ModInt;
     use crate::algo::xor_shift::XorShift;
     #[test]
     fn rand() {
@@ -229,5 +227,22 @@ mod test {
                 .map(mi)
                 .collect::<Vec<_>>()
         );
+    }
+
+    #[test]
+    fn performance() {
+        let mut xor_shift = XorShift::default();
+        let fft: FFT<ModInt<Mod998_244_353>> = FFT::setup();
+        let a_len = 524288;
+        let b_len = 524288;
+        let a = (0..a_len)
+            .map(|_| xor_shift.rand_range(0..998244353).into())
+            .collect::<Vec<_>>();
+        let b = (0..b_len)
+            .map(|_| xor_shift.rand_range(0..998244353).into())
+            .collect::<Vec<_>>();
+        for _ in 0..10 {
+            let _result = fft.convolution(a.clone(), b.clone());
+        }
     }
 }
