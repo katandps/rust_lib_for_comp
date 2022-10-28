@@ -48,11 +48,9 @@ mod mod_int_impl {
         /// ## 計算量
         /// $M$を法として $O(r + \log M)$
         pub fn comb(n: i64, mut r: i64) -> Self {
+            assert!(0 <= r && r <= n);
             if r > n - r {
                 r = n - r;
-            }
-            if r == 0 {
-                return Self::one();
             }
             let (mut ret, mut rev) = (Self::one(), Self::one());
             for k in 0..r {
