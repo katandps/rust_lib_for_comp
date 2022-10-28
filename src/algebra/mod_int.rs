@@ -33,45 +33,14 @@ mod mod_int_impl {
         MulAssign, Neg, One, PhantomData, Pow, Sub, SubAssign, Sum, Zero,
     };
 
-    /// # モンゴメリ表現への変換
-    #[inline]
-    pub fn generate(a: u32, r2: u32, m: u32, m_inv: u32) -> u32 {
-        mrmul(a, r2, m, m_inv)
-    }
-
-    /// # モンゴメリ表現同士の積
-    /// # $mul(ar, br) == (a * b) * r \mod N$
-    #[inline]
-    pub fn mrmul(ar: u32, br: u32, m: u32, m_inv: u32) -> u32 {
-        let t: u64 = (ar as u64) * (br as u64);
-        let (t, f) = ((t >> 32) as u32)
-            .overflowing_sub(((((t as u32).wrapping_mul(m_inv) as u128) * m as u128) >> 32) as u32);
-        if f {
-            t.wrapping_add(m)
-        } else {
-            t
-        }
-    }
-
-    /// # モンゴメリ表現 $AR$ から $A$の復元
-    /// return $a \frac R \mod N$
-    #[inline]
-    pub fn reduce(ar: u32, m: u32, m_inv: u32) -> u32 {
-        let (t, f) =
-            (((((ar.wrapping_mul(m_inv)) as u128) * (m as u128)) >> 32) as u32).overflowing_neg();
-        if f {
-            t.wrapping_add(m)
-        } else {
-            t
-        }
-    }
     impl<M: Mod> ModInt<M> {
         #[inline]
         pub fn new(mut n: u32) -> Self {
             if n >= M::MOD {
                 n = n.rem_euclid(M::MOD);
             }
-            Self(generate(n, M::R_POW2, M::MOD, M::MOD_INV), PhantomData)
+            // # モンゴメリ表現への変換
+            Self(Self::mrmul(n, M::R_POW2), PhantomData)
         }
 
         /// # 組み合わせnCr
@@ -93,9 +62,33 @@ mod mod_int_impl {
             ret / rev
         }
 
+        /// # モンゴメリ表現同士の積
+        /// # $mul(ar, br) == (a * b) * r \mod N$
         #[inline]
-        pub fn get(self) -> u32 {
-            reduce(self.0, M::MOD, M::MOD_INV)
+        pub fn mrmul(ar: u32, br: u32) -> u32 {
+            let t: u64 = (ar as u64) * (br as u64);
+            let (t, f) = ((t >> 32) as u32).overflowing_sub(
+                ((((t as u32).wrapping_mul(M::MOD_INV) as u128) * M::MOD as u128) >> 32) as u32,
+            );
+            if f {
+                t.wrapping_add(M::MOD)
+            } else {
+                t
+            }
+        }
+
+        /// # モンゴメリ表現 $AR$ から $A$の復元
+        /// return $a \frac R \mod N$
+        #[inline]
+        pub fn reduce(self) -> u32 {
+            let (t, f) = (((((self.0.wrapping_mul(M::MOD_INV)) as u128) * (M::MOD as u128)) >> 32)
+                as u32)
+                .overflowing_neg();
+            if f {
+                t.wrapping_add(M::MOD)
+            } else {
+                t
+            }
         }
     }
 
@@ -109,9 +102,9 @@ mod mod_int_impl {
             let mut t = if e & 1 == 0 { M::R } else { self.0 };
             e >>= 1;
             while e != 0 {
-                self.0 = mrmul(self.0, self.0, M::MOD, M::MOD_INV);
+                self.0 = Self::mrmul(self.0, self.0);
                 if e & 1 != 0 {
-                    t = mrmul(t, self.0, M::MOD, M::MOD_INV);
+                    t = Self::mrmul(t, self.0);
                 }
                 e >>= 1;
             }
@@ -212,7 +205,7 @@ mod mod_int_impl {
     impl<M: Mod> MulAssign<ModInt<M>> for ModInt<M> {
         #[inline]
         fn mul_assign(&mut self, rhs: Self) {
-            self.0 = mrmul(self.0, rhs.0, M::MOD, M::MOD_INV)
+            self.0 = Self::mrmul(self.0, rhs.0)
         }
     }
     impl<M: Mod> Div<i64> for ModInt<M> {
@@ -246,13 +239,13 @@ mod mod_int_impl {
     impl<M: Mod> Display for ModInt<M> {
         #[inline]
         fn fmt(&self, f: &mut Formatter) -> std::fmt::Result {
-            write!(f, "{}", self.get())
+            write!(f, "{}", self.reduce())
         }
     }
     impl<M: Mod> Debug for ModInt<M> {
         #[inline]
         fn fmt(&self, f: &mut Formatter) -> std::fmt::Result {
-            write!(f, "{}", self.get())
+            write!(f, "{}", self.reduce())
         }
     }
     impl<M: Mod> Sum for ModInt<M> {
@@ -277,7 +270,7 @@ mod mod_int_impl {
     impl<M: Mod> From<ModInt<M>> for i64 {
         #[inline]
         fn from(m: ModInt<M>) -> Self {
-            m.get() as i64
+            m.reduce() as i64
         }
     }
     impl<M: Mod> Zero for ModInt<M> {
@@ -366,14 +359,14 @@ mod test {
         let a = Mi::new(1_000_000_000);
         let b = Mi::new(7);
         let c = a + b;
-        assert_eq!(c.get(), 0);
+        assert_eq!(c.reduce(), 0);
     }
 
     #[test]
     fn pow_test() {
         let a = Mi::new(3);
         let a = a.pow(4);
-        assert_eq!(a.get(), 81);
+        assert_eq!(a.reduce(), 81);
     }
 
     #[test]
@@ -382,7 +375,7 @@ mod test {
             let mut a = Mi::one();
             a /= i;
             a *= i;
-            assert_eq!(a.get(), 1);
+            assert_eq!(a.reduce(), 1);
         }
     }
 
@@ -396,31 +389,31 @@ mod test {
 
     #[test]
     fn edge_cases() {
-        assert_eq!(1, (Mi::from(MOD + 1)).get());
-        assert_eq!(291172004, (Mi::from(std::i64::MAX) + 1).get(),);
+        assert_eq!(1, (Mi::from(MOD + 1)).reduce());
+        assert_eq!(291172004, (Mi::from(std::i64::MAX) + 1).reduce(),);
         assert_eq!(Mi::new(1_000_000_000) * std::i64::MAX, mi(961796000));
         assert_eq!(Mi::new(1_000_000_000) + std::i64::MAX, mi(291171996));
         assert_eq!(Mi::new(1_000_000_000) - std::i64::MAX, mi(708827997));
         assert_eq!(
-            (Mi::new(1_000_000_000) / std::i64::MAX * std::i64::MAX).get(),
+            (Mi::new(1_000_000_000) / std::i64::MAX * std::i64::MAX).reduce(),
             1_000_000_000
         );
 
         let mut a = Mi::new(1_000_000_000);
         a *= std::i64::MAX;
-        assert_eq!(a.get(), 961796000);
+        assert_eq!(a.reduce(), 961796000);
 
         let mut a = Mi::new(1_000_000_000);
         a += std::i64::MAX;
-        assert_eq!(a.get(), 291171996);
+        assert_eq!(a.reduce(), 291171996);
 
         let mut a = Mi::new(1_000_000_000);
         a -= std::i64::MAX;
-        assert_eq!(a.get(), 708827997);
+        assert_eq!(a.reduce(), 708827997);
 
         let mut a = Mi::new(1_000_000_000);
         a /= std::i64::MAX;
-        assert_eq!((a * std::i64::MAX).get(), 1_000_000_000);
+        assert_eq!((a * std::i64::MAX).reduce(), 1_000_000_000);
     }
 
     #[test]

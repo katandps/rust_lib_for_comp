@@ -46,7 +46,7 @@ impl<M: Mod> ModValTable<ModInt<M>> {
     /// let five = ModValTable::<Mi>::new(5);
     /// let res = vec![1, 1, 2, 6, 24, 120];
     /// for i in 0..=5 {
-    ///     assert_eq!(res[i], five.factorial(i as i64).get());
+    ///     assert_eq!(res[i], five.factorial(i as i64).reduce());
     /// }
     /// ```
 
@@ -60,12 +60,12 @@ impl<M: Mod> ModValTable<ModInt<M>> {
     /// # use rust_lib_for_comp::algebra::mod_int::Mi;
     /// # use rust_lib_for_comp::algebra::mod_val_table::ModValTable;
     /// let five = ModValTable::<Mi>::new(5);
-    /// assert_eq!(1, five.permutation(5, 0).get());
-    /// assert_eq!(5, five.permutation(5, 1).get());
-    /// assert_eq!(20, five.permutation(5, 2).get());
-    /// assert_eq!(60, five.permutation(5, 3).get());
-    /// assert_eq!(120, five.permutation(5, 4).get());
-    /// assert_eq!(120, five.permutation(5, 5).get());
+    /// assert_eq!(1, five.permutation(5, 0).reduce());
+    /// assert_eq!(5, five.permutation(5, 1).reduce());
+    /// assert_eq!(20, five.permutation(5, 2).reduce());
+    /// assert_eq!(60, five.permutation(5, 3).reduce());
+    /// assert_eq!(120, five.permutation(5, 4).reduce());
+    /// assert_eq!(120, five.permutation(5, 5).reduce());
     /// ```
     pub fn permutation(&self, n: i64, r: i64) -> ModInt<M> {
         if n < r {
@@ -82,12 +82,12 @@ impl<M: Mod> ModValTable<ModInt<M>> {
     /// use rust_lib_for_comp::algebra::mod_int::Mi;
     /// use rust_lib_for_comp::algebra::mod_val_table::ModValTable;
     /// let five = ModValTable::<Mi>::new(5);
-    /// assert_eq!(1, five.combination(5, 0).get());
-    /// assert_eq!(5, five.combination(5, 1).get());
-    /// assert_eq!(10, five.combination(5, 2).get());
-    /// assert_eq!(10, five.combination(5, 3).get());
-    /// assert_eq!(5, five.combination(5, 4).get());
-    /// assert_eq!(1, five.combination(5, 5).get());
+    /// assert_eq!(1, five.combination(5, 0).reduce());
+    /// assert_eq!(5, five.combination(5, 1).reduce());
+    /// assert_eq!(10, five.combination(5, 2).reduce());
+    /// assert_eq!(10, five.combination(5, 3).reduce());
+    /// assert_eq!(5, five.combination(5, 4).reduce());
+    /// assert_eq!(1, five.combination(5, 5).reduce());
     /// ```
     pub fn combination(&self, n: i64, r: i64) -> ModInt<M> {
         if n < r {
