@@ -3,7 +3,7 @@
 //! ```
 //! # use rust_lib_for_comp::algebra::chinese_remainder_theorem::*;
 //!
-//! fn assert(b1: usize, m1: usize, b2: usize, m2: usize) {
+//! fn assert(b1: u64, m1: u64, b2: u64, m2: u64) {
 //!     let (r, m) = CRT::crt(b1, m1, b2, m2);
 //!     assert_eq!(r % m1, b1);
 //!     assert_eq!(r % m2, b2);
@@ -24,7 +24,7 @@ pub struct CRT;
 impl CRT {
     /// (r, m) の順で返却
     /// 値がない場合は(0,0)を返す
-    pub fn crt(b1: usize, m1: usize, b2: usize, m2: usize) -> (usize, usize) {
+    pub fn crt(b1: u64, m1: u64, b2: u64, m2: u64) -> (u64, u64) {
         let (b1, b2, m1, m2) = (b1 as i128, b2 as i128, m1 as i128, m2 as i128);
         let (d, p, _q) = Self::ext_gcd(m1, m2);
         if (b2 - b1) % d != 0 {
@@ -33,7 +33,7 @@ impl CRT {
             let m = m1 * (m2 / d); //lcm
             let tmp = (b2 - b1) / d * p % (m2 / d);
             let r = Self::mo(b1 + m1 * tmp, m);
-            (r as usize, m as usize)
+            (r as u64, m as u64)
         }
     }
 
