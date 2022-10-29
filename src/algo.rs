@@ -1,5 +1,6 @@
 //! 基本的なアルゴリズム/役に立つライブラリ
 
+pub mod baby_step_giant_step;
 pub mod binary_search;
 pub mod boyer_moore_majority_vote_algorithm;
 pub mod compress;
