@@ -32,9 +32,7 @@ where
     // 目標値までi回となるような値vを計算しておく → vにk回で到達できるとき、k+i回でゴールに到達できる
     let mut cur = y;
     for i in 0..=p {
-        if !candidates.contains_key(&cur) {
-            candidates.insert(cur, i);
-        }
+        candidates.entry(cur).or_insert(i);
         cur = f_inv(cur);
     }
     // $p$ 回ずつまとめてxを遷移させる → p回以内に到達できる点があれば
