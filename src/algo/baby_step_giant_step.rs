@@ -14,6 +14,7 @@
 use crate::algo::sqrt::sqrt;
 use crate::prelude::*;
 
+#[snippet(name = "baby-step-giant-step", doc_hidden)]
 pub fn baby_step_giant_step<T, F, FINV>(
     mut x: T,
     y: T,
