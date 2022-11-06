@@ -33,14 +33,21 @@ mod mod_int_impl {
         MulAssign, Neg, One, PhantomData, Pow, Sub, SubAssign, Sum, Zero,
     };
 
+    impl<M: Mod> Mod for ModInt<M> {
+        const MOD: u32 = M::MOD;
+        const MOD_INV: u32 = M::MOD_INV;
+        const R_POW2: u32 = M::R_POW2;
+        const R: u32 = M::R;
+    }
+
     impl<M: Mod> ModInt<M> {
         #[inline]
         pub fn new(mut n: u32) -> Self {
-            if n >= M::MOD {
-                n = n.rem_euclid(M::MOD);
+            if n >= Self::MOD {
+                n = n.rem_euclid(Self::MOD);
             }
             // # モンゴメリ表現への変換
-            Self(Self::mrmul(n, M::R_POW2), PhantomData)
+            Self(Self::mrmul(n, Self::R_POW2), PhantomData)
         }
 
         /// # 組み合わせnCr
@@ -66,10 +73,11 @@ mod mod_int_impl {
         pub fn mrmul(ar: u32, br: u32) -> u32 {
             let t: u64 = (ar as u64) * (br as u64);
             let (t, f) = ((t >> 32) as u32).overflowing_sub(
-                ((((t as u32).wrapping_mul(M::MOD_INV) as u128) * M::MOD as u128) >> 32) as u32,
+                ((((t as u32).wrapping_mul(Self::MOD_INV) as u128) * Self::MOD as u128) >> 32)
+                    as u32,
             );
             if f {
-                t.wrapping_add(M::MOD)
+                t.wrapping_add(Self::MOD)
             } else {
                 t
             }
@@ -79,11 +87,11 @@ mod mod_int_impl {
         /// return $a \frac R \mod N$
         #[inline]
         pub fn reduce(self) -> u32 {
-            let (t, f) = (((((self.0.wrapping_mul(M::MOD_INV)) as u128) * (M::MOD as u128)) >> 32)
-                as u32)
+            let (t, f) = (((((self.0.wrapping_mul(Self::MOD_INV)) as u128) * (Self::MOD as u128))
+                >> 32) as u32)
                 .overflowing_neg();
             if f {
-                t.wrapping_add(M::MOD)
+                t.wrapping_add(Self::MOD)
             } else {
                 t
             }
@@ -135,8 +143,8 @@ mod mod_int_impl {
         #[inline]
         fn add_assign(&mut self, rhs: Self) {
             self.0 = self.0 + rhs.0;
-            if self.0 >= M::MOD {
-                self.0 -= M::MOD
+            if self.0 >= Self::MOD {
+                self.0 -= Self::MOD
             }
         }
     }
@@ -174,7 +182,7 @@ mod mod_int_impl {
             self.0 = if self.0 >= rhs.0 {
                 self.0 - rhs.0
             } else {
-                self.0 + M::MOD - rhs.0
+                self.0 + Self::MOD - rhs.0
             }
         }
     }
@@ -231,7 +239,7 @@ mod mod_int_impl {
     impl<M: Mod> DivAssign<ModInt<M>> for ModInt<M> {
         #[inline]
         fn div_assign(&mut self, rhs: Self) {
-            *self *= rhs.pow((M::MOD - 2) as i64)
+            *self *= rhs.pow((Self::MOD - 2) as i64)
         }
     }
     impl<M: Mod> Display for ModInt<M> {
@@ -262,7 +270,7 @@ mod mod_int_impl {
     impl<M: Mod> From<i64> for ModInt<M> {
         #[inline]
         fn from(i: i64) -> Self {
-            Self::new(i.rem_euclid(M::MOD as i64) as u32)
+            Self::new(i.rem_euclid(Self::MOD as i64) as u32)
         }
     }
     impl<M: Mod> From<ModInt<M>> for i64 {
