@@ -1,4 +1,4 @@
-//! # 階乗の前計算
+//! # ModIntの逆元/階乗の前計算
 //! ModInt上での階乗や組み合わせの数え上げ
 //! 剰余類Modについて、組み合わせや順列を数え上げる
 use crate::algebra::mod_int::{Mod, ModInt};
@@ -7,8 +7,12 @@ use crate::prelude::*;
 #[snippet(name = "mod-val-table", doc_hidden)]
 #[derive(Debug)]
 pub struct ModValTable<M> {
-    fact: Vec<M>,
-    fact_inv: Vec<M>,
+    /// # inv$\[i] = i$の逆元
+    pub inv: Vec<M>,
+    /// # fact$\[i] = i!$
+    pub fact: Vec<M>,
+    /// # fact_inv$\[i] = i!$の逆元
+    pub fact_inv: Vec<M>,
 }
 
 #[snippet(name = "mod-val-table", doc_hidden)]
@@ -35,7 +39,11 @@ impl<M: Mod> ModValTable<ModInt<M>> {
             fact[i] = fact[i - 1] * i as i64;
             fact_inv[i] = fact_inv[i - 1] * inv[i];
         }
-        Self { fact, fact_inv }
+        Self {
+            inv,
+            fact,
+            fact_inv,
+        }
     }
 
     /// # Factorial 階乗
