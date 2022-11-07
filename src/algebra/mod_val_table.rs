@@ -1,7 +1,7 @@
 //! # ModIntの逆元/階乗の前計算
 //! 逆元と階乗を$O(N)$で前計算する。
 //!
-use crate::algebra::mod_int::Mod;
+use crate::algebra::mod_int::{Mod, ModInt};
 use crate::prelude::*;
 
 #[snippet(name = "mod-val-table", doc_hidden)]
@@ -19,7 +19,7 @@ pub struct ModValTable<M> {
 
 #[snippet(name = "mod-val-table", doc_hidden)]
 pub mod mod_val_table_impl {
-    use super::{AddAssign, Mod, ModValTable, Mul, Neg, One, Sub, Zero};
+    use super::{Mod, ModInt, ModValTable, One, Zero};
     impl<M: Zero + One> Default for ModValTable<M> {
         fn default() -> Self {
             let inv = vec![M::zero(), M::one()];
@@ -34,42 +34,19 @@ pub mod mod_val_table_impl {
             }
         }
     }
-    pub trait ModInt:
-        Zero
-        + One
-        + Mod
-        + Mul<i64, Output = Self>
-        + Mul<Output = Self>
-        + Sub<Output = Self>
-        + Neg<Output = Self>
-        + AddAssign
-    {
-    }
-    impl<
-            M: Zero
-                + One
-                + Mod
-                + Mul<i64, Output = Self>
-                + Mul<Output = Self>
-                + Sub<Output = Self>
-                + Neg<Output = Self>
-                + AddAssign,
-        > ModInt for M
-    {
-    }
-    impl<M: ModInt> ModValTable<M> {
+    impl<M: Mod> ModValTable<ModInt<M>> {
         /// # 初期化
         /// あるnについてModValTableを初期化する
         pub fn new(n: usize) -> Self {
-            let mut fact = vec![M::one(); n + 1];
-            let mut fact_inv = vec![M::one(); n + 1];
-            let mut inv = vec![M::one(); n + 1];
-            inv[0] = M::zero();
+            let mut fact = vec![ModInt::one(); n + 1];
+            let mut fact_inv = vec![ModInt::one(); n + 1];
+            let mut inv = vec![ModInt::one(); n + 1];
+            inv[0] = ModInt::zero();
             for i in 2..=n {
-                inv[i] = M::zero() - inv[M::MOD as usize % i] * (M::MOD / i as u32) as i64;
+                inv[i] = ModInt::zero() - inv[M::MOD as usize % i] * (M::MOD / i as u32);
             }
             for i in 2..=n {
-                fact[i] = fact[i - 1] * i as i64;
+                fact[i] = fact[i - 1] * i;
                 fact_inv[i] = fact_inv[i - 1] * inv[i];
             }
             Self {
@@ -84,15 +61,14 @@ pub mod mod_val_table_impl {
             if n <= self.limit {
                 return;
             }
-            self.inv.resize(n + 1, M::one());
-            self.fact.resize(n + 1, M::one());
-            self.fact_inv.resize(n + 1, M::one());
+            self.inv.resize(n + 1, ModInt::one());
+            self.fact.resize(n + 1, ModInt::one());
+            self.fact_inv.resize(n + 1, ModInt::one());
             for i in self.limit + 1..=n {
-                self.inv[i] =
-                    M::zero() - self.inv[M::MOD as usize % i] * (M::MOD / i as u32) as i64;
+                self.inv[i] = ModInt::zero() - self.inv[M::MOD as usize % i] * (M::MOD / i as u32);
             }
             for i in self.limit + 1..=n {
-                self.fact[i] = self.fact[i - 1] * i as i64;
+                self.fact[i] = self.fact[i - 1] * i;
                 self.fact_inv[i] = self.fact_inv[i - 1] * self.inv[i];
             }
         }
@@ -109,7 +85,7 @@ pub mod mod_val_table_impl {
         /// }
         /// ```
 
-        pub fn factorial(&mut self, n: i64) -> M {
+        pub fn factorial(&mut self, n: i64) -> ModInt<M> {
             self.init(n as usize);
             self.fact[n as usize]
         }
@@ -127,9 +103,9 @@ pub mod mod_val_table_impl {
         /// assert_eq!(120, five.permutation(5, 4).reduce());
         /// assert_eq!(120, five.permutation(5, 5).reduce());
         /// ```
-        pub fn permutation(&mut self, n: i64, r: i64) -> M {
+        pub fn permutation(&mut self, n: i64, r: i64) -> ModInt<M> {
             if n < r {
-                M::zero()
+                ModInt::zero()
             } else {
                 self.init(n as usize);
                 self.fact[n as usize] * self.fact_inv[(n - r) as usize]
@@ -150,9 +126,9 @@ pub mod mod_val_table_impl {
         /// assert_eq!(5, five.combination(5, 4).reduce());
         /// assert_eq!(1, five.combination(5, 5).reduce());
         /// ```
-        pub fn combination(&mut self, n: i64, r: i64) -> M {
+        pub fn combination(&mut self, n: i64, r: i64) -> ModInt<M> {
             if n < r {
-                M::zero()
+                ModInt::zero()
             } else {
                 self.init(n as usize);
                 self.permutation(n, r) * self.fact_inv[r as usize]
@@ -161,9 +137,9 @@ pub mod mod_val_table_impl {
 
         /// # Combinations with Replacement 重複組み合わせ
         /// $nHr = (n+r)! / k!(n-1)!$
-        pub fn combinations_with_replacement(&mut self, n: i64, r: i64) -> M {
+        pub fn combinations_with_replacement(&mut self, n: i64, r: i64) -> ModInt<M> {
             if n < r || n == 0 {
-                M::zero()
+                ModInt::zero()
             } else {
                 let (n, r) = (n as usize, r as usize);
                 self.init(n + r);
@@ -181,9 +157,9 @@ pub mod mod_val_table_impl {
         /// - N+2角形の三角形分割
         /// - 平面グラフの交差(2n人が円になって手を交差させないように握手する場合の数)
         ///
-        pub fn catalan_number(&mut self, n: i64) -> M {
+        pub fn catalan_number(&mut self, n: i64) -> ModInt<M> {
             if n < 0 {
-                M::zero()
+                ModInt::zero()
             } else {
                 let n = n as usize;
                 self.init(n * 2 + 1);
@@ -197,18 +173,14 @@ pub mod mod_val_table_impl {
         /// ## 計算量
         /// $O(N)$
         /// N番目まですべて求めても $O(N)$ なので、必要な時は改造する
-        pub fn montmort_number(&mut self, n: usize) -> M {
+        pub fn montmort_number(&mut self, n: usize) -> ModInt<M> {
             if n <= 1 {
-                M::zero()
+                ModInt::zero()
             } else {
                 self.init(n as usize);
-                let mut ret = M::zero();
+                let mut ret = ModInt::zero();
                 for k in 2..=n {
-                    ret += if k & 1 == 0 {
-                        self.fact_inv[k]
-                    } else {
-                        -self.fact_inv[k]
-                    };
+                    ret += self.fact_inv[k] * if k & 1 == 0 { 1 } else { -1 };
                 }
                 ret * self.fact[n]
             }

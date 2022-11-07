@@ -118,30 +118,18 @@ mod mod_int_impl {
             self
         }
     }
-    impl<M: Mod> Add<i64> for ModInt<M> {
+    impl<M: Mod, Rhs: Into<Self>> Add<Rhs> for ModInt<M> {
         type Output = Self;
         #[inline]
-        fn add(self, rhs: i64) -> Self {
-            self + ModInt::from(rhs)
-        }
-    }
-    impl<M: Mod> Add<ModInt<M>> for ModInt<M> {
-        type Output = Self;
-        #[inline]
-        fn add(mut self, rhs: Self) -> Self {
+        fn add(mut self, rhs: Rhs) -> Self {
             self += rhs;
             self
         }
     }
-    impl<M: Mod> AddAssign<i64> for ModInt<M> {
+    impl<M: Mod, Rhs: Into<Self>> AddAssign<Rhs> for ModInt<M> {
         #[inline]
-        fn add_assign(&mut self, rhs: i64) {
-            *self = *self + rhs
-        }
-    }
-    impl<M: Mod> AddAssign<ModInt<M>> for ModInt<M> {
-        #[inline]
-        fn add_assign(&mut self, rhs: Self) {
+        fn add_assign(&mut self, rhs: Rhs) {
+            let rhs = rhs.into();
             self.0 = self.0 + rhs.0;
             if self.0 >= Self::MOD {
                 self.0 -= Self::MOD
@@ -155,30 +143,18 @@ mod mod_int_impl {
             Self::zero() - self
         }
     }
-    impl<M: Mod> Sub<i64> for ModInt<M> {
+    impl<M: Mod, Rhs: Into<Self>> Sub<Rhs> for ModInt<M> {
         type Output = Self;
         #[inline]
-        fn sub(self, rhs: i64) -> Self {
-            self - ModInt::from(rhs)
-        }
-    }
-    impl<M: Mod> Sub<ModInt<M>> for ModInt<M> {
-        type Output = Self;
-        #[inline]
-        fn sub(mut self, rhs: Self) -> Self {
+        fn sub(mut self, rhs: Rhs) -> Self {
             self -= rhs;
             self
         }
     }
-    impl<M: Mod> SubAssign<i64> for ModInt<M> {
+    impl<M: Mod, Rhs: Into<Self>> SubAssign<Rhs> for ModInt<M> {
         #[inline]
-        fn sub_assign(&mut self, rhs: i64) {
-            *self -= Self::from(rhs)
-        }
-    }
-    impl<M: Mod> SubAssign<ModInt<M>> for ModInt<M> {
-        #[inline]
-        fn sub_assign(&mut self, rhs: Self) {
+        fn sub_assign(&mut self, rhs: Rhs) {
+            let rhs = rhs.into();
             self.0 = if self.0 >= rhs.0 {
                 self.0 - rhs.0
             } else {
@@ -186,60 +162,32 @@ mod mod_int_impl {
             }
         }
     }
-    impl<M: Mod> Mul<i64> for ModInt<M> {
+    impl<M: Mod, Rhs: Into<Self>> Mul<Rhs> for ModInt<M> {
         type Output = Self;
         #[inline]
-        fn mul(mut self, rhs: i64) -> Self {
-            self *= rhs;
+        fn mul(mut self, rhs: Rhs) -> Self {
+            self *= rhs.into();
             self
         }
     }
-    impl<M: Mod> Mul<ModInt<M>> for ModInt<M> {
+    impl<M: Mod, Rhs: Into<Self>> MulAssign<Rhs> for ModInt<M> {
+        #[inline]
+        fn mul_assign(&mut self, rhs: Rhs) {
+            self.0 = Self::mrmul(self.0, rhs.into().0)
+        }
+    }
+    impl<M: Mod, Rhs: Into<Self>> Div<Rhs> for ModInt<M> {
         type Output = Self;
         #[inline]
-        fn mul(mut self, rhs: Self) -> Self {
-            self *= rhs;
-            self
-        }
-    }
-    impl<M: Mod> MulAssign<i64> for ModInt<M> {
-        #[inline]
-        fn mul_assign(&mut self, rhs: i64) {
-            *self *= Self::from(rhs);
-        }
-    }
-    impl<M: Mod> MulAssign<ModInt<M>> for ModInt<M> {
-        #[inline]
-        fn mul_assign(&mut self, rhs: Self) {
-            self.0 = Self::mrmul(self.0, rhs.0)
-        }
-    }
-    impl<M: Mod> Div<i64> for ModInt<M> {
-        type Output = Self;
-        #[inline]
-        fn div(mut self, rhs: i64) -> Self {
+        fn div(mut self, rhs: Rhs) -> Self {
             self /= rhs;
             self
         }
     }
-    impl<M: Mod> Div<ModInt<M>> for ModInt<M> {
-        type Output = Self;
+    impl<M: Mod, Rhs: Into<Self>> DivAssign<Rhs> for ModInt<M> {
         #[inline]
-        fn div(mut self, rhs: Self) -> Self {
-            self /= rhs;
-            self
-        }
-    }
-    impl<M: Mod> DivAssign<i64> for ModInt<M> {
-        #[inline]
-        fn div_assign(&mut self, rhs: i64) {
-            *self /= Self::from(rhs)
-        }
-    }
-    impl<M: Mod> DivAssign<ModInt<M>> for ModInt<M> {
-        #[inline]
-        fn div_assign(&mut self, rhs: Self) {
-            *self *= rhs.pow((Self::MOD - 2) as i64)
+        fn div_assign(&mut self, rhs: Rhs) {
+            *self *= rhs.into().pow(Self::MOD as i64 - 2)
         }
     }
     impl<M: Mod> Display for ModInt<M> {
@@ -267,12 +215,19 @@ mod mod_int_impl {
             Ok(Self::new(s.parse::<u32>()?))
         }
     }
-    impl<M: Mod> From<i64> for ModInt<M> {
-        #[inline]
-        fn from(i: i64) -> Self {
-            Self::new(i.rem_euclid(Self::MOD as i64) as u32)
-        }
+    macro_rules! impl_integral {
+        ($($ty:ty),*) => {
+            $(
+                impl<M: Mod> From<$ty> for ModInt<M> {
+                    #[inline]
+                    fn from(i: $ty) -> Self {
+                        Self::new(i.rem_euclid(Self::MOD as $ty) as u32)
+                    }
+                }
+            )*
+        };
     }
+    impl_integral!(i32, i64, i128, isize, u32, u64, u128, usize);
     impl<M: Mod> From<ModInt<M>> for i64 {
         #[inline]
         fn from(m: ModInt<M>) -> Self {
