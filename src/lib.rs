@@ -11,7 +11,6 @@ pub mod flow;
 pub mod geometry;
 pub mod graph;
 pub mod prelude;
-pub mod solver;
 pub mod string;
 pub mod typical;
 pub mod util;
