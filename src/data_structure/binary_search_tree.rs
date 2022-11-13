@@ -121,7 +121,7 @@ impl<T: Ord + Copy> BinaryNode<T> {
 
     pub fn delete(&mut self, t: T) {
         if let Some(e) = self.0.as_mut() {
-            match (&e.key).cmp(&t) {
+            match (e.key).cmp(&t) {
                 Ordering::Greater => e.l.delete(t),
                 Ordering::Less => e.r.delete(t),
                 Ordering::Equal => {

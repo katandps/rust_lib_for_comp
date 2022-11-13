@@ -11,7 +11,7 @@ macro_rules! min {
 #[snippet(name = "xor_basis", doc_hidden)]
 pub fn xor_basis(src: &[usize]) -> Vec<usize> {
     let mut base = Vec::new();
-    for mut v in src.to_vec() {
+    for mut v in src.iter().copied() {
         for &b in &base {
             chmin!(v, v ^ b);
         }

@@ -36,7 +36,7 @@ impl BitMatrix {
     /// [ABC141F](https://atcoder.jp/contests/abc141/submissions/27476984)
     pub fn elimination(&mut self, is_extended: bool) -> usize {
         let mut rank = 0;
-        for col in (0..self.width - if is_extended { 1 } else { 0 }).rev() {
+        for col in (0..self.width - usize::from(is_extended)).rev() {
             let mut pivot = None;
             for row in rank..self.height {
                 if self.val[row][col] {

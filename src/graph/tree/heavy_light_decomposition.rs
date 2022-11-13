@@ -139,7 +139,7 @@ impl HLDecomposition {
         if self.in_time[u] > self.in_time[v] {
             swap(&mut u, &mut v)
         }
-        ret.push(self.in_time[u] + if self.edge { 1 } else { 0 }..self.in_time[v] + 1);
+        ret.push(self.in_time[u] + usize::from(self.edge)..self.in_time[v] + 1);
         ret
     }
 

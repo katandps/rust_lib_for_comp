@@ -82,15 +82,15 @@ impl WaveletMatrix {
             if f {
                 ret |= 1u64 << level
             }
-            k = self.matrix[level].rank(k, f) as usize + self.mid[level] * if f { 1 } else { 0 };
+            k = self.matrix[level].rank(k, f) as usize + self.mid[level] * usize::from(f);
         });
         ret
     }
 
     fn succ(&self, b: bool, l: usize, r: usize, level: usize) -> (usize, usize) {
         (
-            self.matrix[level].rank(l, b) + self.mid[level] * if b { 1 } else { 0 },
-            self.matrix[level].rank(r, b) + self.mid[level] * if b { 1 } else { 0 },
+            self.matrix[level].rank(l, b) + self.mid[level] * usize::from(b),
+            self.matrix[level].rank(r, b) + self.mid[level] * usize::from(b),
         )
     }
 

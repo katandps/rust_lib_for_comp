@@ -206,7 +206,7 @@ mod bitset_impl {
                 f,
                 "{}",
                 (0..self.size)
-                    .map(|i| (if self[i] { 1 } else { 0 }).to_string())
+                    .map(|i| usize::from(self[i]).to_string())
                     .collect::<String>()
             )
         }

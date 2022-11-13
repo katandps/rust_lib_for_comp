@@ -4,7 +4,7 @@ use crate::graph::GraphTrait;
 use crate::prelude::*;
 
 #[snippet(name = "retrograde-analysis", doc_hidden)]
-#[derive(Clone, Copy, Debug, PartialEq)]
+#[derive(Clone, Copy, Debug, PartialEq, Eq)]
 pub enum WinLose {
     DRAW,
     WIN,

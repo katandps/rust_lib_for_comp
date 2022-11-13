@@ -11,7 +11,7 @@ pub struct Trie<T> {
 
 impl<T: Default> Trie<T> {
     pub fn insert(&mut self, key: &[char], value: T) {
-        match key.get(0) {
+        match key.first() {
             Some(c) => self
                 .childs
                 .entry(*c)
@@ -22,7 +22,7 @@ impl<T: Default> Trie<T> {
     }
 
     pub fn get(&self, key: &[char]) -> Option<&T> {
-        match key.get(0) {
+        match key.first() {
             Some(c) => self.childs.get(c).and_then(|node| node.get(&key[1..])),
             None => self.value.as_ref(),
         }

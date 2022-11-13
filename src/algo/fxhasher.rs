@@ -16,6 +16,7 @@ mod fxhasher_impl {
     use super::{BitXor, BuildHasherDefault, Hasher, TryInto};
     use std::collections::{HashMap, HashSet};
 
+    #[derive(Default)]
     pub struct FxHasher {
         hash: u64,
     }
@@ -27,12 +28,6 @@ mod fxhasher_impl {
     const ROTATE: u32 = 5;
     const SEED: u64 = 0x51_7c_c1_b7_27_22_0a_95;
 
-    impl Default for FxHasher {
-        #[inline]
-        fn default() -> FxHasher {
-            FxHasher { hash: 0 }
-        }
-    }
     impl Hasher for FxHasher {
         #[inline]
         fn finish(&self) -> u64 {
