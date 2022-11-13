@@ -6,7 +6,7 @@
 //!
 //! ```
 //! # use rust_lib_for_comp::util::reader::*;
-//! let mut reader = ReaderFromString::new("-123 456.7 12345 hogehoge 123 456  789 012   345 678");
+//! let mut reader = ReaderFromStr::new("-123 456.7 12345 hogehoge 123 456  789 012   345 678");
 //! assert_eq!(-123, reader.v());
 //! assert_eq!(456.7, reader.v());
 //! assert_eq!(12345, reader.v());
@@ -16,7 +16,7 @@
 use crate::prelude::*;
 
 #[snippet(name = "reader", doc_hidden)]
-pub use reader_impl::{ReaderFromStdin, ReaderFromString, ReaderTrait};
+pub use reader_impl::{ReaderFromStdin, ReaderFromStr, ReaderTrait};
 #[snippet(name = "reader", doc_hidden)]
 #[rustfmt::skip]
 mod reader_impl {
@@ -95,21 +95,17 @@ mod reader_impl {
         }
     }
 
-    pub struct ReaderFromString {
+    pub struct ReaderFromStr {
         buf: VecDeque<String>,
     }
 
-    #[derive(Clone, Debug, Default)]
-    pub struct ReaderFromStdin {
-        buf: VecDeque<String>,
-    }
-    impl ReaderTrait for ReaderFromString {
+    impl ReaderTrait for ReaderFromStr {
         fn next(&mut self) -> Option<String> {
             self.buf.pop_front()
         }
     }
 
-    impl ReaderFromString {
+    impl ReaderFromStr {
         pub fn new(src: &str) -> Self {
             Self {
                 buf: src
@@ -120,9 +116,20 @@ mod reader_impl {
             }
         }
 
+        pub fn push(&mut self, src: &str) {
+            for s in src.split_whitespace().map(ToString::to_string) {
+                self.buf.push_back(s);
+            }
+        }
+
         pub fn from_file(path: &str) -> Result<Self, Box<dyn std::error::Error>> {
             Ok(Self::new(&std::fs::read_to_string(path)?))
         }
+    }
+    
+    #[derive(Clone, Debug, Default)]
+    pub struct ReaderFromStdin {
+        buf: VecDeque<String>,
     }
 
     impl ReaderTrait for ReaderFromStdin {
@@ -147,12 +154,12 @@ mod tests {
     #[test]
     fn edge_cases() {
         {
-            let mut reader = ReaderFromString::new("8");
-            assert_eq!(8u32, reader.v());
+            let mut reader = ReaderFromStr::new("8");
+            assert_eq!(8u32, reader.v::<u32>());
         }
         {
-            let mut reader = ReaderFromString::new("9");
-            assert_eq!(9i32, reader.v());
+            let mut reader = ReaderFromStr::new("9");
+            assert_eq!(9i32, reader.v::<i32>());
         }
     }
 
@@ -160,7 +167,7 @@ mod tests {
     fn map() {
         {
             let data = "...#..\n.###..\n....##";
-            let mut reader = ReaderFromString::new(data);
+            let mut reader = ReaderFromStr::new(data);
             let res = reader.char_map(3);
 
             let v = data
@@ -175,7 +182,7 @@ mod tests {
         }
         {
             let data = "S..#..\n.###..\n...G##";
-            let mut reader = ReaderFromString::new(data);
+            let mut reader = ReaderFromStr::new(data);
             let v = data
                 .split_whitespace()
                 .map(|s| s.chars().collect::<Vec<_>>())
@@ -191,7 +198,7 @@ mod tests {
 
     #[test]
     fn digits() {
-        let mut reader = ReaderFromString::new("123456");
+        let mut reader = ReaderFromStr::new("123456");
         let res = reader.digits();
         assert_eq!(res, vec![1, 2, 3, 4, 5, 6]);
     }

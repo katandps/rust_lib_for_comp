@@ -12,7 +12,7 @@ pub use std::{
     convert::{TryFrom, TryInto},
     fmt::{Debug, Display, Formatter},
     hash::{Hash, BuildHasherDefault, Hasher},
-    io::{stdin, stdout, BufRead, BufWriter, Read, Write},
+    io::{stdin, stdout, BufRead, BufWriter, Read, Write,StdoutLock},
     iter::{repeat, Product, Sum},
     marker::PhantomData,
     mem::swap,
@@ -27,5 +27,5 @@ pub use std::{
 pub use crate::algebra::*;
 pub use crate::algo::fxhasher::*;
 pub use crate::algo::range::ToLR;
-pub use crate::util::{reader::*, writer::*};
+pub use crate::util::{io::*, io_debug::*, reader::*, writer::*};
 pub use cargo_snippet::snippet;
