@@ -5,7 +5,7 @@ use crate::prelude::*;
 #[snippet(name = "writer", doc_hidden)]
 pub use writer_impl::{AddLineTrait, BitsTrait, JoinTrait, WriterToStdout, WriterTrait};
 #[snippet(name = "writer", doc_hidden)]
-// #[rustfmt::skip]
+#[rustfmt::skip]
 mod writer_impl {
     use super::{stdout, BufWriter, Display, Integral, Write};
     pub trait WriterTrait {

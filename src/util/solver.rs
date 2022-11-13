@@ -13,6 +13,7 @@ use crate::prelude::*;
 #[snippet(include = "debug")]
 #[snippet(include = "faster-hashmap")]
 #[snippet(include = "in-out")]
+#[snippet(include = "io-debug")]
 #[rustfmt::skip]
 pub fn main() {
     std::thread::Builder::new()

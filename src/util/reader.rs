@@ -20,7 +20,7 @@ pub use reader_impl::{ReaderFromStdin, ReaderFromStr, ReaderTrait};
 #[snippet(name = "reader", doc_hidden)]
 #[rustfmt::skip]
 mod reader_impl {
-    use super::{stdin, BufRead, FromStr as FS, VecDeque};
+    use super::{stdin, BufRead, FromStr as FS, VecDeque, Display, WriterTrait};
 
     pub trait ReaderTrait {
         fn next(&mut self) -> Option<String>;
@@ -125,6 +125,13 @@ mod reader_impl {
         pub fn from_file(path: &str) -> Result<Self, Box<dyn std::error::Error>> {
             Ok(Self::new(&std::fs::read_to_string(path)?))
         }
+    }
+
+    impl WriterTrait for ReaderFromStr {
+        fn out<S: Display>(&mut self, s: S) {
+            self.push(&s.to_string());
+        }
+        fn flush(&mut self) {}
     }
     
     #[derive(Clone, Debug, Default)]

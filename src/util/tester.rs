@@ -13,7 +13,12 @@ fn test() {
             .name("extend stack size".into())
             .stack_size(32 * 1024 * 1024)
             .spawn(move || {
-                let mut io = IODebug::new(suit);
+                let mut io = IODebug::new(
+                    suit,
+                    |outer: &mut ReaderFromStr, inner: &mut ReaderFromStr| {
+                        inner.out(outer.v::<String>())
+                    },
+                );
                 solve(&mut io);
                 io.flush();
             })
