@@ -25,15 +25,6 @@ mod io_impl {
         fn out<S: std::fmt::Display>(&mut self, s: S) {
             self.writer.out(s)
         }
-        fn ln<S: std::fmt::Display>(&mut self, s: S) {
-            self.writer.ln(s)
-        }
-        fn join<S: std::fmt::Display, I: IntoIterator<Item = S>>(&mut self, i: I, separator: &str) {
-            self.writer.join(i, separator)
-        }
-        fn bits(&mut self, i: i64, len: usize) {
-            self.writer.bits(i, len)
-        }
         fn flush(&mut self) {
             self.writer.flush()
         }

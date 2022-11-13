@@ -10,33 +10,19 @@ mod io_debug_impl {
     use super::{stdout, BufWriter, Display, ReaderFromStr, ReaderTrait, Write, WriterTrait};
 
     pub struct IODebug {
-        reader: ReaderFromStr,
+        pub reader: ReaderFromStr,
+        pub test_reader: ReaderFromStr,
         buf: String,
     }
 
     impl WriterTrait for IODebug {
-        fn ln<S: Display>(&mut self, s: S) {
-            self.out(s);
-            self.buf.push('\n')
-        }
         fn out<S: Display>(&mut self, s: S) {
             self.buf.push_str(&s.to_string());
-        }
-        fn join<S: Display, I: IntoIterator<Item = S>>(&mut self, i: I, separator: &str) {
-            i.into_iter().fold("", |sep, arg| {
-                self.buf.push_str(&format!("{}{}", sep, arg));
-                separator
-            });
-            self.buf.push('\n');
-        }
-        fn bits(&mut self, i: i64, len: usize) {
-            (0..len).for_each(|b| self.buf.push_str(&format!("{}", i >> b & 1)));
-            self.buf.push('\n');
         }
         fn flush(&mut self) {
             let stdout = stdout();
             let mut writer = BufWriter::new(stdout.lock());
-            self.reader.push(&self.buf);
+            self.test_reader.push(&self.buf);
             write!(writer, "{}", self.buf).expect("Failed to write.");
             let _ = writer.flush();
             self.buf.clear();
@@ -53,6 +39,7 @@ mod io_debug_impl {
         pub fn new(str: &str) -> Self {
             Self {
                 reader: ReaderFromStr::new(str),
+                test_reader: ReaderFromStr::new(""),
                 buf: String::new(),
             }
         }
@@ -63,12 +50,12 @@ mod io_debug_impl {
 fn test() {
     let mut io = IODebug::new("");
     io.out(123);
-    io.ln(456);
-    io.join(&[1, 2, 3, 4, 5], " ");
-    io.bits(13, 5);
+    io.out(456.ln());
+    io.out(&[1, 2, 3, 4, 5].join(" "));
+    io.out(13.bits(5));
     io.flush();
     for &expect in &["123456", "1", "2", "3", "4", "5", "10110"] {
-        assert_eq!(Some(expect.to_string()), io.next());
+        assert_eq!(Some(expect.to_string()), io.test_reader.next());
     }
     assert!(io.next().is_none());
 }

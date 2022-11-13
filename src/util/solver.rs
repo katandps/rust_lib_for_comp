@@ -29,7 +29,8 @@ pub fn main() {
 }
 
 #[snippet("solver")]
+
 pub fn solve<IO: ReaderTrait + WriterTrait>(io: &mut IO) {
     let n: usize = io.v();
-    io.ln(n);
+    io.out(n.ln());
 }

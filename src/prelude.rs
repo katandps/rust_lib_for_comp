@@ -27,5 +27,6 @@ pub use std::{
 pub use crate::algebra::*;
 pub use crate::algo::fxhasher::*;
 pub use crate::algo::range::ToLR;
+pub use crate::element::integral::*;
 pub use crate::util::{io::*, io_debug::*, reader::*, writer::*};
 pub use cargo_snippet::snippet;

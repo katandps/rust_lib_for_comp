@@ -9,11 +9,11 @@ use crate::prelude::*;
 pub fn encode(s: &[char]) -> Vec<char> {
     let mut cur = '-';
     let mut cnt = 0;
-    let mut ans = Vec::new();
+    let mut ret = String::new();
     for c in s {
         if &cur != c {
             if cnt != 0 {
-                ans.push(format!("{}{}", cur, cnt));
+                ret += &format!("{}{}", cur, cnt);
             }
             cur = *c;
             cnt = 0;
@@ -21,9 +21,9 @@ pub fn encode(s: &[char]) -> Vec<char> {
         cnt += 1;
     }
     if cnt > 0 {
-        ans.push(format!("{}{}", cur, cnt));
+        ret += &format!("{}{}", cur, cnt);
     }
-    ans.join("").chars().collect()
+    ret.chars().collect()
 }
 
 #[test]
