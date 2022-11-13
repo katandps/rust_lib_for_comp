@@ -5,6 +5,31 @@
 
 競技プログラミングで使用できるライブラリ及び、各種サイトに参加するためのテンプレート
 
-## ライブラリ
+## About
 
 masterにpushするとテスト/静的解析/Doc生成が走る
+
+## Usage
+
+### Export snippets
+
+#### Install
+`cargo-snippet`を使用しています。
+```sh
+rustup component add rustfmt
+cargo install cargo-snippet --features="binaries"
+```
+
+#### Export
+```
+cargo snippet
+```
+
+### Benchmark
+criterionによるベンチマークに対応しています。
+
+#### Install
+#### bench
+```
+cargo bench
+```

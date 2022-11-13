@@ -8,7 +8,7 @@ use crate::prelude::*;
 #[derive(Clone, Debug)]
 pub struct HLDecomposition {
     graph: Vec<Vec<usize>>,
-    root: usize,
+    _root: usize,
     size: Vec<usize>,
     /// 行きがけ順で頂点に到達した時間
     in_time: Vec<usize>,
@@ -32,7 +32,7 @@ impl HLDecomposition {
     pub fn build<G: GraphTrait>(g: &G, root: usize) -> Self {
         let mut this = Self {
             graph: vec![Vec::new(); g.size()],
-            root,
+            _root: root,
             size: vec![1; g.size()],
             in_time: vec![0; g.size()],
             rev: vec![0; g.size()],
