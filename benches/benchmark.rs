@@ -1,4 +1,4 @@
-mod binary_trie;
+mod set;
 
 use criterion::criterion_main;
-criterion_main!(binary_trie::insert);
+criterion_main!(set::insert);
