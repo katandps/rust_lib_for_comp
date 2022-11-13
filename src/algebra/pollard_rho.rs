@@ -79,7 +79,7 @@ impl PollardRho for u64 {
         }
         let mut ret = Vec::new();
         let mut t = *self;
-        for p in vec![2, 3, 5, 7, 11, 13, 17] {
+        for &p in &[2, 3, 5, 7, 11, 13, 17] {
             if t.is_prime() || t <= p {
                 break;
             }
@@ -90,10 +90,10 @@ impl PollardRho for u64 {
         }
         let p = find_cycle_by_brent(t);
         if t == 1 || p == 1 {
-            return ret;
+            ret
         } else if p == t {
             ret.push(p);
-            return ret;
+            ret
         } else {
             ret.append(&mut p.prime_factorize());
             ret.append(&mut (t / p).prime_factorize());
