@@ -9,16 +9,17 @@ pub trait Integral: 'static + Send + Sync + Copy + Ord + Display + Debug
 + AddAssign + SubAssign + MulAssign + DivAssign + RemAssign + Sum + Product
 + BitOr<Output = Self> + BitAnd<Output = Self> + BitXor<Output = Self> + Not<Output = Self> + Shl<Output = Self> + Shr<Output = Self>
 + BitOrAssign + BitAndAssign + BitXorAssign + ShlAssign + ShrAssign
-+ Zero + One + BoundedBelow + BoundedAbove{}
++ Zero + One + BoundedBelow + BoundedAbove + TrailingZeros{}
 
 #[snippet(name = "algebra", doc_hidden)]
 macro_rules! impl_integral {
     ($($ty:ty),*) => {
         $(
-            impl Zero for $ty { fn zero() -> Self { 0 }}
-            impl One for $ty { fn one() -> Self { 1 }}
-            impl BoundedBelow for $ty { fn min_value() -> Self { Self::min_value() }}
-            impl BoundedAbove for $ty { fn max_value() -> Self { Self::max_value() }}
+            impl Zero for $ty { #[inline] fn zero() -> Self { 0 }}
+            impl One for $ty { #[inline] fn one() -> Self { 1 }}
+            impl BoundedBelow for $ty { #[inline] fn min_value() -> Self { Self::min_value() }}
+            impl BoundedAbove for $ty { #[inline] fn max_value() -> Self { Self::max_value() }}
+            impl TrailingZeros for $ty { #[inline] fn trailing_zero(self) -> Self { self.trailing_zeros() as $ty}}
             impl Integral for $ty {}
         )*
     };

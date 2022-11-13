@@ -10,7 +10,8 @@
 //! [miller_rabin](crate::algebra::miller_rabin)
 //!
 //! ## verify
-//! [ポラードのロー素因数分解法](https://algo-method.com/submissions/611854)
+//! [ポラードのロー素因数分解法](https://algo-method.com/submissions/683415)
+//! [Factorize](https://judge.yosupo.jp/submission/112482)
 
 use crate::{
     algebra::{
@@ -76,14 +77,29 @@ impl PollardRho for u64 {
             }
             panic!("not found cycle.")
         }
-        let p = find_cycle_by_brent(*self);
-        if &p == self {
-            return vec![p];
+        let mut ret = Vec::new();
+        let mut t = *self;
+        for p in vec![2, 3, 5, 7, 11, 13, 17] {
+            if t.is_prime() || t <= p {
+                break;
+            }
+            while t % p == 0 {
+                ret.push(p);
+                t /= p;
+            }
         }
-        let mut ret = p.prime_factorize();
-        ret.append(&mut (*self / p).prime_factorize());
-        ret.sort_unstable();
-        ret
+        let p = find_cycle_by_brent(t);
+        if t == 1 || p == 1 {
+            return ret;
+        } else if p == t {
+            ret.push(p);
+            return ret;
+        } else {
+            ret.append(&mut p.prime_factorize());
+            ret.append(&mut (t / p).prime_factorize());
+            ret.sort_unstable();
+            ret
+        }
     }
 }
 #[test]

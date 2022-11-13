@@ -12,6 +12,7 @@ pub trait ToLR<T> {
 impl<R: RangeBounds<T>, T: Copy + BoundedAbove + BoundedBelow + One + Add<Output = T>> ToLR<T>
     for R
 {
+    #[inline]
     fn to_lr(&self) -> (T, T) {
         use Bound::{Excluded, Included, Unbounded};
         let l = match self.start_bound() {

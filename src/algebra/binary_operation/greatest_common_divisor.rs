@@ -17,34 +17,60 @@
 //! [algebra](crate::algebra)
 use crate::prelude::*;
 
+pub mod naive_impl;
+
 #[snippet(name = "gcd-operation", doc_hidden)]
-#[derive(Clone, Debug, Default)]
-pub struct Gcd<S>(PhantomData<fn() -> S>);
+pub use gcd_impl::Gcd;
 #[snippet(name = "gcd-operation", doc_hidden)]
 mod gcd_impl {
+    use std::ops::{BitOr, Shl, ShrAssign, SubAssign};
+
     use super::{
-        swap, Associative, Commutative, Debug, Gcd, Idempotent, Magma, RemAssign, Unital, Zero,
+        swap, Associative, Commutative, Debug, Idempotent, Magma, PhantomData, TrailingZeros,
+        Unital, Zero,
     };
-    impl<S: Clone + Debug + RemAssign + PartialOrd + Zero> Magma for Gcd<S> {
+
+    #[derive(Clone, Debug, Default)]
+    pub struct Gcd<S>(PhantomData<fn() -> S>);
+
+    #[rustfmt::skip]
+    pub trait GcdNeedTrait: Clone + Copy + Debug + PartialOrd + Zero + BitOr<Output = Self>
+        + ShrAssign + Shl<Output = Self> + SubAssign + TrailingZeros{}
+    #[rustfmt::skip]
+    impl<S: Clone + Copy + Debug + PartialOrd + Zero + BitOr<Output = S>
+        + ShrAssign + Shl<Output = S> + SubAssign + TrailingZeros> GcdNeedTrait for S{}
+
+    impl<S: GcdNeedTrait> Magma for Gcd<S> {
         type M = S;
+        #[inline]
         fn op(x: &S, y: &S) -> S {
-            let (mut x, mut y) = (x.clone(), y.clone());
-            if y > x {
-                swap(&mut x, &mut y);
+            if x == &S::zero() {
+                return *y;
             }
-            while y != S::zero() {
-                x %= y.clone();
-                swap(&mut x, &mut y);
+            if y == &S::zero() {
+                return *x;
             }
-            x
+            let (mut x, mut y) = (*x, *y);
+            let s = (x | y).trailing_zero();
+            x >>= x.trailing_zero();
+            // do-while
+            while {
+                y >>= y.trailing_zero();
+                if x > y {
+                    swap(&mut x, &mut y);
+                }
+                y -= x;
+                y > S::zero()
+            } {}
+            x << s
         }
     }
-    impl<S: Clone + Debug + RemAssign + PartialOrd + Zero> Associative for Gcd<S> {}
-    impl<S: Clone + Debug + RemAssign + PartialOrd + Zero> Unital for Gcd<S> {
+    impl<S: GcdNeedTrait> Associative for Gcd<S> {}
+    impl<S: GcdNeedTrait> Unital for Gcd<S> {
         fn unit() -> S {
             S::zero()
         }
     }
-    impl<S: Clone + Debug + RemAssign + PartialOrd + Zero> Commutative for Gcd<S> {}
-    impl<S: Clone + Debug + RemAssign + PartialOrd + Zero> Idempotent for Gcd<S> {}
+    impl<S: GcdNeedTrait> Commutative for Gcd<S> {}
+    impl<S: GcdNeedTrait> Idempotent for Gcd<S> {}
 }

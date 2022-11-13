@@ -22,7 +22,7 @@ pub mod xor_basis;
 pub use algebra_traits::{
     AbelianGroup, Associative, Band, BoundedAbove, BoundedBelow, Commutative, CommutativeMonoid,
     Group, Idempotent, Invertible, Magma, MapMonoid, Monoid, One, Pow, PrimitiveRoot, SemiGroup,
-    Unital, Zero,
+    Unital, Zero,TrailingZeros
 };
 
 #[snippet(name = "algebra", doc_hidden)]
@@ -175,5 +175,9 @@ mod algebra_traits {
         const DIVIDE_LIMIT: usize;
         /// # 原始根
         fn primitive_root() -> Self;
+    }
+
+    pub trait TrailingZeros {
+        fn trailing_zero(self) -> Self;
     }
 }
