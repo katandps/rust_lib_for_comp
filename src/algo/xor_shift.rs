@@ -50,5 +50,11 @@ mod xor_shift_impl {
             const LOWER_MASK: u64 = 0xFFFFFFFFFFFFF;
             f64::from_bits(UPPER_MASK | (self.next().unwrap() & LOWER_MASK)) - 1.0
         }
+
+        pub fn shuffle<T>(&mut self, s: &mut [T]) {
+            for i in 0..s.len() {
+                s.swap(i, self.rand_range(i as i64..s.len() as i64) as usize);
+            }
+        }
     }
 }
