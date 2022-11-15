@@ -5,7 +5,7 @@ use crate::prelude::*;
 #[snippet(name = "io-debug", doc_hidden)]
 pub use io_debug_impl::IODebug;
 #[snippet(name = "io-debug", doc_hidden)]
-// #[rustfmt::skip]
+#[rustfmt::skip]
 mod io_debug_impl {
     use super::{stdout, BufWriter, Display, ReaderFromStr, ReaderTrait, Write, WriterTrait};
 
@@ -13,6 +13,7 @@ mod io_debug_impl {
         pub reader: ReaderFromStr,
         pub test_reader: ReaderFromStr,
         pub buf: String,
+        stdout: bool,
         f: F,
     }
 
@@ -21,11 +22,13 @@ mod io_debug_impl {
             self.buf.push_str(&s.to_string());
         }
         fn flush(&mut self) {
-            let stdout = stdout();
-            let mut writer = BufWriter::new(stdout.lock());
+            if self.stdout {
+                let stdout = stdout();
+                let mut writer = BufWriter::new(stdout.lock());
+                write!(writer, "{}", self.buf).expect("Failed to write.");
+                let _ = writer.flush();
+            }
             self.test_reader.push(&self.buf);
-            write!(writer, "{}", self.buf).expect("Failed to write.");
-            let _ = writer.flush();
             self.buf.clear();
             (self.f)(&mut self.test_reader, &mut self.reader)
         }
@@ -38,11 +41,12 @@ mod io_debug_impl {
     }
 
     impl<F> IODebug<F> {
-        pub fn new(str: &str, f: F) -> Self {
+        pub fn new(str: &str, stdout: bool, f: F) -> Self {
             Self {
                 reader: ReaderFromStr::new(str),
                 test_reader: ReaderFromStr::new(""),
                 buf: String::new(),
+                stdout,
                 f,
             }
         }
@@ -51,7 +55,7 @@ mod io_debug_impl {
 
 #[test]
 fn test() {
-    let mut io = IODebug::new("", |_: &mut ReaderFromStr, _: &mut ReaderFromStr| ());
+    let mut io = IODebug::new("", false, |_: &mut ReaderFromStr, _: &mut ReaderFromStr| ());
     io.out(123);
     io.out(456.ln());
     io.out(&[1, 2, 3, 4, 5].join(" "));
@@ -68,6 +72,7 @@ fn interactive_test() {
     let mut buf = 100i64;
     let mut io = IODebug::new(
         "100",
+        false,
         |outer: &mut ReaderFromStr, inner: &mut ReaderFromStr| {
             buf += outer.v::<i64>();
             inner.out(buf);
