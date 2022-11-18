@@ -7,48 +7,45 @@
 //! [ABC226F](https://atcoder.jp/contests/abc226/submissions/27139567)
 
 use crate::prelude::*;
-
 #[snippet(name = "split-of-natural-number", doc_hidden)]
-#[derive(Clone, Debug)]
-pub struct SplitOfNumber(Option<Vec<usize>>);
-
+pub use split_of_natural_number_impl::SplitOfNumber;
 #[snippet(name = "split-of-natural-number", doc_hidden)]
-impl Iterator for SplitOfNumber {
-    type Item = Vec<usize>;
-    fn next(&mut self) -> Option<Vec<usize>> {
-        let ret = self.0.clone();
-        if let Some(v) = &mut self.0 {
-            match v.iter().rposition(|&x| x != 1) {
-                None => self.0 = None,
-                Some(i) => {
-                    let others = v.split_off(i);
-                    let mut rest = others.iter().sum::<usize>();
-                    let max = others[0] - 1;
-                    while rest > 0 {
-                        let next = rest.min(max);
-                        v.push(next);
-                        rest -= next;
+mod split_of_natural_number_impl {
+    #[derive(Clone, Debug)]
+    pub struct SplitOfNumber(Option<Vec<usize>>);
+    impl Iterator for SplitOfNumber {
+        type Item = Vec<usize>;
+        fn next(&mut self) -> Option<Vec<usize>> {
+            let ret = self.0.clone();
+            if let Some(v) = &mut self.0 {
+                match v.iter().rposition(|&x| x != 1) {
+                    None => self.0 = None,
+                    Some(i) => {
+                        let others = v.split_off(i);
+                        let mut rest = others.iter().sum::<usize>();
+                        let max = others[0] - 1;
+                        while rest > 0 {
+                            let next = rest.min(max);
+                            v.push(next);
+                            rest -= next;
+                        }
                     }
                 }
-            }
-        } else {
-            self.0 = None
-        };
-        ret
+            } else {
+                self.0 = None
+            };
+            ret
+        }
     }
-}
-
-#[snippet(name = "split-of-natural-number", doc_hidden)]
-impl From<usize> for SplitOfNumber {
-    fn from(n: usize) -> Self {
-        SplitOfNumber(Some(vec![n]))
+    impl From<usize> for SplitOfNumber {
+        fn from(n: usize) -> Self {
+            SplitOfNumber(Some(vec![n]))
+        }
     }
-}
-
-#[snippet(name = "split-of-natural-number", doc_hidden)]
-impl From<&[usize]> for SplitOfNumber {
-    fn from(src: &[usize]) -> Self {
-        SplitOfNumber(Some(src.to_vec()))
+    impl From<&[usize]> for SplitOfNumber {
+        fn from(src: &[usize]) -> Self {
+            SplitOfNumber(Some(src.to_vec()))
+        }
     }
 }
 
