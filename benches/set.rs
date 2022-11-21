@@ -24,11 +24,19 @@ fn insert_to_set(c: &mut Criterion) {
             }
         });
     });
-    c.bench_function("Insert 100 entries to BinaryTrie", |b| {
+    c.bench_function("Insert 100 entries to 60-bits BinaryTrie", |b| {
         b.iter(|| {
-            let mut trie = BinaryTrie::default();
+            let mut trie = BinaryTrie::new(60);
             for _ in 0..100 {
                 trie.insert(xorshift.rand(1 << 60));
+            }
+        })
+    });
+    c.bench_function("Insert 100 entries to 32-bits BinaryTrie", |b| {
+        b.iter(|| {
+            let mut trie = BinaryTrie::new(32);
+            for _ in 0..100 {
+                trie.insert(xorshift.rand(1 << 32));
             }
         })
     });
