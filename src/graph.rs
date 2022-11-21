@@ -16,6 +16,7 @@ pub mod prim;
 pub mod retrograde_analysis;
 pub mod strongly_connected_components;
 pub mod tree;
+pub mod undirected_unweighted_simple_graph;
 pub mod warshall_floyd;
 
 #[snippet(name = "graph", doc_hidden)]
