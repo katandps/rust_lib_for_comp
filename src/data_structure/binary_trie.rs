@@ -7,19 +7,29 @@
 use crate::prelude::*;
 
 #[snippet(name = "binary-trie", doc_hidden)]
-#[derive(Clone, Default)]
-pub struct BinaryTrie {
-    root: binary_trie_impl::TrieNode,
-    xor_val: u64,
-}
-
+pub use binary_trie_impl::BinaryTrie;
 #[snippet(name = "binary-trie", doc_hidden)]
 mod binary_trie_impl {
-    use super::{BinaryTrie, Debug, Formatter};
+    use super::{Debug, Formatter};
     type TrieValue = u64;
+
+    #[derive(Clone)]
+    pub struct BinaryTrie {
+        root: TrieNode,
+        xor_val: u64,
+        bit_len: i64,
+    }
+
     impl BinaryTrie {
-        /// $2^{60}$ 未満の非負整数を登録できる
-        pub const BIT_LEN: i64 = 60;
+        /// $2^{63}$ 未満の非負整数を登録できる
+        pub fn new(bit_len: i64) -> Self {
+            assert!(bit_len >= 0 && bit_len <= 63);
+            Self {
+                bit_len,
+                root: TrieNode::default(),
+                xor_val: 0,
+            }
+        }
 
         /// 今までにinsertした個数を取得する
         /// ## 計算量
@@ -32,36 +42,36 @@ mod binary_trie_impl {
         /// ## 計算量
         /// $O(\text{BIT\textunderscore LEN})$
         pub fn insert(&mut self, v: u64) {
-            self.root.add(v, Self::BIT_LEN - 1);
+            self.root.add(v, self.bit_len - 1);
         }
 
         /// vを一つ削除する
         /// ## 計算量
         /// $O(\text{BIT\textunderscore LEN})$
         pub fn erase(&mut self, v: TrieValue) {
-            self.root.sub(v, Self::BIT_LEN - 1);
+            self.root.sub(v, self.bit_len - 1);
         }
 
         /// xor_valとXORをとったときに最小値となるような値を取得する
         /// ## 計算量
         /// $O(\text{BIT\textunderscore LEN})$
         pub fn min_element(&self) -> TrieValue {
-            self.root.get_min(self.xor_val, Self::BIT_LEN - 1)
+            self.root.get_min(self.xor_val, self.bit_len - 1)
         }
 
         /// biasとXORをとったときに最大値となるような値を取得する
         /// ## 計算量
         /// $O(\text{BIT\textunderscore LEN})$
         pub fn max_element(&self) -> TrieValue {
-            self.root.get_min(self.rev_xor_val(), Self::BIT_LEN - 1)
+            self.root.get_min(self.rev_xor_val(), self.bit_len - 1)
         }
 
-        /// 小さい方からk番目の値を取得する
+        /// 小さい方からn番目の値を取得する
         /// ## 計算量
         /// $O(\text{BIT\textunderscore LEN})$
         pub fn nth(&self, k: usize) -> TrieValue {
             assert!(k <= self.size());
-            self.root.get(k, Self::BIT_LEN - 1)
+            self.root.get(k, self.bit_len - 1)
         }
 
         /// # bias変更
@@ -70,7 +80,7 @@ mod binary_trie_impl {
         }
 
         fn rev_xor_val(&self) -> u64 {
-            self.xor_val ^ ((1 << Self::BIT_LEN) - 1)
+            self.xor_val ^ ((1 << self.bit_len) - 1)
         }
     }
 
@@ -158,7 +168,7 @@ pub mod test {
     use super::*;
     #[test]
     fn test() {
-        let mut trie = BinaryTrie::default();
+        let mut trie = BinaryTrie::new(5);
         trie.insert(5);
         trie.insert(6);
         trie.insert(7);
