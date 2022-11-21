@@ -11,6 +11,7 @@ pub struct XorShift {
 mod xor_shift_impl {
     use super::{RangeBounds, ToLR, XorShift};
     impl Default for XorShift {
+        #[inline]
         fn default() -> Self {
             let seed = 0xf0fb588ca2196dac;
             Self { seed }
@@ -19,6 +20,7 @@ mod xor_shift_impl {
 
     impl Iterator for XorShift {
         type Item = u64;
+        #[inline]
         fn next(&mut self) -> Option<u64> {
             self.seed ^= self.seed << 13;
             self.seed ^= self.seed >> 7;
@@ -34,23 +36,27 @@ mod xor_shift_impl {
         }
         /// # 乱数を生成
         /// 0..mの範囲で乱数を生成する
+        #[inline]
         pub fn rand(&mut self, m: u64) -> u64 {
             self.next().unwrap() % m
         }
         /// # 範囲指定して乱数を生成
         /// rangeの範囲で乱数を生成する
+        #[inline]
         pub fn rand_range<R: RangeBounds<i64>>(&mut self, range: R) -> i64 {
             let (l, r) = range.to_lr();
             let k = self.next().unwrap() as i64;
             k.rem_euclid(r - l) + l
         }
         /// # 浮動小数点数の乱数を生成
+        #[inline]
         pub fn randf(&mut self) -> f64 {
             const UPPER_MASK: u64 = 0x3FF0000000000000;
             const LOWER_MASK: u64 = 0xFFFFFFFFFFFFF;
             f64::from_bits(UPPER_MASK | (self.next().unwrap() & LOWER_MASK)) - 1.0
         }
 
+        #[inline]
         pub fn shuffle<T>(&mut self, s: &mut [T]) {
             for i in 0..s.len() {
                 s.swap(i, self.rand_range(i as i64..s.len() as i64) as usize);
