@@ -14,68 +14,23 @@ macro_rules! min {
 }
 
 #[snippet(name = "dynamic-li-chao-tree", doc_hidden)]
-#[derive(Clone)]
-pub struct DynamicLiChaoTree {
-    nodes: Vec<dynamic_li_chao_tree_impl::Node>,
-    root: usize,
-    right_limit: i64,
-    left_limit: i64,
-}
+pub use dynamic_li_chao_tree_impl::DynamicLiChaoTree;
 
 #[snippet(name = "dynamic-li-chao-tree", doc_hidden)]
 mod dynamic_li_chao_tree_impl {
-    use std::collections::VecDeque;
-
-    use super::{swap, Debug, DynamicLiChaoTree, Ordering};
-
-    #[derive(Clone, Debug, PartialEq, Eq)]
-    struct Line {
-        a: i64,
-        b: i64,
-    }
-    impl Line {
-        fn eval(&self, x: i64) -> i64 {
-            self.a.saturating_mul(x).saturating_add(self.b)
-        }
-    }
-    impl Default for Line {
-        fn default() -> Self {
-            let (a, b) = (0, INF);
-            Self { a, b }
-        }
-    }
-    impl Ord for Line {
-        fn cmp(&self, other: &Self) -> Ordering {
-            self.a.cmp(&other.a)
-        }
-    }
-    impl PartialOrd for Line {
-        fn partial_cmp(&self, other: &Self) -> Option<Ordering> {
-            Some(self.a.cmp(&other.a))
-        }
-    }
-
-    #[derive(Clone, Debug, Default)]
-    pub struct Node {
-        line: Line,
-        l: Option<usize>,
-        r: Option<usize>,
-    }
-
-    impl Node {
-        fn new(line: Line) -> Self {
-            let (l, r) = (None, None);
-            Self { line, l, r }
-        }
-
-        fn eval(&self, x: i64) -> i64 {
-            self.line.eval(x)
-        }
-    }
+    use super::{swap, Debug, Ordering, VecDeque};
 
     const LEFT_LIMIT: i64 = -1_000_000_010;
     const RIGHT_LIMIT: i64 = 1_000_000_010;
     const INF: i64 = std::i64::MAX;
+
+    #[derive(Clone)]
+    pub struct DynamicLiChaoTree {
+        nodes: Vec<Node>,
+        root: usize,
+        right_limit: i64,
+        left_limit: i64,
+    }
 
     impl Default for DynamicLiChaoTree {
         fn default() -> Self {
@@ -198,6 +153,51 @@ mod dynamic_li_chao_tree_impl {
                 buf.push_str(format!("{}..{} a: {} b: {}\n", l, r, a, b).as_str());
             }
             writeln!(f, "{}", buf)
+        }
+    }
+
+    #[derive(Clone, Debug, Default)]
+    struct Node {
+        line: Line,
+        l: Option<usize>,
+        r: Option<usize>,
+    }
+
+    impl Node {
+        fn new(line: Line) -> Self {
+            let (l, r) = (None, None);
+            Self { line, l, r }
+        }
+
+        fn eval(&self, x: i64) -> i64 {
+            self.line.eval(x)
+        }
+    }
+
+    #[derive(Clone, Debug, PartialEq, Eq)]
+    struct Line {
+        a: i64,
+        b: i64,
+    }
+    impl Line {
+        fn eval(&self, x: i64) -> i64 {
+            self.a.saturating_mul(x).saturating_add(self.b)
+        }
+    }
+    impl Default for Line {
+        fn default() -> Self {
+            let (a, b) = (0, INF);
+            Self { a, b }
+        }
+    }
+    impl Ord for Line {
+        fn cmp(&self, other: &Self) -> Ordering {
+            self.a.cmp(&other.a)
+        }
+    }
+    impl PartialOrd for Line {
+        fn partial_cmp(&self, other: &Self) -> Option<Ordering> {
+            Some(self.a.cmp(&other.a))
         }
     }
 }
