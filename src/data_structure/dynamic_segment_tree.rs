@@ -10,15 +10,18 @@
 use crate::prelude::*;
 
 #[snippet(name = "dynamic-segment-tree", doc_hidden)]
-#[derive(Clone, Default)]
-pub struct DynamicSegmentTree<M: Monoid> {
-    root: dynamic_segment_tree_impl::OptionalNode<M>,
-}
-
+pub use dynamic_segment_tree_impl::DynamicSegmentTree;
 #[snippet(name = "dynamic-segment-tree", doc_hidden)]
 mod dynamic_segment_tree_impl {
-    use super::{swap, Debug, DynamicSegmentTree, Monoid, RangeBounds, ToLR};
+    use super::{swap, Debug, Monoid, RangeBounds, ToLR};
     type IndexType = i64;
+    type Bit = i32;
+
+    #[derive(Clone, Default)]
+    pub struct DynamicSegmentTree<M: Monoid> {
+        root: OptionalNode<M>,
+    }
+
     impl<M: Monoid> DynamicSegmentTree<M> {
         /// 最大幅を $2^{BIT_LEN}$ とする
         const BIT_LEN: i32 = 62;
@@ -50,19 +53,11 @@ mod dynamic_segment_tree_impl {
     #[derive(Clone, Debug, Default)]
     pub struct OptionalNode<M: Monoid>(Option<Node<M>>);
 
-    #[derive(Clone, Debug, Default)]
-    struct Node<M: Monoid> {
-        value: M::M,
-        l: Box<OptionalNode<M>>,
-        r: Box<OptionalNode<M>>,
-    }
-
     impl<M: Monoid> OptionalNode<M> {
         fn new(value: M::M) -> Self {
             Self(Some(Node {
                 value,
-                l: Box::new(Self(None)),
-                r: Box::new(Self(None)),
+                children: vec![Self(None), Self(None)],
             }))
         }
         fn set(&mut self, idx: IndexType, bit: i32, value: M::M) {
@@ -71,8 +66,8 @@ mod dynamic_segment_tree_impl {
                 Some(node) => {
                     node.child_mut(idx, bit).set(idx, bit - 1, value);
                     node.value = M::op(
-                        &node.l.prod(0, 1 << 62, 0, 1 << bit),
-                        &node.r.prod(0, 1 << 62, 0, 1 << bit),
+                        &node.left().prod(0, 1 << 62, 0, 1 << bit),
+                        &node.right().prod(0, 1 << 62, 0, 1 << bit),
                     )
                 }
                 None if bit < 0 => swap(self, &mut Self::new(value)),
@@ -88,8 +83,8 @@ mod dynamic_segment_tree_impl {
                 Some(node) => {
                     node.child_mut(idx, bit).apply(idx, bit - 1, f);
                     node.value = M::op(
-                        &node.l.prod(0, 1 << 62, 0, 1 << bit),
-                        &node.r.prod(0, 1 << 62, 0, 1 << bit),
+                        &node.left().prod(0, 1 << 62, 0, 1 << bit),
+                        &node.right().prod(0, 1 << 62, 0, 1 << bit),
                     )
                 }
                 None if bit < 0 => swap(self, &mut Self::new(f(M::unit()))),
@@ -110,25 +105,49 @@ mod dynamic_segment_tree_impl {
             match &self.0 {
                 Some(node) if l <= lb && ub <= r => node.value.clone(),
                 Some(node) if lb < r && l < ub => M::op(
-                    &node.l.prod(l, r, lb, (lb + ub) >> 1),
-                    &node.r.prod(l, r, (lb + ub) >> 1, ub),
+                    &node.left().prod(l, r, lb, (lb + ub) >> 1),
+                    &node.right().prod(l, r, (lb + ub) >> 1, ub),
                 ),
                 _ => M::unit(),
             }
         }
     }
+
+    #[derive(Clone, Debug, Default)]
+    struct Node<M: Monoid> {
+        value: M::M,
+        children: Vec<OptionalNode<M>>,
+    }
     impl<M: Monoid> Node<M> {
-        fn child_mut(&mut self, idx: IndexType, bit: i32) -> &mut OptionalNode<M> {
+        #[inline]
+        fn child_mut(&mut self, idx: IndexType, bit: Bit) -> &mut OptionalNode<M> {
             match () {
-                () if idx >> bit & 1 == 0 => self.l.as_mut(),
-                _ => self.r.as_mut(),
+                () if idx >> bit & 1 == 0 => self.left_mut(),
+                _ => self.right_mut(),
             }
         }
-        fn child(&self, idx: IndexType, bit: i32) -> &OptionalNode<M> {
+        #[inline]
+        fn child(&self, idx: IndexType, bit: Bit) -> &OptionalNode<M> {
             match () {
-                () if idx >> bit & 1 == 0 => &self.l,
-                _ => &self.r,
+                () if idx >> bit & 1 == 0 => self.left(),
+                _ => self.right(),
             }
+        }
+        #[inline]
+        fn left(&self) -> &OptionalNode<M> {
+            unsafe { self.children.get_unchecked(0) }
+        }
+        #[inline]
+        fn left_mut(&mut self) -> &mut OptionalNode<M> {
+            unsafe { self.children.get_unchecked_mut(0) }
+        }
+        #[inline]
+        fn right(&self) -> &OptionalNode<M> {
+            unsafe { self.children.get_unchecked(1) }
+        }
+        #[inline]
+        fn right_mut(&mut self) -> &mut OptionalNode<M> {
+            unsafe { self.children.get_unchecked_mut(1) }
         }
     }
 }

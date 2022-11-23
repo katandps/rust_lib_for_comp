@@ -2,8 +2,10 @@ use criterion::{criterion_group, Criterion};
 
 use rust_lib_for_comp::{
     algo::xor_shift::XorShift,
-    data_structure::{binary_trie::BinaryTrie, treap::Treap},
-    prelude::HashSet,
+    data_structure::{
+        binary_trie::BinaryTrie, dynamic_segment_tree::DynamicSegmentTree, treap::Treap,
+    },
+    prelude::{binary_operation::addition::Addition, HashSet},
 };
 
 fn insert_to_set(c: &mut Criterion) {
@@ -45,6 +47,14 @@ fn insert_to_set(c: &mut Criterion) {
             let mut treap = Treap::default();
             for _ in 0..100 {
                 treap.insert(xorshift.rand(1 << 60));
+            }
+        })
+    });
+    c.bench_function("Add random 100 entries to Dynamic Segment Tree", |b| {
+        b.iter(|| {
+            let mut segtree = DynamicSegmentTree::<Addition<i64>>::default();
+            for _ in 0..100 {
+                segtree.set(xorshift.rand(1 << 60) as i64, xorshift.rand(1 << 30) as i64);
             }
         })
     });
