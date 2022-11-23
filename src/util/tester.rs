@@ -15,7 +15,7 @@ fn test() {
             .spawn(move || {
                 let mut io = IODebug::new(
                     suit,
-                    true,
+                    false,
                     |outer: &mut ReaderFromStr, inner: &mut ReaderFromStr| {
                         inner.out(outer.v::<String>())
                     },
