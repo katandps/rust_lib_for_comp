@@ -137,7 +137,7 @@ mod binary_trie_impl {
                 Some(node) => {
                     let mut child = node.child(bias, b - 1);
                     if child.is_none() {
-                        bias ^= 1 << b - 1;
+                        bias ^= 1 << (b - 1);
                         child = node.child(bias, b - 1);
                     }
                     child.get_min(bias, b - 1)
@@ -155,7 +155,7 @@ mod binary_trie_impl {
                 if k < m {
                     node.left().get(k, b - 1)
                 } else {
-                    node.right().get(k - m, b - 1) | (1 << b - 1)
+                    node.right().get(k - m, b - 1) | (1 << (b - 1))
                 }
             } else {
                 unreachable!("k-th element does not exist.")
