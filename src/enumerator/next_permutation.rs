@@ -6,57 +6,59 @@
 //!     - 辞書順で入力以降のもののみ得られる
 use crate::prelude::*;
 
+pub use self::next_permutation_impl::{next_permutation_from_i, next_permutation_from_slice};
 #[snippet(name = "next-permutation", doc_hidden)]
-#[derive(Clone, Debug)]
-pub struct NextPermutation<T>(Option<Vec<T>>);
-#[snippet(name = "next-permutation", doc_hidden)]
-impl<T: Clone + PartialOrd> Iterator for NextPermutation<T> {
-    type Item = Vec<T>;
-    fn next(&mut self) -> Option<Vec<T>> {
-        let ret = self.0.clone();
-        if let Some(v) = &mut self.0 {
+mod next_permutation_impl {
+    /// [0, size)の順列を辞書順に得るIteratorとなる
+    /// ```
+    /// # use rust_lib_for_comp::enumerator::next_permutation::*;
+    /// let mut s = 0;
+    /// for p in next_permutation_from_i(5) {
+    ///     for pi in p {
+    ///         s += pi;
+    ///     }
+    /// }
+    /// assert_eq!(s, 120 * 10);
+    /// ```
+    pub fn next_permutation_from_i(size: usize) -> impl Iterator<Item = Vec<usize>> {
+        std::iter::successors(Some((0..size).collect::<Vec<_>>()), move |v| {
+            let mut v = v.to_vec();
             if v.len() >= 2 {
                 for i in (1..v.len()).rev() {
                     if v[i - 1] < v[i] {
                         let j = (0..v.len()).rev().find(|j| v[*j] > v[i - 1]).unwrap();
                         v.swap(i - 1, j);
                         v[i..].reverse();
-                        return ret;
+                        return Some(v.to_vec());
                     }
                 }
             }
-        }
-        self.0 = None;
-        ret
+            None
+        })
     }
-}
-/// [0, size)の順列を辞書順に得るIteratorとなる
-/// ```
-/// # use rust_lib_for_comp::enumerator::next_permutation::*;
-/// let mut s = 0;
-/// for p in NextPermutation::from(5) {
-///     for pi in p {
-///         s += pi;
-///     }
-/// }
-/// assert_eq!(s, 120 * 10);
-/// ```
-#[snippet(name = "next-permutation", doc_hidden)]
-impl From<usize> for NextPermutation<usize> {
-    fn from(size: usize) -> Self {
-        NextPermutation(Some((0..size).collect()))
-    }
-}
-/// 重複を考慮した順列を辞書順に得るIteratorとなる
-/// ```
-/// # use rust_lib_for_comp::enumerator::next_permutation::*;
-/// let v = vec![1, 2, 2, 3];
-/// assert_eq!(12, NextPermutation::from(&v[..]).count());
-/// ```
-#[snippet(name = "next-permutation", doc_hidden)]
-impl<T: Clone + PartialOrd> From<&[T]> for NextPermutation<T> {
-    fn from(src: &[T]) -> Self {
-        NextPermutation(Some(src.to_vec()))
+    /// 重複を考慮した順列を辞書順に得るIteratorとなる
+    /// ```
+    /// # use rust_lib_for_comp::enumerator::next_permutation::*;
+    /// let v = vec![1, 2, 2, 3];
+    /// assert_eq!(12, next_permutation_from_slice(&v[..]).count());
+    /// ```
+    pub fn next_permutation_from_slice<T: Clone + PartialOrd>(
+        src: &[T],
+    ) -> impl Iterator<Item = Vec<T>> {
+        std::iter::successors(Some(src.to_vec()), move |v| {
+            let mut v = v.to_vec();
+            if v.len() >= 2 {
+                for i in (1..v.len()).rev() {
+                    if v[i - 1] < v[i] {
+                        let j = (0..v.len()).rev().find(|j| v[*j] > v[i - 1]).unwrap();
+                        v.swap(i - 1, j);
+                        v[i..].reverse();
+                        return Some(v.to_vec());
+                    }
+                }
+            }
+            None
+        })
     }
 }
 
@@ -64,7 +66,7 @@ impl<T: Clone + PartialOrd> From<&[T]> for NextPermutation<T> {
 fn test() {
     let v = vec![1, 2, 3];
     let mut b = Vec::new();
-    for p in NextPermutation::from(&v[..]) {
+    for p in next_permutation_from_slice(&v[..]) {
         b.push(p);
     }
     assert_eq!(
