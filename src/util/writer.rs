@@ -65,11 +65,13 @@ mod writer_impl {
             self.buf.push_str(&s.to_string());
         }
         fn flush(&mut self) {
-            let stdout = stdout();
-            let mut writer = BufWriter::new(stdout.lock());
-            write!(writer, "{}", self.buf).expect("Failed to write.");
-            let _ = writer.flush();
-            self.buf.clear();
+            if !self.buf.is_empty() {
+                let stdout = stdout();
+                let mut writer = BufWriter::new(stdout.lock());
+                write!(writer, "{}", self.buf).expect("Failed to write.");
+                let _ = writer.flush();
+                self.buf.clear();
+            }
         }
     }
 }
