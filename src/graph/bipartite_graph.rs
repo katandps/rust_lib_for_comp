@@ -9,7 +9,6 @@ pub trait BipartiteGraphTrait: GraphTrait {
     /// # 2部グラフとして分割する
     /// すべての頂点について、二部グラフとしてbooleanで彩色した結果を返す
     /// 塗り分けられなかった場合はNoneを返す
-    /// 連結成分数でバランスしない
     fn bipartition(&self) -> Option<Vec<bool>> {
         let mut dist = vec![None; self.size()];
         for src in 0..self.size() {
