@@ -8,13 +8,13 @@
 //! use rust_lib_for_comp::graph::adjacency_matrix::GraphMatrix;
 //! use rust_lib_for_comp::graph::kruskal::Kruskal;
 //!
-//! let graph = GraphMatrix::from(vec![
+//! let graph = GraphMatrix::new(vec![
 //!     vec![-1, 2, 3, 1, -1],
 //!     vec![2, -1, -1, 4, -1],
 //!     vec![3, -1, -1, 1, 1],
 //!     vec![1, 4, 1, -1, 3],
 //!     vec![-1, -1, 1, 3, -1],
-//! ]);
+//! ], Some(-1));
 //! assert_eq!(5, Kruskal::from(&graph).sum());
 //! ```
 //!
