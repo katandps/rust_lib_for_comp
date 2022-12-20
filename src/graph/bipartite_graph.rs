@@ -1,40 +1,44 @@
 //! # 二部グラフ
 //! グラフが二部グラフかどうか判定する
 //! 二部グラフだったときはその分割方法を1つ返す
+//!
+//! ## verify
+//! [ABC282D](https://atcoder.jp/contests/abc282/tasks/abc282_d)
 use crate::graph::GraphTrait;
 use crate::prelude::*;
 
 #[snippet(name = "bipartite-graph", doc_hidden)]
 pub trait BipartiteGraphTrait: GraphTrait {
     /// # 2部グラフとして分割する
-    /// すべての頂点について、二部グラフとしてbooleanで彩色した結果を返す
+    /// 連結成分ごとに二部グラフとしてbooleanで彩色した結果を返す
     /// 塗り分けられなかった場合はNoneを返す
-    fn bipartition(&self) -> Option<Vec<bool>> {
-        let mut dist = vec![None; self.size()];
+    fn bipartition(&self) -> Option<Vec<(usize, bool)>> {
+        let mut colors = vec![None; self.size()];
+
         for src in 0..self.size() {
-            if dist[src].is_none() {
-                dist[src] = Some(true);
-                if !self.dfs(src, &mut dist) {
+            if colors[src].is_none() {
+                colors[src] = Some((src, true));
+
+                let mut ng = false;
+                let mut q = VecDeque::from(vec![src]);
+                'dfs: while let Some(src) = q.pop_front() {
+                    for (dst, _weight) in self.edges(src) {
+                        if colors[dst] == colors[src] {
+                            ng = true;
+                            break 'dfs;
+                        }
+                        if colors[dst].is_none() {
+                            colors[dst] = colors[src].map(|(color, b)| (color, !b));
+                            q.push_back(dst);
+                        }
+                    }
+                }
+                if ng {
                     return None;
                 }
             }
         }
-        Some(dist.iter().map(|op| op.unwrap()).collect())
-    }
-
-    fn dfs(&self, src: usize, d: &mut Vec<Option<bool>>) -> bool {
-        for (dst, _weight) in self.edges(src) {
-            if d[dst] == d[src] {
-                return false;
-            }
-            if d[dst].is_none() {
-                d[dst] = d[src].map(|b| !b);
-                if !self.dfs(dst, d) {
-                    return false;
-                }
-            }
-        }
-        true
+        Some(colors.into_iter().flatten().collect())
     }
 }
 #[snippet(name = "bipartite-graph", doc_hidden)]
