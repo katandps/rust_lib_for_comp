@@ -4,7 +4,7 @@
 use crate::prelude::*;
 
 #[derive(Clone, Debug, Default)]
-pub struct Trie<K: Hash, T> {
+pub struct Trie<K: Hash + Eq, T> {
     childs: HashMap<K, Trie<K, T>>,
     value: Option<T>,
 }
