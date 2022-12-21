@@ -83,6 +83,11 @@ mod priority_sum_impl {
             self.sum.clone()
         }
 
+        /// # 集合が空かどうかを返す
+        pub fn is_empty(&self) -> bool {
+            self.len() == 0
+        }
+
         /// # 集合の個数を取得
         ///
         /// ## 計算量
