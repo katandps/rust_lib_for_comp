@@ -34,6 +34,9 @@ impl PollardRho for u64 {
             return Vec::new();
         }
         fn find_cycle_by_brent(n: u64) -> u64 {
+            if n == 1 {
+                return 1;
+            }
             if n % 2 == 0 {
                 return 2;
             }
@@ -104,6 +107,7 @@ impl PollardRho for u64 {
 }
 #[test]
 fn test() {
+    assert_eq!(vec![7, 17, 17], 2023.prime_factorize());
     assert_eq!(
         vec![3, 3, 53, 79, 265371653],
         9999999999999.prime_factorize()
