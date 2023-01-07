@@ -35,7 +35,6 @@ impl MontgomeryReduction {
     /// nは奇数である必要がある
     #[inline]
     pub const fn new(n: u64) -> Self {
-        assert!(n > 1 && n & 1 == 1);
         let mut n_inv = n;
         // 5 times
         n_inv = n_inv.wrapping_mul(2u64.wrapping_sub(n.wrapping_mul(n_inv)));
