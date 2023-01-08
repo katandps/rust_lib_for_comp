@@ -9,6 +9,8 @@ pub struct XorShift {
 
 #[snippet(name = "xor-shift", doc_hidden)]
 mod xor_shift_impl {
+    use std::time::SystemTime;
+
     use super::{RangeBounds, ToLR, XorShift};
     impl Default for XorShift {
         #[inline]
@@ -30,6 +32,17 @@ mod xor_shift_impl {
     }
 
     impl XorShift {
+        pub fn from_time() -> Self {
+            match SystemTime::now().elapsed() {
+                Ok(elapsed) => Self {
+                    seed: elapsed.as_millis() as u64,
+                },
+                Err(e) => {
+                    panic!("{}", e);
+                }
+            }
+        }
+
         /// # シードを指定して初期化
         pub fn with_seed(seed: u64) -> Self {
             Self { seed }
