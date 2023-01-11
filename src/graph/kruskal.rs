@@ -36,12 +36,15 @@ where
     G: GraphTrait<Weight = W>,
 {
     fn from(graph: &G) -> Self {
-        let mut edges = Vec::new();
-        for src in 0..graph.size() {
-            for (dst, weight) in graph.edges(src) {
-                edges.push((src, dst, weight));
-            }
-        }
+        let mut edges = (0..graph.size())
+            .flat_map(|src| {
+                graph
+                    .edges(src)
+                    .into_iter()
+                    .map(|(dst, weight)| (src, dst, weight))
+                    .collect::<Vec<_>>()
+            })
+            .collect::<Vec<_>>();
         edges.sort_by(|a, b| {
             (a.2)
                 .partial_cmp(&b.2)
@@ -51,8 +54,7 @@ where
         let mut sum = W::zero();
         let mut uf = UnionFind::new(graph.size());
         for (src, dst, weight) in edges {
-            if uf.root(src) != uf.root(dst) {
-                uf.unite(src, dst);
+            if uf.unite(src, dst) {
                 sum += weight;
                 tree.push((src, dst, weight));
             }
