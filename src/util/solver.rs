@@ -18,7 +18,7 @@ use crate::prelude::*;
 pub fn main() {
     std::thread::Builder::new()
         .name("extend stack size".into())
-        .stack_size(32 * 1024 * 1024)
+        .stack_size(128 * 1024 * 1024)
         .spawn(move || {
             let mut io = IO::default();
             solve(&mut io);
