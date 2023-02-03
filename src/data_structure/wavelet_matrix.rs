@@ -25,136 +25,143 @@ use crate::data_structure::succinct_indexable_dictionaries::{SIDBuilder, SID};
 use crate::prelude::*;
 
 #[snippet(name = "wavelet-matrix", doc_hidden)]
-pub struct WaveletMatrix {
-    depth: usize,
-    _size: usize,
-    matrix: Vec<SID>,
-    mid: Vec<usize>,
-}
+pub use wavelet_matrix_impl::WaveletMatrix;
 
 #[snippet(name = "wavelet-matrix", doc_hidden)]
-impl From<Vec<u64>> for WaveletMatrix {
-    fn from(mut src: Vec<u64>) -> Self {
-        let size = src.len();
-        let depth = 64;
-        let mut matrix = Vec::with_capacity(depth);
-        let mut mid = Vec::with_capacity(depth);
-        let (mut l, mut r) = (Vec::with_capacity(size), Vec::with_capacity(size));
-        (0..depth).rev().for_each(|level| {
-            l.clear();
-            r.clear();
-            let mut builder = SIDBuilder::new(size);
-            (0..size).for_each(|i| {
-                if src[i] >> level & 1 > 0 {
-                    builder.set(i);
-                    r.push(src[i]);
-                } else {
-                    l.push(src[i]);
-                }
+mod wavelet_matrix_impl {
+    use super::{RangeBounds, SIDBuilder, ToLR, SID};
+
+    pub struct WaveletMatrix {
+        depth: usize,
+        _size: usize,
+        matrix: Vec<SID>,
+        mid: Vec<usize>,
+    }
+
+    impl<T: Clone + Into<u64>, I: IntoIterator<Item = T>> From<I> for WaveletMatrix {
+        fn from(src: I) -> Self {
+            let mut src = src.into_iter().map(|si| si.into()).collect::<Vec<_>>();
+            let size = src.len();
+            let depth = 64;
+            let mut matrix = Vec::with_capacity(depth);
+            let mut mid = Vec::with_capacity(depth);
+            let (mut l, mut r) = (Vec::with_capacity(size), Vec::with_capacity(size));
+            (0..depth).rev().for_each(|level| {
+                l.clear();
+                r.clear();
+                let mut builder = SIDBuilder::new(size);
+                (0..size).for_each(|i| {
+                    if src[i] >> level & 1 > 0 {
+                        builder.set(i);
+                        r.push(src[i]);
+                    } else {
+                        l.push(src[i]);
+                    }
+                });
+                mid.push(l.len());
+                matrix.push(builder.build());
+                src.clear();
+                src.append(&mut l);
+                src.append(&mut r);
             });
-            mid.push(l.len());
-            matrix.push(builder.build());
-            src.clear();
-            src.append(&mut l);
-            src.append(&mut r);
-        });
-        matrix.reverse();
-        mid.reverse();
+            matrix.reverse();
+            mid.reverse();
 
-        Self {
-            _size: size,
-            depth,
-            matrix,
-            mid,
-        }
-    }
-}
-
-#[snippet(name = "wavelet-matrix", doc_hidden)]
-impl WaveletMatrix {
-    ///
-    /// ## 計算量
-    /// $O(\log N)$
-    pub fn access(&self, mut k: usize) -> u64 {
-        let mut ret = 0;
-        (0..self.depth).rev().for_each(|level| {
-            let f = self.matrix[level].access(k);
-            if f {
-                ret |= 1u64 << level
+            Self {
+                _size: size,
+                depth,
+                matrix,
+                mid,
             }
-            k = self.matrix[level].rank(k, f) as usize + self.mid[level] * usize::from(f);
-        });
-        ret
-    }
-
-    fn succ(&self, b: bool, l: usize, r: usize, level: usize) -> (usize, usize) {
-        (
-            self.matrix[level].rank(l, b) + self.mid[level] * usize::from(b),
-            self.matrix[level].rank(r, b) + self.mid[level] * usize::from(b),
-        )
-    }
-
-    /// $[0 <= i < r) かつ v\[i\] == x$ であるようなiの個数
-    pub fn rank(&self, x: u64, r: usize) -> usize {
-        let (_l, r) = (0..self.depth).rev().fold((0, r), |(l, r), level| {
-            self.succ((x >> level) & 1 > 0, l, r, level)
-        });
-        r - 1
-    }
-
-    /// range のうち、小さい方からk番目の数
-    pub fn kth_smallest<R: RangeBounds<usize>>(&self, range: &R, mut k: usize) -> u64 {
-        let (l, r) = range.to_lr();
-        assert!(k < r - l);
-        let mut ret = 0;
-        (0..self.depth).rev().fold((l, r), |(l, r), level| {
-            let cnt = self.matrix[level].rank(r, false) - self.matrix[level].rank(l, false);
-            if cnt <= k {
-                ret |= 1 << level;
-                k -= cnt;
-            }
-            self.succ(cnt <= k, l, r, level)
-        });
-        ret
-    }
-    /// range のうち、大きい方からk番目の数
-    pub fn kth_largest<R: RangeBounds<usize>>(&self, range: &R, k: usize) -> u64 {
-        let (l, r) = range.to_lr();
-        self.kth_smallest(range, r - l - k - 1)
-    }
-
-    /// range のうち、upper未満のものの個数
-    pub fn range_freq<R: RangeBounds<usize>>(&self, range: &R, upper: u64) -> usize {
-        let (l, r) = range.to_lr();
-        let mut ret = 0;
-        (0..self.depth).rev().fold((l, r), |(l, r), level| {
-            let b = upper >> level & 1 == 1;
-            if b {
-                ret += self.matrix[level].rank(r, false) - self.matrix[level].rank(l, false);
-            }
-            self.succ(b, l, r, level)
-        });
-        ret
-    }
-
-    /// rangeのうち、 upperより小さい要素で最大のもの
-    pub fn prev<R: RangeBounds<usize>>(&self, range: &R, upper: u64) -> Option<u64> {
-        let cnt = self.range_freq(range, upper);
-        if cnt == 0 {
-            None
-        } else {
-            Some(self.kth_smallest(range, cnt - 1))
         }
     }
 
-    /// rangeのうち、lower以上の要素で最小のもの
-    pub fn next<R: RangeBounds<usize>>(&self, range: &R, lower: u64) -> Option<u64> {
-        let (l, r) = range.to_lr();
-        let cnt = self.range_freq(range, lower);
-        if cnt == r - l {
-            None
-        } else {
-            Some(self.kth_smallest(range, cnt))
+    impl WaveletMatrix {
+        /// # Indexを指定して要素を取得
+        /// ## 計算量
+        /// $O(\log N)$
+        pub fn access(&self, mut index: usize) -> u64 {
+            let mut ret = 0;
+            (0..self.depth).rev().for_each(|level| {
+                let f = self.matrix[level].access(index);
+                if f {
+                    ret |= 1u64 << level
+                }
+                index =
+                    self.matrix[level].rank(index, f) as usize + self.mid[level] * usize::from(f);
+            });
+            ret
+        }
+
+        fn succ(&self, b: bool, l: usize, r: usize, level: usize) -> (usize, usize) {
+            (
+                self.matrix[level].rank(l, b) + self.mid[level] * usize::from(b),
+                self.matrix[level].rank(r, b) + self.mid[level] * usize::from(b),
+            )
+        }
+
+        /// # $[0 <= i < r) かつ v\[i\] == x$ であるようなiの個数
+        pub fn rank(&self, x: u64, r: usize) -> usize {
+            let (_l, r) = (0..self.depth).rev().fold((0, r), |(l, r), level| {
+                self.succ((x >> level) & 1 > 0, l, r, level)
+            });
+            r - 1
+        }
+
+        /// # range のうち、小さい方からk番目の数
+        pub fn kth_smallest<R: RangeBounds<usize>>(&self, range: &R, mut k: usize) -> u64 {
+            let (l, r) = range.to_lr();
+            assert!(k < r - l);
+            let mut ret = 0;
+            (0..self.depth).rev().fold((l, r), |(l, r), level| {
+                let cnt = self.matrix[level].rank(r, false) - self.matrix[level].rank(l, false);
+                if cnt <= k {
+                    ret |= 1 << level;
+                    k -= cnt;
+                }
+                self.succ(cnt <= k, l, r, level)
+            });
+            ret
+        }
+        /// # range のうち、大きい方からk番目の数
+        pub fn kth_largest<R: RangeBounds<usize>>(&self, range: &R, k: usize) -> u64 {
+            let (l, r) = range.to_lr();
+            self.kth_smallest(range, r - l - k - 1)
+        }
+
+        /// # range のうち、upper未満のものの個数
+        pub fn range_freq<R: RangeBounds<usize>>(&self, range: &R, upper: u64) -> usize {
+            let (l, r) = range.to_lr();
+            let mut ret = 0;
+            (0..self.depth).rev().fold((l, r), |(l, r), level| {
+                let b = upper >> level & 1 == 1;
+                if b {
+                    ret += self.matrix[level].rank(r, false) - self.matrix[level].rank(l, false);
+                }
+                self.succ(b, l, r, level)
+            });
+            ret
+        }
+
+        /// # rangeのうち、 upperより小さい要素で最大のもの
+        pub fn prev<R: RangeBounds<usize>>(&self, range: &R, upper: u64) -> Option<u64> {
+            let cnt = self.range_freq(range, upper);
+            if cnt == 0 {
+                None
+            } else {
+                Some(self.kth_smallest(range, cnt - 1))
+            }
+        }
+
+        /// # rangeのうち、lower以上の要素で最小のもの
+        pub fn next<R: RangeBounds<usize>>(&self, range: &R, lower: u64) -> Option<u64> {
+            let (l, r) = range.to_lr();
+            let cnt = self.range_freq(range, lower);
+            if cnt == r - l {
+                None
+            } else {
+                Some(self.kth_smallest(range, cnt))
+            }
         }
     }
 }
