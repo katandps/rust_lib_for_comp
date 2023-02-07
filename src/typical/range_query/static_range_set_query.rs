@@ -37,7 +37,7 @@ pub fn solve(n: usize, q: usize, a: Vec<usize>, lr: Vec<(usize, usize)>) -> Vec<
                 queries.push(Reverse(query));
                 break;
             }
-            ans[query.2] = bit.fold(query.1..query.0);
+            ans[query.2] = bit.product(query.1..query.0);
         }
     }
     ans

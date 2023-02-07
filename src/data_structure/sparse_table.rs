@@ -1,6 +1,6 @@
 //! # Sparse Table
 //! 静的データ構造
-//! 事前計算 $O(N\log N)$で、foldを$O(1)$で計算できる
+//! 事前計算 $O(N\log N)$で、区間積を$O(1)$で計算できる
 //!
 //! Bandが載る
 //! ## verify
@@ -9,15 +9,17 @@ use crate::algebra::Band;
 use crate::prelude::*;
 
 #[snippet(name = "sparse-table", doc_hidden)]
-#[derive(Clone)]
-pub struct SparseTable<B: Band> {
-    size: usize,
-    table: Vec<Vec<B::M>>,
-}
-
+pub use sparse_table_impl::SparseTable;
 #[snippet(name = "sparse-table", doc_hidden)]
 mod sparse_table_impl {
-    use super::{Band, Debug, Formatter, RangeBounds, SparseTable, ToLR};
+    use super::{Band, Debug, Formatter, RangeBounds, RangeProduct, ToLR};
+
+    #[derive(Clone)]
+    pub struct SparseTable<B: Band> {
+        size: usize,
+        table: Vec<Vec<B::M>>,
+    }
+
     impl<B: Band> From<&[B::M]> for SparseTable<B> {
         fn from(v: &[B::M]) -> Self {
             let size = v.len();
@@ -36,8 +38,12 @@ mod sparse_table_impl {
         }
     }
 
-    impl<B: Band> SparseTable<B> {
-        pub fn query<R: RangeBounds<usize>>(&self, range: R) -> B::M {
+    /// # 区間の総積
+    /// ## 計算量
+    /// $O(1)$
+    impl<B: Band> RangeProduct<usize> for SparseTable<B> {
+        type Magma = B;
+        fn product<R: RangeBounds<usize>>(&self, range: R) -> B::M {
             let (l, r) = range.to_lr();
             let lg = 63 - (r - l).leading_zeros();
             B::op(
@@ -46,13 +52,14 @@ mod sparse_table_impl {
             )
         }
     }
+
     impl<B: Band> Debug for SparseTable<B>
     where
         B::M: Debug,
     {
         fn fmt(&self, f: &mut Formatter) -> std::fmt::Result {
             for i in 0..self.size {
-                writeln!(f, "{:?}", self.query(i..=i))?;
+                writeln!(f, "{:?}", self.product(i..=i))?;
             }
             Ok(())
         }
@@ -71,7 +78,7 @@ fn test() {
             for k in i..j {
                 m = Minimization::op(&m, &src[k]);
             }
-            assert_eq!(m, sparse_table.query(i..j));
+            assert_eq!(m, sparse_table.product(i..j));
         }
     }
 }

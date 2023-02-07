@@ -13,7 +13,9 @@ pub struct BinaryIndexedTree<A: Magma> {
 
 #[snippet(name = "binary-indexed-tree", doc_hidden)]
 mod binary_indexed_tree_impl {
-    use super::{AbelianGroup, BinaryIndexedTree, Debug, Formatter, RangeBounds, ToLR};
+    use super::{
+        AbelianGroup, BinaryIndexedTree, Debug, Formatter, RangeBounds, RangeProduct, ToLR,
+    };
 
     /// サイズを指定して作成する
     impl<A: AbelianGroup> From<usize> for BinaryIndexedTree<A> {
@@ -36,6 +38,23 @@ mod binary_indexed_tree_impl {
         }
     }
 
+    /// # 区間の総積
+    /// ## 計算量
+    /// $O(\log N)$
+    impl<A: AbelianGroup> RangeProduct<usize> for BinaryIndexedTree<A> {
+        type Magma = A;
+        fn product<R: RangeBounds<usize>>(&self, range: R) -> A::M {
+            let (a, b) = range.to_lr();
+            if b == 0 {
+                A::unit()
+            } else if a == 0 {
+                self.sum(b - 1)
+            } else {
+                A::op(&self.sum(b - 1), &A::inv(&self.sum(a - 1)))
+            }
+        }
+    }
+
     impl<A: AbelianGroup> BinaryIndexedTree<A> {
         /// add $x$ to $i$
         pub fn add(&mut self, i: usize, x: A::M) {
@@ -49,7 +68,7 @@ mod binary_indexed_tree_impl {
         /// update $i$ to $x$
         pub fn update(&mut self, i: usize, mut x: A::M) {
             let mut idx = i as i32 + 1;
-            x = A::op(&x, &A::inv(&self.fold(i..=i)));
+            x = A::op(&x, &A::inv(&self.product(i..=i)));
             while idx <= self.n as i32 {
                 self.bit[idx as usize] = A::op(&self.bit[idx as usize], &x);
                 idx += idx & -idx;
@@ -65,18 +84,6 @@ mod binary_indexed_tree_impl {
                 idx -= idx & -idx;
             }
             ret
-        }
-
-        /// sum of range
-        pub fn fold<R: RangeBounds<usize>>(&self, range: R) -> A::M {
-            let (a, b) = range.to_lr();
-            if b == 0 {
-                A::unit()
-            } else if a == 0 {
-                self.sum(b - 1)
-            } else {
-                A::op(&self.sum(b - 1), &A::inv(&self.sum(a - 1)))
-            }
         }
 
         /// sumが初めてlbを超える位置を返す
@@ -134,7 +141,7 @@ mod binary_indexed_tree_impl {
     {
         fn fmt(&self, f: &mut Formatter<'_>) -> std::fmt::Result {
             let v = (0..self.n)
-                .map(|i| format!("{:?}", self.fold(i..=i)))
+                .map(|i| format!("{:?}", self.product(i..=i)))
                 .collect::<Vec<_>>()
                 .join(" ");
             let v2 = (0..self.n)

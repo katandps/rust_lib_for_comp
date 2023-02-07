@@ -28,3 +28,19 @@ impl<R: RangeBounds<T>, T: Copy + BoundedAbove + BoundedBelow + One + Add<Output
         (l, r)
     }
 }
+
+/// # 二項演算の総積クエリを提供する
+/// 遅延評価などを持つデータ構造は、&mut selfを要求するRangeProductMutを使用する
+#[snippet(name = "range", doc_hidden)]
+#[rustfmt::skip]
+pub trait RangeProduct<I> {
+    type Magma: Magma;
+    fn product<R: RangeBounds<I>>(&self, range: R) -> <Self::Magma as Magma>::M;
+}
+
+#[snippet(name = "range", doc_hidden)]
+#[rustfmt::skip]
+pub trait RangeProductMut<I> {
+    type Magma: Magma;
+    fn product<R: RangeBounds<I>>(&mut self, range: R) -> <Self::Magma as Magma>::M;
+}

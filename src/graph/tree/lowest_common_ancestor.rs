@@ -46,7 +46,7 @@ impl LowestCommonAncestor {
         if l > r {
             swap(&mut l, &mut r)
         }
-        self.tour.tour[self.depth.query(l..r).index]
+        self.tour.tour[self.depth.product(l..r).index]
     }
 
     /// # $u \to v$のパスを求める

@@ -13,13 +13,27 @@ use crate::prelude::*;
 pub use dynamic_segment_tree_impl::DynamicSegmentTree;
 #[snippet(name = "dynamic-segment-tree", doc_hidden)]
 mod dynamic_segment_tree_impl {
-    use super::{swap, Debug, Monoid, RangeBounds, ToLR};
+    use super::{swap, Debug, Monoid, RangeBounds, RangeProduct, ToLR};
     type IndexType = i64;
     type Bit = i32;
 
     #[derive(Clone, Default)]
     pub struct DynamicSegmentTree<M: Monoid> {
         root: OptionalNode<M>,
+    }
+
+    /// # 区間の総積
+    /// ## 計算量
+    /// $O(\log N)$
+    impl<M: Monoid> RangeProduct<IndexType> for DynamicSegmentTree<M> {
+        type Magma = M;
+        fn product<R: RangeBounds<IndexType>>(
+            &self,
+            range: R,
+        ) -> <Self::Magma as crate::prelude::Magma>::M {
+            let (l, r) = range.to_lr();
+            self.root.prod(l, r, 0, Self::MAX)
+        }
     }
 
     impl<M: Monoid> DynamicSegmentTree<M> {
@@ -41,13 +55,6 @@ mod dynamic_segment_tree_impl {
         /// $O( \log N)$
         pub fn get(&self, i: IndexType) -> M::M {
             self.root.get(i, Self::BIT_LEN - 1)
-        }
-        /// Rangeで与えられた区間の値を取得する
-        /// ## 計算量
-        /// $O( \log N)$
-        pub fn prod<R: RangeBounds<IndexType>>(&self, range: R) -> M::M {
-            let (l, r) = range.to_lr();
-            self.root.prod(l, r, 0, Self::MAX)
         }
     }
     #[derive(Clone, Debug, Default)]
@@ -170,14 +177,14 @@ mod test {
         segtree.apply(I2, |x| x + 2);
         segtree.apply(I2, |x| x + 8);
         assert_eq!(10, segtree.get(I2));
-        assert_eq!(Addition::<i64>::unit(), segtree.prod(0..I1));
-        assert_eq!(8, segtree.prod(0..=I1));
-        assert_eq!(8, segtree.prod(0..I2));
-        assert_eq!(18, segtree.prod(0..=I2));
-        assert_eq!(Addition::<i64>::unit(), segtree.prod(I1 + 1..I2));
-        assert_eq!(10, segtree.prod(I1 + 1..=I2));
-        assert_eq!(10, segtree.prod(I2..=I2));
-        assert_eq!(10, segtree.prod(I2..I2 * 100));
-        assert_eq!(Addition::<i64>::unit(), segtree.prod(I2 + 1..I2 * 100));
+        assert_eq!(Addition::<i64>::unit(), segtree.product(0..I1));
+        assert_eq!(8, segtree.product(0..=I1));
+        assert_eq!(8, segtree.product(0..I2));
+        assert_eq!(18, segtree.product(0..=I2));
+        assert_eq!(Addition::<i64>::unit(), segtree.product(I1 + 1..I2));
+        assert_eq!(10, segtree.product(I1 + 1..=I2));
+        assert_eq!(10, segtree.product(I2..=I2));
+        assert_eq!(10, segtree.product(I2..I2 * 100));
+        assert_eq!(Addition::<i64>::unit(), segtree.product(I2 + 1..I2 * 100));
     }
 }

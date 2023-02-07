@@ -8,18 +8,20 @@ use crate::algebra::{Magma, MapMonoid};
 use crate::prelude::*;
 
 #[snippet(name = "lazy-segment-tree", doc_hidden)]
-#[derive(Clone)]
-pub struct LazySegmentTree<M: MapMonoid> {
-    m: M,
-    n: usize,
-    log: usize,
-    node: Vec<<M::Mono as Magma>::M>,
-    lazy: Vec<<M::Func as Magma>::M>,
-}
-
+pub use lazy_segment_tree_impl::LazySegmentTree;
 #[snippet(name = "lazy-segment-tree", doc_hidden)]
 mod lazy_segment_tree_impl {
-    use super::{LazySegmentTree, Magma, MapMonoid, RangeBounds, ToLR};
+    use super::{Magma, MapMonoid, RangeBounds, RangeProductMut, ToLR};
+
+    #[derive(Clone)]
+    pub struct LazySegmentTree<M: MapMonoid> {
+        m: M,
+        n: usize,
+        log: usize,
+        node: Vec<<M::Mono as Magma>::M>,
+        lazy: Vec<<M::Func as Magma>::M>,
+    }
+
     impl<M: MapMonoid> From<(M, usize)> for LazySegmentTree<M> {
         fn from((m, length): (M, usize)) -> Self {
             let n = (length + 1).next_power_of_two();
@@ -45,6 +47,43 @@ mod lazy_segment_tree_impl {
             segtree.node[segtree.n..segtree.n + v.len() - 1].clone_from_slice(v);
             (0..segtree.n - 1).rev().for_each(|i| segtree.calc(i));
             segtree
+        }
+    }
+
+    /// # 区間の総積
+    /// ## 計算量
+    /// $O(\log N)$
+    impl<M: MapMonoid> RangeProductMut<usize> for LazySegmentTree<M> {
+        type Magma = M::Mono;
+        fn product<R: RangeBounds<usize>>(&mut self, range: R) -> <M::Mono as Magma>::M {
+            let (mut l, mut r) = range.to_lr();
+            if l == r {
+                return M::unit();
+            }
+            l += self.n;
+            r += self.n;
+            for i in (1..=self.log).rev() {
+                if ((l >> i) << i) != l {
+                    self.propagate(l >> i);
+                }
+                if ((r >> i) << i) != r {
+                    self.propagate(r >> i);
+                }
+            }
+            let (mut sml, mut smr) = (M::unit(), M::unit());
+            while l < r {
+                if l & 1 != 0 {
+                    sml = self.m.op(&sml, &self.node[l]);
+                    l += 1;
+                }
+                if r & 1 != 0 {
+                    r -= 1;
+                    smr = self.m.op(&self.node[r], &smr);
+                }
+                l >>= 1;
+                r >>= 1;
+            }
+            self.m.op(&sml, &smr)
         }
     }
 
@@ -109,39 +148,6 @@ mod lazy_segment_tree_impl {
             self.node[i].clone()
         }
 
-        /// 区間 $[l, r)$ の値を取得する
-        /// $l == r$ のときは $unit$ を返す
-        pub fn prod<R: RangeBounds<usize>>(&mut self, range: R) -> <M::Mono as Magma>::M {
-            let (mut l, mut r) = range.to_lr();
-            if l == r {
-                return M::unit();
-            }
-            l += self.n;
-            r += self.n;
-            for i in (1..=self.log).rev() {
-                if ((l >> i) << i) != l {
-                    self.propagate(l >> i);
-                }
-                if ((r >> i) << i) != r {
-                    self.propagate(r >> i);
-                }
-            }
-            let (mut sml, mut smr) = (M::unit(), M::unit());
-            while l < r {
-                if l & 1 != 0 {
-                    sml = self.m.op(&sml, &self.node[l]);
-                    l += 1;
-                }
-                if r & 1 != 0 {
-                    r -= 1;
-                    smr = self.m.op(&self.node[r], &smr);
-                }
-                l >>= 1;
-                r >>= 1;
-            }
-            self.m.op(&sml, &smr)
-        }
-
         /// k番目の区間を内包する区間の値から計算する
         fn calc(&mut self, k: usize) {
             assert!(2 * k + 1 < self.node.len());
@@ -193,15 +199,15 @@ mod test {
         let mut segtree = LazySegmentTree::<AddSum>::from((m, n));
 
         for i in 1..n {
-            assert_eq!(0, segtree.prod(i - 1..i).value);
+            assert_eq!(0, segtree.product(i - 1..i).value);
         }
 
         // [0, 0, 3, 0, 0]
         segtree.update_at(2, 3);
-        assert_eq!(3, segtree.prod(2..3).value);
+        assert_eq!(3, segtree.product(2..3).value);
 
         // [0, 2, 5, 2, 0]
         segtree.update_range(1..4, 2);
-        assert_eq!(7, segtree.prod(0..3).value);
+        assert_eq!(7, segtree.product(0..3).value);
     }
 }

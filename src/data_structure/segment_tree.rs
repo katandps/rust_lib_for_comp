@@ -10,15 +10,17 @@ use crate::algebra::Monoid;
 use crate::prelude::*;
 
 #[snippet(name = "segment-tree", doc_hidden)]
-#[derive(Clone, Debug)]
-pub struct SegmentTree<M: Monoid> {
-    n: usize,
-    node: Vec<M::M>,
-}
-
+pub use segment_tree_impl::SegmentTree;
 #[snippet(name = "segment-tree", doc_hidden)]
 mod segment_tree_impl {
-    use super::{Index, Monoid, RangeBounds, SegmentTree, ToLR};
+    use super::{Index, Monoid, RangeBounds, RangeProduct, ToLR};
+
+    #[derive(Clone, Debug)]
+    pub struct SegmentTree<M: Monoid> {
+        n: usize,
+        node: Vec<M::M>,
+    }
+
     impl<M: Monoid> From<&Vec<M::M>> for SegmentTree<M> {
         fn from(v: &Vec<M::M>) -> Self {
             let mut segtree = Self::new(v.len() + 1);
@@ -27,6 +29,33 @@ mod segment_tree_impl {
                 segtree.node[i] = M::op(&segtree.node[2 * i], &segtree.node[2 * i + 1]);
             }
             segtree
+        }
+    }
+
+    /// # 区間の総積
+    /// ## 計算量
+    /// $O(\log N)$
+    impl<M: Monoid> RangeProduct<usize> for SegmentTree<M> {
+        type Magma = M;
+        fn product<R: RangeBounds<usize>>(&self, range: R) -> M::M {
+            let (mut l, mut r) = range.to_lr();
+            l += self.n;
+            r += self.n;
+            let mut sml = M::unit();
+            let mut smr = M::unit();
+            while l < r {
+                if l & 1 != 0 {
+                    sml = M::op(&sml, &self.node[l]);
+                    l += 1;
+                }
+                if r & 1 != 0 {
+                    r -= 1;
+                    smr = M::op(&self.node[r], &smr);
+                }
+                l >>= 1;
+                r >>= 1;
+            }
+            M::op(&sml, &smr)
         }
     }
 
@@ -53,30 +82,6 @@ mod segment_tree_impl {
                 i >>= 1;
                 self.node[i] = M::op(&self.node[2 * i], &self.node[2 * i + 1]);
             }
-        }
-
-        /// Rangeで与えられた区間の値を取得する
-        /// ## 計算量
-        /// $O(\log N)$
-        pub fn prod<R: RangeBounds<usize>>(&self, range: R) -> M::M {
-            let (mut l, mut r) = range.to_lr();
-            l += self.n;
-            r += self.n;
-            let mut sml = M::unit();
-            let mut smr = M::unit();
-            while l < r {
-                if l & 1 != 0 {
-                    sml = M::op(&sml, &self.node[l]);
-                    l += 1;
-                }
-                if r & 1 != 0 {
-                    r -= 1;
-                    smr = M::op(&self.node[r], &smr);
-                }
-                l >>= 1;
-                r >>= 1;
-            }
-            M::op(&sml, &smr)
         }
     }
 
@@ -105,16 +110,16 @@ mod test {
         for i in 0..base.len() {
             assert_eq!(base[i], segtree[i]);
         }
-        assert_eq!(3, segtree.prod(0..1));
-        assert_eq!(3, segtree.prod(0..2));
-        assert_eq!(4, segtree.prod(0..3));
-        assert_eq!(4, segtree.prod(0..4));
-        assert_eq!(5, segtree.prod(0..5));
-        assert_eq!(9, segtree.prod(0..6));
+        assert_eq!(3, segtree.product(0..1));
+        assert_eq!(3, segtree.product(0..2));
+        assert_eq!(4, segtree.product(0..3));
+        assert_eq!(4, segtree.product(0..4));
+        assert_eq!(5, segtree.product(0..5));
+        assert_eq!(9, segtree.product(0..6));
 
         segtree.update_at(3, 8);
-        assert_eq!(4, segtree.prod(0..3));
-        assert_eq!(8, segtree.prod(0..4));
-        assert_eq!(8, segtree.prod(2..5));
+        assert_eq!(4, segtree.product(0..3));
+        assert_eq!(8, segtree.product(0..4));
+        assert_eq!(8, segtree.product(2..5));
     }
 }
