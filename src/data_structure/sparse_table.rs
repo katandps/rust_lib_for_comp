@@ -12,12 +12,18 @@ use crate::prelude::*;
 pub use sparse_table_impl::SparseTable;
 #[snippet(name = "sparse-table", doc_hidden)]
 mod sparse_table_impl {
-    use super::{Band, Debug, Formatter, RangeBounds, RangeProduct, ToLR};
+    use super::{Band, Debug, Display, Formatter, JoinTrait, RangeBounds, RangeProduct, ToLR};
 
     #[derive(Clone)]
     pub struct SparseTable<B: Band> {
         size: usize,
         table: Vec<Vec<B::M>>,
+    }
+
+    impl<B: Band> SparseTable<B> {
+        pub fn len(&self) -> usize {
+            self.size
+        }
     }
 
     impl<B: Band> From<&[B::M]> for SparseTable<B> {
@@ -55,13 +61,14 @@ mod sparse_table_impl {
 
     impl<B: Band> Debug for SparseTable<B>
     where
-        B::M: Debug,
+        B::M: Display,
     {
         fn fmt(&self, f: &mut Formatter) -> std::fmt::Result {
-            for i in 0..self.size {
-                writeln!(f, "{:?}", self.product(i..=i))?;
-            }
-            Ok(())
+            writeln!(
+                f,
+                "\n{}",
+                (0..self.len()).map(|i| self.product(i..=i)).join(" ")
+            )
         }
     }
 }
