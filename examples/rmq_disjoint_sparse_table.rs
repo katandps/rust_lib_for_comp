@@ -1,4 +1,4 @@
-// verification-helper: PROBLEM http://judge.u-aizu.ac.jp/onlinejudge/description.jsp?id=ITP1_1_A
+// verification-helper: PROBLEM https://judge.yosupo.jp/problem/staticrmq
 
 use rust_lib_for_comp::{
     data_structure::disjoint_sparse_table::DisjointSparseTable,
