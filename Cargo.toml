@@ -39,3 +39,11 @@ opt-level = 3
 [[bench]]
 name = "benchmark"
 harness = false
+
+[[example]]
+name = "hello-world"
+path = "examples/hello_world.rs"
+
+[[example]]
+name = "rmq-disjoint-sparse-table"
+path = "examples/rmq_disjoint_sparse_table.rs"
