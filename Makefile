@@ -14,6 +14,7 @@ check:
 
 test:
 	cargo test --workspace
+	oj-verify run -j 8
 
 snippet:
 	mkdir -p $(SNIPPETS_DIR)

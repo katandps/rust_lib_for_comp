@@ -1,11 +1,14 @@
 //! # XorShift法による疑似乱数生成
-use crate::prelude::*;
+use prelude::*;
+use range_traits::*;
 
+#[snippet(name = "xor-shift", doc_hidden)]
 #[derive(Clone, Debug)]
 pub struct XorShift {
     seed: u64,
 }
 
+#[snippet(name = "xor-shift", doc_hidden)]
 mod xor_shift_impl {
     use std::time::SystemTime;
 
