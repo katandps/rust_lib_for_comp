@@ -15,9 +15,7 @@
 //! ```
 use crate::prelude::*;
 
-#[snippet(name = "reader", doc_hidden)]
 pub use reader_impl::{ReaderFromStdin, ReaderFromStr, ReaderTrait};
-#[snippet(name = "reader", doc_hidden)]
 #[rustfmt::skip]
 mod reader_impl {
     use super::{stdin, BufRead, FromStr as FS, VecDeque, Display, WriterTrait};

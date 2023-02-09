@@ -17,16 +17,12 @@ pub mod pollard_rho;
 pub mod sieve_of_eratosthenes;
 pub mod xor_basis;
 
-#[snippet(name = "algebra", doc_hidden)]
-#[rustfmt::skip]
 pub use algebra_traits::{
     AbelianGroup, Associative, Band, BoundedAbove, BoundedBelow, Commutative, CommutativeMonoid,
     Group, Idempotent, Invertible, Magma, MapMonoid, Monoid, One, Pow, PrimitiveRoot, SemiGroup,
-    Unital, Zero,TrailingZeros
+    TrailingZeros, Unital, Zero,
 };
 
-#[snippet(name = "algebra", doc_hidden)]
-#[rustfmt::skip]
 mod algebra_traits {
     use super::Debug;
     /// # マグマ

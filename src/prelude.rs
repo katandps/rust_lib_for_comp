@@ -1,7 +1,6 @@
 //! # 一括インポート用モジュール
 //! ここでインポートする要素はtemplateで使えるようにしておく
 
-#[snippet(name = "prelude", doc_hidden)]
 #[rustfmt::skip]
 pub use std::{
     cmp::{max, min, Ordering, Reverse},

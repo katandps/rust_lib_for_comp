@@ -16,6 +16,7 @@ members = [
     'crates/range_traits',
     'crates/io_util',
     'crates/solver',
+    'crates/dbg_macro',
 ]
 
 [dependencies]

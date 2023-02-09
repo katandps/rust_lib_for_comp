@@ -3,18 +3,6 @@
 
 use crate::prelude::*;
 
-#[snippet(name = "template", doc_hidden)]
-#[snippet(include = "reader")]
-#[snippet(include = "writer")]
-#[snippet(include = "algebra")]
-#[snippet(include = "min_max")]
-#[snippet(include = "range")]
-#[snippet(include = "prelude")]
-#[snippet(include = "debug")]
-#[snippet(include = "faster-hashmap")]
-#[snippet(include = "in-out")]
-#[snippet(include = "io-debug")]
-#[rustfmt::skip]
 pub fn main() {
     std::thread::Builder::new()
         .name("extend stack size".into())
