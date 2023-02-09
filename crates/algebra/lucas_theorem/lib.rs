@@ -2,7 +2,7 @@
 //! $nCr \bmod p$ を $O( p^2 \log_p N)$ で得る
 //!
 //! ```
-//! # use rust_lib_for_comp::algebra::lucas_theorem::*;
+//! # use lucas_theorem::*;
 //! assert_eq!(1 % 3, lucas_theorem(5, 0, 3));
 //! assert_eq!(5 % 3, lucas_theorem(5, 1, 3));
 //! assert_eq!(10 % 3, lucas_theorem(5, 2, 3));
@@ -20,7 +20,9 @@
 //! assert_eq!(1 % 3, lucas_theorem(7, 7, 3));
 //! ```
 
-use crate::prelude::*;
+use prelude::*;
+
+#[snippet(name = "lucas-theorem", doc_hidden)]
 pub fn lucas_theorem(mut n: i64, mut r: i64, p: i64) -> i64 {
     fn combination(n: i64, k: i64) -> i64 {
         if min(k, n - k) == 0 {

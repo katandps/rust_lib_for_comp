@@ -428,6 +428,14 @@ dependencies = [
 ]
 
 [[package]]
+name = "lucas_theorem"
+version = "0.1.0"
+dependencies = [
+ "algebra",
+ "prelude",
+]
+
+[[package]]
 name = "maximization"
 version = "0.1.0"
 dependencies = [
