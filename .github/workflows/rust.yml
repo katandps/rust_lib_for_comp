@@ -26,9 +26,9 @@ jobs:
       - run: rustup install 1.65.0
       - run: rustup component add clippy
       - run: cargo +1.42.0 check
-      - run: cargo +1.65.0 clippy -- -D warnings
-      - run: cargo +1.65.0 test
-      - run: cargo +1.65.0 doc --no-deps
+      - run: cargo +1.65.0 clippy --workspace -- -D warnings
+      - run: cargo +1.65.0 test --workspace
+      - run: cargo +1.65.0 doc --workspace --no-deps
       - uses: peaceiris/actions-gh-pages@v3
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
