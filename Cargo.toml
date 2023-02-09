@@ -15,6 +15,7 @@ members = [
     'crates/prelude',
     'crates/range_traits',
     'crates/io_util',
+    'crates/solver',
 ]
 
 [dependencies]

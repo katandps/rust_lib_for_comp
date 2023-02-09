@@ -1,17 +1,13 @@
+//! # main関数
+//!
+//! ## dependencies
+//! io_util
+//! prelude
+
+use io_util::*;
 use prelude::*;
 
-#[snippet(name = "template", doc_hidden)]
-#[snippet(include = "reader")]
-#[snippet(include = "writer")]
-#[snippet(include = "algebra")]
-#[snippet(include = "min_max")]
-#[snippet(include = "range")]
-#[snippet(include = "prelude")]
-#[snippet(include = "debug")]
-#[snippet(include = "faster-hashmap")]
-#[snippet(include = "in-out")]
-#[snippet(include = "io-debug")]
-#[rustfmt::skip]
+#[snippet("solver")]
 pub fn main() {
     std::thread::Builder::new()
         .name("extend stack size".into())
@@ -28,6 +24,6 @@ pub fn main() {
 
 #[snippet("solver")]
 pub fn solve<IO: ReaderTrait + WriterTrait>(io: &mut IO) {
-    let n: usize = io.v();
-    io.out(n.ln());
+    let _n: usize = io.v();
+    io.out("\n");
 }

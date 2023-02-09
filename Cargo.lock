@@ -661,6 +661,14 @@ dependencies = [
 ]
 
 [[package]]
+name = "solver"
+version = "0.1.0"
+dependencies = [
+ "io_util",
+ "prelude",
+]
+
+[[package]]
 name = "string_util"
 version = "0.1.0"
 dependencies = [
