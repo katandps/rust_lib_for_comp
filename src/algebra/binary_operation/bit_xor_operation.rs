@@ -1,10 +1,8 @@
 //! # BitXor $a \circ b \to xor(a, b)$
 use crate::prelude::*;
 
-#[snippet(name = "bit-xor-operation", doc_hidden)]
 #[derive(Clone, Debug, Default)]
 pub struct BitXorOperation<S>(PhantomData<fn() -> S>);
-#[snippet(name = "bit-xor-operation", doc_hidden)]
 mod bit_xor_operation_impl {
     use super::{Associative, BitXor, BitXorOperation, Commutative, Debug, Magma, Unital, Zero};
     impl<S: Clone + Debug + BitXor<Output = S> + PartialEq> Magma for BitXorOperation<S> {

@@ -2,10 +2,8 @@
 //! $a > b$ のとき b
 use crate::prelude::*;
 
-#[snippet(name = "minimization", doc_hidden)]
 #[derive(Clone, Debug, Default)]
 pub struct Minimization<S>(PhantomData<fn() -> S>);
-#[snippet(name = "minimization", doc_hidden)]
 mod minimization_impl {
     use super::{
         Associative, BoundedAbove, Commutative, Debug, Idempotent, Magma, Minimization, Unital,

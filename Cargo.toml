@@ -14,6 +14,7 @@ members = [
     'crates/algebra/binary_operation/greatest_common_divisor',
     'crates/algebra/binary_operation/maximization',
     'crates/algebra/binary_operation/minimization',
+    'crates/algebra/binary_operation/multiplication',
     'crates/data_structure/segment_tree',
     'crates/data_structure/disjoint_sparse_table',
     'crates/prelude',
