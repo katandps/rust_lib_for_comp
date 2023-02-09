@@ -5,7 +5,7 @@ on: push
 env:
   CARGO_TERM_COLOR: always
   RUST_BACKTRACE: 1
-  RUSTDOCFLAGS: --html-in-header katex.html
+  RUSTDOCFLAGS: --html-in-header /home/runner/work/rust_lib_for_comp/rust_lib_for_comp/katex.html
 
 jobs:
   test:
