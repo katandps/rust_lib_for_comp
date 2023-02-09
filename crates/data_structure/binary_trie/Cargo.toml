@@ -1,0 +1,16 @@
+[package]
+name = "binary_trie"
+version = "0.1.0"
+edition = "2018"
+
+[dependencies]
+prelude = { path = "../../prelude" }
+algebra = { path = "../../algebra" }
+range_traits = { path = "../../range_traits" }
+string_util = { path = "../../string_util" }
+
+# minimization = { path = "../../algebra/binary_operation/minimization" }
+# io_util = { path = "../../io_util" }
+
+[lib]
+path = "lib.rs"

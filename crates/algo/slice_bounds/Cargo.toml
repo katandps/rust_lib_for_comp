@@ -1,0 +1,10 @@
+[package]
+name = "slice_bounds"
+version = "0.1.0"
+edition = "2018"
+
+[dependencies]
+prelude = { path = "../../prelude" }
+
+[lib]
+path = "lib.rs"
