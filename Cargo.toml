@@ -16,6 +16,7 @@ members = [
     'crates/algebra/binary_operation/minimization',
     'crates/algebra/binary_operation/multiplication',
     'crates/algebra/binary_operation/overwrite_operation',
+    'crates/algebra/chinese_remainder_theorem',
     'crates/algebra/mod_int',
     'crates/algo/fxhasher',
     'crates/data_structure/segment_tree',

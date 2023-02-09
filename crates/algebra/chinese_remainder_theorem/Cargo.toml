@@ -1,0 +1,13 @@
+[package]
+name = "chinese_remainder_theorem"
+version = "0.1.0"
+edition = "2018"
+
+[dependencies]
+prelude = { path = "../../prelude" }
+
+[dev-dependencies]
+rand = "0.6"
+
+[lib]
+path = "lib.rs"

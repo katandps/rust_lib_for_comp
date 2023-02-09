@@ -1,7 +1,7 @@
 //! # 中国剰余定理
 //! $x \equiv b1 \bmod m1$, $x \equiv b2 \bmod m2$ となる整数$x$, $m$を得る $(x \equiv r \bmod m)$
 //! ```
-//! # use rust_lib_for_comp::algebra::chinese_remainder_theorem::*;
+//! # use chinese_remainder_theorem::*;
 //!
 //! fn assert(b1: u64, m1: u64, b2: u64, m2: u64) {
 //!     let (r, m) = CRT::crt(b1, m1, b2, m2);
@@ -15,7 +15,12 @@
 //! assert(4, 10, 2, 16);
 //! assert(1, 1_000_000_000_000_001, 0, 2);
 //! ```
+use prelude::*;
+
+#[snippet(name = "chinese-remainder-theorem", doc_hidden)]
 pub struct CRT;
+
+#[snippet(name = "chinese-remainder-theorem", doc_hidden)]
 impl CRT {
     /// (r, m) の順で返却
     /// 値がない場合は(0,0)を返す
