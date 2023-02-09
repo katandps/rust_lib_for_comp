@@ -4,11 +4,13 @@
 //! ## 出展
 //! [cbreeden/fxhash](https://github.com/cbreeden/fxhash)
 
-use crate::prelude::*;
+use prelude::*;
 
+#[snippet(name = "faster-hashmap")]
 #[rustfmt::skip]
 pub use self::fxhasher_impl::{FxHashMap as HashMap, FxHashSet as HashSet};
 
+#[snippet(name = "faster-hashmap")]
 #[rustfmt::skip]
 mod fxhasher_impl {
     use super::{BitXor, BuildHasherDefault, Hasher, TryInto};

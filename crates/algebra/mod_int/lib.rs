@@ -1,12 +1,15 @@
 //! # 剰余体
 //!
 //! $2^{32}$を$R$とするモンゴメリ乗算を使用して実装
-use crate::prelude::*;
+use algebra::*;
+use fxhasher::HashMap;
 pub use mod1000000007::{mi, Mi};
+use prelude::*;
 
 pub mod mod1000000007;
 pub mod mod998244353;
 
+#[snippet(name = "mod-int", doc_hidden)]
 pub trait Mod: Copy + Clone + Debug {
     /// # 法$N$
     const MOD: u32;
@@ -19,9 +22,11 @@ pub trait Mod: Copy + Clone + Debug {
     const R_POW2: u32;
 }
 
+#[snippet(name = "mod-int", doc_hidden)]
 #[derive(Copy, Clone, Eq, PartialEq, Default)]
 pub struct ModInt<M: Mod>(u32, PhantomData<fn() -> M>);
 
+#[snippet(name = "mod-int", doc_hidden)]
 mod mod_int_impl {
     use std::num::ParseIntError;
 
