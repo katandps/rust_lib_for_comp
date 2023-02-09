@@ -10,13 +10,16 @@
 //! [Q3. 素数判定 (強)](https://algo-method.com/submissions/611523)
 //! [ミラー・ラビン素数判定法のテスト](https://yukicoder.me/submissions/799899)
 
-use super::montgomery_multiplication::MontgomeryReduction;
+use montgomery_multiplication_64::MontgomeryReduction;
+use prelude::*;
 
+#[snippet(name = "miller-rabin", doc_hidden)]
 pub trait MillerRabin {
     /// 素数判定
     fn is_prime(&self) -> bool;
 }
 
+#[snippet(name = "miller-rabin", doc_hidden)]
 impl MillerRabin for u64 {
     fn is_prime(&self) -> bool {
         if *self < 2 || *self & 1 == 0 {

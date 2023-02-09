@@ -20,6 +20,7 @@ members = [
     'crates/algebra/complex_number',
     'crates/algebra/lucas_theorem',
     'crates/algebra/matrix',
+    'crates/algebra/miller_rabin',
     'crates/algebra/mod_int',
     'crates/algebra/mod_pow',
     'crates/algebra/mod_val_table',
