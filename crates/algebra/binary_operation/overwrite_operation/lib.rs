@@ -2,12 +2,16 @@
 //!
 //! ## verify
 //! [ABL E](https://atcoder.jp/contests/abl/submissions/26979080)
-use crate::prelude::*;
+use algebra::*;
+use prelude::*;
 
-#[derive(Clone, Debug, Default)]
-pub struct OverwriteOperation<S>(PhantomData<fn() -> S>);
+#[snippet(name = "overwrite_operation", doc_hidden)]
+pub use overwrite_operation_mod::OverwriteOperation;
+#[snippet(name = "overwrite_operation", doc_hidden)]
 mod overwrite_operation_mod {
-    use super::{Associative, Debug, Idempotent, Magma, OverwriteOperation, Unital};
+    use super::{Associative, Debug, Default, Idempotent, Magma, PhantomData, Unital};
+    #[derive(Clone, Debug, Default)]
+    pub struct OverwriteOperation<S>(PhantomData<fn() -> S>);
     impl<S: Clone + Debug + PartialEq> Magma for OverwriteOperation<S> {
         type M = Option<S>;
         fn op(x: &Self::M, y: &Self::M) -> Self::M {
