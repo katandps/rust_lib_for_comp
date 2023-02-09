@@ -21,6 +21,7 @@ members = [
     'crates/algebra/lucas_theorem',
     'crates/algebra/matrix',
     'crates/algebra/mod_int',
+    'crates/algebra/mod_pow',
     'crates/algo/fxhasher',
     'crates/data_structure/segment_tree',
     'crates/data_structure/disjoint_sparse_table',
