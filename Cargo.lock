@@ -248,6 +248,14 @@ dependencies = [
 ]
 
 [[package]]
+name = "greatest_common_divisor"
+version = "0.1.0"
+dependencies = [
+ "algebra",
+ "prelude",
+]
+
+[[package]]
 name = "half"
 version = "1.8.2"
 source = "registry+https://github.com/rust-lang/crates.io-index"
