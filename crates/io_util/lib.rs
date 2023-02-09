@@ -1,11 +1,11 @@
-//! # 入力ヘルパー
-//! バッファリングされた入力を提供する
+//! # 入出力ヘルパー
+//! バッファリングされた入力/出力を提供する
 //!
 //! ## 使い方
 //! Readを引数に取り、StringのIteratorを得る
 //!
 //! ```
-//! # use rust_lib_for_comp::util::reader::*;
+//! # use io_util::*;
 //! let mut reader = ReaderFromStr::new("-123 456.7 12345 hogehoge 123 456  789 012   345 678");
 //! assert_eq!(-123, reader.v());
 //! assert_eq!(456.7, reader.v());
@@ -13,12 +13,21 @@
 //! assert_eq!("hogehoge".to_string(), reader.v::<String>());
 //! assert_eq!(vec![123, 456, 789, 12, 345, 678], reader.vec(6));
 //! ```
-use crate::prelude::*;
 
-pub use reader_impl::{ReaderFromStdin, ReaderFromStr, ReaderTrait};
+use prelude::*;
+
+#[snippet(name = "io-util", doc_hidden)]
+pub use io_impl::{ReaderFromStdin, ReaderFromStr, ReaderTrait, WriterToStdout, WriterTrait, IO};
+#[snippet(name = "io-util", doc_hidden)]
 #[rustfmt::skip]
-mod reader_impl {
-    use super::{stdin, BufRead, FromStr as FS, VecDeque, Display, WriterTrait};
+mod io_impl {
+    use super::{stdin, stdout, BufRead, BufWriter, Display, FromStr as FS, VecDeque, Write};
+
+    #[derive(Clone, Debug, Default)]
+    pub struct IO {
+        reader: ReaderFromStdin,
+        writer: WriterToStdout,
+    }
 
     pub trait ReaderTrait {
         fn next(&mut self) -> Option<String>;
@@ -131,7 +140,7 @@ mod reader_impl {
         }
         fn flush(&mut self) {}
     }
-    
+
     #[derive(Clone, Debug, Default)]
     pub struct ReaderFromStdin {
         buf: VecDeque<String>,
@@ -148,6 +157,48 @@ mod reader_impl {
                     .append(&mut l.split_whitespace().map(ToString::to_string).collect());
             }
             self.buf.pop_front()
+        }
+    }
+
+    pub trait WriterTrait {
+        /// # Sを出力
+        fn out<S: Display>(&mut self, s: S);
+        /// # バッファをクリアする
+        fn flush(&mut self);
+    }
+
+    #[derive(Clone, Debug, Default)]
+    pub struct WriterToStdout {
+        buf: String,
+    }
+
+    impl WriterTrait for WriterToStdout {
+        fn out<S: Display>(&mut self, s: S) {
+            self.buf.push_str(&s.to_string());
+        }
+        fn flush(&mut self) {
+            if !self.buf.is_empty() {
+                let stdout = stdout();
+                let mut writer = BufWriter::new(stdout.lock());
+                write!(writer, "{}", self.buf).expect("Failed to write.");
+                let _ = writer.flush();
+                self.buf.clear();
+            }
+        }
+    }
+
+    impl ReaderTrait for IO {
+        fn next(&mut self) -> Option<String> {
+            self.reader.next()
+        }
+    }
+
+    impl WriterTrait for IO {
+        fn out<S: std::fmt::Display>(&mut self, s: S) {
+            self.writer.out(s)
+        }
+        fn flush(&mut self) {
+            self.writer.flush()
         }
     }
 }

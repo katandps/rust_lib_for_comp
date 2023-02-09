@@ -1,30 +1,21 @@
-//! # 代数
-use crate::prelude::*;
+use prelude::*;
 
-pub mod binary_operation;
-pub mod chinese_remainder_theorem;
-pub mod complex_number;
-pub mod lucas_theorem;
-pub mod matrix;
-pub mod miller_rabin;
-pub mod mod_int;
-pub mod mod_inv;
-pub mod mod_inv_u64;
-pub mod mod_pow;
-pub mod mod_val_table;
-pub mod montgomery_multiplication;
-pub mod pollard_rho;
-pub mod sieve_of_eratosthenes;
-pub mod xor_basis;
-
+#[snippet(name = "algebra", doc_hidden)]
+#[rustfmt::skip]
 pub use algebra_traits::{
     AbelianGroup, Associative, Band, BoundedAbove, BoundedBelow, Commutative, CommutativeMonoid,
-    Group, Idempotent, Invertible, Magma, MapMonoid, Monoid, One, Pow, PrimitiveRoot, SemiGroup,
-    TrailingZeros, Unital, Zero,
+    Group, Idempotent, Integral, Invertible, Magma, MapMonoid, Monoid, One, Pow, PrimitiveRoot,
+    SemiGroup, TrailingZeros, Unital, Zero,
 };
 
+#[snippet(name = "algebra", doc_hidden)]
+#[rustfmt::skip]
 mod algebra_traits {
-    use super::Debug;
+    use super::{
+        Add, AddAssign, BitAnd, BitAndAssign, BitOr, BitOrAssign, BitXor, BitXorAssign, Debug,
+        Display, Div, DivAssign, Mul, MulAssign, Not, Product, Rem, RemAssign, Shl, ShlAssign, Shr,
+        ShrAssign, Sub, SubAssign, Sum,
+    };
     /// # マグマ
     /// 二項演算: $M \circ M \to M$
     pub trait Magma {
@@ -176,4 +167,57 @@ mod algebra_traits {
     pub trait TrailingZeros {
         fn trailing_zero(self) -> Self;
     }
+
+    pub trait Integral:
+        'static
+        + Send
+        + Sync
+        + Copy
+        + Ord
+        + Display
+        + Debug
+        + Add<Output = Self>
+        + Sub<Output = Self>
+        + Mul<Output = Self>
+        + Div<Output = Self>
+        + Rem<Output = Self>
+        + AddAssign
+        + SubAssign
+        + MulAssign
+        + DivAssign
+        + RemAssign
+        + Sum
+        + Product
+        + BitOr<Output = Self>
+        + BitAnd<Output = Self>
+        + BitXor<Output = Self>
+        + Not<Output = Self>
+        + Shl<Output = Self>
+        + Shr<Output = Self>
+        + BitOrAssign
+        + BitAndAssign
+        + BitXorAssign
+        + ShlAssign
+        + ShrAssign
+        + Zero
+        + One
+        + BoundedBelow
+        + BoundedAbove
+        + TrailingZeros
+    {
+    }
+
+    macro_rules! impl_integral {
+    ($($ty:ty),*) => {
+        $(
+            impl Zero for $ty { #[inline] fn zero() -> Self { 0 }}
+            impl One for $ty { #[inline] fn one() -> Self { 1 }}
+            impl BoundedBelow for $ty { #[inline] fn min_value() -> Self { Self::min_value() }}
+            impl BoundedAbove for $ty { #[inline] fn max_value() -> Self { Self::max_value() }}
+            impl TrailingZeros for $ty { #[inline] fn trailing_zero(self) -> Self { self.trailing_zeros() as $ty}}
+            impl Integral for $ty {}
+        )*
+    };
+}
+    impl_integral!(i8, i16, i32, i64, i128, isize, u8, u16, u32, u64, u128, usize);
 }

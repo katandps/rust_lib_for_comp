@@ -5,7 +5,19 @@ authors = ["katand <katandps@gmail.com>"]
 edition = "2018"
 rust-version = "1.42"
 
-# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+[workspace]
+members = [
+    'crates/algebra',
+    'crates/algebra/binary_operation/minimization',
+    'crates/algebra/binary_operation/maximization',
+    'crates/data_structure/segment_tree',
+    'crates/data_structure/disjoint_sparse_table',
+    'crates/prelude',
+    'crates/range_traits',
+    'crates/io_util',
+    'crates/solver',
+    'crates/dbg_macro',
+]
 
 [dependencies]
 cargo-snippet = "0.6"
@@ -43,7 +55,3 @@ harness = false
 [[example]]
 name = "hello-world"
 path = "examples/hello_world.rs"
-
-[[example]]
-name = "rmq-disjoint-sparse-table"
-path = "examples/rmq_disjoint_sparse_table.rs"

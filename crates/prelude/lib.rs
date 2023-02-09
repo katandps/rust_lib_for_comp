@@ -1,6 +1,6 @@
-//! # 一括インポート用モジュール
-//! ここでインポートする要素はtemplateで使えるようにしておく
+pub use cargo_snippet::snippet;
 
+#[snippet(name = "prelude", doc_hidden)]
 #[rustfmt::skip]
 pub use std::{
     cmp::{max, min, Ordering, Reverse},
@@ -9,6 +9,7 @@ pub use std::{
     },
     convert::Infallible,
     convert::{TryFrom, TryInto},
+    default::Default,
     fmt::{Debug, Display, Formatter},
     hash::{Hash, BuildHasherDefault, Hasher},
     io::{stdin, stdout, BufRead, BufWriter, Read, Write,StdoutLock},
@@ -22,10 +23,3 @@ pub use std::{
     },
     str::{from_utf8, FromStr},
 };
-
-pub use crate::algebra::*;
-pub use crate::algo::fxhasher::*;
-pub use crate::algo::range::{RangeProduct, RangeProductMut, ToLR};
-pub use crate::element::integral::*;
-pub use crate::util::{io::*, io_debug::*, reader::*, writer::*};
-pub use cargo_snippet::snippet;
