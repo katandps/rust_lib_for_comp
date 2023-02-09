@@ -1,9 +1,11 @@
 //! # ModIntの逆元/階乗の前計算
 //! 逆元と階乗を$O(N)$で前計算する。
 //!
-use crate::algebra::mod_int::{Mod, ModInt};
-use crate::prelude::*;
+use algebra::*;
+use mod_int::{Mod, ModInt};
+use prelude::*;
 
+#[snippet(name = "mod-val-table", doc_hidden)]
 #[derive(Debug, Clone)]
 pub struct ModValTable<M> {
     /// # inv$\[i] = i$の逆元
@@ -16,6 +18,7 @@ pub struct ModValTable<M> {
     limit: usize,
 }
 
+#[snippet(name = "mod-val-table", doc_hidden)]
 pub mod mod_val_table_impl {
     use super::{Mod, ModInt, ModValTable, One, Zero};
     impl<M: Zero + One> Default for ModValTable<M> {
@@ -74,8 +77,8 @@ pub mod mod_val_table_impl {
         /// # Factorial 階乗
         /// $ n! $
         /// ```
-        /// # use rust_lib_for_comp::algebra::mod_int::Mi;
-        /// # use rust_lib_for_comp::algebra::mod_val_table::ModValTable;
+        /// # use mod_int::Mi;
+        /// # use mod_val_table::ModValTable;
         /// let mut five = ModValTable::<Mi>::new(5);
         /// let res = vec![1, 1, 2, 6, 24, 120];
         /// for i in 0..=5 {
@@ -91,8 +94,8 @@ pub mod mod_val_table_impl {
         /// # Permutation 順列
         /// $nPr = n! / (n - r)!$
         /// ```
-        /// # use rust_lib_for_comp::algebra::mod_int::Mi;
-        /// # use rust_lib_for_comp::algebra::mod_val_table::ModValTable;
+        /// # use mod_int::Mi;
+        /// # use mod_val_table::ModValTable;
         /// let mut five = ModValTable::<Mi>::new(5);
         /// assert_eq!(1, five.permutation(5, 0).reduce());
         /// assert_eq!(5, five.permutation(5, 1).reduce());
@@ -114,8 +117,8 @@ pub mod mod_val_table_impl {
         /// $nCr = n! / (n - r)! r! = nPr / r!$
         /// Binomial Coefficient 二項係数 とも呼ぶ
         /// ```
-        /// use rust_lib_for_comp::algebra::mod_int::Mi;
-        /// use rust_lib_for_comp::algebra::mod_val_table::ModValTable;
+        /// use mod_int::Mi;
+        /// use mod_val_table::ModValTable;
         /// let mut five = ModValTable::<Mi>::new(5);
         /// assert_eq!(1, five.combination(5, 0).reduce());
         /// assert_eq!(5, five.combination(5, 1).reduce());
@@ -188,7 +191,7 @@ pub mod mod_val_table_impl {
 
 #[test]
 fn catalan_test() {
-    use crate::algebra::mod_int::mod998244353::Mi;
+    use mod_int::mod998244353::Mi;
     let mut mvt = ModValTable::default();
     assert_eq!(Mi::new(1), mvt.catalan_number(0));
     assert_eq!(Mi::new(1), mvt.catalan_number(1));
@@ -204,7 +207,7 @@ fn catalan_test() {
 
 #[test]
 fn montmort_test() {
-    use crate::algebra::mod_int::mod998244353::Mi;
+    use mod_int::mod998244353::Mi;
 
     let mut mvt = ModValTable::default();
     assert_eq!(Mi::new(0), mvt.montmort_number(1));

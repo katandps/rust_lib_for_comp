@@ -22,6 +22,7 @@ members = [
     'crates/algebra/matrix',
     'crates/algebra/mod_int',
     'crates/algebra/mod_pow',
+    'crates/algebra/mod_val_table',
     'crates/algo/fxhasher',
     'crates/data_structure/segment_tree',
     'crates/data_structure/disjoint_sparse_table',

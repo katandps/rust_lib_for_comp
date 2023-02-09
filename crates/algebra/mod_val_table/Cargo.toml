@@ -1,0 +1,12 @@
+[package]
+name = "mod_val_table"
+version = "0.1.0"
+edition = "2018"
+
+[dependencies]
+algebra = { path = "../../algebra" }
+mod_int = { path = "../../algebra/mod_int" }
+prelude = { path = "../../prelude" }
+
+[lib]
+path = "lib.rs"
