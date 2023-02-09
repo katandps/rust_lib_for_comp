@@ -1,9 +1,12 @@
 //! # 行列
 //!
 //!
-use crate::prelude::*;
+use algebra::*;
+use prelude::*;
 
+#[snippet(name = "matrix", doc_hidden)]
 pub use matrix_impl::Matrix;
+#[snippet(name = "matrix", doc_hidden)]
 mod matrix_impl {
     use super::{
         Add, AddAssign, Debug, Div, Formatter, Mul, MulAssign, Neg, One, Pow, Sub, SubAssign, Zero,
@@ -254,7 +257,7 @@ mod matrix_impl {
 mod test {
     use super::matrix_impl::{ColumnVector, Determinant, RowVector};
     use super::*;
-    use crate::algebra::mod_int::mod998244353::{mi, Mi};
+    use mod_int::mod998244353::{mi, Mi};
     use std::convert::TryInto;
 
     #[test]

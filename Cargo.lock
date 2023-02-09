@@ -436,6 +436,15 @@ dependencies = [
 ]
 
 [[package]]
+name = "matrix"
+version = "0.1.0"
+dependencies = [
+ "algebra",
+ "mod_int",
+ "prelude",
+]
+
+[[package]]
 name = "maximization"
 version = "0.1.0"
 dependencies = [
