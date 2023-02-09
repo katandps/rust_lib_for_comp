@@ -1,7 +1,7 @@
 //! # 高速ハッシュ
 //! 暗号学的に安全ではないが、高速なHash
 //!
-//! ## 出展
+//! ## 出典
 //! [cbreeden/fxhash](https://github.com/cbreeden/fxhash)
 
 use prelude::*;

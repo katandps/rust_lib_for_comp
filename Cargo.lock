@@ -326,6 +326,20 @@ dependencies = [
 ]
 
 [[package]]
+name = "dynamic_li_chao_tree"
+version = "0.1.0"
+dependencies = [
+ "addition",
+ "algebra",
+ "io_util",
+ "minimization",
+ "prelude",
+ "range_traits",
+ "string_util",
+ "xor_shift",
+]
+
+[[package]]
 name = "either"
 version = "1.8.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -1020,6 +1034,20 @@ version = "0.1.0"
 dependencies = [
  "algebra",
  "prelude",
+]
+
+[[package]]
+name = "succinct_indexable_dictionaries"
+version = "0.1.0"
+dependencies = [
+ "addition",
+ "algebra",
+ "io_util",
+ "minimization",
+ "prelude",
+ "range_traits",
+ "string_util",
+ "xor_shift",
 ]
 
 [[package]]
