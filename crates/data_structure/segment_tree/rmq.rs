@@ -1,11 +1,9 @@
 // verification-helper: PROBLEM https://judge.yosupo.jp/problem/staticrmq
-use io_util::IO;
+use io_util::*;
 use minimization::Minimization;
 use range_traits::*;
-use reader::*;
 use segment_tree::SegmentTree;
 use string_util::*;
-use writer::*;
 
 fn main() {
     let mut io = IO::default();

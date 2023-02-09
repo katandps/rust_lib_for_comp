@@ -5,8 +5,6 @@ edition = "2018"
 
 [dependencies]
 prelude = { path = "../prelude" }
-reader = { path = "../reader" }
-writer = { path = "../writer" }
 
 [lib]
 path = "lib.rs"

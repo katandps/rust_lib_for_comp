@@ -1,11 +1,9 @@
 // verification-helper: PROBLEM https://judge.yosupo.jp/problem/staticrmq
 use disjoint_sparse_table::DisjointSparseTable;
-use io_util::IO;
+use io_util::*;
 use minimization::Minimization;
 use range_traits::RangeProduct;
-use reader::*;
 use string_util::*;
-use writer::*;
 
 fn main() {
     let mut io = IO::default();

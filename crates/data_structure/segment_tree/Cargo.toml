@@ -10,8 +10,6 @@ range_traits = { path = "../../range_traits" }
 
 minimization = { path = "../../algebra/binary_operation/minimization" }
 io_util = { path = "../../io_util" }
-reader = { path = "../..//reader" }
-writer = { path = "../..//writer" }
 string_util = { path = "../../string_util" }
 
 [dev-dependencies]
