@@ -12,19 +12,18 @@
 //! ## verify
 //! [ポラードのロー素因数分解法](https://algo-method.com/submissions/683415)
 //! [Factorize](https://judge.yosupo.jp/submission/112482)
+use algebra::*;
+use greatest_common_divisor::Gcd;
+use miller_rabin::MillerRabin;
+use montgomery_multiplication_64::MontgomeryReduction;
+use prelude::*;
 
-use crate::{
-    algebra::{
-        binary_operation::greatest_common_divisor::Gcd, miller_rabin::MillerRabin,
-        montgomery_multiplication::MontgomeryReduction,
-    },
-    prelude::*,
-};
-
+#[snippet(name = "pollard-rho", doc_hidden)]
 pub trait PollardRho {
     fn prime_factorize(&self) -> Vec<u64>;
 }
 
+#[snippet(name = "pollard-rho", doc_hidden)]
 #[allow(clippy::many_single_char_names)]
 impl PollardRho for u64 {
     fn prime_factorize(&self) -> Vec<u64> {

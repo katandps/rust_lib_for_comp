@@ -7,7 +7,6 @@
 
 use crate::prelude::*;
 
-#[snippet(name = "montgomery-multiplication", doc_hidden)]
 #[derive(Clone, Debug)]
 pub struct MontgomeryReduction {
     /// 奇数$N$
@@ -28,7 +27,6 @@ pub struct MontgomeryReduction {
     pub k: u32,
 }
 
-#[snippet(name = "montgomery-multiplication", doc_hidden)]
 impl MontgomeryReduction {
     /// # 初期化
     /// $\pmod n$ で初期化する
