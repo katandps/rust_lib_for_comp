@@ -940,6 +940,13 @@ dependencies = [
 ]
 
 [[package]]
+name = "sieve_of_erathosthenes"
+version = "0.1.0"
+dependencies = [
+ "prelude",
+]
+
+[[package]]
 name = "solver"
 version = "0.1.0"
 dependencies = [

@@ -26,6 +26,7 @@ members = [
     'crates/algebra/mod_val_table',
     'crates/algebra/montgomery_multiplication_64',
     'crates/algebra/pollard_rho',
+    'crates/algebra/sieve_of_erathosthenes',
     'crates/algo/fxhasher',
     'crates/algo/xor_shift',
     'crates/data_structure/segment_tree',
