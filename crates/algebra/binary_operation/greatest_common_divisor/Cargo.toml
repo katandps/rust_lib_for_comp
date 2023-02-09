@@ -1,0 +1,11 @@
+[package]
+name = "greatest_common_divisor"
+version = "0.1.0"
+edition = "2018"
+
+[dependencies]
+prelude = { path = "../../../prelude" }
+algebra = { path = "../../" }
+
+[lib]
+path = "lib.rs"

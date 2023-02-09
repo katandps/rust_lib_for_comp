@@ -1,8 +1,29 @@
-use crate::prelude::*;
+//! # GCD $a \circ b \to gcd(a, b)$
+//! 最小公倍数をユークリッドの互除法で求める
+//!
+//! ## 使い方
+//!```
+//! # use greatest_common_divisor::*;
+//! # use algebra::*;
+//! assert_eq!(1, Gcd::op(&3, &5));
+//! assert_eq!(2, Gcd::op(&4, &6));
+//! assert_eq!(3, Gcd::op(&3, &9));
+//! assert_eq!(3, Gcd::op(&9, &3));
+//! assert_eq!(11, Gcd::op(&11, &11));
+//! assert_eq!(1, Gcd::op(&1_000_000_007, &998_244_353));
+//!```
+//!
+//! ## dependency
+//! prelude
+//! algebra
+use algebra::*;
+use prelude::*;
 
 pub mod naive_impl;
 
+#[snippet(name = "gcd-operation", doc_hidden)]
 pub use gcd_impl::Gcd;
+#[snippet(name = "gcd-operation", doc_hidden)]
 mod gcd_impl {
     use std::ops::{BitOr, Shl, ShrAssign, SubAssign};
 

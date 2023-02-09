@@ -1,12 +1,17 @@
 //! # BitOr $a \circ b \to or(a, b)$
-use crate::prelude::*;
+use algebra::*;
+use prelude::*;
 
-#[derive(Clone, Debug, Default)]
-pub struct BitOrOperation<S>(PhantomData<fn() -> S>);
+#[snippet(name = "bit-or-operation", doc_hidden)]
+pub use bit_or_opration_impl::BitOrOperation;
+#[snippet(name = "bit-or-operation", doc_hidden)]
 mod bit_or_opration_impl {
     use super::{
-        Associative, BitOr, BitOrOperation, Commutative, Debug, Idempotent, Magma, Unital, Zero,
+        Associative, BitOr, Commutative, Debug, Default, Idempotent, Magma, PhantomData, Unital,
+        Zero,
     };
+    #[derive(Clone, Debug, Default)]
+    pub struct BitOrOperation<S>(PhantomData<fn() -> S>);
     impl<S: Clone + Debug + BitOr<Output = S> + PartialEq> Magma for BitOrOperation<S> {
         type M = S;
         fn op(x: &Self::M, y: &Self::M) -> Self::M {
