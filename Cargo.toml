@@ -10,6 +10,7 @@ members = [
     'crates/algebra',
     'crates/algebra/binary_operation/addition',
     'crates/algebra/binary_operation/bit_or_operation',
+    'crates/algebra/binary_operation/bit_xor_operation',
     'crates/algebra/binary_operation/greatest_common_divisor',
     'crates/algebra/binary_operation/maximization',
     'crates/algebra/binary_operation/minimization',
