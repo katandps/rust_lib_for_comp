@@ -2,14 +2,16 @@
 //! 四則演算をサポート
 //!
 //! 誤差の対策は十分に行うこと
-use crate::algebra::{One, Zero};
-use crate::prelude::*;
+use algebra::{One, Zero};
+use prelude::*;
 
+#[snippet(name = "complex-number", doc_hidden)]
 #[derive(Clone, Copy)]
 pub struct Complex {
     real: f64,
     imaginary: f64,
 }
+#[snippet(name = "complex-number", doc_hidden)]
 mod complex_impl {
     use super::{
         Add, AddAssign, Complex, Debug, Div, DivAssign, Formatter, Mul, MulAssign, Neg, One, Sub,

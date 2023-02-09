@@ -113,7 +113,6 @@ name = "chinese_remainder_theorem"
 version = "0.1.0"
 dependencies = [
  "prelude",
- "rand 0.6.5",
 ]
 
 [[package]]
@@ -171,6 +170,14 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "ddfc5b9aa5d4507acaf872de71051dfd0e309860e88966e1051e462a077aac4f"
 dependencies = [
  "bitflags",
+]
+
+[[package]]
+name = "complex_number"
+version = "0.1.0"
+dependencies = [
+ "algebra",
+ "prelude",
 ]
 
 [[package]]
