@@ -1,0 +1,25 @@
+[package]
+name = "segment_tree"
+version = "0.1.0"
+edition = "2018"
+
+[dependencies]
+prelude = { path = "../../prelude" }
+algebra = { path = "../../algebra" }
+range_traits = { path = "../../range_traits" }
+
+minimization = { path = "../../algebra/binary_operation/minimization" }
+io_util = { path = "../../io_util" }
+reader = { path = "../..//reader" }
+writer = { path = "../..//writer" }
+string_util = { path = "../../string_util" }
+
+[dev-dependencies]
+maximization = { path = "../../algebra/binary_operation/maximization" }
+
+[lib]
+path = "lib.rs"
+
+[[example]]
+name = "rmq-segment-tree"
+path = "rmq.rs"

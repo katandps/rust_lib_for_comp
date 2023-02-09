@@ -1,0 +1,12 @@
+[package]
+name = "io_util"
+version = "0.1.0"
+edition = "2018"
+
+[dependencies]
+prelude = { path = "../prelude" }
+reader = { path = "../reader" }
+writer = { path = "../writer" }
+
+[lib]
+path = "lib.rs"

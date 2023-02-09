@@ -1,0 +1,11 @@
+[package]
+name = "reader"
+version = "0.1.0"
+edition = "2018"
+
+[dependencies]
+prelude = { path = "../prelude" }
+writer = { path = "../writer" }
+
+[lib]
+path = "lib.rs"

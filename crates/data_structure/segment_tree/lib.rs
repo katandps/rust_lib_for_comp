@@ -6,8 +6,9 @@
 //!
 //! ## todo
 //! 単調性がある場合の二分探索の実装
-use crate::algebra::Monoid;
-use crate::prelude::*;
+use algebra::*;
+use prelude::*;
+use range_traits::*;
 
 #[snippet(name = "segment-tree", doc_hidden)]
 pub use segment_tree_impl::SegmentTree;
@@ -21,8 +22,8 @@ mod segment_tree_impl {
         node: Vec<M::M>,
     }
 
-    impl<M: Monoid> From<&Vec<M::M>> for SegmentTree<M> {
-        fn from(v: &Vec<M::M>) -> Self {
+    impl<M: Monoid> From<&[M::M]> for SegmentTree<M> {
+        fn from(v: &[M::M]) -> Self {
             let mut segtree = Self::new(v.len() + 1);
             segtree.node[segtree.n..segtree.n + v.len()].clone_from_slice(v);
             for i in (0..segtree.n - 1).rev() {
@@ -100,12 +101,12 @@ mod segment_tree_impl {
 #[cfg(test)]
 mod test {
     use super::*;
-    use crate::algebra::binary_operation::maximization::Maximization;
+    use maximization::Maximization;
 
     #[test]
     fn it_works() {
         let base = vec![3, 1, 4, 1, 5, 9, 2, 6, 5, 3];
-        let mut segtree: SegmentTree<Maximization<_>> = SegmentTree::from(&base);
+        let mut segtree: SegmentTree<Maximization<i64>> = SegmentTree::from(&base[..]);
 
         for i in 0..base.len() {
             assert_eq!(base[i], segtree[i]);

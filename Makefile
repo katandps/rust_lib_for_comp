@@ -16,6 +16,7 @@ test:
 
 snippet:
 	mkdir -p $(SNIPPETS_DIR)
+	fd "Cargo.toml" crates | xargs dirname | xargs -i sh -c 'cd {}; cargo snippet -t vscode lib.rs > snippet;'
 	cargo snippet -t vscode > $(SNIPPETS_DIR)/$(SNIPPETS_FILE)
 
 build: fmt lint check test snippet

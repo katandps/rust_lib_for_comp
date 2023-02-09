@@ -3,8 +3,10 @@
 //!
 //! ## verify
 //! [Static RMQ](https://judge.yosupo.jp/submission/124820)
-use crate::algebra::SemiGroup;
-use crate::prelude::*;
+use algebra::*;
+use prelude::*;
+use range_traits::*;
+use string_util::JoinTrait;
 
 #[snippet(name = "disjoint-sparse-table", doc_hidden)]
 pub use disjoint_sparse_table_impl::DisjointSparseTable;
@@ -97,7 +99,7 @@ mod disjoint_sparse_table_impl {
 
 #[test]
 fn test() {
-    use crate::prelude::binary_operation::addition::Addition;
+    use addition::Addition;
 
     let src = vec![1i64, 2, 4, 8, 16, 32, 64, 128, 256, 512];
     let dst = DisjointSparseTable::<Addition<i64>>::from(&src[..]);
