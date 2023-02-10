@@ -1,11 +1,13 @@
 [package]
-name = "binary_trie"
+name = "plane_int"
 version = "0.1.0"
 edition = "2018"
 
 [dependencies]
 prelude = { path = "../../prelude" }
-string_util = { path = "../../util/string_util" }
+
+[dev-dependencies]
+itertools = "0.9"
 
 [lib]
 path = "lib.rs"

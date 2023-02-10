@@ -1,0 +1,12 @@
+[package]
+name = "rolling_hash"
+version = "0.1.0"
+edition = "2018"
+
+[dependencies]
+prelude = { path = "../../prelude" }
+montgomery_multiplication_64 = { path = "../../algebra/montgomery_multiplication_64" }
+xor_shift = { path = "../../algo/xor_shift" }
+
+[lib]
+path = "lib.rs"

@@ -1,11 +1,9 @@
 [package]
-name = "binary_trie"
+name = "longest_increasing_subsequence"
 version = "0.1.0"
 edition = "2018"
 
 [dependencies]
 prelude = { path = "../../prelude" }
-string_util = { path = "../../util/string_util" }
-
 [lib]
 path = "lib.rs"

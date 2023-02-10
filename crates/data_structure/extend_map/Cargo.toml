@@ -1,11 +1,11 @@
 [package]
-name = "binary_trie"
+name = "extend_map"
 version = "0.1.0"
 edition = "2018"
 
 [dependencies]
 prelude = { path = "../../prelude" }
-string_util = { path = "../../util/string_util" }
+fxhasher = { path = "../../algo/fxhasher" }
 
 [lib]
 path = "lib.rs"

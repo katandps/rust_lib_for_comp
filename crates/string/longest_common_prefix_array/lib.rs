@@ -1,6 +1,6 @@
 //! LCP配列 Longest Common Prefix Array
-use crate::prelude::*;
-use crate::string::suffix_array::SuffixArray;
+use prelude::*;
+use suffix_array::SuffixArray;
 
 #[snippet(name = "longest-common-prefix-array", doc_hidden)]
 pub struct LCPArray {

@@ -3,9 +3,10 @@
 //!
 //! ## verify
 //! [047 - Monochromatic Diagonal](https://atcoder.jp/contests/typical90/submissions/31161891)
-use crate::algebra::montgomery_multiplication::MontgomeryReduction;
-use crate::algo::xor_shift::XorShift;
-use crate::prelude::*;
+use montgomery_multiplication_64::MontgomeryReduction;
+use prelude::*;
+use xor_shift::XorShift;
+
 #[snippet(name = "rolling-hash", doc_hidden)]
 pub use rolling_hash_impl::{Hashed, RollingHash};
 #[snippet(name = "rolling-hash", doc_hidden)]

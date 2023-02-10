@@ -1,16 +1,14 @@
 [package]
-name = "binary_indexed_tree"
+name = "weighted_union_find"
 version = "0.1.0"
 edition = "2018"
 
 [dependencies]
 prelude = { path = "../../prelude" }
 algebra = { path = "../../algebra" }
-range_traits = { path = "../../range_traits" }
 
 [dev-dependencies]
 addition = { path = "../../algebra/binary_operation/addition" }
-rand = "0.6"
 
 [lib]
 path = "lib.rs"

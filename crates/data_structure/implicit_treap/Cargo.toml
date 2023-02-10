@@ -1,11 +1,11 @@
 [package]
-name = "binary_indexed_tree"
+name = "implicit_treap"
 version = "0.1.0"
 edition = "2018"
 
 [dependencies]
 prelude = { path = "../../prelude" }
-algebra = { path = "../../algebra" }
+xor_shift = { path = "../../algo/xor_shift" }
 range_traits = { path = "../../range_traits" }
 
 [dev-dependencies]

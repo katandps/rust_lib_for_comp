@@ -15,6 +15,6 @@ xor_shift = { path = "../../../algo/xor_shift" }
 path = "lib.rs"
 
 [[bench]]
-name = "binary-GCD"
-path = "./binary_gcd.rs"
+name = "binary-gcd"
+path = "./bench_binary_gcd.rs"
 harness = false

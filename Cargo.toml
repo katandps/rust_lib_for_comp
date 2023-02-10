@@ -42,18 +42,29 @@ members = [
     'crates/algo/xor_shift',
     'crates/convolution/bitwise_convolution',
     'crates/convolution/fast_fourier_transform',
-    'crates/data_structure/binary_trie',
     'crates/data_structure/binary_indexed_tree',
+    'crates/data_structure/binary_indexed_tree_2d',
+    'crates/data_structure/binary_search_tree',
+    'crates/data_structure/binary_trie',
     'crates/data_structure/bit_set',
+    'crates/data_structure/bit_matrix',
+    'crates/data_structure/complete_64_part_tree',
+    'crates/data_structure/cumulative_sum',
     'crates/data_structure/disjoint_sparse_table',
     'crates/data_structure/dynamic_li_chao_tree',
+    'crates/data_structure/dynamic_segment_tree',
+    'crates/data_structure/extend_map',
+    'crates/data_structure/implicit_treap',
     'crates/data_structure/lazy_segment_tree',
+    'crates/data_structure/partially_persistent_union_find',
+    'crates/data_structure/priority_sum',
     'crates/data_structure/segment_tree',
     'crates/data_structure/sparse_table',
     'crates/data_structure/succinct_indexable_dictionaries',
     'crates/data_structure/treap',
     'crates/data_structure/union_find',
     'crates/data_structure/wavelet_matrix',
+    'crates/data_structure/weighted_union_find',
     'crates/dynamic_programming/rerooting_dp',
     'crates/element/int_with_index',
     'crates/element/segment',
@@ -62,6 +73,9 @@ members = [
     'crates/enumerator/next_permutation',
     'crates/enumerator/split_of_natural_number',
     'crates/enumerator/subset',
+    'crates/geometry/floor_sum',
+    'crates/geometry/plane_float',
+    'crates/geometry/plane_int',
     'crates/graph',
     'crates/graph/adjacency_list',
     'crates/graph/adjacency_matrix',
@@ -86,6 +100,17 @@ members = [
     'crates/prelude',
     'crates/print/vec2d',
     'crates/range_traits',
+    'crates/string/knuth_morris_pratt',
+    'crates/string/lexicographically_combine',
+    'crates/string/longest_common_prefix_array',
+    'crates/string/longest_increasing_subsequence',
+    'crates/string/manachar',
+    'crates/string/morris_pratt',
+    'crates/string/rolling_hash',
+    'crates/string/run_length_encoding',
+    'crates/string/suffix_array',
+    'crates/string/trie',
+    'crates/string/z_algorithm',
     'crates/typical_problems/highly_composite_number',
     'crates/typical_problems/range_query/static_range_set_query',
     'crates/typical_problems/range_query/static_range_frequency',
@@ -98,27 +123,6 @@ members = [
     'crates/util/time_keeper',
 ]
 
-[dependencies]
-cargo-snippet = "0.6"
-
-[dev-dependencies]
-
-# RNG 疑似乱数生成器 (randファミリー)
-rand = { version = "=0.7.3", features = ["small_rng"] }
-getrandom = "=0.1.14"
-rand_chacha = "=0.2.1"
-rand_core = "=0.5.1"
-rand_hc = "=0.2.0"
-rand_pcg = "=0.2.1"
-# 乱数分布
-rand_distr = "=0.2.2"
-
-# イテレータの強化
-itertools = "=0.8.2"
-itertools-num = "=0.1.3"
-
-criterion = "=0.4.0"
-
 [profile.release]
 lto = true
 panic = 'abort'
@@ -126,11 +130,3 @@ overflow-checks = true
 
 [profile.test]
 opt-level = 3
-
-[[bench]]
-name = "benchmark"
-harness = false
-
-[[example]]
-name = "hello-world"
-path = "examples/hello_world.rs"

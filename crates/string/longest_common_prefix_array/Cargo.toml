@@ -1,11 +1,11 @@
 [package]
-name = "binary_trie"
+name = "longest_common_prefix_array"
 version = "0.1.0"
 edition = "2018"
 
 [dependencies]
 prelude = { path = "../../prelude" }
-string_util = { path = "../../util/string_util" }
+suffix_array = { path = "../suffix_array" }
 
 [lib]
 path = "lib.rs"

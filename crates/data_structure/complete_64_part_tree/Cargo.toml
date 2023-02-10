@@ -1,11 +1,10 @@
 [package]
-name = "binary_trie"
+name = "complete_64_part_tree"
 version = "0.1.0"
 edition = "2018"
 
 [dependencies]
 prelude = { path = "../../prelude" }
-string_util = { path = "../../util/string_util" }
 
 [lib]
 path = "lib.rs"

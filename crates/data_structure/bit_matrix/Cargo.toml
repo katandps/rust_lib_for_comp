@@ -1,11 +1,11 @@
 [package]
-name = "binary_trie"
+name = "bit_matrix"
 version = "0.1.0"
 edition = "2018"
 
 [dependencies]
 prelude = { path = "../../prelude" }
-string_util = { path = "../../util/string_util" }
+bit_set = { path = "../bit_set" }
 
 [lib]
 path = "lib.rs"
