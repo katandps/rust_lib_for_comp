@@ -9,8 +9,8 @@ algebra = { path = "../../algebra" }
 range_traits = { path = "../../range_traits" }
 
 minimization = { path = "../../algebra/binary_operation/minimization" }
-io_util = { path = "../../io_util" }
-string_util = { path = "../../string_util" }
+io_util = { path = "../../util/io_util" }
+string_util = { path = "../../util/string_util" }
 segment = {path = "../../element/segment" }
 
 [dev-dependencies]

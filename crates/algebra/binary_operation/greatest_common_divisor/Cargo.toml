@@ -7,5 +7,14 @@ edition = "2018"
 prelude = { path = "../../../prelude" }
 algebra = { path = "../../" }
 
+[dev-dependencies]
+criterion = "0.4"
+xor_shift = { path = "../../../algo/xor_shift" }
+
 [lib]
 path = "lib.rs"
+
+[[bench]]
+name = "binary-GCD"
+path = "./binary_gcd.rs"
+harness = false

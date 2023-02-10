@@ -7,7 +7,7 @@ edition = "2018"
 prelude = { path = "../../prelude" }
 graph = { path = "../../graph" }
 algebra = { path = "../../algebra" }
-string_util = { path = "../../string_util" }
+string_util = { path = "../../util/string_util" }
 bit_set = {path = "../../data_structure/bit_set" }
 
 [lib]

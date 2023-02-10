@@ -1,10 +1,12 @@
 [package]
-name = "succinct_indexable_dictionaries"
+name = "solver"
 version = "0.1.0"
 edition = "2018"
 
 [dependencies]
 prelude = { path = "../../prelude" }
+io_util = { path = "../io_util" }
+io_debug = { path = "../io_debug" }
 
 [lib]
 path = "lib.rs"

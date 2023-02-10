@@ -1,5 +1,5 @@
 [package]
-name = "succinct_indexable_dictionaries"
+name = "vec2d"
 version = "0.1.0"
 edition = "2018"
 

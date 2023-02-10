@@ -223,6 +223,13 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "baf1de4339761588bc0619e3cbc0120ee582ebb74b53b4efbf79117bd2da40fd"
 
 [[package]]
+name = "chars_compress"
+version = "0.1.0"
+dependencies = [
+ "prelude",
+]
+
+[[package]]
 name = "chinese_remainder_theorem"
 version = "0.1.0"
 dependencies = [
@@ -291,6 +298,13 @@ name = "complex_number"
 version = "0.1.0"
 dependencies = [
  "algebra",
+ "prelude",
+]
+
+[[package]]
+name = "compress"
+version = "0.1.0"
+dependencies = [
  "prelude",
 ]
 
@@ -510,7 +524,9 @@ name = "greatest_common_divisor"
 version = "0.1.0"
 dependencies = [
  "algebra",
+ "criterion",
  "prelude",
+ "xor_shift",
 ]
 
 [[package]]
@@ -581,6 +597,16 @@ version = "0.1.0"
 dependencies = [
  "algebra",
  "prelude",
+]
+
+[[package]]
+name = "io_debug"
+version = "0.1.0"
+dependencies = [
+ "algebra",
+ "io_util",
+ "prelude",
+ "string_util",
 ]
 
 [[package]]
@@ -732,6 +758,14 @@ version = "0.1.0"
 dependencies = [
  "algebra",
  "montgomery_multiplication_64",
+ "prelude",
+]
+
+[[package]]
+name = "min_max_macro"
+version = "0.1.0"
+dependencies = [
+ "algebra",
  "prelude",
 ]
 
@@ -1282,6 +1316,7 @@ dependencies = [
 name = "solver"
 version = "0.1.0"
 dependencies = [
+ "io_debug",
  "io_util",
  "prelude",
 ]
@@ -1358,14 +1393,7 @@ dependencies = [
 name = "succinct_indexable_dictionaries"
 version = "0.1.0"
 dependencies = [
- "addition",
- "algebra",
- "io_util",
- "minimization",
  "prelude",
- "range_traits",
- "string_util",
- "xor_shift",
 ]
 
 [[package]]
@@ -1384,6 +1412,14 @@ name = "textwrap"
 version = "0.16.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "222a222a5bfe1bba4a77b45ec488a741b3cb8872e5e499451fd7d0129c9c7c3d"
+
+[[package]]
+name = "time_keeper"
+version = "0.1.0"
+dependencies = [
+ "algebra",
+ "prelude",
+]
 
 [[package]]
 name = "tinytemplate"
@@ -1438,6 +1474,13 @@ dependencies = [
 
 [[package]]
 name = "union_of_ranges"
+version = "0.1.0"
+dependencies = [
+ "prelude",
+]
+
+[[package]]
+name = "vec2d"
 version = "0.1.0"
 dependencies = [
  "prelude",

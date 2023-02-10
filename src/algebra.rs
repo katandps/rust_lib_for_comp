@@ -3,16 +3,11 @@ use crate::prelude::*;
 
 pub mod binary_operation;
 pub mod chinese_remainder_theorem;
-pub mod complex_number;
 pub mod lucas_theorem;
-pub mod matrix;
 pub mod miller_rabin;
-pub mod mod_int;
 pub mod mod_inv;
 pub mod mod_inv_u64;
 pub mod mod_pow;
-pub mod mod_val_table;
-pub mod montgomery_multiplication;
 pub mod pollard_rho;
 pub mod sieve_of_eratosthenes;
 pub mod xor_basis;
