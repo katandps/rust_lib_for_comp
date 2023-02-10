@@ -467,6 +467,20 @@ dependencies = [
 ]
 
 [[package]]
+name = "lazy_segment_tree"
+version = "0.1.0"
+dependencies = [
+ "addition",
+ "algebra",
+ "io_util",
+ "minimization",
+ "prelude",
+ "range_traits",
+ "segment",
+ "string_util",
+]
+
+[[package]]
 name = "lazy_static"
 version = "1.4.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -956,6 +970,14 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "d29ab0c6d3fc0ee92fe66e2d99f700eab17a8d57d1c1d3b748380fb20baa78cd"
 
 [[package]]
+name = "segment"
+version = "0.1.0"
+dependencies = [
+ "algebra",
+ "prelude",
+]
+
+[[package]]
 name = "segment_tree"
 version = "0.1.0"
 dependencies = [
@@ -1019,6 +1041,19 @@ version = "0.1.0"
 dependencies = [
  "io_util",
  "prelude",
+]
+
+[[package]]
+name = "sparse_table"
+version = "0.1.0"
+dependencies = [
+ "addition",
+ "algebra",
+ "io_util",
+ "minimization",
+ "prelude",
+ "range_traits",
+ "string_util",
 ]
 
 [[package]]
@@ -1175,6 +1210,15 @@ name = "wasm-bindgen-shared"
 version = "0.2.84"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "0046fef7e28c3804e5e38bfa31ea2a0f73905319b677e57ebe37e49358989b5d"
+
+[[package]]
+name = "wavelet_matrix"
+version = "0.1.0"
+dependencies = [
+ "prelude",
+ "range_traits",
+ "succinct_indexable_dictionaries",
+]
 
 [[package]]
 name = "web-sys"

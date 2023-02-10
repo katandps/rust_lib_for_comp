@@ -1,0 +1,12 @@
+[package]
+name = "wavelet_matrix"
+version = "0.1.0"
+edition = "2018"
+
+[dependencies]
+prelude = { path = "../../prelude" }
+succinct_indexable_dictionaries = { path = "../../data_structure/succinct_indexable_dictionaries" }
+range_traits = { path = "../../range_traits" }
+
+[lib]
+path = "lib.rs"
