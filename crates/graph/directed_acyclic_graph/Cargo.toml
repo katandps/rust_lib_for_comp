@@ -1,0 +1,11 @@
+[package]
+name = "directed_acyclic_graph"
+version = "0.1.0"
+edition = "2018"
+
+[dependencies]
+prelude = { path = "../../prelude" }
+graph = { path = "../../graph" }
+
+[lib]
+path = "lib.rs"

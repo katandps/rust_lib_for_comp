@@ -1,0 +1,14 @@
+[package]
+name = "undirected_unweighted_simple_graph"
+version = "0.1.0"
+edition = "2018"
+
+[dependencies]
+prelude = { path = "../../prelude" }
+graph = { path = "../../graph" }
+algebra = { path = "../../algebra" }
+string_util = { path = "../../string_util" }
+bit_set = {path = "../../data_structure/bit_set" }
+
+[lib]
+path = "lib.rs"

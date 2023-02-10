@@ -1,0 +1,15 @@
+[package]
+name = "bipartite_graph"
+version = "0.1.0"
+edition = "2018"
+
+[dependencies]
+prelude = { path = "../../prelude" }
+graph = { path = "../../graph" }
+
+
+[dev-dependencies]
+adjacency_list = { path = "../../graph/adjacency_list" }
+
+[lib]
+path = "lib.rs"

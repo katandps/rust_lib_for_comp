@@ -1,0 +1,12 @@
+[package]
+name = "dijkstra"
+version = "0.1.0"
+edition = "2018"
+
+[dependencies]
+prelude = { path = "../../prelude" }
+graph = { path = "../../graph" }
+algebra = { path = "../../algebra" }
+
+[lib]
+path = "lib.rs"
