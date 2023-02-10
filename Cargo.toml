@@ -86,6 +86,9 @@ members = [
     'crates/prelude',
     'crates/range_traits',
     'crates/solver',
+    'crates/typical_problems/highly_composite_number',
+    'crates/typical_problems/range_query/static_range_set_query',
+    'crates/typical_problems/range_query/static_range_frequency',
 ]
 
 [dependencies]

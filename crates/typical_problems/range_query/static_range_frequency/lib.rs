@@ -7,7 +7,7 @@
 //! - $LRX$: クエリ $[L, R)$ に Xがいくつあるか
 //!
 
-use crate::algo::slice_bounds::SliceBounds;
+use slice_bounds::SliceBounds;
 
 #[allow(clippy::many_single_char_names)]
 pub fn solve(_n: usize, q: usize, a: Vec<usize>, lrx: Vec<(usize, usize, usize)>) -> Vec<usize> {

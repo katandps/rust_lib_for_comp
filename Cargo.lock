@@ -552,6 +552,13 @@ dependencies = [
 ]
 
 [[package]]
+name = "highly_composite_number"
+version = "0.1.0"
+dependencies = [
+ "prelude",
+]
+
+[[package]]
 name = "indexmap"
 version = "1.9.2"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -1304,6 +1311,23 @@ name = "sqrt"
 version = "0.1.0"
 dependencies = [
  "prelude",
+]
+
+[[package]]
+name = "static_range_frequency"
+version = "0.1.0"
+dependencies = [
+ "slice_bounds",
+]
+
+[[package]]
+name = "static_range_set_query"
+version = "0.1.0"
+dependencies = [
+ "addition",
+ "binary_indexed_tree",
+ "prelude",
+ "range_traits",
 ]
 
 [[package]]

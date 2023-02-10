@@ -1,0 +1,13 @@
+[package]
+name = "static_range_set_query"
+version = "0.1.0"
+edition = "2018"
+
+[dependencies]
+addition = { path = "../../../algebra/binary_operation/addition" }
+prelude = { path = "../../../prelude" }
+binary_indexed_tree = { path = "../../../data_structure/binary_indexed_tree" }
+range_traits = { path = "../../../range_traits"}
+
+[lib]
+path = "lib.rs"

@@ -12,10 +12,10 @@
 //! ## verify
 //! [ABC174F](https://atcoder.jp/contests/abc174/submissions/31141642)
 
-use crate::{
-    data_structure::binary_indexed_tree::BinaryIndexedTree,
-    prelude::{binary_operation::addition::Addition, *},
-};
+use addition::Addition;
+use binary_indexed_tree::BinaryIndexedTree;
+use prelude::*;
+use range_traits::*;
 
 const KINDS: usize = 500_000;
 
