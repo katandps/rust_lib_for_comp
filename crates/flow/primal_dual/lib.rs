@@ -3,9 +3,10 @@
 //!
 //! ## verify
 //! [GRL_6_B](https://judge.u-aizu.ac.jp/onlinejudge/review.jsp?rid=6493214)
-use crate::graph::adjacency_list::Graph;
-use crate::graph::GraphTrait;
-use crate::prelude::*;
+use adjacency_list::Graph;
+use algebra::*;
+use graph::GraphTrait;
+use prelude::*;
 
 macro_rules! chmin {($base:expr, $($cmps:expr),+ $(,)*) => {{let cmp_min = min!($($cmps),+);if $base > cmp_min {$base = cmp_min;true} else {false}}};}
 macro_rules! min {

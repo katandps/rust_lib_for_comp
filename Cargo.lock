@@ -390,6 +390,16 @@ dependencies = [
 ]
 
 [[package]]
+name = "dinic"
+version = "0.1.0"
+dependencies = [
+ "adjacency_list",
+ "algebra",
+ "graph",
+ "prelude",
+]
+
+[[package]]
 name = "directed_acyclic_graph"
 version = "0.1.0"
 dependencies = [
@@ -454,6 +464,13 @@ version = "0.1.0"
 dependencies = [
  "adjacency_list",
  "graph",
+ "prelude",
+]
+
+[[package]]
+name = "flow_vertices"
+version = "0.1.0"
+dependencies = [
  "prelude",
 ]
 
@@ -879,6 +896,16 @@ dependencies = [
 ]
 
 [[package]]
+name = "primal_dual"
+version = "0.1.0"
+dependencies = [
+ "adjacency_list",
+ "algebra",
+ "graph",
+ "prelude",
+]
+
+[[package]]
 name = "proc-macro2"
 version = "1.0.51"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -1115,6 +1142,14 @@ name = "regex-syntax"
 version = "0.6.28"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "456c603be3e8d448b072f410900c09faf164fbce2d480456f50eea6e25f9c848"
+
+[[package]]
+name = "rerooting_dp"
+version = "0.1.0"
+dependencies = [
+ "algebra",
+ "graph",
+]
 
 [[package]]
 name = "retrograde_analysis"

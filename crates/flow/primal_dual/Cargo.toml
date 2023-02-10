@@ -1,0 +1,13 @@
+[package]
+name = "primal_dual"
+version = "0.1.0"
+edition = "2018"
+
+[dependencies]
+prelude = { path = "../../prelude" }
+graph = { path = "../../graph" }
+adjacency_list = { path = "../../graph/adjacency_list" }
+algebra = { path = "../../algebra" }
+
+[lib]
+path = "lib.rs"

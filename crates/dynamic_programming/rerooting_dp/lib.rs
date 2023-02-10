@@ -1,9 +1,8 @@
 //! 全方位木DP
 //!
 //! 未完成
-use crate::prelude::*;
-
-use crate::graph::GraphTrait;
+use algebra::*;
+use graph::GraphTrait;
 
 pub struct RerootingDP<M: Monoid> {
     subtree: Vec<M::M>,

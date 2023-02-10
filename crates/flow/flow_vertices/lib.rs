@@ -1,7 +1,7 @@
 //! # 頂点の割り振り
 //! 頂点のグループを表す列挙子とその番号から、頂点集合全体での番号を割り振って返す
 
-use crate::prelude::*;
+use prelude::*;
 
 #[snippet(name = "flow_vertices", doc_hidden)]
 #[derive(Clone, Copy, Debug)]

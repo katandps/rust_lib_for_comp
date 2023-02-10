@@ -8,9 +8,10 @@
 //!
 //! ## verify
 //! [GRL_6_A](https://judge.u-aizu.ac.jp/onlinejudge/review.jsp?rid=6482959#2)
-use crate::graph::adjacency_list::Graph;
-use crate::graph::GraphTrait;
-use crate::prelude::*;
+use adjacency_list::Graph;
+use algebra::*;
+use graph::GraphTrait;
+use prelude::*;
 
 #[snippet(name = "dinic", doc_hidden)]
 #[derive(Clone, Debug)]

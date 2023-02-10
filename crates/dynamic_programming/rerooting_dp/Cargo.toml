@@ -1,0 +1,11 @@
+[package]
+name = "rerooting_dp"
+version = "0.1.0"
+edition = "2018"
+
+[dependencies]
+algebra = { path = "../../algebra" }
+graph = { path = "../../graph" }
+
+[lib]
+path = "lib.rs"
