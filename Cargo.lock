@@ -33,6 +33,13 @@ dependencies = [
 ]
 
 [[package]]
+name = "all_combination"
+version = "0.1.0"
+dependencies = [
+ "prelude",
+]
+
+[[package]]
 name = "anes"
 version = "0.1.6"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -119,6 +126,14 @@ version = "0.1.0"
 dependencies = [
  "adjacency_list",
  "graph",
+ "prelude",
+]
+
+[[package]]
+name = "bit_combination"
+version = "0.1.0"
+dependencies = [
+ "algebra",
  "prelude",
 ]
 
@@ -749,6 +764,13 @@ dependencies = [
 ]
 
 [[package]]
+name = "next_permutation"
+version = "0.1.0"
+dependencies = [
+ "prelude",
+]
+
+[[package]]
 name = "num-traits"
 version = "0.2.15"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -1236,6 +1258,13 @@ dependencies = [
 ]
 
 [[package]]
+name = "split_of_natural_number"
+version = "0.1.0"
+dependencies = [
+ "prelude",
+]
+
+[[package]]
 name = "sqrt"
 version = "0.1.0"
 dependencies = [
@@ -1256,6 +1285,13 @@ version = "0.1.0"
 dependencies = [
  "adjacency_list",
  "graph",
+ "prelude",
+]
+
+[[package]]
+name = "subset"
+version = "0.1.0"
+dependencies = [
  "prelude",
 ]
 
