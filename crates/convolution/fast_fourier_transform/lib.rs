@@ -7,7 +7,9 @@
 //! ## verify
 //! [ACLPracticeContestF](https://atcoder.jp/contests/practice2/submissions/36009124)
 
-use crate::prelude::*;
+use algebra::*;
+use prelude::*;
+
 #[snippet(name = "fast-fourier-transform", doc_hidden)]
 pub struct FFT<T> {
     root: Vec<T>,
@@ -186,9 +188,9 @@ mod fast_fourier_transform_impl {
 #[cfg(test)]
 mod test {
     use super::FFT;
-    use crate::algebra::mod_int::mod998244353::{mi, Mod998_244_353};
-    use crate::algebra::mod_int::ModInt;
-    use crate::algo::xor_shift::XorShift;
+    use mod_int::mod998244353::{mi, Mod998_244_353};
+    use mod_int::ModInt;
+    use xor_shift::XorShift;
     #[test]
     fn rand() {
         let mut xor_shift = XorShift::default();

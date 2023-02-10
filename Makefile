@@ -16,6 +16,9 @@ test:
 	cargo test --workspace
 	oj-verify run -j 8
 
+coverage:
+	cargo llvm-cov --workspace
+
 snippet:
 	mkdir -p $(SNIPPETS_DIR)
 	fd "Cargo.toml" crates | xargs dirname | xargs -i sh -c 'cd {}; cargo snippet -t vscode lib.rs > `basename {}`.$(SNIPPETS_SUFFIX); basename {}'

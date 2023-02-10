@@ -3,8 +3,9 @@
 //! ## verify
 //! [Bitwise Xor Convolution](https://judge.yosupo.jp/submission/109189)
 use super::ConvolutionType;
-use crate::algebra::mod_int::{Mod, ModInt};
-use crate::prelude::*;
+use algebra::*;
+use mod_int::{Mod, ModInt};
+use prelude::*;
 
 #[snippet(name = "xor-convolution", doc_hidden)]
 #[snippet(include = "bitwise-convolution")]
@@ -38,8 +39,8 @@ impl ConvolutionType for XorConvolution {
 #[cfg(test)]
 mod test {
     use super::{super::convolution, XorConvolution};
-    use crate::algebra::mod_int::mod998244353::{mi, Mod998_244_353};
-    use crate::algo::xor_shift::XorShift;
+    use mod_int::mod998244353::{mi, Mod998_244_353};
+    use xor_shift::XorShift;
     #[test]
     fn rand() {
         let mut xor_shift = XorShift::default();

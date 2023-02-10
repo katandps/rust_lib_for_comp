@@ -1,28 +1,30 @@
-//! # OR畳み込み
+//! # AND畳み込み
+//!
+//! ## verify
+//! [Bitwise And Convolution](https://judge.yosupo.jp/submission/109188)
 
 use super::ConvolutionType;
-use crate::algebra::mod_int::{Mod, ModInt};
-use crate::prelude::*;
+use mod_int::{Mod, ModInt};
+use prelude::*;
 
-#[snippet(name = "or-convolution", doc_hidden)]
+#[snippet(name = "and-convolution", doc_hidden)]
 #[snippet(include = "bitwise-convolution")]
-pub struct OrConvolution;
+pub struct AndConvolution;
 
-#[snippet(name = "or-convolution", doc_hidden)]
-impl ConvolutionType for OrConvolution {
+#[snippet(name = "and-convolution", doc_hidden)]
+impl ConvolutionType for AndConvolution {
+    #[allow(clippy::many_single_char_names)]
     fn fwht<M: Mod>(src: &mut Vec<ModInt<M>>, rev: bool) {
         let n = src.len();
         let mut i = 1;
         while i < n {
-            for j in 0..i {
-                let mut k = 0;
-                while k < n {
-                    src[j + k + i] = if rev {
-                        src[j + k + i] - src[j + k]
+            for j in 0..n {
+                if i & j == 0 {
+                    src[j] = if !rev {
+                        src[j] + src[i | j]
                     } else {
-                        src[j + k + i] + src[j + k]
+                        src[j] - src[i | j]
                     };
-                    k += i * 2;
                 }
             }
             i <<= 1;
@@ -32,9 +34,9 @@ impl ConvolutionType for OrConvolution {
 
 #[cfg(test)]
 mod test {
-    use super::{super::convolution, OrConvolution};
-    use crate::algebra::mod_int::mod998244353::{mi, Mod998_244_353};
-    use crate::algo::xor_shift::XorShift;
+    use super::{super::convolution, AndConvolution};
+    use mod_int::mod998244353::{mi, Mod998_244_353};
+    use xor_shift::XorShift;
     #[test]
     fn rand() {
         let mut xor_shift = XorShift::default();
@@ -50,10 +52,10 @@ mod test {
             let mut expect = vec![mi(0); max!(a.len(), b.len()).next_power_of_two()];
             for i in 0..a_len {
                 for j in 0..b_len {
-                    expect[i | j] += a[i] * b[j];
+                    expect[i & j] += a[i] * b[j];
                 }
             }
-            let result = convolution::<Mod998_244_353, OrConvolution>(a, b);
+            let result = convolution::<Mod998_244_353, AndConvolution>(a, b);
             assert_eq!(expect, result);
         }
     }

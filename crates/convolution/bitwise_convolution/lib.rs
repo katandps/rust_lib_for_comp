@@ -1,7 +1,8 @@
 //! # 高速アダマール変換 (Fast Walsh Hadamard Transform)
 
-use crate::algebra::mod_int::{Mod, ModInt};
-use crate::prelude::*;
+use algebra::*;
+use mod_int::{Mod, ModInt};
+use prelude::*;
 
 macro_rules! max {($a:expr $(,)*) => {{$a}};($a:expr, $b:expr $(,)*) => {{if $a > $b {$a} else {$b}}};($a:expr, $($rest:expr),+ $(,)*) => {{let b = max!($($rest),+);if $a > b {$a} else {b}}};}
 
