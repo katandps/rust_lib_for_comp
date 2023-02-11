@@ -1,3 +1,6 @@
+//! # stdの一括import
+//! スニペット結合時に衝突しないように読み込んでおく
+
 pub use cargo_snippet::snippet;
 
 #[snippet(name = "prelude", doc_hidden)]

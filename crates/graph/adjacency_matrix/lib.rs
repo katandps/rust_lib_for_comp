@@ -1,4 +1,4 @@
-//! # 隣接行列
+//! # グラフの隣接行列表現
 
 use graph::GraphTrait;
 use prelude::*;
