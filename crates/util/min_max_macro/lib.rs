@@ -1,22 +1,26 @@
 //! 最大最小を求めるマクロ
 
-use prelude::*;
+use prelude::snippet;
 
-#[snippet(name = "min_max", doc_hidden)]
-#[allow(unused_macros)]
-macro_rules! chmin {($base:expr, $($cmps:expr),+ $(,)*) => {{let cmp_min = min!($($cmps),+);if $base > cmp_min {$base = cmp_min;true} else {false}}};}
-
+#[macro_export]
 #[snippet(name = "min_max", doc_hidden)]
 #[allow(unused_macros)]
 macro_rules! min {($a:expr $(,)*) => {{$a}};($a:expr, $b:expr $(,)*) => {{if $a > $b {$b} else {$a}}};($a:expr, $($rest:expr),+ $(,)*) => {{let b = min!($($rest),+);if $a > b {b} else {$a}}};}
 
+#[macro_export]
 #[snippet(name = "min_max", doc_hidden)]
 #[allow(unused_macros)]
-macro_rules! chmax {($base:expr, $($cmps:expr),+ $(,)*) => {{let cmp_max = max!($($cmps),+);if $base < cmp_max {$base = cmp_max;true} else {false}}};}
+macro_rules! chmin {($base:expr, $($cmps:expr),+ $(,)*) => {{let cmp_min = min!($($cmps),+);if $base > cmp_min {$base = cmp_min;true} else {false}}};}
 
+#[macro_export]
 #[snippet(name = "min_max", doc_hidden)]
 #[allow(unused_macros)]
 macro_rules! max {($a:expr $(,)*) => {{$a}};($a:expr, $b:expr $(,)*) => {{if $a > $b {$a} else {$b}}};($a:expr, $($rest:expr),+ $(,)*) => {{let b = max!($($rest),+);if $a > b {$a} else {b}}};}
+
+#[macro_export]
+#[snippet(name = "min_max", doc_hidden)]
+#[allow(unused_macros)]
+macro_rules! chmax {($base:expr, $($cmps:expr),+ $(,)*) => {{let cmp_max = max!($($cmps),+);if $base < cmp_max {$base = cmp_max;true} else {false}}};}
 
 #[cfg(test)]
 mod test {

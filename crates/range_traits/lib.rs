@@ -1,13 +1,13 @@
 use algebra::*;
 use prelude::*;
 
-#[snippet(name = "range", doc_hidden)]
+#[snippet(name = "range-traits", doc_hidden)]
 #[rustfmt::skip]
 pub trait ToLR<T> {
     fn to_lr(&self) -> (T, T);
 }
 
-#[snippet(name = "range", doc_hidden)]
+#[snippet(name = "range-traits", doc_hidden)]
 #[rustfmt::skip]
 impl<R: RangeBounds<T>, T: Copy + BoundedAbove + BoundedBelow + One + Add<Output = T>> ToLR<T>
     for R
@@ -31,14 +31,14 @@ impl<R: RangeBounds<T>, T: Copy + BoundedAbove + BoundedBelow + One + Add<Output
 
 /// # 二項演算の総積クエリを提供する
 /// 遅延評価などを持つデータ構造は、&mut selfを要求するRangeProductMutを使用する
-#[snippet(name = "range", doc_hidden)]
+#[snippet(name = "range-traits", doc_hidden)]
 #[rustfmt::skip]
 pub trait RangeProduct<I> {
     type Magma: Magma;
     fn product<R: RangeBounds<I>>(&self, range: R) -> <Self::Magma as Magma>::M;
 }
 
-#[snippet(name = "range", doc_hidden)]
+#[snippet(name = "range-traits", doc_hidden)]
 #[rustfmt::skip]
 pub trait RangeProductMut<I> {
     type Magma: Magma;

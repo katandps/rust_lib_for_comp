@@ -5,16 +5,22 @@ edition = "2018"
 
 [dependencies]
 prelude = { path = "../../prelude" }
-algebra = { path = "../../algebra" }
+min_max_macro = { path = "../../util/min_max_macro" }
 range_traits = { path = "../../range_traits" }
-string_util = { path = "../../util/string_util" }
-
-minimization = { path = "../../algebra/binary_operation/minimization" }
-io_util = { path = "../../util/io_util" }
 
 [dev-dependencies]
-addition = { path = "../../algebra/binary_operation/addition" }
 xor_shift = { path = "../../algo/xor_shift" }
+string_util = { path = "../../util/string_util" }
+io_util = { path = "../../util/io_util" }
+
 
 [lib]
 path = "lib.rs"
+
+[[example]]
+name = "segment_add_get_min_dlct"
+path = "./segment_add_get_min.rs"
+
+[[example]]
+name = "line_add_get_min_dlct"
+path = "./line_add_get_min.rs"

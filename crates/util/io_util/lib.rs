@@ -16,7 +16,8 @@
 
 use prelude::*;
 
-#[snippet(name = "io-util", doc_hidden)]
+#[snippet("io-util")]
+#[rustfmt::skip]
 pub use io_impl::{ReaderFromStdin, ReaderFromStr, ReaderTrait, WriterToStdout, WriterTrait, IO};
 #[snippet(name = "io-util", doc_hidden)]
 #[rustfmt::skip]

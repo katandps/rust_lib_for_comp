@@ -459,10 +459,8 @@ dependencies = [
 name = "dynamic_li_chao_tree"
 version = "0.1.0"
 dependencies = [
- "addition",
- "algebra",
  "io_util",
- "minimization",
+ "min_max_macro",
  "prelude",
  "range_traits",
  "string_util",

@@ -9,7 +9,16 @@ use io_debug::*;
 use io_util::*;
 use prelude::*;
 
-#[snippet("solver")]
+#[snippet("template")]
+#[snippet(include = "io-util")]
+#[snippet(include = "io-debug")]
+#[snippet(include = "dbg-macro")]
+#[snippet(include = "prelude")]
+#[snippet(include = "algebra")]
+#[snippet(include = "min_max")]
+#[snippet(include = "range-traits")]
+#[snippet(include = "faster-hashmap")]
+#[rustfmt::skip]
 pub fn main() {
     std::thread::Builder::new()
         .name("extend stack size".into())

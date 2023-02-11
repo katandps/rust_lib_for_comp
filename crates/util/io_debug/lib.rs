@@ -4,6 +4,7 @@ use io_util::*;
 use prelude::*;
 
 #[snippet(name = "io-debug", doc_hidden)]
+#[rustfmt::skip]
 pub use io_debug_impl::IODebug;
 #[snippet(name = "io-debug", doc_hidden)]
 #[rustfmt::skip]

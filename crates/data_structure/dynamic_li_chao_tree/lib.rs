@@ -4,21 +4,16 @@
 //!
 //! ## verify
 //! [Line Add Get Min](https://judge.yosupo.jp/submission/108762)
+use min_max_macro::{chmax, chmin, max, min};
 use prelude::*;
-
-macro_rules! chmin {($base:expr, $($cmps:expr),+ $(,)*) => {{let cmp_min = min!($($cmps),+);if $base > cmp_min {$base = cmp_min;true} else {false}}};}
-macro_rules! min {
-    ($a:expr $(,)*) => {{$a}};
-    ($a:expr, $b:expr $(,)*) => {{if $a > $b {$b} else {$a}}};
-    ($a:expr, $($rest:expr),+ $(,)*) => {{let b = min!($($rest),+);if $a > b {b} else {$a}}};
-}
+use range_traits::ToLR;
 
 #[snippet(name = "dynamic-li-chao-tree", doc_hidden)]
 pub use dynamic_li_chao_tree_impl::DynamicLiChaoTree;
 
 #[snippet(name = "dynamic-li-chao-tree", doc_hidden)]
 mod dynamic_li_chao_tree_impl {
-    use super::{swap, Debug, Ordering, VecDeque};
+    use super::{chmax, chmin, max, min, swap, Debug, Ordering, ToLR, VecDeque};
 
     const LEFT_LIMIT: i64 = -1_000_000_010;
     const RIGHT_LIMIT: i64 = 1_000_000_010;
@@ -53,24 +48,33 @@ mod dynamic_li_chao_tree_impl {
             }
         }
 
-        /// # 直線$ax+b$を追加
-        pub fn add_line(&mut self, a: i64, b: i64) {
+        /// # rangeに直線$ax+b$を追加
+        /// ## 計算量
+        /// $O(\log V)$
+        pub fn add_line<R: ToLR<i64>>(&mut self, range: R, a: i64, b: i64) {
             let mut line = Line { a, b };
-            let (mut node, mut left, mut right) = (self.root, self.left_limit, self.right_limit);
+            let (mut left, mut right) = range.to_lr();
+            chmax!(left, self.left_limit);
+            chmin!(right, self.right_limit);
+            let mut node = self.root;
+
             loop {
                 // 追加する区間における、追加する直線の両端の値
                 let (line_l, line_r) = (line.eval(left), line.eval(right));
                 // すでに追加されている直線の両端の値
                 let (y_l, y_r) = (self.nodes[node].eval(left), self.nodes[node].eval(right));
                 if y_l <= line_l && y_r <= line_r {
-                    // 現在の区間に設定された直線が常に追加する直線以下である
+                    // 常に、既存の直線が追加する直線より下にある
                     return;
                 } else if y_l >= line_l && y_r >= line_r {
-                    // 現在の区間に設定された直線より追加する直線のほうが常に下にある
-                    self.nodes[node].line = line.clone();
+                    // 常に、追加する直線が既存の直線より下にある
+                    self.nodes[node].line = line;
                     return;
                 } else if left + 1 < right {
+                    // 直線を追加する幅が2以上ある
                     let m = (left + right) / 2;
+
+                    // 直線を追加する区間を半分以下にする
                     if line.eval(m) < self.nodes[node].eval(m) {
                         swap(&mut self.nodes[node].line, &mut line);
                     }
@@ -94,7 +98,7 @@ mod dynamic_li_chao_tree_impl {
                             node = self.nodes[node].r.unwrap();
                             left = m;
                         }
-                        // ここには落ちない
+                        // 上の分岐で傾きが同じものは除かれるので、ここには来ない
                         Ordering::Equal => unreachable!(),
                     }
                 } else {
@@ -102,6 +106,32 @@ mod dynamic_li_chao_tree_impl {
                 }
             }
         }
+
+        /// # rangeに区間rの線分$ax+b$を追加
+        /// ## 計算量
+        /// $O(\log^2 V)$
+        pub fn add_segment<R: ToLR<i64>, R2: ToLR<i64>>(
+            &mut self,
+            range: R,
+            width: R2,
+            a: i64,
+            b: i64,
+        ) {
+            let (l, r) = range.to_lr();
+            let (l2, r2) = width.to_lr();
+            if r <= l2 || r2 <= l {
+                return;
+            }
+            if l2 <= l && r <= r2 {
+                self.add_line(range, a, b);
+            }
+            if l + 1 < r {
+                let m = (l + r) / 2;
+                self.add_segment(l..m, l2..r2, a, b);
+                self.add_segment(m..r, l2..r2, a, b);
+            }
+        }
+
         /// # $x$座標における$y$の最小値を取得
         pub fn query(&self, x: i64) -> i64 {
             let mut node = self.root;
@@ -159,7 +189,9 @@ mod dynamic_li_chao_tree_impl {
     #[derive(Clone, Debug, Default)]
     struct Node {
         line: Line,
+        // 左の子のノード番号
         l: Option<usize>,
+        // 右の子のノード番号
         r: Option<usize>,
     }
 
@@ -211,7 +243,7 @@ fn test() {
     let lines = vec![(1, 0), (-1, 10), (0, -10), (0, -20), (3, -150), (-2, 500)];
     for i in 0..lines.len() {
         let (a, b) = lines[i];
-        cht.add_line(a, b);
+        cht.add_line(.., a, b);
         for j in -1000..1000 {
             let mut t = std::i64::MAX;
             for k in 0..=i {
@@ -248,7 +280,7 @@ fn test_rand() {
             xorshift.rand_range(-B_ABS_MAX..=B_ABS_MAX),
         );
         lines.push((a, b));
-        cht.add_line(a, b);
+        cht.add_line(.., a, b);
     }
     for _ in 0..q {
         let t = xorshift.rand_range(0..=1);
@@ -258,7 +290,7 @@ fn test_rand() {
                 xorshift.rand_range(-B_ABS_MAX..=B_ABS_MAX),
             );
             lines.push((a, b));
-            cht.add_line(a, b);
+            cht.add_line(.., a, b);
         } else {
             let x = xorshift.rand_range(-A_ABS_MAX..=A_ABS_MAX);
             let mut m = 1 << 60;

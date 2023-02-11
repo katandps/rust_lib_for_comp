@@ -3,7 +3,7 @@
 
 use prelude::*;
 
-#[snippet("debug_macro")]
+#[snippet("dbg-macro")]
 #[allow(unused_macros)]
 macro_rules! dbg {
     ($($x:tt)*) => {
