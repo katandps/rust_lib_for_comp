@@ -18,6 +18,7 @@ use prelude::*;
 #[snippet(include = "min_max")]
 #[snippet(include = "range-traits")]
 #[snippet(include = "faster-hashmap")]
+#[snippet(include = "string-util")]
 #[rustfmt::skip]
 pub fn main() {
     std::thread::Builder::new()
@@ -40,7 +41,7 @@ pub fn solve<IO: ReaderTrait + WriterTrait>(io: &mut IO) {
 }
 
 /// # テスト実行用関数
-#[snippet("tester")]
+#[snippet("tester", doc_hidden)]
 #[test]
 fn test() {
     let test_suits = vec!["0", "1"];
