@@ -56,11 +56,14 @@ jobs:
         run: |
           oj-verify docs
           cd .verify-helper/markdown
-          bundle install --path .vendor/bundle
+          bundle config set --local path '.vendor/bundle'
+          bundle install
           bundle exec jekyll build
           cd ../../
-          cargo doc --workspace --no-deps
+          mkdir -p target
+          mkdir -p doc
           mv .verify-helper/markdown/_site/* target/doc
+          cargo doc --workspace --no-deps
           
       - name: Publish docs
         uses: peaceiris/actions-gh-pages@v3
