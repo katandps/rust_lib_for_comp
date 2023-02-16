@@ -1,5 +1,5 @@
 //! # 文字列の辞書順最小の結合
-//! 文字列(Vec<char>)の配列を入力にとる。
+//! 文字列のスライスを入力にとる。
 //! 文字列同士を自由に並び替えて結合したとき、辞書順最小になるものを得る
 //!
 //! ## 概要
@@ -11,8 +11,10 @@
 use prelude::*;
 
 #[snippet(name = "lexicographically-combine", doc_hidden)]
-pub fn lexicographically_combine(mut s: Vec<Vec<char>>) -> Vec<char> {
-    s.sort_by(|a, b| {
+pub fn lexicographically_combine(s: &[Vec<char>]) -> Vec<char> {
+    let mut v = (0..s.len()).collect::<Vec<_>>();
+    v.sort_by(|&ai, &bi| {
+        let (a, b) = (&s[ai], &s[bi]);
         let mut s = Vec::new();
         let mut t = Vec::new();
         for &ai in a {
@@ -27,5 +29,5 @@ pub fn lexicographically_combine(mut s: Vec<Vec<char>>) -> Vec<char> {
         }
         s.cmp(&t)
     });
-    s.into_iter().flatten().collect::<Vec<_>>()
+    v.into_iter().flat_map(|i| s[i].clone()).collect::<Vec<_>>()
 }

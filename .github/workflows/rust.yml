@@ -4,6 +4,7 @@ on: push
 
 env:
   CARGO_TERM_COLOR: always
+  CARGO_INCREMENTAL: 1
   RUST_BACKTRACE: 1
   RUSTDOCFLAGS: --html-in-header /home/runner/work/rust_lib_for_comp/rust_lib_for_comp/katex.html
 
@@ -13,20 +14,24 @@ jobs:
 
     steps:
       - uses: actions/checkout@v2
+        with: 
+          fetch-depth: 0 # for inclimental build: ファイルがcommitされた時刻を取得する
 
       - uses: actions/cache@v2
         with:
           path: |
             ~/.cargo/bin/
-            ~/.cargo/registry/index/
-            ~/.cargo/registry/cache/
-            ~/.cargo/git/db/
+            ~/.cargo/registry
+            ~/.cargo/git
             target
-          key: ${{ runner.os }}-cargo-${{ hashFiles('**/Cargo.lock') }}-${{ hashFiles('**/rust.yml') }}
+        key: ${{ runner.os }}-cargo-${{ hashFiles('**/Cargo.lock') }}
 
       - uses: actions/setup-python@v1
       - uses: actions/setup-ruby@v1
       - run: pip3 install -U online-judge-verify-helper
+
+      - name: Restore mtime
+        run: python ./git-restore-mtime.py # for inclimental build:checkoutしたファイルのタイムスタンプを書き換える
 
       - name: Install Rust
         run: |
