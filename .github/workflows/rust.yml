@@ -39,25 +39,25 @@ jobs:
           profile: minimal
       - run: rustup component add clippy
 
-    - name: Run tests
-      env:
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        YUKICODER_TOKEN: ${{ secrets.YUKICODER_TOKEN }}
-        GH_PAT: ${{ secrets.GH_PAT }}
-      run: |
-        cargo +1.42.0 check
-        cargo +1.65.0 clippy --workspace -- -D warnings
-        cargo +1.65.0 test --workspace
-        oj-verify run -j 32
+      - name: Run tests
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          YUKICODER_TOKEN: ${{ secrets.YUKICODER_TOKEN }}
+          GH_PAT: ${{ secrets.GH_PAT }}
+        run: |
+          cargo +1.42.0 check
+          cargo +1.65.0 clippy --workspace -- -D warnings
+          cargo +1.65.0 test --workspace
+          oj-verify run -j 32
 
-    - name: Generate docs
-      run: |
-        oj-verify docs
-        cargo +1.65.0 doc --workspace --no-deps
-        mv .verify-helper/markdown/* target/doc
+      - name: Generate docs
+        run: |
+          oj-verify docs
+          cargo +1.65.0 doc --workspace --no-deps
+          mv .verify-helper/markdown/* target/doc
 
-    - name: Publish docs
-      uses: peaceiris/actions-gh-pages@v3
-        with:
-          github_token: ${{ secrets.GITHUB_TOKEN }}
-          publish_dir: ./target/doc/
+        - name: Publish docs
+          uses: peaceiris/actions-gh-pages@v3
+          with:
+            github_token: ${{ secrets.GITHUB_TOKEN }}
+            publish_dir: ./target/doc/
