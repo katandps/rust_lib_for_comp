@@ -20,6 +20,7 @@ jobs:
       - uses: actions/cache@v2
         with:
           path: |
+            ~/.cache/pip
             ~/.cargo/bin/
             ~/.cargo/registry
             ~/.cargo/git
@@ -62,9 +63,9 @@ jobs:
           cd ../../
           mkdir -p public
           rm -rf public/*
-          mv -f .verify-helper/markdown/_site/* public
+          cp -P .verify-helper/markdown/_site/* public
           cargo doc --workspace --no-deps
-          mv -f target/doc/* public
+          cp -P target/doc/* public
           
       - name: Publish docs
         uses: peaceiris/actions-gh-pages@v3
