@@ -62,7 +62,7 @@ jobs:
           cd ../../
           mkdir -p target
           mkdir -p doc
-          mv .verify-helper/markdown/_site/* target/doc
+          mv -f .verify-helper/markdown/_site/* target/doc
           cargo doc --workspace --no-deps
           
       - name: Publish docs
