@@ -58,8 +58,8 @@ jobs:
           cd .verify-helper/markdown
           bundle install --path .vendor/bundle
           bundle exec jekyll build
-          cargo doc --workspace --no-deps
           cd ../../
+          cargo doc --workspace --no-deps
           mv .verify-helper/markdown/_site/* target/doc
           
       - name: Publish docs
