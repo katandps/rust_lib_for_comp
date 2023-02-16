@@ -7,6 +7,15 @@ edition = "2018"
 prelude = { path = "../../prelude" }
 succinct_indexable_dictionaries = { path = "../../data_structure/succinct_indexable_dictionaries" }
 range_traits = { path = "../../range_traits" }
+fxhasher = { path = "../../algo/fxhasher"}
+
+[dev-dependencies]
+string_util = { path = "../../util/string_util" }
+io_util = { path = "../../util/io_util" }
 
 [lib]
 path = "lib.rs"
+
+[[example]]
+name = "static_range_frequency_wavelet_matrix"
+path = "./srf.rs"

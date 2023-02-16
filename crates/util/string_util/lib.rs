@@ -18,7 +18,7 @@ mod string_util_impl {
         }
     }
     pub trait JoinTrait {
-        /// # separatorで結合して改行をつける
+        /// # separatorで結合する
         fn join(self, separator: &str) -> String;
     }
     impl<D: Display, I: IntoIterator<Item = D>> JoinTrait for I {
@@ -28,7 +28,7 @@ mod string_util_impl {
                 buf.push_str(&format!("{}{}", sep, arg));
                 separator
             });
-            buf + "\n"
+            buf
         }
     }
 

@@ -1442,6 +1442,7 @@ name = "succinct_indexable_dictionaries"
 version = "0.1.0"
 dependencies = [
  "prelude",
+ "string_util",
 ]
 
 [[package]]
@@ -1629,8 +1630,11 @@ checksum = "0046fef7e28c3804e5e38bfa31ea2a0f73905319b677e57ebe37e49358989b5d"
 name = "wavelet_matrix"
 version = "0.1.0"
 dependencies = [
+ "fxhasher",
+ "io_util",
  "prelude",
  "range_traits",
+ "string_util",
  "succinct_indexable_dictionaries",
 ]
 

@@ -21,29 +21,38 @@
 //!
 //! ## verify
 //! unverified
+use fxhasher::HashMap;
 use prelude::*;
 use range_traits::ToLR;
 use succinct_indexable_dictionaries::{SIDBuilder, SID};
 
 #[snippet(name = "wavelet-matrix", doc_hidden)]
+#[snippet(include = "succinct-indexable-dictionaries")]
 pub use wavelet_matrix_impl::WaveletMatrix;
 
 #[snippet(name = "wavelet-matrix", doc_hidden)]
 mod wavelet_matrix_impl {
-    use super::{RangeBounds, SIDBuilder, ToLR, SID};
+    use super::{HashMap, RangeBounds, SIDBuilder, ToLR, SID};
 
+    #[derive(Debug)]
     pub struct WaveletMatrix {
-        depth: usize,
         _size: usize,
+        depth: usize,
         matrix: Vec<SID>,
         mid: Vec<usize>,
+        /// ソートが終わった後の各値の最左位置
+        id: HashMap<u64, usize>,
     }
 
     impl<T: Clone + Into<u64>, I: IntoIterator<Item = T>> From<I> for WaveletMatrix {
         fn from(src: I) -> Self {
-            let mut src = src.into_iter().map(|si| si.into()).collect::<Vec<_>>();
+            let mut src = src.into_iter().map(|si| si.into()).collect::<Vec<u64>>();
             let size = src.len();
-            let depth = 64;
+            let depth = src
+                .iter()
+                .map(|si| Self::DEPTH - si.leading_zeros())
+                .max()
+                .unwrap_or(0) as usize;
             let mut matrix = Vec::with_capacity(depth);
             let mut mid = Vec::with_capacity(depth);
             let (mut l, mut r) = (Vec::with_capacity(size), Vec::with_capacity(size));
@@ -67,17 +76,23 @@ mod wavelet_matrix_impl {
             });
             matrix.reverse();
             mid.reverse();
-
+            let mut id = HashMap::default();
+            src.into_iter().enumerate().for_each(|(i, si)| {
+                id.entry(si).or_insert(i);
+            });
             Self {
                 _size: size,
                 depth,
                 matrix,
                 mid,
+                id,
             }
         }
     }
 
     impl WaveletMatrix {
+        /// $2^{DEPTH}$まで格納できる
+        const DEPTH: u32 = 64;
         /// # Indexを指定して要素を取得
         /// ## 計算量
         /// $O(\log N)$
@@ -102,11 +117,21 @@ mod wavelet_matrix_impl {
         }
 
         /// # $[0 <= i < r) かつ v\[i\] == x$ であるようなiの個数
+        /// ## 計算量
+        /// $O(\log N)$
         pub fn rank(&self, x: u64, r: usize) -> usize {
             let (_l, r) = (0..self.depth).rev().fold((0, r), |(l, r), level| {
                 self.succ((x >> level) & 1 > 0, l, r, level)
             });
-            r - 1
+            r - self.id.get(&x).unwrap_or(&r)
+        }
+
+        /// # rangeに含まれる v\[i\] == x$ であるようなiの個数
+        /// ## 計算量
+        /// $O(\log N)$
+        pub fn rank_range<R: ToLR<usize>>(&self, x: u64, range: &R) -> usize {
+            let (l, r) = range.to_lr();
+            self.rank(x, r) - self.rank(x, l)
         }
 
         /// # range のうち、小さい方からk番目の数
@@ -163,6 +188,35 @@ mod wavelet_matrix_impl {
             } else {
                 Some(self.kth_smallest(range, cnt))
             }
+        }
+    }
+}
+
+#[test]
+fn test_access() {
+    let src = vec![5u64, 4, 5, 5, 2, 1, 5, 6, 1, 3, 5, 0];
+    let wm = WaveletMatrix::from(src.clone());
+    for i in 0..src.len() {
+        assert_eq!(src[i], wm.access(i));
+    }
+    let src = vec![0u64, 0, 0, 0];
+    let wm = WaveletMatrix::from(src.clone());
+    for i in 0..src.len() {
+        assert_eq!(src[i], wm.access(i));
+    }
+}
+
+#[test]
+fn test_rank() {
+    let src = vec![5u64, 4, 5, 5, 2, 1, 5, 6, 1, 3, 5, 0];
+    let wm = WaveletMatrix::from(src.clone());
+    for i in 0..10 {
+        let mut cnt = 0;
+        for j in 0..src.len() {
+            if src[j] == i {
+                cnt += 1;
+            }
+            assert_eq!(cnt, wm.rank(i, j + 1), "{} {}", i, j);
         }
     }
 }
