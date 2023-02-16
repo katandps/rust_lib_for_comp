@@ -25,6 +25,7 @@ jobs:
           key: ${{ runner.os }}-cargo-${{ hashFiles('**/Cargo.lock') }}-${{ hashFiles('**/rust.yml') }}
 
       - uses: actions/setup-python@v1
+      - uses: actions/setup-ruby@v1
       - run: pip3 install -U online-judge-verify-helper
 
       - name: Install Rust
@@ -49,9 +50,12 @@ jobs:
       - name: Generate docs
         run: |
           oj-verify docs
+          cd .verify-helper/markdown
+          bundle install --path .vendor/bundle
+          bundle exec jekyll build
           cargo doc --workspace --no-deps
-          mv .verify-helper/markdown/* target/doc
-
+          mv .verify-helper/markdown/_site/* target/doc
+          
       - name: Publish docs
         uses: peaceiris/actions-gh-pages@v3
         with:
