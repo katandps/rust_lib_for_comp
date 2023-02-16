@@ -178,7 +178,7 @@ pub mod mod_val_table_impl {
             if n <= 1 {
                 ModInt::zero()
             } else {
-                self.init(n as usize);
+                self.init(n);
                 let mut ret = ModInt::zero();
                 for k in 2..=n {
                     ret += self.fact_inv[k] * if k & 1 == 0 { 1 } else { -1 };

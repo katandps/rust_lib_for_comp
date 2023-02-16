@@ -23,8 +23,8 @@ impl<T: Ord + Copy> BinaryNode<T> {
     fn node(key: T) -> Self {
         Self(Some(ExistNode {
             key,
-            l: Box::new(Self::default()),
-            r: Box::new(Self::default()),
+            l: Box::default(),
+            r: Box::default(),
         }))
     }
 

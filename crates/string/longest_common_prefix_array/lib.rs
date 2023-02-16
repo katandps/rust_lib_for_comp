@@ -17,11 +17,9 @@ impl LCPArray {
         sa.sa.iter().enumerate().for_each(|(i, sai)| rank[*sai] = i);
 
         let mut lcp = vec![0; n];
-        let mut h = 0;
+        let mut h = 0usize;
         for i in 0..n {
-            if h > 0 {
-                h -= 1
-            }
+            h = h.saturating_sub(1);
             if rank[i] == 0 {
                 continue;
             }

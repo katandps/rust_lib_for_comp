@@ -101,8 +101,7 @@ mod wavelet_matrix_impl {
                 if f {
                     ret |= 1u64 << level
                 }
-                index =
-                    self.matrix[level].rank(index, f) as usize + self.mid[level] * usize::from(f);
+                index = self.matrix[level].rank(index, f) + self.mid[level] * usize::from(f);
             });
             ret
         }

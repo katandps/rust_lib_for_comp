@@ -70,7 +70,7 @@ mod complete_64_part_tree_impl {
                 if self.map[b][pos] == 0 {
                     break;
                 }
-                pos = pos << 6 | self.map[b][pos as usize].trailing_zeros() as usize;
+                pos = pos << 6 | self.map[b][pos].trailing_zeros() as usize;
                 ret = Some(pos);
             }
             ret

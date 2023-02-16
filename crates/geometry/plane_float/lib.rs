@@ -228,18 +228,10 @@ impl Line {
 
     pub fn cross_points_as_segment(l: Self, m: Self) -> Option<Point> {
         let p = Self::cross_points(l, m);
-        match p {
-            Some(p) => {
-                if (p - l.p1).abs() + (l.p2 - p).abs() - (l.p2 - l.p1).abs() < std::f64::EPSILON
-                    && (p - m.p1).abs() + (m.p2 - p).abs() - (m.p2 - m.p1).abs() < std::f64::EPSILON
-                {
-                    Some(p)
-                } else {
-                    None
-                }
-            }
-            _ => None,
-        }
+        p.filter(|&p| {
+            (p - l.p1).abs() + (l.p2 - p).abs() - (l.p2 - l.p1).abs() < std::f64::EPSILON
+                && (p - m.p1).abs() + (m.p2 - p).abs() - (m.p2 - m.p1).abs() < std::f64::EPSILON
+        })
     }
 
     /// xを与えたときのyの値を求める
