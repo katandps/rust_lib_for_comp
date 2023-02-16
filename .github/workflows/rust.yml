@@ -60,13 +60,13 @@ jobs:
           bundle install
           bundle exec jekyll build
           cd ../../
-          rm -rf target/doc
-          mkdir -p target/doc
-          mv -f .verify-helper/markdown/_site/* target/doc
+          mkdir -p public
+          rm -rf public/*
+          mv -f .verify-helper/markdown/_site/* public
           cargo doc --workspace --no-deps
+          mv -f target/doc/* public
           
       - name: Publish docs
         uses: peaceiris/actions-gh-pages@v3
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
-          publish_dir: ./target/doc/
