@@ -31,7 +31,7 @@ mod fxhasher_impl {
     impl Hasher for FxHasher {
         #[inline]
         fn finish(&self) -> u64 {
-            self.hash as u64
+            self.hash
         }
         #[inline]
         fn write(&mut self, mut bytes: &[u8]) {
