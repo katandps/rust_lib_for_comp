@@ -31,7 +31,7 @@ jobs:
         run: |
           rustup install 1.42.0
           rustup install stable
-          rustup default 1.42.0 
+          rustup default stable
           rustup set profile minimal
           rustup component add clippy
 
@@ -42,14 +42,14 @@ jobs:
           GH_PAT: ${{ secrets.GH_PAT }}
         run: |
           cargo +1.42.0 check
-          cargo +stable clippy --workspace -- -D warnings
-          cargo +stable test --workspace
+          cargo clippy --workspace -- -D warnings
+          cargo test --workspace
           oj-verify run -j 32
 
       - name: Generate docs
         run: |
           oj-verify docs
-          cargo +stable doc --workspace --no-deps
+          cargo doc --workspace --no-deps
           mv .verify-helper/markdown/* target/doc
 
       - name: Publish docs
