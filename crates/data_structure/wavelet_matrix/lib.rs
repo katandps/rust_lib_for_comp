@@ -13,14 +13,12 @@
 //! ```
 //!
 //! ## dependencies
-//! [完備辞書](crate::data_structure::succinct_indexable_dictionaries)
+//! [完備辞書](succinct_indexable_dictionaries)
 //!
 //! ## 計算量
 //! - 構築: $O(N \log V)$
 //! - クエリ: $O( \log^2 V)$
 //!
-//! ## verify
-//! unverified
 use fxhasher::HashMap;
 use prelude::*;
 use range_traits::ToLR;
@@ -109,6 +107,7 @@ mod wavelet_matrix_impl {
             ret
         }
 
+        // [l, r)の範囲について、level-bit目がbであるようなものの範囲を返す
         fn succ(&self, b: bool, l: usize, r: usize, level: usize) -> (usize, usize) {
             (
                 self.matrix[level].rank(l, b) + self.mid[level] * usize::from(b),
@@ -134,18 +133,23 @@ mod wavelet_matrix_impl {
             self.rank(x, r) - self.rank(x, l)
         }
 
-        /// # range のうち、小さい方からk番目の数
+        /// # range のうち、小さい方から0-indexedでk番目の数
+        /// ## 計算量
+        /// $O(\log N)$
         pub fn kth_smallest<R: RangeBounds<usize>>(&self, range: &R, mut k: usize) -> u64 {
             let (l, r) = range.to_lr();
             assert!(k < r - l);
             let mut ret = 0;
             (0..self.depth).rev().fold((l, r), |(l, r), level| {
+                // 範囲内で、現在のbitが0であるものの個数
                 let cnt = self.matrix[level].rank(r, false) - self.matrix[level].rank(l, false);
                 if cnt <= k {
                     ret |= 1 << level;
                     k -= cnt;
+                    self.succ(true, l, r, level)
+                } else {
+                    self.succ(false, l, r, level)
                 }
-                self.succ(cnt <= k, l, r, level)
             });
             ret
         }
@@ -217,6 +221,25 @@ fn test_rank() {
                 cnt += 1;
             }
             assert_eq!(cnt, wm.rank(i, j + 1), "{} {}", i, j);
+        }
+    }
+}
+
+#[test]
+fn test_kth_smallest() {
+    let src = vec![5u64, 4, 5, 5, 2, 1, 5, 6, 1, 3, 5, 0];
+    let n = src.len();
+    let wm = WaveletMatrix::from(src.clone());
+    for l in 0..n {
+        for r in l + 1..n {
+            let mut v = Vec::new();
+            for i in l..r {
+                v.push(src[i]);
+            }
+            v.sort();
+            for i in l..r {
+                assert_eq!(v[i - l], wm.kth_smallest(&(l..r), i - l));
+            }
         }
     }
 }
