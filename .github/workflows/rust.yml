@@ -63,9 +63,9 @@ jobs:
           cd ../../
           mkdir -p public
           rm -rf public/*
-          cp -rP .verify-helper/markdown/_site/ public
+          cp -rP .verify-helper/markdown/_site/ public/
           cargo doc --workspace --no-deps
-          cp -rP target/doc/ public
+          cp -rP target/doc/ public/
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           YUKICODER_TOKEN: ${{ secrets.YUKICODER_TOKEN }}
