@@ -2,7 +2,7 @@
 //! ここでは、$2^{64} - 1$ 以下の数について、決定的アルゴリズムとして扱う
 //!
 //! ## dependency
-//! [montgomery_u64](crate::algebra::montgomery_multiplication)
+//! [モンゴメリ乗算](montgomery_multiplication_64)
 //!
 //!
 //! ## verify

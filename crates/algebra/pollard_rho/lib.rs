@@ -5,9 +5,9 @@
 //! $O(N^{\frac{1}{4}})$
 //!
 //! ## dependency
-//! [mod_pow](crate::algebra::mod_pow)
-//! [gcd](crate::algebra::binary_operation::greatest_common_divisor)
-//! [miller_rabin](crate::algebra::miller_rabin)
+//! [最小公倍数](greatest_common_divisor)
+//! [ミラーラビン法](miller_rabin)
+//! [モンゴメリ乗算](montgomery_multiplication_64)
 //!
 //! ## verify
 //! [ポラードのロー素因数分解法](https://algo-method.com/submissions/683415)

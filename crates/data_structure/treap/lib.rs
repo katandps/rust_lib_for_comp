@@ -2,7 +2,7 @@
 //! 乱数を利用して平衡を保つ二分探索木 Tree + Heap
 //!
 //! ## dependency
-//! [xor-shift](crate::algo::xor_shift::XorShift)
+//! [xor-shift](xor_shift::XorShift)
 
 use prelude::*;
 use xor_shift::XorShift;
