@@ -60,8 +60,8 @@ jobs:
           bundle install
           bundle exec jekyll build
           cd ../../
-          mkdir -p target
-          mkdir -p doc
+          rm -rf target/doc
+          mkdir -p target/doc
           mv -f .verify-helper/markdown/_site/* target/doc
           cargo doc --workspace --no-deps
           
