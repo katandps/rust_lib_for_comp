@@ -44,14 +44,14 @@ jobs:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         YUKICODER_TOKEN: ${{ secrets.YUKICODER_TOKEN }}
         GH_PAT: ${{ secrets.GH_PAT }}
-      run:
+      run: |
         cargo +1.42.0 check
         cargo +1.65.0 clippy --workspace -- -D warnings
         cargo +1.65.0 test --workspace
         oj-verify run -j 32
 
     - name: Generate docs
-      run:
+      run: |
         oj-verify docs
         cargo +1.65.0 doc --workspace --no-deps
         mv .verify-helper/markdown/* target/doc
