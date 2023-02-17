@@ -1,1 +1,1 @@
-- [Rustdoc](https://katandps.github.io/rust_lib_for_comp/solver/)
+- [Rustdoc](/solver/)

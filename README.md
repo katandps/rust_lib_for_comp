@@ -1,5 +1,5 @@
 [![Rust](https://github.com/katandps/rust_lib_for_comp/actions/workflows/rust.yml/badge.svg?branch=master)](https://github.com/katandps/rust_lib_for_comp/actions/workflows/rust.yml)
-[![rustdoc](https://img.shields.io/badge/Doc-GitHubPages-brightgreen)](https://katandps.github.io/rust_lib_for_comp/prelude)
+[![rustdoc](https://img.shields.io/badge/Doc-GitHubPages-brightgreen)](https://library.katand.net/)
 
 # Rust Library for Competitive Programming
 
