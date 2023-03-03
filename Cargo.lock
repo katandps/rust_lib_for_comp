@@ -1636,6 +1636,7 @@ dependencies = [
  "range_traits",
  "string_util",
  "succinct_indexable_dictionaries",
+ "xor_shift",
 ]
 
 [[package]]

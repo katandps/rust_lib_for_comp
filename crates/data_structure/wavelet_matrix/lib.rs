@@ -93,7 +93,7 @@ mod wavelet_matrix_impl {
         const DEPTH: u32 = 64;
         /// # Indexを指定して要素を取得
         /// ## 計算量
-        /// $O(\log N)$
+        /// $O(\log V)$
         pub fn access(&self, mut index: usize) -> u64 {
             let mut ret = 0;
             (0..self.depth).rev().for_each(|level| {
@@ -116,7 +116,7 @@ mod wavelet_matrix_impl {
 
         /// # $[0 <= i < r) かつ v\[i\] == x$ であるようなiの個数
         /// ## 計算量
-        /// $O(\log N)$
+        /// $O(\log V)$
         pub fn rank(&self, x: u64, r: usize) -> usize {
             let (_l, r) = (0..self.depth).rev().fold((0, r), |(l, r), level| {
                 self.succ((x >> level) & 1 > 0, l, r, level)
@@ -126,7 +126,7 @@ mod wavelet_matrix_impl {
 
         /// # rangeに含まれる v\[i\] == x$ であるようなiの個数
         /// ## 計算量
-        /// $O(\log N)$
+        /// $O(\log V)$
         pub fn rank_range<R: ToLR<usize>>(&self, x: u64, range: &R) -> usize {
             let (l, r) = range.to_lr();
             self.rank(x, r) - self.rank(x, l)
@@ -134,7 +134,7 @@ mod wavelet_matrix_impl {
 
         /// # range のうち、小さい方から0-indexedでk番目の数
         /// ## 計算量
-        /// $O(\log N)$
+        /// $O(\log V)$
         pub fn kth_smallest<R: RangeBounds<usize>>(&self, range: &R, mut k: usize) -> u64 {
             let (l, r) = range.to_lr();
             assert!(k < r - l);
@@ -152,13 +152,17 @@ mod wavelet_matrix_impl {
             });
             ret
         }
-        /// # range のうち、大きい方からk番目の数
+        /// # range中で大きい方から0-indexedでk番目の数
+        /// ## 計算量
+        /// $O(\log V)$
         pub fn kth_largest<R: RangeBounds<usize>>(&self, range: &R, k: usize) -> u64 {
             let (l, r) = range.to_lr();
             self.kth_smallest(range, r - l - k - 1)
         }
 
         /// # range のうち、upper未満のものの個数
+        /// ## 計算量
+        /// $O(\log V)$
         pub fn range_freq<R: RangeBounds<usize>>(&self, range: &R, upper: u64) -> usize {
             let (l, r) = range.to_lr();
             let mut ret = 0;
@@ -195,49 +199,80 @@ mod wavelet_matrix_impl {
     }
 }
 
-#[test]
-fn test_access() {
-    let src = vec![5u64, 4, 5, 5, 2, 1, 5, 6, 1, 3, 5, 0];
-    let wm = WaveletMatrix::from(src.clone());
-    for i in 0..src.len() {
-        assert_eq!(src[i], wm.access(i));
-    }
-    let src = vec![0u64, 0, 0, 0];
-    let wm = WaveletMatrix::from(src.clone());
-    for i in 0..src.len() {
-        assert_eq!(src[i], wm.access(i));
-    }
-}
+#[cfg(test)]
+mod test {
+    use super::*;
+    use xor_shift::XorShift;
 
-#[test]
-fn test_rank() {
-    let src = vec![5u64, 4, 5, 5, 2, 1, 5, 6, 1, 3, 5, 0];
-    let wm = WaveletMatrix::from(src.clone());
-    for i in 0..10 {
-        let mut cnt = 0;
-        for j in 0..src.len() {
-            if src[j] == i {
-                cnt += 1;
-            }
-            assert_eq!(cnt, wm.rank(i, j + 1), "{} {}", i, j);
+    #[test]
+    fn test_access() {
+        let src = vec![5u64, 4, 5, 5, 2, 1, 5, 6, 1, 3, 5, 0];
+        let wm = WaveletMatrix::from(src.clone());
+        for i in 0..src.len() {
+            assert_eq!(src[i], wm.access(i));
+        }
+        let src = vec![0u64, 0, 0, 0];
+        let wm = WaveletMatrix::from(src.clone());
+        for i in 0..src.len() {
+            assert_eq!(src[i], wm.access(i));
         }
     }
-}
 
-#[test]
-fn test_kth_smallest() {
-    let src = vec![5u64, 4, 5, 5, 2, 1, 5, 6, 1, 3, 5, 0];
-    let n = src.len();
-    let wm = WaveletMatrix::from(src.clone());
-    for l in 0..n {
-        for r in l + 1..n {
-            let mut v = Vec::new();
-            for i in l..r {
-                v.push(src[i]);
+    #[test]
+    fn test_rank() {
+        let src = vec![5u64, 4, 5, 5, 2, 1, 5, 6, 1, 3, 5, 0];
+        let wm = WaveletMatrix::from(src.clone());
+        for i in 0..10 {
+            let mut cnt = 0;
+            for j in 0..src.len() {
+                if src[j] == i {
+                    cnt += 1;
+                }
+                assert_eq!(cnt, wm.rank(i, j + 1), "{} {}", i, j);
             }
-            v.sort();
-            for i in l..r {
-                assert_eq!(v[i - l], wm.kth_smallest(&(l..r), i - l));
+        }
+    }
+
+    #[test]
+    fn test_kth_smallest() {
+        let n = 200;
+        let mut rand = XorShift::from_time();
+        let src = (0..n)
+            .map(|_| rand.rand_range(0..10000000000000) as u64)
+            .collect::<Vec<_>>();
+        let wm = WaveletMatrix::from(src.clone());
+        for l in 0..n {
+            for r in l + 1..n {
+                let mut v = Vec::new();
+                for i in l..r {
+                    v.push(src[i]);
+                }
+                v.sort();
+                for i in l..r {
+                    assert_eq!(v[i - l], wm.kth_smallest(&(l..r), i - l));
+                }
+            }
+        }
+    }
+
+    #[test]
+    fn test_kth_largest() {
+        let n = 200;
+        let mut rand = XorShift::from_time();
+        let src = (0..n)
+            .map(|_| rand.rand_range(0..10000000000000) as u64)
+            .collect::<Vec<_>>();
+        let wm = WaveletMatrix::from(src.clone());
+        for l in 0..n {
+            for r in l + 1..n {
+                let mut v = Vec::new();
+                for i in l..r {
+                    v.push(src[i]);
+                }
+                v.sort();
+                for i in l..r {
+                    assert_eq!(v[v.len() + l - 1 - i], wm.kth_largest(&(l..r), i - l));
+                }
             }
         }
     }

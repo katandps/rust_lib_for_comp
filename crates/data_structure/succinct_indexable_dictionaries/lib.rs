@@ -59,7 +59,8 @@ mod succinct_indexable_dictionaries_impl {
         /// 存在しない場合はNone
         ///
         /// ## 計算量
-        /// $O( \log Size)$
+        /// $O(\log Size)$
+        ///
         pub fn select(&self, x: usize) -> Option<usize> {
             if self.rank_1(self.size) < x {
                 return None;

@@ -12,6 +12,7 @@ fxhasher = { path = "../../algo/fxhasher"}
 [dev-dependencies]
 string_util = { path = "../../util/string_util" }
 io_util = { path = "../../util/io_util" }
+xor_shift = { path = "../../algo/xor_shift" }
 
 [lib]
 path = "lib.rs"
