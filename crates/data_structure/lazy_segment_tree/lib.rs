@@ -12,7 +12,7 @@ use range_traits::{RangeProductMut, ToLR};
 pub use lazy_segment_tree_impl::LazySegmentTree;
 #[snippet(name = "lazy-segment-tree", doc_hidden)]
 mod lazy_segment_tree_impl {
-    use super::{Magma, MapMonoid, RangeBounds, RangeProductMut, ToLR};
+    use super::{Magma, MapMonoid, RangeProductMut, ToLR};
 
     #[derive(Clone)]
     pub struct LazySegmentTree<M: MapMonoid> {
@@ -56,7 +56,7 @@ mod lazy_segment_tree_impl {
     /// $O(\log N)$
     impl<M: MapMonoid> RangeProductMut<usize> for LazySegmentTree<M> {
         type Magma = M::Mono;
-        fn product<R: RangeBounds<usize>>(&mut self, range: R) -> <M::Mono as Magma>::M {
+        fn product<R: ToLR<usize>>(&mut self, range: R) -> <M::Mono as Magma>::M {
             let (mut l, mut r) = range.to_lr();
             if l == r {
                 return M::unit();
@@ -99,7 +99,7 @@ mod lazy_segment_tree_impl {
         }
 
         /// 区間更新 [l, r)
-        pub fn update_range<R: RangeBounds<usize>>(&mut self, range: R, f: <M::Func as Magma>::M) {
+        pub fn update_range<R: ToLR<usize>>(&mut self, range: R, f: <M::Func as Magma>::M) {
             let (mut l, mut r) = range.to_lr();
             if l == r {
                 return;

@@ -107,16 +107,16 @@ mod dynamic_li_chao_tree_impl {
         /// # rangeに区間rの線分$ax+b$を追加
         /// ## 計算量
         /// $O(\log^2 V)$
-        pub fn add_segment<R: ToLR<i64>>(&mut self, range: &R, a: i64, b: i64) {
+        pub fn add_segment<R: ToLR<i64>>(&mut self, range: R, a: i64, b: i64) {
             let line = Line { a, b };
             self._add_segment(range, self.root, line)
         }
 
-        fn _add_segment<R: ToLR<i64>>(&mut self, range: &R, node_id: usize, line: Line) {
-            if self.nodes[node_id].exclusive_range(range) {
+        fn _add_segment<R: ToLR<i64>>(&mut self, range: R, node_id: usize, line: Line) {
+            if self.nodes[node_id].exclusive_range(range.clone()) {
                 return;
             }
-            if self.nodes[node_id].contains_range(range) {
+            if self.nodes[node_id].contains_range(range.clone()) {
                 return self._add_line(node_id, line);
             }
 
@@ -128,13 +128,13 @@ mod dynamic_li_chao_tree_impl {
 
             // 左右の子にも追加する
             if let Some(left_child_node_id) = self.nodes[node_id].l_child {
-                self._add_segment(range, left_child_node_id, line.clone());
+                self._add_segment(range.clone(), left_child_node_id, line.clone());
             } else {
                 let left_child_node_id = self.nodes.len();
                 self.nodes[node_id].l_child = Some(left_child_node_id);
                 self.nodes
                     .push(Node::new(Line::default(), self.nodes[node_id].l, m));
-                self._add_segment(range, left_child_node_id, line.clone());
+                self._add_segment(range.clone(), left_child_node_id, line.clone());
             }
             if let Some(right_child_node_id) = self.nodes[node_id].r_child {
                 self._add_segment(range, right_child_node_id, line);
@@ -153,7 +153,7 @@ mod dynamic_li_chao_tree_impl {
         }
         fn _query(&self, node_id: usize, x: i64) -> i64 {
             let node = &self.nodes[node_id];
-            if node.exclusive_range(&(x..=x)) {
+            if node.exclusive_range(x..=x) {
                 Self::INF
             } else {
                 let mut ret = node.eval(x);
@@ -251,12 +251,12 @@ mod dynamic_li_chao_tree_impl {
             self.line.eval(self.r)
         }
         /// # このノード全体が区間に含まれるか
-        fn contains_range<R: ToLR<i64>>(&self, range: &R) -> bool {
+        fn contains_range<R: ToLR<i64>>(&self, range: R) -> bool {
             let (l, r) = range.to_lr();
             l <= self.l && self.r <= r
         }
         /// # このノードと区間が共通点をもたないか
-        fn exclusive_range<R: ToLR<i64>>(&self, range: &R) -> bool {
+        fn exclusive_range<R: ToLR<i64>>(&self, range: R) -> bool {
             let (l, r) = range.to_lr();
             r <= self.l || self.r <= l
         }
@@ -365,7 +365,7 @@ fn test_rand() {
 #[test]
 fn test_segment() {
     let mut cht = DynamicLiChaoTree::new(-10, 10);
-    cht.add_segment(&(-5..5), 0, 0);
+    cht.add_segment(-5..5, 0, 0);
     assert_eq!(cht.query(-6), DynamicLiChaoTree::INF);
     assert_eq!(cht.query(-5), 0);
     assert_eq!(cht.query(-4), 0);

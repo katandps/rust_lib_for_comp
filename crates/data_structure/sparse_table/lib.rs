@@ -14,7 +14,7 @@ use string_util::JoinTrait;
 pub use sparse_table_impl::SparseTable;
 #[snippet(name = "sparse-table", doc_hidden)]
 mod sparse_table_impl {
-    use super::{Band, Debug, Display, Formatter, JoinTrait, RangeBounds, RangeProduct, ToLR};
+    use super::{Band, Debug, Display, Formatter, JoinTrait, RangeProduct, ToLR};
 
     #[derive(Clone)]
     pub struct SparseTable<B: Band> {
@@ -45,7 +45,7 @@ mod sparse_table_impl {
     /// $O(1)$
     impl<B: Band> RangeProduct<usize> for SparseTable<B> {
         type Magma = B;
-        fn product<R: RangeBounds<usize>>(&self, range: R) -> B::M {
+        fn product<R: ToLR<usize>>(&self, range: R) -> B::M {
             let (l, r) = range.to_lr();
             let lg = 63 - (r - l).leading_zeros();
             B::op(

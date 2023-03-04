@@ -3,13 +3,13 @@ use prelude::*;
 
 #[snippet(name = "range-traits", doc_hidden)]
 #[rustfmt::skip]
-pub trait ToLR<T> {
+pub trait ToLR<T>: Clone {
     fn to_lr(&self) -> (T, T);
 }
 
 #[snippet(name = "range-traits", doc_hidden)]
 #[rustfmt::skip]
-impl<R: RangeBounds<T>, T: Copy + BoundedAbove + BoundedBelow + One + Add<Output = T>> ToLR<T>
+impl<R: RangeBounds<T> + Clone, T: Copy + BoundedAbove + BoundedBelow + One + Add<Output = T>> ToLR<T>
     for R
 {
     #[inline]
@@ -35,12 +35,12 @@ impl<R: RangeBounds<T>, T: Copy + BoundedAbove + BoundedBelow + One + Add<Output
 #[rustfmt::skip]
 pub trait RangeProduct<I> {
     type Magma: Magma;
-    fn product<R: RangeBounds<I>>(&self, range: R) -> <Self::Magma as Magma>::M;
+    fn product<R: ToLR<I>>(&self, range: R) -> <Self::Magma as Magma>::M;
 }
 
 #[snippet(name = "range-traits", doc_hidden)]
 #[rustfmt::skip]
 pub trait RangeProductMut<I> {
     type Magma: Magma;
-    fn product<R: RangeBounds<I>>(&mut self, range: R) -> <Self::Magma as Magma>::M;
+    fn product<R: ToLR<I>>(&mut self, range: R) -> <Self::Magma as Magma>::M;
 }

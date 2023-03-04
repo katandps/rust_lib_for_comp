@@ -30,7 +30,7 @@ pub use wavelet_matrix_impl::WaveletMatrix;
 
 #[snippet(name = "wavelet-matrix", doc_hidden)]
 mod wavelet_matrix_impl {
-    use super::{HashMap, RangeBounds, SIDBuilder, ToLR, SID};
+    use super::{HashMap, SIDBuilder, ToLR, SID};
 
     #[derive(Debug)]
     pub struct WaveletMatrix {
@@ -124,18 +124,18 @@ mod wavelet_matrix_impl {
             r - self.id.get(&x).unwrap_or(&r)
         }
 
-        /// # rangeに含まれる v\[i\] == x$ であるようなiの個数
+        /// # section内で v\[i\] == x$ であるようなiの個数
         /// ## 計算量
         /// $O(\log V)$
-        pub fn rank_range<R: ToLR<usize>>(&self, x: u64, range: &R) -> usize {
-            let (l, r) = range.to_lr();
+        pub fn rank_section<R1: ToLR<usize>>(&self, section: R1, x: u64) -> usize {
+            let (l, r) = section.to_lr();
             self.rank(x, r) - self.rank(x, l)
         }
 
         /// # range のうち、小さい方から0-indexedでk番目の数
         /// ## 計算量
         /// $O(\log V)$
-        pub fn kth_smallest<R: RangeBounds<usize>>(&self, range: &R, mut k: usize) -> u64 {
+        pub fn kth_smallest<R: ToLR<usize>>(&self, range: &R, mut k: usize) -> u64 {
             let (l, r) = range.to_lr();
             assert!(k < r - l);
             let mut ret = 0;
@@ -155,16 +155,16 @@ mod wavelet_matrix_impl {
         /// # range中で大きい方から0-indexedでk番目の数
         /// ## 計算量
         /// $O(\log V)$
-        pub fn kth_largest<R: RangeBounds<usize>>(&self, range: &R, k: usize) -> u64 {
+        pub fn kth_largest<R: ToLR<usize>>(&self, range: &R, k: usize) -> u64 {
             let (l, r) = range.to_lr();
             self.kth_smallest(range, r - l - k - 1)
         }
 
-        /// # range のうち、upper未満のものの個数
+        /// # index_range のうち、値がupper未満のものの個数
         /// ## 計算量
         /// $O(\log V)$
-        pub fn range_freq<R: RangeBounds<usize>>(&self, range: &R, upper: u64) -> usize {
-            let (l, r) = range.to_lr();
+        pub fn range_freq<R: ToLR<usize>>(&self, index_range: &R, upper: u64) -> usize {
+            let (l, r) = index_range.to_lr();
             let mut ret = 0;
             (0..self.depth).rev().fold((l, r), |(l, r), level| {
                 let b = upper >> level & 1 == 1;
@@ -177,7 +177,7 @@ mod wavelet_matrix_impl {
         }
 
         /// # rangeのうち、 upperより小さい要素で最大のもの
-        pub fn prev<R: RangeBounds<usize>>(&self, range: &R, upper: u64) -> Option<u64> {
+        pub fn prev<R: ToLR<usize>>(&self, range: &R, upper: u64) -> Option<u64> {
             let cnt = self.range_freq(range, upper);
             if cnt == 0 {
                 None
@@ -187,7 +187,7 @@ mod wavelet_matrix_impl {
         }
 
         /// # rangeのうち、lower以上の要素で最小のもの
-        pub fn next<R: RangeBounds<usize>>(&self, range: &R, lower: u64) -> Option<u64> {
+        pub fn next<R: ToLR<usize>>(&self, range: &R, lower: u64) -> Option<u64> {
             let (l, r) = range.to_lr();
             let cnt = self.range_freq(range, lower);
             if cnt == r - l {
