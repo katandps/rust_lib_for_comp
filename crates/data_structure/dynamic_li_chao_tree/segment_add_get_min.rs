@@ -21,7 +21,7 @@ fn main() {
             if ans == DynamicLiChaoTree::INF {
                 io.out("INFINITY\n");
             } else {
-                io.out(ans.ln())
+                io.out(ans.line())
             }
         }
     }

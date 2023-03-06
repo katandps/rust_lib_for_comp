@@ -60,8 +60,8 @@ fn test() {
     use string_util::*;
     let mut io = IODebug::new("", false, |_: &mut ReaderFromStr, _: &mut ReaderFromStr| ());
     io.out(123);
-    io.out(456.ln());
-    io.out(&[1, 2, 3, 4, 5].join(" ").ln());
+    io.out(456.line());
+    io.out(&[1, 2, 3, 4, 5].join(" ").line());
     io.out(13.bits(5));
     io.flush();
     for &expect in &["123456", "1", "2", "3", "4", "5", "10110"] {

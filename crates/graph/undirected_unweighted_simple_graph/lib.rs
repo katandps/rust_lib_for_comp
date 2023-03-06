@@ -78,7 +78,7 @@ mod undirected_unweighted_simple_graph_impl {
                 (0..self.n * (self.n - 1) / 2)
                     .map(|i| if self.b[i] { "1" } else { "0" })
                     .join("")
-                    .ln()
+                    .line()
             )
         }
     }
@@ -92,9 +92,9 @@ mod undirected_unweighted_simple_graph_impl {
                     .map(|i| (0..self.n)
                         .map(|j| if self.get(i, j) { "1" } else { "0" })
                         .join("")
-                        .ln())
+                        .line())
                     .join("")
-                    .ln()
+                    .line()
             )
         }
     }

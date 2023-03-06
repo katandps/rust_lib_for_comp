@@ -13,7 +13,7 @@ pub use disjoint_sparse_table_impl::DisjointSparseTable;
 
 #[snippet(name = "disjoint-sparse-table", doc_hidden)]
 mod disjoint_sparse_table_impl {
-    use super::{min, Debug, Display, Formatter, JoinTrait, RangeProduct, SemiGroup, ToLR};
+    use super::{min, Debug, Display, Formatter, JoinTrait, RangeProduct, SemiGroup, ToBounds};
 
     pub struct DisjointSparseTable<S: SemiGroup> {
         pub len: usize,
@@ -67,8 +67,8 @@ mod disjoint_sparse_table_impl {
     /// $O(1)$
     impl<S: SemiGroup> RangeProduct<usize> for DisjointSparseTable<S> {
         type Magma = S;
-        fn product<R: ToLR<usize>>(&self, range: R) -> S::M {
-            let (l, mut r) = range.to_lr();
+        fn product<R: ToBounds<usize>>(&self, range: R) -> S::M {
+            let (l, mut r) = range.lr();
             assert!(l < r);
             // l..=rに変換
             r -= 1;

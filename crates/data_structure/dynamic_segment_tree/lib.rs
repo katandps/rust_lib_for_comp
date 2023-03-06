@@ -15,7 +15,7 @@ use range_traits::*;
 pub use dynamic_segment_tree_impl::DynamicSegmentTree;
 #[snippet(name = "dynamic-segment-tree", doc_hidden)]
 mod dynamic_segment_tree_impl {
-    use super::{swap, Debug, Monoid, RangeProduct, ToLR};
+    use super::{swap, Debug, Monoid, RangeProduct, ToBounds};
     type IndexType = i64;
     type Bit = i32;
 
@@ -29,8 +29,8 @@ mod dynamic_segment_tree_impl {
     /// $O(\log N)$
     impl<M: Monoid> RangeProduct<IndexType> for DynamicSegmentTree<M> {
         type Magma = M;
-        fn product<R: ToLR<IndexType>>(&self, range: R) -> M::M {
-            let (l, r) = range.to_lr();
+        fn product<R: ToBounds<IndexType>>(&self, range: R) -> M::M {
+            let (l, r) = range.lr();
             self.root.prod(l, r, 0, Self::MAX)
         }
     }

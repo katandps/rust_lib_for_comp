@@ -17,7 +17,7 @@ fn main() {
             dlct.add_line(a, b);
         } else {
             let p = io.v::<i64>();
-            io.out(dlct.query(p).ln())
+            io.out(dlct.query(p).line())
         }
     }
     io.flush();

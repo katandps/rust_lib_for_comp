@@ -12,7 +12,7 @@ pub struct XorShift {
 mod xor_shift_impl {
     use std::time::SystemTime;
 
-    use super::{ToLR, XorShift};
+    use super::{ToBounds, XorShift};
     impl Default for XorShift {
         #[inline]
         fn default() -> Self {
@@ -57,8 +57,8 @@ mod xor_shift_impl {
         /// # 範囲指定して乱数を生成
         /// rangeの範囲で乱数を生成する
         #[inline]
-        pub fn rand_range<R: ToLR<i64>>(&mut self, range: R) -> i64 {
-            let (l, r) = range.to_lr();
+        pub fn rand_range<R: ToBounds<i64>>(&mut self, range: R) -> i64 {
+            let (l, r) = range.lr();
             let k = self.next().unwrap() as i64;
             k.rem_euclid(r - l) + l
         }

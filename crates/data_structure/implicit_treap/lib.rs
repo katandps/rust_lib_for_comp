@@ -14,7 +14,7 @@ pub struct ImplicitTreap<T> {
 
 #[snippet(name = "implicit_treap", doc_hidden)]
 mod implicit_treap_impl {
-    use super::{swap, Display, Formatter, ImplicitTreap, Index, ToLR};
+    use super::{swap, Display, Formatter, ImplicitTreap, Index, ToBounds};
     impl<T> ImplicitTreap<T> {
         /// # サイズ
         ///
@@ -55,15 +55,15 @@ mod implicit_treap_impl {
 
         /// # 反転
         /// rangeの範囲を反転する
-        pub fn reverse<R: ToLR<usize>>(&mut self, range: R) {
-            let (l, r) = range.to_lr();
+        pub fn reverse<R: ToBounds<usize>>(&mut self, range: R) {
+            let (l, r) = range.lr();
             self.root.reverse(l, r);
         }
 
         /// # 回転
         /// rangeの範囲をtopが先頭に来るように回転する
-        pub fn rotate<R: ToLR<usize>>(&mut self, range: R, top: usize) {
-            let (l, r) = range.to_lr();
+        pub fn rotate<R: ToBounds<usize>>(&mut self, range: R, top: usize) {
+            let (l, r) = range.lr();
             assert!(l <= top && top < r);
             self.root.rotate(l, r, top);
         }

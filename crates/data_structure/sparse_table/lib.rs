@@ -7,14 +7,14 @@
 //! [Static RMQ](https://judge.yosupo.jp/submission/64144)
 use algebra::Band;
 use prelude::*;
-use range_traits::{RangeProduct, ToLR};
+use range_traits::{RangeProduct, ToBounds};
 use string_util::JoinTrait;
 
 #[snippet(name = "sparse-table", doc_hidden)]
 pub use sparse_table_impl::SparseTable;
 #[snippet(name = "sparse-table", doc_hidden)]
 mod sparse_table_impl {
-    use super::{Band, Debug, Display, Formatter, JoinTrait, RangeProduct, ToLR};
+    use super::{Band, Debug, Display, Formatter, JoinTrait, RangeProduct, ToBounds};
 
     #[derive(Clone)]
     pub struct SparseTable<B: Band> {
@@ -45,8 +45,8 @@ mod sparse_table_impl {
     /// $O(1)$
     impl<B: Band> RangeProduct<usize> for SparseTable<B> {
         type Magma = B;
-        fn product<R: ToLR<usize>>(&self, range: R) -> B::M {
-            let (l, r) = range.to_lr();
+        fn product<R: ToBounds<usize>>(&self, range: R) -> B::M {
+            let (l, r) = range.lr();
             let lg = 63 - (r - l).leading_zeros();
             B::op(
                 &self.table[lg as usize][l],

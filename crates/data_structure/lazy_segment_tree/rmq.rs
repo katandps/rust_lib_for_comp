@@ -27,7 +27,7 @@ fn main() {
     let mut dst = LazySegmentTree::from((&a[..], MinMin));
     for _ in 0..q {
         let (l, r) = io.v2::<usize, usize>();
-        io.out(dst.product(l..r).ln());
+        io.out(dst.product(l..r).line());
     }
     io.flush();
 }

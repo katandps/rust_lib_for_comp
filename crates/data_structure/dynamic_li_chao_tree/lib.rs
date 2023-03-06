@@ -6,14 +6,14 @@
 //! [Line Add Get Min](https://judge.yosupo.jp/submission/108762)
 use min_max_macro::{chmin, min};
 use prelude::*;
-use range_traits::ToLR;
+use range_traits::ToBounds;
 
 #[snippet(name = "dynamic-li-chao-tree", doc_hidden)]
 pub use dynamic_li_chao_tree_impl::DynamicLiChaoTree;
 
 #[snippet(name = "dynamic-li-chao-tree", doc_hidden)]
 mod dynamic_li_chao_tree_impl {
-    use super::{chmin, min, swap, Debug, Ordering, ToLR, VecDeque};
+    use super::{chmin, min, swap, Debug, Ordering, ToBounds, VecDeque};
 
     const LEFT_LIMIT: i64 = -1_000_000_010;
     const RIGHT_LIMIT: i64 = 1_000_000_010;
@@ -107,12 +107,12 @@ mod dynamic_li_chao_tree_impl {
         /// # rangeに区間rの線分$ax+b$を追加
         /// ## 計算量
         /// $O(\log^2 V)$
-        pub fn add_segment<R: ToLR<i64>>(&mut self, range: R, a: i64, b: i64) {
+        pub fn add_segment<R: ToBounds<i64> + Clone>(&mut self, range: R, a: i64, b: i64) {
             let line = Line { a, b };
             self._add_segment(range, self.root, line)
         }
 
-        fn _add_segment<R: ToLR<i64>>(&mut self, range: R, node_id: usize, line: Line) {
+        fn _add_segment<R: ToBounds<i64> + Clone>(&mut self, range: R, node_id: usize, line: Line) {
             if self.nodes[node_id].exclusive_range(range.clone()) {
                 return;
             }
@@ -251,13 +251,13 @@ mod dynamic_li_chao_tree_impl {
             self.line.eval(self.r)
         }
         /// # このノード全体が区間に含まれるか
-        fn contains_range<R: ToLR<i64>>(&self, range: R) -> bool {
-            let (l, r) = range.to_lr();
+        fn contains_range<R: ToBounds<i64>>(&self, range: R) -> bool {
+            let (l, r) = range.lr();
             l <= self.l && self.r <= r
         }
         /// # このノードと区間が共通点をもたないか
-        fn exclusive_range<R: ToLR<i64>>(&self, range: R) -> bool {
-            let (l, r) = range.to_lr();
+        fn exclusive_range<R: ToBounds<i64>>(&self, range: R) -> bool {
+            let (l, r) = range.lr();
             r <= self.l || self.r <= l
         }
         /// # 指定されたx座標でのyの値

@@ -3,7 +3,7 @@
 //! 計算量は各$\log(N)$
 use algebra::{AbelianGroup, Magma};
 use prelude::*;
-use range_traits::{RangeProduct, ToLR};
+use range_traits::{RangeProduct, ToBounds};
 
 #[snippet(name = "binary-indexed-tree", doc_hidden)]
 #[derive(Clone)]
@@ -14,7 +14,7 @@ pub struct BinaryIndexedTree<A: Magma> {
 
 #[snippet(name = "binary-indexed-tree", doc_hidden)]
 mod binary_indexed_tree_impl {
-    use super::{AbelianGroup, BinaryIndexedTree, Debug, Formatter, RangeProduct, ToLR};
+    use super::{AbelianGroup, BinaryIndexedTree, Debug, Formatter, RangeProduct, ToBounds};
 
     /// サイズを指定して作成する
     impl<A: AbelianGroup> From<usize> for BinaryIndexedTree<A> {
@@ -42,8 +42,8 @@ mod binary_indexed_tree_impl {
     /// $O(\log N)$
     impl<A: AbelianGroup> RangeProduct<usize> for BinaryIndexedTree<A> {
         type Magma = A;
-        fn product<R: ToLR<usize>>(&self, range: R) -> A::M {
-            let (a, b) = range.to_lr();
+        fn product<R: ToBounds<usize>>(&self, range: R) -> A::M {
+            let (a, b) = range.lr();
             if b == 0 {
                 A::unit()
             } else if a == 0 {

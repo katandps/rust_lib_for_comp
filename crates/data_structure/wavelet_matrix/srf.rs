@@ -10,7 +10,7 @@ fn main() {
     for _ in 0..q {
         let (l, r, x) = io.v3::<usize, usize, u64>();
         let ans = wm.rank_section(l..r, x);
-        io.out(ans.ln());
+        io.out(ans.line());
     }
     io.flush();
 }

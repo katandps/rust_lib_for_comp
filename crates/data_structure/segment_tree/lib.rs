@@ -14,7 +14,7 @@ use range_traits::*;
 pub use segment_tree_impl::SegmentTree;
 #[snippet(name = "segment-tree", doc_hidden)]
 mod segment_tree_impl {
-    use super::{Index, Monoid, RangeProduct, ToLR};
+    use super::{Index, Monoid, RangeProduct, ToBounds};
 
     #[derive(Clone, Debug)]
     pub struct SegmentTree<M: Monoid> {
@@ -38,8 +38,8 @@ mod segment_tree_impl {
     /// $O(\log N)$
     impl<M: Monoid> RangeProduct<usize> for SegmentTree<M> {
         type Magma = M;
-        fn product<R: ToLR<usize>>(&self, range: R) -> M::M {
-            let (mut l, mut r) = range.to_lr();
+        fn product<R: ToBounds<usize>>(&self, range: R) -> M::M {
+            let (mut l, mut r) = range.lr();
             l += self.n;
             r += self.n;
             let mut sml = M::unit();

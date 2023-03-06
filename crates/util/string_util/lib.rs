@@ -9,11 +9,11 @@ pub use string_util_impl::{AddLineTrait, BitsTrait, JoinTrait};
 mod string_util_impl {
     use super::{Display, Integral};
     pub trait AddLineTrait {
-        fn ln(&self) -> String;
+        fn line(&self) -> String;
     }
 
     impl<D: Display> AddLineTrait for D {
-        fn ln(&self) -> String {
+        fn line(&self) -> String {
             self.to_string() + "\n"
         }
     }
