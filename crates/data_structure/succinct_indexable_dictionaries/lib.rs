@@ -55,20 +55,20 @@ mod succinct_indexable_dictionaries_impl {
                     .count_ones() as usize
         }
 
-        /// # 1のビットをx個含む[0, p)の区間であって、pが最小となるものを返す
+        /// # $b$のビットをx個含む[0, p)の区間であって、pが最小となるものを返す
         /// 存在しない場合はNone
         ///
         /// ## 計算量
         /// $O(\log Size)$
         ///
-        pub fn select(&self, x: usize) -> Option<usize> {
-            if self.rank_1(self.size) < x {
+        pub fn select(&self, x: usize, b: bool) -> Option<usize> {
+            if self.rank(self.size, b) < x {
                 return None;
             }
             let (mut lb, mut ub) = (-1, self.size as i64);
             while ub - lb > 1 {
                 let mid = (lb + ub) >> 1;
-                if self.rank_1(mid as usize) < x {
+                if self.rank(mid as usize, b) < x {
                     lb = mid
                 } else {
                     ub = mid
@@ -151,13 +151,13 @@ mod test {
         assert_eq!(2, dict.rank(125, true));
         assert_eq!(3, dict.rank(126, true));
 
-        assert_eq!(Some(0), dict.select(0));
-        assert_eq!(Some(1), dict.select(1));
-        assert_eq!(Some(2), dict.select(2));
-        assert_eq!(Some(126), dict.select(3));
-        assert_eq!(Some(251), dict.select(4));
-        assert_eq!(Some(501), dict.select(5));
-        assert_eq!(Some(1001), dict.select(6));
-        assert_eq!(None, dict.select(7));
+        assert_eq!(Some(0), dict.select(0, true));
+        assert_eq!(Some(1), dict.select(1, true));
+        assert_eq!(Some(2), dict.select(2, true));
+        assert_eq!(Some(126), dict.select(3, true));
+        assert_eq!(Some(251), dict.select(4, true));
+        assert_eq!(Some(501), dict.select(5, true));
+        assert_eq!(Some(1001), dict.select(6, true));
+        assert_eq!(None, dict.select(7, true));
     }
 }

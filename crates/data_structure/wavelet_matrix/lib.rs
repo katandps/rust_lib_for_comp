@@ -36,7 +36,9 @@ mod wavelet_matrix_impl {
     pub struct WaveletMatrix {
         _size: usize,
         depth: usize,
+        // bitごとにsortした索引 小さい桁から入っている
         matrix: Vec<SID>,
+        // 各索引の境界
         mid: Vec<usize>,
         /// ソートが終わった後の各値の最左位置
         id: HashMap<u64, usize>,
@@ -74,10 +76,12 @@ mod wavelet_matrix_impl {
             });
             matrix.reverse();
             mid.reverse();
-            let mut id = HashMap::default();
-            src.into_iter().enumerate().for_each(|(i, si)| {
-                id.entry(si).or_insert(i);
-            });
+            let id = src
+                .iter()
+                .enumerate()
+                .rev() // 先頭のindexを保存する
+                .map(|(i, si)| (*si, i))
+                .collect();
             Self {
                 _size: size,
                 depth,
@@ -114,7 +118,7 @@ mod wavelet_matrix_impl {
             )
         }
 
-        /// # $[0 <= i < r) かつ v\[i\] == x$ であるようなiの個数
+        /// # $[0 <= i < r) かつ $v\[i\] == x$ であるようなiの個数
         /// ## 計算量
         /// $O(\log V)$
         pub fn rank(&self, x: u64, r: usize) -> usize {
@@ -124,12 +128,28 @@ mod wavelet_matrix_impl {
             r - self.id.get(&x).unwrap_or(&r)
         }
 
-        /// # section内で v\[i\] == x$ であるようなiの個数
+        /// # section内で $v\[i\] == x$ であるようなiの個数
         /// ## 計算量
         /// $O(\log V)$
-        pub fn rank_section<R1: ToBounds<usize>>(&self, section: R1, x: u64) -> usize {
+        pub fn rank_section<R: ToBounds<usize>>(&self, section: R, x: u64) -> usize {
             let (l, r) = section.lr();
             self.rank(x, r) - self.rank(x, l)
+        }
+
+        /// # 全体から1-indexedでi番目に登場するxの位置
+        /// ## 計算量
+        /// $O(\log^2 V)$
+        pub fn select(&self, x: u64, i: usize) -> Option<usize> {
+            if let Some(&c) = self.id.get(&x) {
+                let p = (0..self.depth).try_fold(c + i, |p, level| {
+                    let b = x >> level & 1 == 1;
+                    self.matrix[level].select(p - self.mid[level] * usize::from(b), b)
+                });
+                p.map(|p| p - 1)
+            } else {
+                // xはない
+                None
+            }
         }
 
         /// # range のうち、小さい方から0-indexedでk番目の数
@@ -230,6 +250,22 @@ mod test {
                 }
                 assert_eq!(cnt, wm.rank(i, j + 1), "{} {}", i, j);
             }
+        }
+    }
+
+    #[test]
+    fn test_select() {
+        let n = 1000000;
+        let mut rand = XorShift::from_time();
+        let src = (0..n)
+            .map(|_| rand.rand_range(0..10000000000000) as u64)
+            .collect::<Vec<_>>();
+        let mut map = HashMap::default();
+        let wm = WaveletMatrix::from(src.clone());
+        for i in 0..n {
+            *map.entry(src[i]).or_insert(0) += 1;
+            let c = map.get(&src[i]).unwrap();
+            assert_eq!(wm.select(src[i], *c), Some(i));
         }
     }
 
