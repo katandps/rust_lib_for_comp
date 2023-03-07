@@ -176,12 +176,12 @@ mod lazy_segment_tree_impl {
 mod test {
     use super::*;
     use addition::Addition;
-    use segment::Segment;
+    use section::Section;
 
     // これは毎回書く(モノイドとモノイドから作用付きモノイドを作る)
     pub struct AddSum;
     impl MapMonoid for AddSum {
-        type Mono = Addition<Segment<i64>>;
+        type Mono = Addition<Section<i64>>;
         type Func = Addition<i64>;
 
         fn apply(

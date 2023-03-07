@@ -6,44 +6,44 @@
 use algebra::Zero;
 use prelude::*;
 
-#[snippet(name = "segment", doc_hidden)]
-pub use segment_impl::Segment;
-#[snippet(name = "segment", doc_hidden)]
-mod segment_impl {
+#[snippet(name = "section", doc_hidden)]
+pub use section_impl::Section;
+#[snippet(name = "section", doc_hidden)]
+mod section_impl {
     use super::{Add, Debug, Display, Formatter, Mul, Zero};
 
     #[derive(Clone, PartialEq, Ord, PartialOrd, Eq)]
-    pub struct Segment<M: Clone + PartialEq> {
+    pub struct Section<M: Clone + PartialEq> {
         pub value: M,
         size: i64,
     }
 
-    impl<M: Clone + PartialEq + Display> Debug for Segment<M> {
+    impl<M: Clone + PartialEq + Display> Debug for Section<M> {
         fn fmt(&self, f: &mut Formatter<'_>) -> std::fmt::Result {
             write!(f, "v: {}, size: {}", self.value, self.size)
         }
     }
-    impl<M: Clone + PartialEq + Add<Output = M> + Zero> Add for Segment<M> {
+    impl<M: Clone + PartialEq + Add<Output = M> + Zero> Add for Section<M> {
         type Output = Self;
         fn add(self, rhs: Self) -> Self {
             let (value, size) = (self.value + rhs.value, self.size + rhs.size);
             Self { value, size }
         }
     }
-    impl<M: Clone + PartialEq + Zero> Zero for Segment<M> {
+    impl<M: Clone + PartialEq + Zero> Zero for Section<M> {
         fn zero() -> Self {
             let (value, size) = (M::zero(), 1);
             Self { value, size }
         }
     }
-    impl<M: Clone + PartialEq + Add<Output = M>> Add<M> for Segment<M> {
+    impl<M: Clone + PartialEq + Add<Output = M>> Add<M> for Section<M> {
         type Output = Self;
         fn add(self, rhs: M) -> Self {
             let (value, size) = (self.value + rhs, self.size);
             Self { value, size }
         }
     }
-    impl<M: Clone + PartialEq + Mul<Output = M>> Mul<M> for Segment<M> {
+    impl<M: Clone + PartialEq + Mul<Output = M>> Mul<M> for Section<M> {
         type Output = Self;
         fn mul(self, rhs: M) -> Self {
             let (value, size) = (self.value * rhs, self.size);
