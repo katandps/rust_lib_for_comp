@@ -61,6 +61,7 @@ jobs:
           bundle install
           bundle exec jekyll build
           cd ../../
+          mkdir public
           cp -frP .verify-helper/markdown/_site/* public/
           cargo doc --workspace --no-deps
           cp -rP target/doc/* public/
