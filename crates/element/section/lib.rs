@@ -17,6 +17,11 @@ mod section_impl {
         pub value: M,
         size: i64,
     }
+    impl<M: Clone + PartialEq> Section<M> {
+        pub fn new(value: M, size: i64) -> Self {
+            Self { value, size }
+        }
+    }
 
     impl<M: Clone + PartialEq + Display> Debug for Section<M> {
         fn fmt(&self, f: &mut Formatter<'_>) -> std::fmt::Result {
@@ -32,7 +37,7 @@ mod section_impl {
     }
     impl<M: Clone + PartialEq + Zero> Zero for Section<M> {
         fn zero() -> Self {
-            let (value, size) = (M::zero(), 1);
+            let (value, size) = (M::zero(), 0);
             Self { value, size }
         }
     }
