@@ -61,6 +61,7 @@ members = [
     'crates/dynamic_programming/rerooting_dp',
     'crates/element/int_with_index',
     'crates/element/section',
+    'crates/element/sum_and_prefix_max',
     'crates/enumerator/all_combination',
     'crates/enumerator/bit_combination',
     'crates/enumerator/next_permutation',
