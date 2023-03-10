@@ -1302,12 +1302,23 @@ dependencies = [
 name = "segment_tree"
 version = "0.1.0"
 dependencies = [
+ "addition",
  "algebra",
  "io_util",
  "maximization",
  "minimization",
  "prelude",
  "range_traits",
+ "sequence",
+ "string_util",
+]
+
+[[package]]
+name = "sequence"
+version = "0.1.0"
+dependencies = [
+ "algebra",
+ "prelude",
  "string_util",
 ]
 

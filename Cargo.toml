@@ -60,6 +60,7 @@ members = [
     'crates/data_structure/weighted_union_find',
     'crates/dynamic_programming/rerooting_dp',
     'crates/element/int_with_index',
+    'crates/element/sequence',
     'crates/element/section',
     'crates/element/sum_and_prefix_max',
     'crates/enumerator/all_combination',

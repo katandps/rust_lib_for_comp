@@ -1,0 +1,12 @@
+[package]
+name = "sequence"
+version = "0.1.0"
+edition = "2018"
+
+[dependencies]
+prelude = { path = "../../prelude" }
+algebra = { path = "../../algebra" }
+string_util = { path = "../../util/string_util" }
+
+[lib]
+path = "lib.rs"
