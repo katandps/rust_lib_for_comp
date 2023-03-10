@@ -14,7 +14,7 @@ check:
 
 test:
 	cargo test --workspace
-	oj-verify run -j 8
+	oj-verify run
 
 coverage:
 	cargo llvm-cov --workspace
