@@ -44,3 +44,19 @@ pub trait RangeProductMut<I> {
     type Magma: Magma;
     fn product<R: ToBounds<I>>(&mut self, range: R) -> <Self::Magma as Magma>::M;
 }
+
+/// # 値の更新
+/// indexで指定した値をfで更新する
+#[snippet(name = "range-traits", doc_hidden)]
+#[rustfmt::skip]
+pub trait PointUpdate<T> {
+    fn update_at(&mut self, index: usize, f: T);
+}
+
+/// # 区間の更新
+/// rangeで指定した値をfで更新する
+#[snippet(name = "range-traits", doc_hidden)]
+#[rustfmt::skip]
+pub trait RangeUpdate<I, T> {
+    fn update_range<R: ToBounds<I>>(&mut self, range: R, f: T);
+}

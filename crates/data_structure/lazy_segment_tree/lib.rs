@@ -6,13 +6,13 @@
 
 use algebra::{Magma, MapMonoid};
 use prelude::*;
-use range_traits::{RangeProductMut, ToBounds};
+use range_traits::{PointUpdate, RangeProductMut, RangeUpdate, ToBounds};
 
 #[snippet(name = "lazy-segment-tree", doc_hidden)]
 pub use lazy_segment_tree_impl::LazySegmentTree;
 #[snippet(name = "lazy-segment-tree", doc_hidden)]
 mod lazy_segment_tree_impl {
-    use super::{Magma, MapMonoid, RangeProductMut, ToBounds};
+    use super::{Magma, MapMonoid, PointUpdate, RangeProductMut, RangeUpdate, ToBounds};
 
     #[derive(Clone)]
     pub struct LazySegmentTree<M: MapMonoid> {
@@ -88,18 +88,18 @@ mod lazy_segment_tree_impl {
         }
     }
 
-    impl<M: MapMonoid> LazySegmentTree<M> {
-        /// 一点更新
-        pub fn update_at(&mut self, mut i: usize, f: <M::Func as Magma>::M) {
+    impl<M: MapMonoid> PointUpdate<<M::Func as Magma>::M> for LazySegmentTree<M> {
+        fn update_at(&mut self, mut i: usize, f: <M::Func as Magma>::M) {
             assert!(i < self.n);
             i += self.n;
             (1..=self.log).rev().for_each(|j| self.propagate(i >> j));
             self.node[i] = self.m.apply(&f, &self.node[i]);
             (1..=self.log).for_each(|j| self.calc(i >> j));
         }
+    }
 
-        /// 区間更新 [l, r)
-        pub fn update_range<R: ToBounds<usize>>(&mut self, range: R, f: <M::Func as Magma>::M) {
+    impl<M: MapMonoid> RangeUpdate<usize, <M::Func as Magma>::M> for LazySegmentTree<M> {
+        fn update_range<R: ToBounds<usize>>(&mut self, range: R, f: <M::Func as Magma>::M) {
             let (mut l, mut r) = range.lr();
             if l == r {
                 return;
@@ -138,7 +138,9 @@ mod lazy_segment_tree_impl {
                 }
             }
         }
+    }
 
+    impl<M: MapMonoid> LazySegmentTree<M> {
         /// i番目の値を取得する
         pub fn get(&mut self, mut i: usize) -> <M::Mono as Magma>::M {
             assert!(i < self.n);

@@ -3,7 +3,7 @@
 //! 計算量は各$\log(N)$
 use algebra::{AbelianGroup, Magma};
 use prelude::*;
-use range_traits::{RangeProduct, ToBounds};
+use range_traits::{PointUpdate, RangeProduct, ToBounds};
 
 #[snippet(name = "binary-indexed-tree", doc_hidden)]
 #[derive(Clone)]
@@ -14,7 +14,9 @@ pub struct BinaryIndexedTree<A: Magma> {
 
 #[snippet(name = "binary-indexed-tree", doc_hidden)]
 mod binary_indexed_tree_impl {
-    use super::{AbelianGroup, BinaryIndexedTree, Debug, Formatter, RangeProduct, ToBounds};
+    use super::{
+        AbelianGroup, BinaryIndexedTree, Debug, Formatter, PointUpdate, RangeProduct, ToBounds,
+    };
 
     /// サイズを指定して作成する
     impl<A: AbelianGroup> From<usize> for BinaryIndexedTree<A> {
@@ -27,12 +29,12 @@ mod binary_indexed_tree_impl {
     }
 
     /// ソースを指定して作成する
-    impl<A: AbelianGroup> From<&[A::M]> for BinaryIndexedTree<A> {
-        fn from(src: &[A::M]) -> Self {
+    impl<A: AbelianGroup> From<Vec<A::M>> for BinaryIndexedTree<A> {
+        fn from(src: Vec<A::M>) -> Self {
             let mut bit = Self::from(src.len());
-            src.iter()
+            src.into_iter()
                 .enumerate()
-                .for_each(|(i, item)| bit.add(i + 1, item.clone()));
+                .for_each(|(i, item)| bit.add(i, item));
             bit
         }
     }
@@ -54,20 +56,22 @@ mod binary_indexed_tree_impl {
         }
     }
 
-    impl<A: AbelianGroup> BinaryIndexedTree<A> {
-        /// add $x$ to $i$
-        pub fn add(&mut self, i: usize, x: A::M) {
+    /// # i番目をxに更新する
+    impl<A: AbelianGroup> PointUpdate<A::M> for BinaryIndexedTree<A> {
+        fn update_at(&mut self, i: usize, mut x: A::M) {
             let mut idx = i as i32 + 1;
+            x = A::op(&x, &A::inv(&self.product(i..=i)));
             while idx <= self.n as i32 {
                 self.bit[idx as usize] = A::op(&self.bit[idx as usize], &x);
                 idx += idx & -idx;
             }
         }
+    }
 
-        /// update $i$ to $x$
-        pub fn update(&mut self, i: usize, mut x: A::M) {
+    impl<A: AbelianGroup> BinaryIndexedTree<A> {
+        /// add $x$ to $i$
+        pub fn add(&mut self, i: usize, x: A::M) {
             let mut idx = i as i32 + 1;
-            x = A::op(&x, &A::inv(&self.product(i..=i)));
             while idx <= self.n as i32 {
                 self.bit[idx as usize] = A::op(&self.bit[idx as usize], &x);
                 idx += idx & -idx;
