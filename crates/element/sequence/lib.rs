@@ -32,9 +32,7 @@ mod sequence_impl {
     impl<T: Add<Output = T> + Clone + PartialOrd> Add for Sequence<T> {
         type Output = Self;
         fn add(self, rhs: Self) -> Self {
-            Self {
-                0: vec![self.0, rhs.0].into_iter().flatten().collect(),
-            }
+            Self(vec![self.0, rhs.0].into_iter().flatten().collect())
         }
     }
 

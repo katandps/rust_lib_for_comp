@@ -86,6 +86,7 @@ members = [
     'crates/graph/strongly_connected_components',
     'crates/graph/tree',
     'crates/graph/tree/euler_tour',
+    'crates/graph/tree/heavy_light_decomposition',
     'crates/graph/tree/lowest_common_ancestor',
     'crates/graph/undirected_unweighted_simple_graph',
     'crates/graph/warshall_floyd',

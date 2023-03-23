@@ -4,8 +4,6 @@
 use graph::GraphTrait;
 use prelude::*;
 
-pub mod heavy_light_decomposition;
-
 #[allow(unused_macros)]
 macro_rules! chmax {($base:expr, $($cmps:expr),+ $(,)*) => {{let cmp_max = max!($($cmps),+);if $base < cmp_max {$base = cmp_max;true} else {false}}};}
 
