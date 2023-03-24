@@ -16,8 +16,10 @@ mod heavy_light_decomposition_impl {
 
     #[derive(Clone, Debug)]
     pub struct HLDecomposition<D> {
-        graph: Vec<Vec<usize>>,
-        _root: usize,
+        /// 木の頂点数
+        n: usize,
+        /// 木の根
+        root: usize,
         size: Vec<usize>,
         /// 行きがけ順で頂点に到達した時間
         in_time: Vec<usize>,
@@ -25,6 +27,7 @@ mod heavy_light_decomposition_impl {
         /// これを使って区間データを初期化するとよい
         rev: Vec<usize>,
         /// 行きがけ順で頂点から抜けた時間
+        /// 部分木クエリに利用する
         out_time: Vec<usize>,
         /// 同じ連結成分で最も根に近い頂点
         head: Vec<usize>,
@@ -46,8 +49,8 @@ mod heavy_light_decomposition_impl {
             W: Clone,
         {
             let mut this = Self {
-                graph: vec![Vec::new(); g.size()],
-                _root: root,
+                n: g.size(),
+                root,
                 size: vec![1; g.size()],
                 in_time: vec![0; g.size()],
                 rev: vec![0; g.size() * 2],
@@ -58,9 +61,8 @@ mod heavy_light_decomposition_impl {
                 edge: false,
                 upward: D::from(Vec::new()),
             };
-            this.build_graph(g, root, root);
-            this.dfs_size(root, root);
-            this.dfs_hld(root, root, &mut 0);
+            let max_childs = this.dfs_size(g);
+            this.dfs_hld(g, max_childs);
             let src = this
                 .rev
                 .iter()
@@ -77,8 +79,8 @@ mod heavy_light_decomposition_impl {
             D: From<Vec<W>>,
         {
             let mut this = Self {
-                graph: vec![Vec::new(); g.size()],
-                _root: root,
+                n: g.size(),
+                root,
                 size: vec![1; g.size()],
                 in_time: vec![0; g.size()],
                 rev: vec![0; g.size() * 2],
@@ -89,9 +91,8 @@ mod heavy_light_decomposition_impl {
                 edge: true,
                 upward: D::from(Vec::new()),
             };
-            this.build_graph(g, root, root);
-            this.dfs_size(root, root);
-            this.dfs_hld(root, root, &mut 0);
+            let max_childs = this.dfs_size(g);
+            this.dfs_hld(g, max_childs);
             this
         }
 
@@ -134,52 +135,65 @@ mod heavy_light_decomposition_impl {
             ret
         }
 
-        fn build_graph<G: GraphTrait>(&mut self, g: &G, src: usize, par: usize) {
-            for (dst, _w) in g.edges(src) {
-                if dst == par {
-                    continue;
-                }
-                self.graph[src].push(dst);
-                self.build_graph(g, dst, src);
-            }
-        }
-
-        /// 部分木のサイズを求めつつ、
-        /// srcの子で部分木のサイズが一番大きいものがgraph[src]に来るようにする
-        fn dfs_size(&mut self, src: usize, par: usize) {
-            self.parent[src] = par;
-            for dst_i in 0..self.graph[src].len() {
-                let dst = self.graph[src][dst_i];
-                if dst == par {
-                    continue;
-                }
-                self.depth[dst] = self.depth[src] + 1;
-                self.dfs_size(dst, src);
-                self.size[src] += self.size[dst];
-                if self.size[dst] > self.size[self.graph[src][0]] {
-                    self.graph[src].swap(0, dst_i);
-                }
-            }
-        }
-
-        fn dfs_hld(&mut self, src: usize, par: usize, times: &mut usize) {
-            self.in_time[src] = *times;
-            self.rev[self.in_time[src]] = src;
-            *times += 1;
-
-            for dst in self.graph[src].clone() {
-                if dst == par || dst == src {
-                    continue;
-                }
-                // graph[src][0] == dst <=> src->dstがheavy-path
-                self.head[dst] = if self.graph[src][0] == dst {
-                    self.head[src]
+        /// 部分木のサイズを求めつつ、直接の子のうち、部分木のサイズが最も大きいもののリストを返す
+        /// srcの子で部分木のサイズが一番大きいものがgraph[src][0]に来るようにする
+        fn dfs_size<G: GraphTrait>(&mut self, g: &G) -> Vec<Option<usize>> {
+            let mut dfs = vec![self.root];
+            let mut max_childs = vec![None; g.size()];
+            while let Some(src) = dfs.pop() {
+                if src < self.n {
+                    dfs.push(!src);
+                    for (dst, _w) in g.edges(src) {
+                        if dst == self.parent[src] {
+                            continue;
+                        }
+                        self.parent[dst] = src;
+                        self.depth[dst] = self.depth[src] + 1;
+                        dfs.push(dst);
+                    }
                 } else {
-                    dst
-                };
-                self.dfs_hld(dst, src, times);
+                    let (mut max_child, mut max_child_size) = (None, 0);
+                    for (dst, _w) in g.edges(!src) {
+                        if dst == self.parent[!src] {
+                            continue;
+                        }
+                        self.size[!src] += self.size[dst];
+                        if max_child_size < self.size[dst] {
+                            max_child_size = self.size[dst];
+                            max_child = Some(dst);
+                        }
+                    }
+                    max_childs[!src] = max_child;
+                }
             }
-            self.out_time[src] = *times;
+            max_childs
+        }
+
+        fn dfs_hld<G: GraphTrait>(&mut self, g: &G, max_childs: Vec<Option<usize>>) {
+            let mut times = 0;
+            let mut dfs = vec![self.root];
+            while let Some(src) = dfs.pop() {
+                if src < self.n {
+                    self.in_time[src] = times;
+                    times += 1;
+                    self.rev[self.in_time[src]] = src;
+                    dfs.push(!src);
+                    // 0番目を先に探索したい -> 最後にやる
+                    for (dst, _w) in g.edges(src) {
+                        if dst == self.parent[src] || max_childs[src] == Some(dst) {
+                            continue;
+                        }
+                        self.head[dst] = dst;
+                        dfs.push(dst);
+                    }
+                    if let Some(dst) = max_childs[src] {
+                        self.head[dst] = self.head[src];
+                        dfs.push(dst);
+                    }
+                } else {
+                    self.out_time[!src] = times;
+                }
+            }
         }
 
         /// # 頂点vからrootの方向にk個さかのぼった頂点を返す
