@@ -4,8 +4,8 @@ use prelude::*;
 #[rustfmt::skip]
 pub use algebra_traits::{
     AbelianGroup, Associative, Band, BoundedAbove, BoundedBelow, Commutative, CommutativeMonoid,
-    Group, Idempotent, Integral, Invertible, Magma, MapMonoid, Monoid, One, Pow, PrimitiveRoot,
-    SemiGroup, TrailingZeros, Unital, Zero,
+    Group, Idempotent, Integral, Invertible, LeastSignificantBit, Magma, MapMonoid, Monoid, One,
+    Pow, PrimitiveRoot, SemiGroup, TrailingZeros, Unital, Zero,
 };
 
 #[snippet(name = "algebra", doc_hidden)]
@@ -164,8 +164,14 @@ mod algebra_traits {
         fn primitive_root() -> Self;
     }
 
+    /// # 二進数表記したとき最後尾につく0の数
     pub trait TrailingZeros {
         fn trailing_zero(self) -> Self;
+    }
+
+    /// # 最下位bit
+    pub trait LeastSignificantBit {
+        fn lsb(self) -> Self;
     }
 
     pub trait Integral:
@@ -204,6 +210,7 @@ mod algebra_traits {
         + BoundedBelow
         + BoundedAbove
         + TrailingZeros
+        + LeastSignificantBit
     {
     }
 
@@ -215,9 +222,24 @@ mod algebra_traits {
             impl BoundedBelow for $ty { #[inline] fn min_value() -> Self { Self::min_value() }}
             impl BoundedAbove for $ty { #[inline] fn max_value() -> Self { Self::max_value() }}
             impl TrailingZeros for $ty { #[inline] fn trailing_zero(self) -> Self { self.trailing_zeros() as $ty}}
+            impl LeastSignificantBit for $ty { #[inline] fn lsb(self) -> Self {if self == 0 {0} else {self & !(self - 1)}}}
             impl Integral for $ty {}
         )*
     };
 }
     impl_integral!(i8, i16, i32, i64, i128, isize, u8, u16, u32, u64, u128, usize);
+}
+
+#[cfg(test)]
+mod test {
+    use super::LeastSignificantBit;
+    #[test]
+    fn test_lsb() {
+        assert_eq!(0, 0usize.lsb());
+        assert_eq!(1, 1usize.lsb());
+        assert_eq!(2, 2usize.lsb());
+        assert_eq!(1, 3usize.lsb());
+        assert_eq!(4, 4usize.lsb());
+        assert_eq!(1, 5usize.lsb());
+    }
 }

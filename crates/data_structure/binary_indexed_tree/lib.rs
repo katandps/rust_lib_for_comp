@@ -1,7 +1,7 @@
 //! # BinaryIndexedTree(Fenwick Tree)
 //! アーベル群の二項演算を載せることができる
 //! 計算量は各$\log(N)$
-use algebra::{AbelianGroup, Magma};
+use algebra::{AbelianGroup, LeastSignificantBit, Magma};
 use prelude::*;
 use range_traits::{PointUpdate, RangeProduct, ToBounds};
 
@@ -15,7 +15,8 @@ pub struct BinaryIndexedTree<A: Magma> {
 #[snippet(name = "binary-indexed-tree", doc_hidden)]
 mod binary_indexed_tree_impl {
     use super::{
-        AbelianGroup, BinaryIndexedTree, Debug, Formatter, PointUpdate, RangeProduct, ToBounds,
+        AbelianGroup, BinaryIndexedTree, Debug, Formatter, LeastSignificantBit, PointUpdate,
+        RangeProduct, ToBounds,
     };
 
     /// サイズを指定して作成する
@@ -59,11 +60,11 @@ mod binary_indexed_tree_impl {
     /// # i番目をxに更新する
     impl<A: AbelianGroup> PointUpdate<A::M> for BinaryIndexedTree<A> {
         fn update_at(&mut self, i: usize, mut x: A::M) {
-            let mut idx = i as i32 + 1;
+            let mut idx = i + 1;
             x = A::op(&x, &A::inv(&self.product(i..=i)));
-            while idx <= self.n as i32 {
-                self.bit[idx as usize] = A::op(&self.bit[idx as usize], &x);
-                idx += idx & -idx;
+            while idx <= self.n {
+                self.bit[idx] = A::op(&self.bit[idx], &x);
+                idx += idx.lsb();
             }
         }
     }
@@ -71,20 +72,20 @@ mod binary_indexed_tree_impl {
     impl<A: AbelianGroup> BinaryIndexedTree<A> {
         /// add $x$ to $i$
         pub fn add(&mut self, i: usize, x: A::M) {
-            let mut idx = i as i32 + 1;
-            while idx <= self.n as i32 {
-                self.bit[idx as usize] = A::op(&self.bit[idx as usize], &x);
-                idx += idx & -idx;
+            let mut idx = i + 1;
+            while idx <= self.n {
+                self.bit[idx] = A::op(&self.bit[idx], &x);
+                idx += idx.lsb();
             }
         }
 
         /// sum of $[0, i)$
         pub fn sum(&self, i: usize) -> A::M {
             let mut ret = A::unit();
-            let mut idx = i as i32 + 1;
+            let mut idx = i + 1;
             while idx > 0 {
-                ret = A::op(&ret, &self.bit[idx as usize]);
-                idx -= idx & -idx;
+                ret = A::op(&ret, &self.bit[idx]);
+                idx -= idx.lsb();
             }
             ret
         }
