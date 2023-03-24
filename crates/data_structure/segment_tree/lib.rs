@@ -1,13 +1,9 @@
 //! # セグメント木
 //! セグメント木(非再帰)
 //!
-//!
-//!
 //! ## verify
 //! [ARC133B](https://atcoder.jp/contests/arc133/submissions/28689143)
 //!
-//! ## todo
-//! 単調性がある場合の二分探索の実装
 use algebra::*;
 use prelude::*;
 use range_traits::*;
@@ -25,6 +21,8 @@ mod segment_tree_impl {
     }
     /// vを初期値としてセグメント木を生成する(完全二分木)
     /// vの長さを要素数とする
+    /// ## 計算量
+    /// $O(N)$
     impl<M: Monoid> From<Vec<M::M>> for SegmentTree<M> {
         fn from(v: Vec<M::M>) -> Self {
             let mut segtree = Self::new(v.len());
@@ -69,9 +67,10 @@ mod segment_tree_impl {
         fn update_at(&mut self, mut i: usize, value: M::M) {
             i += self.n;
             self.node[i] = value;
+            i >>= 1;
             while i > 0 {
-                i >>= 1;
                 self.node[i] = M::op(&self.node[i << 1], &self.node[i << 1 | 1]);
+                i >>= 1;
             }
         }
     }
@@ -263,6 +262,18 @@ mod test {
                 let expect = if c <= r { Some(r - c) } else { None };
                 assert_eq!(expect, segtree.lower_bound(r, |&k| k >= c as i32),);
             }
+        }
+    }
+
+    #[test]
+    fn max_test() {
+        // 不正な値を作ってしまい落ちることがあった
+        let n = 524288;
+        let base = vec![1_000_000_000_000; n];
+        let mut segtree: SegmentTree<Addition<i64>> = SegmentTree::from(base);
+        let q = 524288;
+        for _ in 0..q {
+            segtree.update_at(0, 1_000_000_000_000);
         }
     }
 }

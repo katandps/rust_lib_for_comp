@@ -24,3 +24,7 @@ path = "lib.rs"
 [[example]]
 name = "vertex_add_path_sum"
 path = "./vertex_add_path_sum.rs"
+
+[[example]]
+name = "vertex_add_path_sum2"
+path = "./vertex_add_path_sum2.rs"
