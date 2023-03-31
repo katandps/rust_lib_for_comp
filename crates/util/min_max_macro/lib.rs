@@ -1,5 +1,5 @@
 //! 最大最小を求めるマクロ
-#[allow(unused_macros)]
+#![allow(unused_macros)]
 use prelude::snippet;
 
 #[snippet(name = "min_max", doc_hidden)]
