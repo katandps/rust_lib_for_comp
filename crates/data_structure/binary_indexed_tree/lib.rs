@@ -170,8 +170,8 @@ mod test {
         let mut bit = BinaryIndexedTree::<Addition<i64>>::from(LEN);
 
         for _ in 0..1000 {
-            let left = rand::thread_rng().gen_range(0, LEN);
-            let right = rand::thread_rng().gen_range(left, LEN);
+            let left = rand::thread_rng().gen_range(0..LEN);
+            let right = rand::thread_rng().gen_range(left..LEN);
 
             for i in left..right {
                 v[i] += 1;

@@ -4,10 +4,10 @@
 //! io_util
 //! prelude
 
-#[allow(unused_imports)]
 use io_debug::*;
 use io_util::*;
 use prelude::*;
+use string_util::*;
 
 #[snippet("template")]
 #[snippet(include = "io-util")]
@@ -36,34 +36,47 @@ pub fn main() {
 
 #[snippet("solver")]
 pub fn solve<IO: ReaderTrait + WriterTrait>(io: &mut IO) {
-    let _n: usize = io.v();
-    io.out("\n");
+    let n = io.v::<usize>();
+    io.out(n.line());
 }
 
-/// # テスト実行用関数
 #[snippet("tester", doc_hidden)]
 #[test]
-fn test() {
-    let test_suits = vec!["0", "1"];
-    for suit in test_suits {
-        std::thread::Builder::new()
-            .name("extend stack size".into())
-            .stack_size(128 * 1024 * 1024)
-            .spawn(move || {
-                let mut io = IODebug::new(
-                    suit,
-                    true,
-                    |_outer: &mut ReaderFromStr, _inner: &mut ReaderFromStr| {
-                        // solverの出力はこのouterで入力される
-                        // innerで出力した内容がsolver側で入力として受け取れる
-                        // inner.out(outer.v::<String>())
-                    },
-                );
-                solve(&mut io);
-                io.flush();
-            })
-            .unwrap()
-            .join()
-            .unwrap()
-    }
+fn test_1() {
+    test_helper("1", "1");
+}
+/// # テスト実行用ヘルパー
+#[snippet("tester", doc_hidden)]
+#[allow(dead_code)]
+fn test_helper<Suit: ToString + Send + Sized>(input: Suit, expect: Suit) {
+    let s = input.to_string();
+    let expect = expect
+        .to_string()
+        .split_whitespace()
+        .map(ToString::to_string)
+        .collect::<Vec<String>>();
+    std::thread::Builder::new()
+        .name("extend stack size".into())
+        .stack_size(128 * 1024 * 1024)
+        .spawn(move || {
+            let mut io = IODebug::new(
+                s.as_str(),
+                false,
+                |output: &mut ReaderFromStr, _input: &mut ReaderFromStr| {
+                    let mut result = Vec::new();
+                    while let Some(s) = output.next() {
+                        result.push(s);
+                    }
+                    assert_eq!(expect, result);
+                    // solverの出力はoutputで入力される
+                    // inputで出力した内容がsolver側で入力として受け取れる
+                    // input.out(outer.v::<String>())
+                },
+            );
+            solve(&mut io);
+            io.flush();
+        })
+        .unwrap()
+        .join()
+        .unwrap()
 }
