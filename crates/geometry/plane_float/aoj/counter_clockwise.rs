@@ -1,5 +1,4 @@
 // verification-helper: PROBLEM https://onlinejudge.u-aizu.ac.jp/courses/library/4/CGL/all/CGL_1_C
-// verification-helper: ERROR 0.0000000001
 use io_util::*;
 use plane_float::{ClockwiseDirection, Point};
 use string_util::*;

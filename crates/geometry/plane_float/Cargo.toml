@@ -24,3 +24,7 @@ path = "./aoj/reflection.rs"
 [[example]]
 name = "counter-clockwise"
 path = "./aoj/counter_clockwise.rs"
+
+[[example]]
+name = "parallel-orthogonal"
+path = "./aoj/parallel_orthogonal.rs"

@@ -208,14 +208,29 @@ mod plane_float_impl {
             Line { p1: p, p2: q }
         }
 
+        /// # 2直線の内積
+        pub fn dot(l: Self, m: Self) -> f64 {
+            Point::dot(m.p2 - m.p1, l.p2 - l.p1)
+        }
+
         /// # 2直線の外積
-        pub fn cross(l: &Self, m: &Self) -> f64 {
+        pub fn cross(l: Self, m: Self) -> f64 {
             Point::cross(m.p2 - m.p1, l.p2 - l.p1)
+        }
+
+        /// # 2直線の直交判定(内積が0)
+        pub fn is_orthogonal(l: Self, r: Self) -> bool {
+            Self::dot(l, r).abs() < EPS
+        }
+
+        /// # 2直線の平行判定(外積が0)
+        pub fn is_parallel(l: Self, r: Self) -> bool {
+            Self::cross(l, r).abs() < EPS
         }
 
         /// # 2直線の交点
         pub fn cross_point(l: Self, m: Self) -> Option<Point> {
-            let d = Self::cross(&l, &m);
+            let d = Self::cross(l, m);
             if d.abs() < EPS {
                 None
             } else {
