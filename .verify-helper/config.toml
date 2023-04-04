@@ -1,0 +1,2 @@
+[languages.rust.list_dependencies_backend]
+kind = "cargo-udeps"

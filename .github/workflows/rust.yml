@@ -38,9 +38,11 @@ jobs:
         run: |
           rustup install 1.42.0
           rustup install stable
+          rustup install nightly
           rustup default stable
           rustup set profile minimal
           rustup component add clippy
+          cargo install cargo-udeps --locked
 
       - name: Run tests
         env:
