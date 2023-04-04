@@ -2,17 +2,28 @@
 use prelude::*;
 
 #[snippet(name = "plane-float", doc_hidden)]
-pub use plane_float_impl::{Circle, Line, Point, Triangle};
+pub use plane_float_impl::{Circle, ClockwizeDirection, Line, Point, Segment, Triangle};
 #[snippet(name = "plane-float", doc_hidden)]
 mod plane_float_impl {
     use super::{
-        Add, AddAssign, Debug, Display, Div, DivAssign, Formatter, Mul, MulAssign, Sub, SubAssign,
+        Add, AddAssign, Debug, Display, Div, DivAssign, Formatter, Mul, MulAssign, Neg, Sub,
+        SubAssign,
     };
+
+    const EPS: f64 = std::f64::EPSILON;
+
     /// 点
-    #[derive(Copy, Clone, PartialEq, PartialOrd)]
+    #[derive(Copy, Clone, PartialOrd)]
     pub struct Point {
         pub x: f64,
         pub y: f64,
+    }
+
+    impl PartialEq for Point {
+        fn eq(&self, other: &Self) -> bool {
+            let p = *self - *other;
+            p.x.abs() < EPS && p.y.abs() < EPS
+        }
     }
 
     impl Point {
@@ -20,7 +31,7 @@ mod plane_float_impl {
             Point { x, y }
         }
 
-        /// 偏角を求める(radian)
+        /// # 偏角を求める($0.0 <= rad <= 2\pi$)
         /// 原点だった場合はNone
         pub fn declination(&self) -> Option<f64> {
             use std::f64::consts::PI;
@@ -75,8 +86,50 @@ mod plane_float_impl {
             self.norm().sqrt()
         }
 
+        /// # 2点間の距離
         pub fn distance(&self, another: &Self) -> f64 {
             (*self - *another).abs()
+        }
+    }
+
+    #[derive(Clone, Copy, Debug)]
+    /// 3点A,B,Cの位置関係
+    pub enum ClockwizeDirection {
+        /// 時計回り
+        Clockwize,
+        /// 反時計回り
+        CounterClockWise,
+        /// 3点が一直線上にあり、C->A->Bの順に並んでいる
+        OneLineCAB,
+        /// 3点が一直線上にあり、A->B->Cの順に並んでいる
+        OneLineABC,
+        /// 3点が一直線上にあり、A->C->Bの順に並んでいる
+        OneLineACB,
+    }
+
+    impl ClockwizeDirection {
+        pub fn direction(a: Point, b: Point, c: Point) -> Self {
+            let (b, c) = (b - a, c - a);
+            let cross = Point::cross(b, c);
+            if cross > EPS {
+                Self::CounterClockWise
+            } else if cross < -EPS {
+                Self::Clockwize
+            } else if Point::dot(b, c) < 0.0 {
+                Self::OneLineCAB
+            } else if b.norm() < c.norm() {
+                Self::OneLineABC
+            } else {
+                Self::OneLineACB
+            }
+        }
+    }
+
+    /// # 原点に対称な点
+    impl Neg for Point {
+        type Output = Point;
+        fn neg(self) -> Self::Output {
+            Point::new(-self.x, -self.y)
         }
     }
 
@@ -155,31 +208,24 @@ mod plane_float_impl {
             Line { p1: p, p2: q }
         }
 
+        /// # 2直線の外積
         pub fn cross(l: &Self, m: &Self) -> f64 {
             Point::cross(m.p2 - m.p1, l.p2 - l.p1)
         }
 
-        /// 交点を求める
-        pub fn cross_points(l: Self, m: Self) -> Option<Point> {
+        /// # 2直線の交点
+        pub fn cross_point(l: Self, m: Self) -> Option<Point> {
             let d = Self::cross(&l, &m);
-            if d.abs() < std::f64::EPSILON {
+            if d.abs() < EPS {
                 None
             } else {
                 Some(l.p1 + (l.p2 - l.p1) * Point::cross(m.p2 - m.p1, m.p2 - l.p1) / d)
             }
         }
 
-        pub fn cross_points_as_segment(l: Self, m: Self) -> Option<Point> {
-            let p = Self::cross_points(l, m);
-            p.filter(|&p| {
-                (p - l.p1).abs() + (l.p2 - p).abs() - (l.p2 - l.p1).abs() < std::f64::EPSILON
-                    && (p - m.p1).abs() + (m.p2 - p).abs() - (m.p2 - m.p1).abs() < std::f64::EPSILON
-            })
-        }
-
-        /// xを与えたときのyの値を求める
+        /// # xを与えたときのyの値を求める
         pub fn y(self, x: f64) -> Option<f64> {
-            if (self.p1.x - self.p2.x).abs() < std::f64::EPSILON {
+            if (self.p1.x - self.p2.x).abs() < EPS {
                 None
             } else {
                 Some(
@@ -188,9 +234,9 @@ mod plane_float_impl {
             }
         }
 
-        /// yを与えたときのxの値を求める
+        /// # yを与えたときのxの値を求める
         pub fn x(self, y: f64) -> Option<f64> {
-            if (self.p1.y - self.p2.y).abs() < std::f64::EPSILON {
+            if (self.p1.y - self.p2.y).abs() < EPS {
                 None
             } else {
                 Some(
@@ -199,25 +245,76 @@ mod plane_float_impl {
             }
         }
 
-        /// 直線と点の距離
+        /// # 直線と点の距離
         pub fn distance(self, p: Point) -> f64 {
-            if (self.p1.x - self.p2.x).abs() < std::f64::EPSILON {
+            if (self.p1.x - self.p2.x).abs() < EPS {
                 return (p.x - self.p1.x).abs();
             }
-            if (self.p1.y - self.p2.y).abs() < std::f64::EPSILON {
+            if (self.p1.y - self.p2.y).abs() < EPS {
                 return (p.y - self.p1.y).abs();
             }
             let l = Line::new(p, p + (self.p2 - self.p1).rot90());
-            match Self::cross_points(self, l) {
+            match Self::cross_point(self, l) {
                 Some(cp) => (p - cp).abs(),
                 None => 0.0,
             }
+        }
+
+        /// # 射影
+        /// 点から直線に引いた垂線の足
+        pub fn projection(self, p: Point) -> Point {
+            let t = Point::dot(p - self.p1, self.p1 - self.p2) / Point::norm(self.p1 - self.p2);
+            self.p1 + (self.p1 - self.p2) * t
+        }
+
+        /// # 反射
+        /// 直線を対称軸として点$P$と線対称にある位置の点
+        pub fn reflection(self, p: Point) -> Point {
+            p + (self.projection(p) - p) * 2.0
         }
     }
 
     impl Display for Line {
         fn fmt(&self, f: &mut Formatter) -> std::fmt::Result {
             write!(f, "{} - {}", self.p1, self.p2)
+        }
+    }
+
+    #[derive(Copy, Clone)]
+    pub struct Segment {
+        /// 直線
+        pub line: Line,
+        /// 端点1
+        pub p1: Point,
+        /// 端点2
+        pub p2: Point,
+    }
+
+    impl From<Line> for Segment {
+        fn from(value: Line) -> Self {
+            Self {
+                line: value,
+                p1: value.p1,
+                p2: value.p2,
+            }
+        }
+    }
+
+    impl Segment {
+        pub fn new(p1: Point, p2: Point) -> Self {
+            Self {
+                line: Line::new(p1, p2),
+                p1,
+                p2,
+            }
+        }
+
+        /// # 2線分の交点
+        pub fn cross_point(l: Self, m: Self) -> Option<Point> {
+            Line::cross_point(l.line, m.line).filter(|&p| {
+                (p - l.p1).abs() + (l.p2 - p).abs() - (l.p2 - l.p1).abs() < std::f64::EPSILON
+                    && (p - m.p1).abs() + (m.p2 - p).abs() - (m.p2 - m.p1).abs() < std::f64::EPSILON
+            })
         }
     }
 
@@ -269,7 +366,7 @@ mod plane_float_impl {
                 (self.p2 + self.p3) / 2.0,
                 (self.p2 + self.p3) / 2.0 + (self.p2 - self.p3).rot90(),
             );
-            Line::cross_points(p1p2, p2p3)
+            Line::cross_point(p1p2, p2p3)
         }
     }
 
@@ -333,47 +430,35 @@ mod test {
         let l1 = Line::new(Point::new(0.0, 0.0), Point::new(5.0, 5.0));
         let l2 = Line::new(Point::new(0.0, 5.0), Point::new(5.0, 0.0));
 
-        let cp = Line::cross_points(l1, l2).unwrap();
+        let cp = Line::cross_point(l1, l2).unwrap();
         assert_eq!(cp.x, 2.5);
         assert_eq!(cp.y, 2.5);
     }
 
     #[test]
     fn cross_point_as_segment() {
-        let l1 = Line::new(Point::new(0.0, 0.0), Point::new(5.0, 5.0));
-        let l2 = Line::new(Point::new(0.0, 0.0), Point::new(2.49, 2.49));
-        let l3 = Line::new(Point::new(2.51, 2.51), Point::new(5.0, 5.0));
-        let l4 = Line::new(Point::new(5.0, 5.0), Point::new(2.51, 2.51));
-        let m = Line::new(Point::new(0.0, 5.0), Point::new(5.0, 0.0));
+        let l1 = Segment::new(Point::new(0.0, 0.0), Point::new(5.0, 5.0));
+        let l2 = Segment::new(Point::new(0.0, 0.0), Point::new(2.49, 2.49));
+        let l3 = Segment::new(Point::new(2.51, 2.51), Point::new(5.0, 5.0));
+        let l4 = Segment::new(Point::new(5.0, 5.0), Point::new(2.51, 2.51));
+        let m = Segment::new(Point::new(0.0, 5.0), Point::new(5.0, 0.0));
 
-        assert_eq!(
-            Some(Point::new(2.5, 2.5)),
-            Line::cross_points_as_segment(l1, m)
-        );
-        assert_eq!(
-            Some(Point::new(2.5, 2.5)),
-            Line::cross_points_as_segment(m, l1)
-        );
-        assert_eq!(None, Line::cross_points_as_segment(l2, m));
-        assert_eq!(None, Line::cross_points_as_segment(m, l2));
-        assert_eq!(None, Line::cross_points_as_segment(m, l3));
-        assert_eq!(None, Line::cross_points_as_segment(l3, m));
-        assert_eq!(None, Line::cross_points_as_segment(l4, m));
-        assert_eq!(None, Line::cross_points_as_segment(m, l4));
+        assert_eq!(Some(Point::new(2.5, 2.5)), Segment::cross_point(l1, m));
+        assert_eq!(Some(Point::new(2.5, 2.5)), Segment::cross_point(m, l1));
+        assert_eq!(None, Segment::cross_point(l2, m));
+        assert_eq!(None, Segment::cross_point(m, l2));
+        assert_eq!(None, Segment::cross_point(m, l3));
+        assert_eq!(None, Segment::cross_point(l3, m));
+        assert_eq!(None, Segment::cross_point(l4, m));
+        assert_eq!(None, Segment::cross_point(m, l4));
 
-        let l1 = Line::new(Point::new(0.0, 0.0), Point::new(5.0, 0.0));
-        let m1 = Line::new(Point::new(2.5, 0.01), Point::new(2.5, 1.0));
-        let m2 = Line::new(Point::new(2.5, 0.0), Point::new(2.5, 1.0));
-        let m3 = Line::new(Point::new(2.5, -0.01), Point::new(2.5, 1.0));
-        assert_eq!(None, Line::cross_points_as_segment(l1, m1));
-        assert_eq!(
-            Some(Point::new(2.5, 0.0)),
-            Line::cross_points_as_segment(l1, m2)
-        );
-        assert_eq!(
-            Some(Point::new(2.5, 0.0)),
-            Line::cross_points_as_segment(l1, m3)
-        );
+        let l1 = Segment::new(Point::new(0.0, 0.0), Point::new(5.0, 0.0));
+        let m1 = Segment::new(Point::new(2.5, 0.01), Point::new(2.5, 1.0));
+        let m2 = Segment::new(Point::new(2.5, 0.0), Point::new(2.5, 1.0));
+        let m3 = Segment::new(Point::new(2.5, -0.01), Point::new(2.5, 1.0));
+        assert_eq!(None, Segment::cross_point(l1, m1));
+        assert_eq!(Some(Point::new(2.5, 0.0)), Segment::cross_point(l1, m2));
+        assert_eq!(Some(Point::new(2.5, 0.0)), Segment::cross_point(l1, m3));
     }
 
     #[test]
