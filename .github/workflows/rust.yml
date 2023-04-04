@@ -4,7 +4,7 @@ on: push
 
 env:
   CARGO_TERM_COLOR: always
-  CARGO_INCREMENTAL: 1
+  CARGO_INCREMENTAL: 0
   RUST_BACKTRACE: 1
   RUSTDOCFLAGS: --html-in-header /home/runner/work/rust_lib_for_comp/rust_lib_for_comp/katex.html
 
@@ -21,18 +21,11 @@ jobs:
         with:
           path: |
             ~/.cache/pip
-            ~/.cargo/bin/
-            ~/.cargo/registry
-            ~/.cargo/git
-            target
-          key: ${{ runner.os }}-cargo-${{ hashFiles('**/Cargo.lock') }}
+          key: "oj-helper"
 
       - uses: actions/setup-python@v1
       - uses: actions/setup-ruby@v1
       - run: pip3 install -U online-judge-verify-helper
-
-      - name: Restore mtime
-        run: python ./git-restore-mtime.py # for inclimental build:checkoutしたファイルのタイムスタンプを書き換える
 
       - name: Install Rust
         run: |
@@ -43,6 +36,13 @@ jobs:
           rustup set profile minimal
           rustup component add clippy
           cargo install cargo-udeps --locked
+  
+      - uses: Swatinem/rust-cache@v2
+        with:
+          shared-key: "lib"
+
+      - name: Restore mtime
+        run: python ./git-restore-mtime.py # for inclimental build:checkoutしたファイルのタイムスタンプを書き換える
 
       - name: Run tests
         env:
