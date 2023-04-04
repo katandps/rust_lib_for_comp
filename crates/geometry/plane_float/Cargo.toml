@@ -6,5 +6,12 @@ edition = "2018"
 [dependencies]
 prelude = { path = "../../prelude" }
 
+[dev-dependencies]
+io_util = { path = "../../util/io_util" }
+
 [lib]
 path = "lib.rs"
+
+[[example]]
+name = "projection"
+path = "./aoj/projection.rs"
