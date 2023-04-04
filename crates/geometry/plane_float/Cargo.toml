@@ -8,6 +8,7 @@ prelude = { path = "../../prelude" }
 
 [dev-dependencies]
 io_util = { path = "../../util/io_util" }
+string_util = { path = "../../util/string_util" }
 
 [lib]
 path = "lib.rs"
@@ -15,3 +16,11 @@ path = "lib.rs"
 [[example]]
 name = "projection"
 path = "./aoj/projection.rs"
+
+[[example]]
+name = "reflection"
+path = "./aoj/reflection.rs"
+
+[[example]]
+name = "counter-clockwise"
+path = "./aoj/counter_clockwise.rs"

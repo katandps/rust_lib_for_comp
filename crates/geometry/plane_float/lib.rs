@@ -2,7 +2,7 @@
 use prelude::*;
 
 #[snippet(name = "plane-float", doc_hidden)]
-pub use plane_float_impl::{Circle, ClockwizeDirection, Line, Point, Segment, Triangle};
+pub use plane_float_impl::{Circle, ClockwiseDirection, Line, Point, Segment, Triangle};
 #[snippet(name = "plane-float", doc_hidden)]
 mod plane_float_impl {
     use super::{
@@ -94,11 +94,11 @@ mod plane_float_impl {
 
     #[derive(Clone, Copy, Debug)]
     /// 3点A,B,Cの位置関係
-    pub enum ClockwizeDirection {
+    pub enum ClockwiseDirection {
         /// 時計回り
-        Clockwize,
+        Clockwise,
         /// 反時計回り
-        CounterClockWise,
+        CounterClockwise,
         /// 3点が一直線上にあり、C->A->Bの順に並んでいる
         OneLineCAB,
         /// 3点が一直線上にあり、A->B->Cの順に並んでいる
@@ -107,14 +107,14 @@ mod plane_float_impl {
         OneLineACB,
     }
 
-    impl ClockwizeDirection {
+    impl ClockwiseDirection {
         pub fn direction(a: Point, b: Point, c: Point) -> Self {
             let (b, c) = (b - a, c - a);
             let cross = Point::cross(b, c);
             if cross > EPS {
-                Self::CounterClockWise
+                Self::CounterClockwise
             } else if cross < -EPS {
-                Self::Clockwize
+                Self::Clockwise
             } else if Point::dot(b, c) < 0.0 {
                 Self::OneLineCAB
             } else if b.norm() < c.norm() {
