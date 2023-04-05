@@ -515,12 +515,29 @@ mod plane_float_impl {
             Self { nodes }
         }
 
+        /// # 面積
+        /// 外積の総和/2
         pub fn area(&self) -> f64 {
             let mut res = 0.0;
             for i in 0..self.nodes.len() {
                 res += Point::cross(self.nodes[i], self.nodes[(i + 1) % self.nodes.len()]);
             }
             res * 0.5
+        }
+
+        /// # 凸性判定
+        pub fn is_convex(&self) -> bool {
+            for i in 0..self.nodes.len() {
+                if ClockwiseDirection::direction(
+                    self.nodes[i],
+                    self.nodes[(i + 1) % self.nodes.len()],
+                    self.nodes[(i + 2) % self.nodes.len()],
+                ) == ClockwiseDirection::Clockwise
+                {
+                    return false;
+                }
+            }
+            true
         }
     }
 }

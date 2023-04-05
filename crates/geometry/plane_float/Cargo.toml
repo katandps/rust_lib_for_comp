@@ -45,3 +45,7 @@ path = "./aoj/distance.rs"
 [[example]]
 name = "area"
 path = "./aoj/area.rs"
+
+[[example]]
+name = "is-convex"
+path = "./aoj/is_convex.rs"
