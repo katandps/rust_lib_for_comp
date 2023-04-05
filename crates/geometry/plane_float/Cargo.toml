@@ -37,3 +37,7 @@ path = "./aoj/intersection.rs"
 [[example]]
 name = "cross-point"
 path = "./aoj/cross_point.rs"
+
+[[example]]
+name = "distance"
+path = "./aoj/distance.rs"
