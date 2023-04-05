@@ -3,7 +3,7 @@ use min_max_macro::min;
 use prelude::*;
 
 #[snippet(name = "plane-float", doc_hidden)]
-pub use plane_float_impl::{Circle, ClockwiseDirection, Line, Point, Segment, Triangle};
+pub use plane_float_impl::{Circle, ClockwiseDirection, Line, Point, Polygon, Segment, Triangle};
 #[snippet(name = "plane-float", doc_hidden)]
 mod plane_float_impl {
     use super::{
@@ -492,6 +492,35 @@ mod plane_float_impl {
             } else {
                 Vec::new()
             }
+        }
+    }
+
+    /// # 多角形
+    #[derive(Clone)]
+    pub struct Polygon {
+        /// 頂点は反時計回りの順
+        nodes: Vec<Point>,
+    }
+
+    impl From<&[(f64, f64)]> for Polygon {
+        fn from(nodes: &[(f64, f64)]) -> Self {
+            Self {
+                nodes: nodes.iter().map(|&p| Point::from(p)).collect(),
+            }
+        }
+    }
+
+    impl Polygon {
+        pub fn new(nodes: Vec<Point>) -> Self {
+            Self { nodes }
+        }
+
+        pub fn area(&self) -> f64 {
+            let mut res = 0.0;
+            for i in 0..self.nodes.len() {
+                res += Point::cross(self.nodes[i], self.nodes[(i + 1) % self.nodes.len()]);
+            }
+            res * 0.5
         }
     }
 }
