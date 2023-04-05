@@ -5,6 +5,7 @@ edition = "2018"
 
 [dependencies]
 prelude = { path = "../../prelude" }
+min_max_macro = { path = "../../util/min_max_macro" }
 
 [dev-dependencies]
 io_util = { path = "../../util/io_util" }
@@ -32,3 +33,7 @@ path = "./aoj/parallel_orthogonal.rs"
 [[example]]
 name = "intersection"
 path = "./aoj/intersection.rs"
+
+[[example]]
+name = "cross-point"
+path = "./aoj/cross_point.rs"

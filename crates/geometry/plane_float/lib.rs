@@ -1,4 +1,5 @@
 //! # 二次元平面(浮動小数点数)
+use min_max_macro::min;
 use prelude::*;
 
 #[snippet(name = "plane-float", doc_hidden)]
@@ -6,7 +7,7 @@ pub use plane_float_impl::{Circle, ClockwiseDirection, Line, Point, Segment, Tri
 #[snippet(name = "plane-float", doc_hidden)]
 mod plane_float_impl {
     use super::{
-        Add, AddAssign, Debug, Display, Div, DivAssign, Formatter, Mul, MulAssign, Neg, Sub,
+        min, Add, AddAssign, Debug, Display, Div, DivAssign, Formatter, Mul, MulAssign, Neg, Sub,
         SubAssign,
     };
 
@@ -17,6 +18,13 @@ mod plane_float_impl {
     pub struct Point {
         pub x: f64,
         pub y: f64,
+    }
+
+    /// # Tuple(x, y)から生成
+    impl From<(f64, f64)> for Point {
+        fn from(value: (f64, f64)) -> Self {
+            Self::new(value.0, value.1)
+        }
     }
 
     impl PartialEq for Point {
@@ -216,6 +224,15 @@ mod plane_float_impl {
         pub p2: Point,
     }
 
+    impl From<Segment> for Line {
+        fn from(value: Segment) -> Self {
+            Self {
+                p1: value.p1,
+                p2: value.p2,
+            }
+        }
+    }
+
     impl Line {
         pub fn new(p: Point, q: Point) -> Line {
             Line { p1: p, p2: q }
@@ -310,8 +327,6 @@ mod plane_float_impl {
 
     #[derive(Copy, Clone)]
     pub struct Segment {
-        /// 直線
-        pub line: Line,
         /// 端点1
         pub p1: Point,
         /// 端点2
@@ -321,7 +336,6 @@ mod plane_float_impl {
     impl From<Line> for Segment {
         fn from(value: Line) -> Self {
             Self {
-                line: value,
                 p1: value.p1,
                 p2: value.p2,
             }
@@ -330,27 +344,52 @@ mod plane_float_impl {
 
     impl Segment {
         pub fn new(p1: Point, p2: Point) -> Self {
-            Self {
-                line: Line::new(p1, p2),
-                p1,
-                p2,
+            Self { p1, p2 }
+        }
+
+        /// # 線分同士の交点
+        pub fn cross_point(l: Self, m: Self) -> Option<Point> {
+            if Self::is_intersect(l, m) {
+                Line::cross_point(l.into(), m.into())
+            } else {
+                None
             }
         }
 
-        /// # 2線分の交点
-        pub fn cross_point(l: Self, m: Self) -> Option<Point> {
-            Line::cross_point(l.line, m.line).filter(|&p| {
-                (p - l.p1).abs() + (l.p2 - p).abs() - (l.p2 - l.p1).abs() < std::f64::EPSILON
-                    && (p - m.p1).abs() + (m.p2 - p).abs() - (m.p2 - m.p1).abs() < std::f64::EPSILON
-            })
+        /// # 線分の共有点の存在
+        pub fn is_intersect(l: Self, m: Self) -> bool {
+            ClockwiseDirection::direction(m.p1, m.p2, l.p1)
+                .is_counterside(ClockwiseDirection::direction(m.p1, m.p2, l.p2))
+                && ClockwiseDirection::direction(l.p1, l.p2, m.p1)
+                    .is_counterside(ClockwiseDirection::direction(l.p1, l.p2, m.p2))
         }
 
-        /// # 線分が共有点をもつか
-        pub fn is_intersect(self, l: Self) -> bool {
-            ClockwiseDirection::direction(self.p1, self.p2, l.p1)
-                .is_counterside(ClockwiseDirection::direction(self.p1, self.p2, l.p2))
-                && ClockwiseDirection::direction(l.p1, l.p2, self.p1)
-                    .is_counterside(ClockwiseDirection::direction(l.p1, l.p2, self.p2))
+        /// # 線分と点の距離
+        /// $\angle\mathrm{P_2P_1P}$が鈍角 $\Leftrightarrow$ $\mathrm{P_1P}$が距離
+        /// $\angle\mathrm{P_1P_2P}$が鈍角 $\Leftrightarrow$ $\mathrm{P_2P}$が距離
+        /// 上記以外は垂線の足が距離
+        pub fn distance_to_point(s: Self, p: Point) -> f64 {
+            if Point::dot(s.p2 - s.p1, p - s.p1) < 0.0 {
+                (p - s.p1).abs()
+            } else if Point::dot(s.p1 - s.p2, p - s.p2) < 0.0 {
+                (p - s.p2).abs()
+            } else {
+                Line::from(s).distance(p)
+            }
+        }
+
+        /// # 線分同士の距離
+        pub fn distance(l: Self, m: Self) -> f64 {
+            if Self::is_intersect(l, m) {
+                0.0
+            } else {
+                min!(
+                    Self::distance_to_point(l, m.p1),
+                    Self::distance_to_point(l, m.p2),
+                    Self::distance_to_point(m, l.p1),
+                    Self::distance_to_point(m, l.p2),
+                )
+            }
         }
     }
 

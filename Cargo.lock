@@ -992,6 +992,7 @@ name = "plane_float"
 version = "0.1.0"
 dependencies = [
  "io_util",
+ "min_max_macro",
  "prelude",
  "string_util",
 ]
