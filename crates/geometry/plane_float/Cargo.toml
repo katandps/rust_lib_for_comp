@@ -28,3 +28,7 @@ path = "./aoj/counter_clockwise.rs"
 [[example]]
 name = "parallel-orthogonal"
 path = "./aoj/parallel_orthogonal.rs"
+
+[[example]]
+name = "intersection"
+path = "./aoj/intersection.rs"

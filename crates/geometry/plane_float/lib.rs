@@ -92,7 +92,7 @@ mod plane_float_impl {
         }
     }
 
-    #[derive(Clone, Copy, Debug)]
+    #[derive(Clone, Copy, Debug, PartialEq)]
     /// 3点A,B,Cの位置関係
     pub enum ClockwiseDirection {
         /// 時計回り
@@ -108,6 +108,7 @@ mod plane_float_impl {
     }
 
     impl ClockwiseDirection {
+        /// # 3点の関係性を調べる
         pub fn direction(a: Point, b: Point, c: Point) -> Self {
             let (b, c) = (b - a, c - a);
             let cross = Point::cross(b, c);
@@ -122,6 +123,18 @@ mod plane_float_impl {
             } else {
                 Self::OneLineACB
             }
+        }
+
+        /// # 同じ側にないことを調べる
+        /// この関数は同じ3点について調べた結果であることを保証しない
+        pub fn is_counterside(self, other: Self) -> bool {
+            use ClockwiseDirection::*;
+            self == OneLineACB
+                || other == OneLineACB
+                || (self, other) == (OneLineABC, OneLineCAB)
+                || (other, self) == (OneLineABC, OneLineCAB)
+                || (self, other) == (Clockwise, CounterClockwise)
+                || (other, self) == (Clockwise, CounterClockwise)
         }
     }
 
@@ -330,6 +343,14 @@ mod plane_float_impl {
                 (p - l.p1).abs() + (l.p2 - p).abs() - (l.p2 - l.p1).abs() < std::f64::EPSILON
                     && (p - m.p1).abs() + (m.p2 - p).abs() - (m.p2 - m.p1).abs() < std::f64::EPSILON
             })
+        }
+
+        /// # 線分が共有点をもつか
+        pub fn is_intersect(self, l: Self) -> bool {
+            ClockwiseDirection::direction(self.p1, self.p2, l.p1)
+                .is_counterside(ClockwiseDirection::direction(self.p1, self.p2, l.p2))
+                && ClockwiseDirection::direction(l.p1, l.p2, self.p1)
+                    .is_counterside(ClockwiseDirection::direction(l.p1, l.p2, self.p2))
         }
     }
 
