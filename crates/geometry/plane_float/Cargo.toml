@@ -49,3 +49,7 @@ path = "./aoj/area.rs"
 [[example]]
 name = "is-convex"
 path = "./aoj/is_convex.rs"
+
+[[example]]
+name = "polygon-point-containment"
+path = "./aoj/polygon_point_containment.rs"

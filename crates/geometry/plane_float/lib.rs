@@ -3,7 +3,9 @@ use min_max_macro::min;
 use prelude::*;
 
 #[snippet(name = "plane-float", doc_hidden)]
-pub use plane_float_impl::{Circle, ClockwiseDirection, Line, Point, Polygon, Segment, Triangle};
+pub use plane_float_impl::{
+    Circle, ClockwiseDirection, Including, Line, Point, Polygon, Segment, Triangle,
+};
 #[snippet(name = "plane-float", doc_hidden)]
 mod plane_float_impl {
     use super::{
@@ -539,6 +541,33 @@ mod plane_float_impl {
             }
             true
         }
+
+        /// # 内包判定(Winding number algorithm)
+        /// 頂点の周りの角度を調べる 内包していないときは0に近い値になる
+        pub fn include(&self, p: Point) -> Including {
+            let mut sum = 0.0f64;
+            for i in 0..self.nodes.len() {
+                let (p1, p2) = (self.nodes[i], self.nodes[(i + 1) % self.nodes.len()]);
+                if Segment::distance_to_point(Segment::new(p1, p2), p) < EPS {
+                    return Including::OnLine;
+                }
+                let dot = Point::dot(p1 - p, p2 - p);
+                let cross = Point::cross(p1 - p, p2 - p);
+                sum += cross.atan2(dot)
+            }
+            // 角度和は$2\pi$の整数倍の値になる 誤差を考慮して$\pi$で判定する
+            if sum.abs() >= std::f64::consts::PI {
+                Including::Inside
+            } else {
+                Including::Outside
+            }
+        }
+    }
+
+    pub enum Including {
+        Inside,
+        OnLine,
+        Outside,
     }
 }
 
