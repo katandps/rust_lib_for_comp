@@ -7,6 +7,7 @@ pub use plane_float_impl::{
     Circle, ClockwiseDirection, Including, Line, Point, Polygon, Segment, Triangle,
 };
 #[snippet(name = "plane-float", doc_hidden)]
+#[rustfmt::skip]
 mod plane_float_impl {
     use super::{
         min, Add, AddAssign, Debug, Display, Div, DivAssign, Formatter, Mul, MulAssign, Neg, Sub,
@@ -64,6 +65,11 @@ mod plane_float_impl {
                 radian.cos() * self.x - radian.sin() * self.y,
                 radian.sin() * self.x + radian.cos() * self.y,
             )
+        }
+
+        /// # 直線$y=x$について対称に移動する
+        pub fn swap(self) -> Point {
+            Point::new(self.y, self.x)
         }
 
         /// ## 原点を軸にpi/2回転させる
@@ -501,7 +507,7 @@ mod plane_float_impl {
     #[derive(Clone)]
     pub struct Polygon {
         /// 頂点は反時計回りの順
-        nodes: Vec<Point>,
+        pub nodes: Vec<Point>,
     }
 
     impl From<&[(f64, f64)]> for Polygon {
@@ -514,7 +520,13 @@ mod plane_float_impl {
 
     impl Polygon {
         pub fn new(nodes: Vec<Point>) -> Self {
+            assert!(nodes.len() >= 3);
             Self { nodes }
+        }
+
+        /// # 頂点数
+        pub fn number_of_sides(&self) -> usize {
+            self.nodes.len()
         }
 
         /// # 面積
@@ -561,6 +573,80 @@ mod plane_float_impl {
             } else {
                 Including::Outside
             }
+        }
+
+        /// # 凸包
+        /// 隣り合う3点を見て、内側にはまっているものがないように頂点を削除する
+        ///
+        /// ## 引数
+        /// - points: 頂点集合
+        /// - include_on_line: trueならば辺上の点を含む
+        pub fn convex_hull(mut points: Vec<Point>, include_on_line: bool) -> Self {
+            points.sort_by(|a, b| a.partial_cmp(b).unwrap());
+            let mut nodes = Vec::new();
+            for &p in &points {
+                while nodes.len() >= 2 {
+                    let c = Point::cross(
+                        nodes[nodes.len() - 1] - nodes[nodes.len() - 2],
+                        p - nodes[nodes.len() - 2],
+                    );
+                    if (include_on_line && c < -EPS) || (!include_on_line && c < EPS) {
+                        nodes.pop();
+                    } else {
+                        break;
+                    }
+                }
+                nodes.push(p);
+            }
+            let m = nodes.len();
+            points.reverse();
+            for &p in &points {
+                while nodes.len() > m {
+                    let c = Point::cross(
+                        nodes[nodes.len() - 1] - nodes[nodes.len() - 2],
+                        p - nodes[nodes.len() - 1],
+                    );
+                    if (include_on_line && c < -EPS) || (!include_on_line && c < EPS) {
+                        nodes.pop();
+                    } else {
+                        break;
+                    }
+                }
+                // 同じ頂点は含まないようにする
+                if nodes[nodes.len() - 1] != p {
+                    nodes.push(p);
+                }
+            }
+            // 同じ頂点は含まないようにする
+            if nodes[0] == nodes[nodes.len() - 1] {
+                nodes.pop();
+            }
+
+            Self::new(nodes)
+        }
+
+        /// # $x$について正規化
+        /// 最も左にある点のうち、最も下にあるものが頂点0になるよう、回転させる
+        pub fn normalize(&mut self) {
+            let mut result = Vec::new();
+            let mut start = false;
+            for i in 0..self.nodes.len() * 2 {
+                if result.len() == self.nodes.len() {
+                    break;
+                }
+                let cur = i % self.nodes.len();
+                if start {
+                    result.push(self.nodes[cur]);
+                } else {
+                    let prev = (i + self.nodes.len() - 1) % self.nodes.len();
+                    let next = (i + 1) % self.nodes.len();
+                    if self.nodes[prev] > self.nodes[cur] && self.nodes[cur] < self.nodes[next] {
+                        start = true;
+                        result.push(self.nodes[cur]);
+                    }
+                }
+            }
+            self.nodes = result
         }
     }
 
