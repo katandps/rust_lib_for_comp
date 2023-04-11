@@ -1,5 +1,5 @@
 //! # 二次元平面(浮動小数点数)
-use min_max_macro::min;
+use min_max_macro::{chmax, max, min};
 use prelude::*;
 
 #[snippet(name = "plane-float", doc_hidden)]
@@ -7,11 +7,10 @@ pub use plane_float_impl::{
     Circle, ClockwiseDirection, Including, Line, Point, Polygon, Segment, Triangle,
 };
 #[snippet(name = "plane-float", doc_hidden)]
-#[rustfmt::skip]
 mod plane_float_impl {
     use super::{
-        min, Add, AddAssign, Debug, Display, Div, DivAssign, Formatter, Mul, MulAssign, Neg, Sub,
-        SubAssign,
+        chmax, max, min, Add, AddAssign, Debug, Display, Div, DivAssign, Formatter, Index,
+        IndexMut, Mul, MulAssign, Neg, Sub, SubAssign,
     };
 
     const EPS: f64 = std::f64::EPSILON;
@@ -518,6 +517,22 @@ mod plane_float_impl {
         }
     }
 
+    /// # Indexアクセス
+    /// 頂点番号 mod 頂点数でのアクセスを実装する
+    impl Index<usize> for Polygon {
+        type Output = Point;
+        fn index(&self, index: usize) -> &Point {
+            &self.nodes[(index) % self.nodes.len()]
+        }
+    }
+
+    impl IndexMut<usize> for Polygon {
+        fn index_mut(&mut self, index: usize) -> &mut Point {
+            let n = self.nodes.len();
+            &mut self.nodes[index % n]
+        }
+    }
+
     impl Polygon {
         pub fn new(nodes: Vec<Point>) -> Self {
             assert!(nodes.len() >= 3);
@@ -525,28 +540,64 @@ mod plane_float_impl {
         }
 
         /// # 頂点数
+        ///
+        /// ## 計算量
+        /// $O(1)$
         pub fn number_of_sides(&self) -> usize {
             self.nodes.len()
         }
 
         /// # 面積
         /// 外積の総和/2
+        ///
+        /// ## 計算量
+        /// $O(N)$
         pub fn area(&self) -> f64 {
             let mut res = 0.0;
             for i in 0..self.nodes.len() {
-                res += Point::cross(self.nodes[i], self.nodes[(i + 1) % self.nodes.len()]);
+                res += Point::cross(self[i], self[i + 1]);
             }
             res * 0.5
         }
 
+        /// # 凸多角形の直径
+        /// 最遠点対の距離をキャリパー法で求める
+        ///
+        /// ## 計算量
+        /// $O(N\log N)$
+        pub fn diameter(&self) -> f64 {
+            assert!(self.is_convex());
+            let n = self.nodes.len();
+            let (mut i, mut j) = (0, 0);
+            for k in 0..n {
+                if self.nodes[k] < self.nodes[i] {
+                    i = k
+                }
+                if self.nodes[j] < self.nodes[k] {
+                    j = k
+                }
+            }
+            let mut res = 0.0;
+            let (si, sj) = (i, j);
+            while i != sj || j != si {
+                chmax!(res, Point::distance(&self[i], &self[j]));
+                if Point::cross(self[i + 1] - self[i], self[j + 1] - self[j]) < 0.0 {
+                    i = (i + 1) % n
+                } else {
+                    j = (j + 1) % n
+                }
+            }
+            res
+        }
+
         /// # 凸性判定
+        ///
+        /// ## 計算量
+        /// $O(N)$
         pub fn is_convex(&self) -> bool {
             for i in 0..self.nodes.len() {
-                if ClockwiseDirection::direction(
-                    self.nodes[i],
-                    self.nodes[(i + 1) % self.nodes.len()],
-                    self.nodes[(i + 2) % self.nodes.len()],
-                ) == ClockwiseDirection::Clockwise
+                if ClockwiseDirection::direction(self[i], self[i + 1], self[i + 2])
+                    == ClockwiseDirection::Clockwise
                 {
                     return false;
                 }
@@ -556,6 +607,12 @@ mod plane_float_impl {
 
         /// # 内包判定(Winding number algorithm)
         /// 頂点の周りの角度を調べる 内包していないときは0に近い値になる
+        ///
+        /// ## 計算量
+        /// $O(N)$
+        ///
+        /// ## todo
+        /// atan2を使わない実装があるらしい(定数倍高速化)
         pub fn include(&self, p: Point) -> Including {
             let mut sum = 0.0f64;
             for i in 0..self.nodes.len() {
@@ -581,6 +638,9 @@ mod plane_float_impl {
         /// ## 引数
         /// - points: 頂点集合
         /// - include_on_line: trueならば辺上の点を含む
+        ///
+        /// ## 計算量
+        /// $O(N\log N)$
         pub fn convex_hull(mut points: Vec<Point>, include_on_line: bool) -> Self {
             points.sort_by(|a, b| a.partial_cmp(b).unwrap());
             let mut nodes = Vec::new();
@@ -627,6 +687,9 @@ mod plane_float_impl {
 
         /// # $x$について正規化
         /// 最も左にある点のうち、最も下にあるものが頂点0になるよう、回転させる
+        ///
+        /// ## 計算量
+        /// $O(N)$
         pub fn normalize(&mut self) {
             let mut result = Vec::new();
             let mut start = false;
@@ -634,15 +697,15 @@ mod plane_float_impl {
                 if result.len() == self.nodes.len() {
                     break;
                 }
-                let cur = i % self.nodes.len();
+                let cur = i;
                 if start {
-                    result.push(self.nodes[cur]);
+                    result.push(self[cur]);
                 } else {
-                    let prev = (i + self.nodes.len() - 1) % self.nodes.len();
-                    let next = (i + 1) % self.nodes.len();
-                    if self.nodes[prev] > self.nodes[cur] && self.nodes[cur] < self.nodes[next] {
+                    let prev = i + self.nodes.len() - 1;
+                    let next = i + 1;
+                    if self[prev] > self[cur] && self[cur] < self[next] {
                         start = true;
-                        result.push(self.nodes[cur]);
+                        result.push(self[cur]);
                     }
                 }
             }

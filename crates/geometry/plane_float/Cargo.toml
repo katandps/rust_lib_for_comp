@@ -57,3 +57,7 @@ path = "./aoj/polygon_point_containment.rs"
 [[example]]
 name = "convex-hull"
 path = "./aoj/convex_hull.rs"
+
+[[example]]
+name = "diameter-of-a-convex-polygon"
+path = "./aoj/diameter_of_a_convex_polygon.rs"
