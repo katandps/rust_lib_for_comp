@@ -7,6 +7,7 @@ pub use plane_float_impl::{
     Circle, ClockwiseDirection, Including, Line, Point, Polygon, Segment, Triangle,
 };
 #[snippet(name = "plane-float", doc_hidden)]
+#[rustfmt::skip]
 mod plane_float_impl {
     use super::{
         chmax, max, min, Add, AddAssign, Debug, Display, Div, DivAssign, Formatter, Index,
@@ -503,7 +504,7 @@ mod plane_float_impl {
     }
 
     /// # 多角形
-    #[derive(Clone)]
+    #[derive(Clone, Debug)]
     pub struct Polygon {
         /// 頂点は反時計回りの順
         pub nodes: Vec<Point>,
@@ -535,7 +536,6 @@ mod plane_float_impl {
 
     impl Polygon {
         pub fn new(nodes: Vec<Point>) -> Self {
-            assert!(nodes.len() >= 3);
             Self { nodes }
         }
 
@@ -710,6 +710,26 @@ mod plane_float_impl {
                 }
             }
             self.nodes = result
+        }
+
+        /// # 凸多角形の切断
+        ///
+        pub fn cut(&self, l: Line) -> Self {
+            let mut q = Vec::new();
+            for i in 0..self.nodes.len() {
+                let c1 = Point::cross(l.p2 - l.p1, self[i] - l.p1);
+                let c2 = Point::cross(l.p2 - l.p1, self[i + 1] - l.p1);
+                if c1 * c2 < EPS {
+                    let edge = Line::new(self[i], self[i + 1]);
+                    if let Some(cp) = Line::cross_point(edge, l) {
+                        q.push(cp)
+                    }
+                }
+                if c2 > -EPS {
+                    q.push(self[i + 1])
+                }
+            }
+            Self::new(q)
         }
     }
 
