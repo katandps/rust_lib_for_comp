@@ -1,7 +1,8 @@
-// verification-helper: PROBLEM https://onlinejudge.u-aizu.ac.jp/courses/library/4/CGL/4/CGL_4_B
+// verification-helper: PROBLEM https://onlinejudge.u-aizu.ac.jp/courses/library/4/CGL/5/CGL_5_A
 // verification-helper: ERROR 0.00000001
+use closest_pair::ClosestPair;
 use io_util::*;
-use plane_float::{Point, Polygon};
+use plane_float::Point;
 use string_util::*;
 
 fn main() {
@@ -12,8 +13,7 @@ fn main() {
         .into_iter()
         .map(|(x, y)| Point::new(x, y))
         .collect::<Vec<_>>();
-    let polygon = Polygon::convex_hull(points, true);
-
-    io.out(polygon.diameter().line());
+    let (dist, _a, _b) = ClosestPair::closest_pair(points);
+    io.out(dist.line());
     io.flush();
 }

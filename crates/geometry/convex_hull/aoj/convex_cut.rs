@@ -1,7 +1,8 @@
 // verification-helper: PROBLEM https://onlinejudge.u-aizu.ac.jp/courses/library/4/CGL/4/CGL_4_C
 // verification-helper: ERROR 0.00000001
+use convex_hull::Polygon;
 use io_util::*;
-use plane_float::{Line, Point, Polygon};
+use plane_float::{Line, Point};
 use string_util::*;
 
 fn main() {

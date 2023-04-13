@@ -68,6 +68,8 @@ members = [
     'crates/enumerator/next_permutation',
     'crates/enumerator/split_of_natural_number',
     'crates/enumerator/subset',
+    'crates/geometry/closest_pair',
+    'crates/geometry/convex_hull',
     'crates/geometry/floor_sum',
     'crates/geometry/plane_float',
     'crates/geometry/plane_int',

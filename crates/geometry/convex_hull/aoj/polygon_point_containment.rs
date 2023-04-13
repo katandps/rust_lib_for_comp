@@ -1,6 +1,7 @@
 // verification-helper: PROBLEM https://onlinejudge.u-aizu.ac.jp/courses/library/4/CGL/3/CGL_3_C
+use convex_hull::{Including, Polygon};
 use io_util::*;
-use plane_float::{Including, Point, Polygon};
+use plane_float::Point;
 use string_util::*;
 
 fn main() {

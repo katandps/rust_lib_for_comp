@@ -1,0 +1,40 @@
+[package]
+name = "convex_hull"
+version = "0.1.0"
+edition = "2018"
+
+[dependencies]
+prelude = { path = "../../prelude" }
+min_max_macro = { path = "../../util/min_max_macro" }
+plane_float = { path = "../plane_float" }
+
+[dev-dependencies]
+io_util = { path = "../../util/io_util" }
+string_util = { path = "../../util/string_util" }
+
+[lib]
+path = "lib.rs"
+
+[[example]]
+name = "area"
+path = "./aoj/area.rs"
+
+[[example]]
+name = "is-convex"
+path = "./aoj/is_convex.rs"
+
+[[example]]
+name = "polygon-point-containment"
+path = "./aoj/polygon_point_containment.rs"
+
+[[example]]
+name = "convex-hull"
+path = "./aoj/convex_hull.rs"
+
+[[example]]
+name = "diameter-of-a-convex-polygon"
+path = "./aoj/diameter_of_a_convex_polygon.rs"
+
+[[example]]
+name = "convex-cut"
+path = "./aoj/convex_cut.rs"
