@@ -72,8 +72,8 @@ mod xor_shift_impl {
 
         #[inline]
         pub fn shuffle<T>(&mut self, s: &mut [T]) {
-            for i in 0..s.len() {
-                s.swap(i, self.rand_range(i as i64..s.len() as i64) as usize);
+            for i in (1..s.len()).rev() {
+                s.swap(i, self.rand_range(0..i as i64) as usize);
             }
         }
     }
