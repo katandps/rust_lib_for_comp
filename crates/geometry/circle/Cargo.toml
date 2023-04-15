@@ -1,0 +1,20 @@
+[package]
+name = "circle"
+version = "0.1.0"
+edition = "2018"
+
+[dependencies]
+prelude = { path = "../../prelude" }
+min_max_macro = { path = "../../util/min_max_macro" }
+plane_float = { path = "../plane_float" }
+
+[dev-dependencies]
+io_util = { path = "../../util/io_util" }
+string_util = { path = "../../util/string_util" }
+
+[lib]
+path = "lib.rs"
+
+[[example]]
+name = "intersection-of-circles"
+path = "./intersection_of_circles.rs"
