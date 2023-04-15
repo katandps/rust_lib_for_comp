@@ -3,7 +3,9 @@ use min_max_macro::{chmax, max};
 use plane_float::{ClockwiseDirection, Line, Point, Segment, EPS};
 use prelude::*;
 
+#[snippet(name = "convex-hull", doc_hidden)]
 pub use convex_hull_impl::{Including, Polygon};
+#[snippet(name = "convex-hull", doc_hidden)]
 mod convex_hull_impl {
     use super::{chmax, max, ClockwiseDirection, Index, IndexMut, Line, Point, Segment, EPS};
 

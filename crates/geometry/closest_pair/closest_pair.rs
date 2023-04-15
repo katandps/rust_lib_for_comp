@@ -13,7 +13,7 @@ fn main() {
         .into_iter()
         .map(|(x, y)| Point::new(x, y))
         .collect::<Vec<_>>();
-    let (dist, _a, _b) = ClosestPair::closest_pair(points);
+    let (dist, _pair) = ClosestPair::closest_pair(points);
     io.out(dist.line());
     io.flush();
 }
