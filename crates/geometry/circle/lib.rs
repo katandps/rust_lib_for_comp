@@ -55,13 +55,14 @@ mod circle_impl {
             2.0 * s / (a + b + c)
         }
 
-        /// 面積を求める
+        /// # 面積
         pub fn area(&self) -> f64 {
             let a = self.p2 - self.p1;
             let b = self.p3 - self.p1;
             (a.x * b.y - a.y * b.x).abs() / 2.0
         }
 
+        /// # 外接円
         pub fn circumscribed_circle(&self) -> Option<Circle> {
             self.circumcenter().map(|c| Circle {
                 center: c,
@@ -110,21 +111,6 @@ mod circle_impl {
             }
         }
 
-        pub fn is_intersect(&self, another: &Self) -> CircleIntersection {
-            let d = self.center.distance(&another.center);
-            if d > self.radius + another.radius + EPS {
-                CircleIntersection::NotCross
-            } else if (d - (self.radius + another.radius)).abs() < EPS {
-                CircleIntersection::Circumscribed
-            } else if (d - (self.radius - another.radius).abs()).abs() < EPS {
-                CircleIntersection::Inscribed
-            } else if d < (self.radius - another.radius).abs() - EPS {
-                CircleIntersection::Included
-            } else {
-                CircleIntersection::Intersect
-            }
-        }
-
         /// # 二つの円の交点
         /// 順序は不定
         pub fn cross_points(&self, another: &Self) -> Vec<Point> {
@@ -160,6 +146,23 @@ mod circle_impl {
         Inscribed,
         // 内包する(共有点なし)
         Included,
+    }
+
+    impl CircleIntersection {
+        pub fn intersect(c1: &Circle, c2: &Circle) -> Self {
+            let d = c1.center.distance(&c2.center);
+            if d > c1.radius + c2.radius + EPS {
+                CircleIntersection::NotCross
+            } else if (d - (c1.radius + c2.radius)).abs() < EPS {
+                CircleIntersection::Circumscribed
+            } else if (d - (c1.radius - c2.radius).abs()).abs() < EPS {
+                CircleIntersection::Inscribed
+            } else if d < (c1.radius - c2.radius).abs() - EPS {
+                CircleIntersection::Included
+            } else {
+                CircleIntersection::Intersect
+            }
+        }
     }
 }
 

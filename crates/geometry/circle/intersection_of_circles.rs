@@ -10,7 +10,7 @@ fn main() {
     let c1 = Circle::new(x1, y1, r1);
     let c2 = Circle::new(x2, y2, r2);
     io.out(
-        match c1.is_intersect(&c2) {
+        match CircleIntersection::intersect(&c1, &c2) {
             CircleIntersection::NotCross => 4,
             CircleIntersection::Circumscribed => 3,
             CircleIntersection::Intersect => 2,
