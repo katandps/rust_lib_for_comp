@@ -1,12 +1,12 @@
 //! # 円
-use plane_float::{Line, Point, EPS};
+use plane_float::{ClockwiseDirection, Line, Point, EPS};
 use prelude::*;
 
 #[snippet(name = "circle", doc_hidden)]
 pub use circle_impl::{Circle, CircleIntersection, Triangle};
 #[snippet(name = "circle", doc_hidden)]
 mod circle_impl {
-    use super::{Line, Point, EPS};
+    use super::{ClockwiseDirection, Line, Point, EPS};
     #[derive(Copy, Clone)]
     pub struct Triangle {
         p1: Point,
@@ -19,18 +19,29 @@ mod circle_impl {
             Triangle { p1, p2, p3 }
         }
 
-        /// 内心を求める
+        /// # 内接円
+        pub fn inner_circle(&self) -> Option<Circle> {
+            self.inner_center().map(|c| Circle {
+                center: c,
+                radius: self.inner_circle_radius(),
+            })
+        }
+
+        /// # 内心
         pub fn inner_center(&self) -> Option<Point> {
-            let line = Line::new(self.p1, self.p2);
-            if line.distance(self.p3) > 0.0 {
-                Some((self.p1 + self.p2 + self.p3) / 3.0)
+            let d = ClockwiseDirection::direction(self.p1, self.p2, self.p3);
+            if d == ClockwiseDirection::Clockwise || d == ClockwiseDirection::CounterClockwise {
+                let p1p2 = self.p1.distance(&self.p2);
+                let p2p3 = self.p2.distance(&self.p3);
+                let p3p1 = self.p3.distance(&self.p1);
+                Some((self.p3 * p1p2 + self.p1 * p2p3 + self.p2 * p3p1) / (p1p2 + p2p3 + p3p1))
             } else {
                 None
             }
         }
 
-        ///内接円の半径
-        pub fn inner_circle_radius(&self) -> f64 {
+        /// # 内接円の半径
+        fn inner_circle_radius(&self) -> f64 {
             let a = (self.p1 - self.p2).abs();
             let b = (self.p2 - self.p3).abs();
             let c = (self.p3 - self.p1).abs();

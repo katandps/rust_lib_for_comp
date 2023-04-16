@@ -18,3 +18,7 @@ path = "lib.rs"
 [[example]]
 name = "intersection-of-circles"
 path = "./intersection_of_circles.rs"
+
+[[example]]
+name = "incircle-of-triangle"
+path = "./incircle_of_triangle.rs"
