@@ -1,12 +1,12 @@
 //! # 円
-use plane_float::{ClockwiseDirection, Line, Point, EPS};
+use plane_float::{Line, Point, EPS};
 use prelude::*;
 
 #[snippet(name = "circle", doc_hidden)]
 pub use circle_impl::{Circle, CircleIntersection, Triangle};
 #[snippet(name = "circle", doc_hidden)]
 mod circle_impl {
-    use super::{ClockwiseDirection, Line, Point, EPS};
+    use super::{Line, Point, EPS};
     #[derive(Copy, Clone)]
     pub struct Triangle {
         p1: Point,
@@ -19,6 +19,13 @@ mod circle_impl {
             Triangle { p1, p2, p3 }
         }
 
+        /// # 正の面積を持つ三角形かどうか判定する
+        fn is_valid(&self) -> bool {
+            let a = self.p2 - self.p1;
+            let b = self.p3 - self.p1;
+            (a.x * b.y - a.y * b.x).abs() >= EPS
+        }
+
         /// # 内接円
         pub fn inner_circle(&self) -> Option<Circle> {
             self.inner_center().map(|c| Circle {
@@ -29,8 +36,7 @@ mod circle_impl {
 
         /// # 内心
         pub fn inner_center(&self) -> Option<Point> {
-            let d = ClockwiseDirection::direction(self.p1, self.p2, self.p3);
-            if d == ClockwiseDirection::Clockwise || d == ClockwiseDirection::CounterClockwise {
+            if self.is_valid() {
                 let p1p2 = self.p1.distance(&self.p2);
                 let p2p3 = self.p2.distance(&self.p3);
                 let p3p1 = self.p3.distance(&self.p1);
@@ -54,6 +60,13 @@ mod circle_impl {
             let a = self.p2 - self.p1;
             let b = self.p3 - self.p1;
             (a.x * b.y - a.y * b.x).abs() / 2.0
+        }
+
+        pub fn circumscribed_circle(&self) -> Option<Circle> {
+            self.circumcenter().map(|c| Circle {
+                center: c,
+                radius: c.distance(&self.p1),
+            })
         }
 
         /// 外心を求める
