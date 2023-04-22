@@ -1,25 +1,25 @@
 //! # 凸包
 use min_max_macro::{chmax, max};
-use plane_float::{ClockwiseDirection, Line, Point, Segment, EPS};
+use plane_float::{ClockwiseDirection, Line, Segment, Vector, EPS};
 use prelude::*;
 
 #[snippet(name = "convex-hull", doc_hidden)]
 pub use convex_hull_impl::{Including, Polygon};
 #[snippet(name = "convex-hull", doc_hidden)]
 mod convex_hull_impl {
-    use super::{chmax, max, ClockwiseDirection, Index, IndexMut, Line, Point, Segment, EPS};
+    use super::{chmax, max, ClockwiseDirection, Index, IndexMut, Line, Segment, Vector, EPS};
 
     /// # 多角形
     #[derive(Clone, Debug)]
     pub struct Polygon {
         /// 頂点は反時計回りの順
-        pub nodes: Vec<Point>,
+        pub nodes: Vec<Vector>,
     }
 
     impl From<&[(f64, f64)]> for Polygon {
         fn from(nodes: &[(f64, f64)]) -> Self {
             Self {
-                nodes: nodes.iter().map(|&p| Point::from(p)).collect(),
+                nodes: nodes.iter().map(|&p| Vector::from(p)).collect(),
             }
         }
     }
@@ -27,21 +27,21 @@ mod convex_hull_impl {
     /// # Indexアクセス
     /// 頂点番号 mod 頂点数でのアクセスを実装する
     impl Index<usize> for Polygon {
-        type Output = Point;
-        fn index(&self, index: usize) -> &Point {
+        type Output = Vector;
+        fn index(&self, index: usize) -> &Vector {
             &self.nodes[(index) % self.nodes.len()]
         }
     }
 
     impl IndexMut<usize> for Polygon {
-        fn index_mut(&mut self, index: usize) -> &mut Point {
+        fn index_mut(&mut self, index: usize) -> &mut Vector {
             let n = self.nodes.len();
             &mut self.nodes[index % n]
         }
     }
 
     impl Polygon {
-        pub fn new(nodes: Vec<Point>) -> Self {
+        pub fn new(nodes: Vec<Vector>) -> Self {
             Self { nodes }
         }
 
@@ -61,7 +61,7 @@ mod convex_hull_impl {
         pub fn area(&self) -> f64 {
             let mut res = 0.0;
             for i in 0..self.nodes.len() {
-                res += Point::cross(self[i], self[i + 1]);
+                res += Vector::cross(self[i], self[i + 1]);
             }
             res * 0.5
         }
@@ -86,8 +86,8 @@ mod convex_hull_impl {
             let mut res = 0.0;
             let (si, sj) = (i, j);
             while i != sj || j != si {
-                chmax!(res, Point::distance(&self[i], &self[j]));
-                if Point::cross(self[i + 1] - self[i], self[j + 1] - self[j]) < 0.0 {
+                chmax!(res, Vector::distance(&self[i], &self[j]));
+                if Vector::cross(self[i + 1] - self[i], self[j + 1] - self[j]) < 0.0 {
                     i = (i + 1) % n
                 } else {
                     j = (j + 1) % n
@@ -119,15 +119,15 @@ mod convex_hull_impl {
         ///
         /// ## todo
         /// atan2を使わない実装があるらしい(定数倍高速化)
-        pub fn include(&self, p: Point) -> Including {
+        pub fn include(&self, p: Vector) -> Including {
             let mut sum = 0.0f64;
             for i in 0..self.nodes.len() {
                 let (p1, p2) = (self.nodes[i], self.nodes[(i + 1) % self.nodes.len()]);
                 if Segment::distance_to_point(Segment::new(p1, p2), p) < EPS {
                     return Including::OnLine;
                 }
-                let dot = Point::dot(p1 - p, p2 - p);
-                let cross = Point::cross(p1 - p, p2 - p);
+                let dot = Vector::dot(p1 - p, p2 - p);
+                let cross = Vector::cross(p1 - p, p2 - p);
                 sum += cross.atan2(dot)
             }
             // 角度和は$2\pi$の整数倍の値になる 誤差を考慮して$\pi$で判定する
@@ -147,12 +147,12 @@ mod convex_hull_impl {
         ///
         /// ## 計算量
         /// $O(N\log N)$
-        pub fn convex_hull(mut points: Vec<Point>, include_on_line: bool) -> Self {
+        pub fn convex_hull(mut points: Vec<Vector>, include_on_line: bool) -> Self {
             points.sort_by(|a, b| a.partial_cmp(b).unwrap());
             let mut nodes = Vec::new();
             for &p in &points {
                 while nodes.len() >= 2 {
-                    let c = Point::cross(
+                    let c = Vector::cross(
                         nodes[nodes.len() - 1] - nodes[nodes.len() - 2],
                         p - nodes[nodes.len() - 2],
                     );
@@ -168,7 +168,7 @@ mod convex_hull_impl {
             points.reverse();
             for &p in &points {
                 while nodes.len() > m {
-                    let c = Point::cross(
+                    let c = Vector::cross(
                         nodes[nodes.len() - 1] - nodes[nodes.len() - 2],
                         p - nodes[nodes.len() - 1],
                     );
@@ -223,8 +223,8 @@ mod convex_hull_impl {
         pub fn cut(&self, l: Line) -> Self {
             let mut q = Vec::new();
             for i in 0..self.nodes.len() {
-                let c1 = Point::cross(l.p2 - l.p1, self[i] - l.p1);
-                let c2 = Point::cross(l.p2 - l.p1, self[i + 1] - l.p1);
+                let c1 = Vector::cross(l.p2 - l.p1, self[i] - l.p1);
+                let c2 = Vector::cross(l.p2 - l.p1, self[i + 1] - l.p1);
                 if c1 * c2 < EPS {
                     let edge = Line::new(self[i], self[i + 1]);
                     if let Some(cp) = Line::cross_point(edge, l) {

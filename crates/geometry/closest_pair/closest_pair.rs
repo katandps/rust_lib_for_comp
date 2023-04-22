@@ -2,7 +2,7 @@
 // verification-helper: ERROR 0.00000001
 use closest_pair::ClosestPair;
 use io_util::*;
-use plane_float::Point;
+use plane_float::Vector;
 use string_util::*;
 
 fn main() {
@@ -11,7 +11,7 @@ fn main() {
     let xy = io.vec2::<f64, f64>(n);
     let points = xy
         .into_iter()
-        .map(|(x, y)| Point::new(x, y))
+        .map(|(x, y)| Vector::new(x, y))
         .collect::<Vec<_>>();
     let (dist, _pair) = ClosestPair::closest_pair(points);
     io.out(dist.line());

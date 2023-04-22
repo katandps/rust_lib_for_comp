@@ -1,6 +1,6 @@
 //! # 最近点対
 use min_max_macro::{chmin, min};
-use plane_float::Point;
+use plane_float::Vector;
 use prelude::*;
 
 #[snippet(name = "closest-pair", doc_hidden)]
@@ -8,7 +8,7 @@ pub struct ClosestPair;
 #[snippet(name = "closest-pair", doc_hidden)]
 impl ClosestPair {
     const INF: f64 = 1e30;
-    pub fn closest_pair(mut points: Vec<Point>) -> (f64, Option<(Point, Point)>) {
+    pub fn closest_pair(mut points: Vec<Vector>) -> (f64, Option<(Vector, Vector)>) {
         assert!(points.len() >= 2);
         points.sort_by(|a, b| a.partial_cmp(b).unwrap());
         let (d2, pair) = Self::calc(&mut points);
@@ -16,7 +16,7 @@ impl ClosestPair {
     }
 
     // 距離の二乗と、その値を得るペアを得る
-    fn calc(points: &mut [Point]) -> (f64, Option<(Point, Point)>) {
+    fn calc(points: &mut [Vector]) -> (f64, Option<(Vector, Vector)>) {
         let n = points.len();
         if n <= 1 {
             return (Self::INF, None);
@@ -38,7 +38,7 @@ impl ClosestPair {
                 continue;
             }
             for j in (0..nears.len()).rev() {
-                let a: Point = nears[j] - p;
+                let a: Vector = nears[j] - p;
                 let dy2 = a.y * a.y;
                 if dy2 < d2 {
                     let dx2 = a.x * a.x;

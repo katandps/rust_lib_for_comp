@@ -3,7 +3,7 @@ use min_max_macro::min;
 use prelude::*;
 
 #[snippet(name = "plane-float", doc_hidden)]
-pub use plane_float_impl::{ClockwiseDirection, Line, Point, Segment, EPS};
+pub use plane_float_impl::{ClockwiseDirection, Line, Segment, Vector, EPS};
 #[snippet(name = "plane-float", doc_hidden)]
 mod plane_float_impl {
     use super::{
@@ -13,30 +13,30 @@ mod plane_float_impl {
 
     pub const EPS: f64 = std::f64::EPSILON;
 
-    /// 点
-    #[derive(Copy, Clone, PartialOrd)]
-    pub struct Point {
+    /// 点ベクトル
+    #[derive(Copy, Clone, Default, PartialOrd)]
+    pub struct Vector {
         pub x: f64,
         pub y: f64,
     }
 
     /// # Tuple(x, y)から生成
-    impl From<(f64, f64)> for Point {
+    impl From<(f64, f64)> for Vector {
         fn from(value: (f64, f64)) -> Self {
             Self::new(value.0, value.1)
         }
     }
 
-    impl PartialEq for Point {
+    impl PartialEq for Vector {
         fn eq(&self, other: &Self) -> bool {
             let p = *self - *other;
             p.x.abs() < EPS && p.y.abs() < EPS
         }
     }
 
-    impl Point {
-        pub fn new(x: f64, y: f64) -> Point {
-            Point { x, y }
+    impl Vector {
+        pub fn new(x: f64, y: f64) -> Vector {
+            Vector { x, y }
         }
 
         /// # 偏角を求める($0.0 <= rad <= 2\pi$)
@@ -57,26 +57,26 @@ mod plane_float_impl {
         }
 
         /// 原点を軸にradian回転させる
-        pub fn rot(self, radian: f64) -> Point {
-            Point::new(
+        pub fn rot(self, radian: f64) -> Vector {
+            Vector::new(
                 radian.cos() * self.x - radian.sin() * self.y,
                 radian.sin() * self.x + radian.cos() * self.y,
             )
         }
 
         /// # 直線$y=x$について対称に移動する
-        pub fn swap(self) -> Point {
-            Point::new(self.y, self.x)
+        pub fn swap(self) -> Vector {
+            Vector::new(self.y, self.x)
         }
 
         /// ## 原点を軸にpi/2回転させる
-        pub fn rot90(self) -> Point {
-            Point::new(-self.y, self.x)
+        pub fn rot90(self) -> Vector {
+            Vector::new(-self.y, self.x)
         }
 
         /// ## x軸に対して反転
-        pub fn conj(self) -> Point {
-            Point::new(self.x, -self.y)
+        pub fn conj(self) -> Vector {
+            Vector::new(self.x, -self.y)
         }
 
         /// ## 原点からのベクトルとして見た時の外積
@@ -122,14 +122,14 @@ mod plane_float_impl {
 
     impl ClockwiseDirection {
         /// # 3点の関係性を調べる
-        pub fn direction(a: Point, b: Point, c: Point) -> Self {
+        pub fn direction(a: Vector, b: Vector, c: Vector) -> Self {
             let (b, c) = (b - a, c - a);
-            let cross = Point::cross(b, c);
+            let cross = Vector::cross(b, c);
             if cross > EPS {
                 Self::CounterClockwise
             } else if cross < -EPS {
                 Self::Clockwise
-            } else if Point::dot(b, c) < 0.0 {
+            } else if Vector::dot(b, c) < 0.0 {
                 Self::OneLineCAB
             } else if b.norm() < c.norm() {
                 Self::OneLineABC
@@ -152,72 +152,72 @@ mod plane_float_impl {
     }
 
     /// # 原点に対称な点
-    impl Neg for Point {
-        type Output = Point;
+    impl Neg for Vector {
+        type Output = Vector;
         fn neg(self) -> Self::Output {
-            Point::new(-self.x, -self.y)
+            Vector::new(-self.x, -self.y)
         }
     }
 
-    impl Add<Point> for Point {
-        type Output = Point;
-        fn add(self, rhs: Point) -> Point {
-            Point::new(self.x + rhs.x, self.y + rhs.y)
+    impl Add<Vector> for Vector {
+        type Output = Vector;
+        fn add(self, rhs: Vector) -> Vector {
+            Vector::new(self.x + rhs.x, self.y + rhs.y)
         }
     }
 
-    impl AddAssign<Point> for Point {
-        fn add_assign(&mut self, other: Point) {
+    impl AddAssign<Vector> for Vector {
+        fn add_assign(&mut self, other: Vector) {
             *self = *self + other;
         }
     }
 
-    impl Sub<Point> for Point {
-        type Output = Point;
-        fn sub(self, rhs: Point) -> Point {
-            Point::new(self.x - rhs.x, self.y - rhs.y)
+    impl Sub<Vector> for Vector {
+        type Output = Vector;
+        fn sub(self, rhs: Vector) -> Vector {
+            Vector::new(self.x - rhs.x, self.y - rhs.y)
         }
     }
 
-    impl SubAssign<Point> for Point {
-        fn sub_assign(&mut self, other: Point) {
+    impl SubAssign<Vector> for Vector {
+        fn sub_assign(&mut self, other: Vector) {
             *self = *self - other;
         }
     }
 
-    impl Mul<f64> for Point {
-        type Output = Point;
-        fn mul(self, rhs: f64) -> Point {
-            Point::new(self.x * rhs, self.y * rhs)
+    impl Mul<f64> for Vector {
+        type Output = Vector;
+        fn mul(self, rhs: f64) -> Vector {
+            Vector::new(self.x * rhs, self.y * rhs)
         }
     }
 
-    impl MulAssign<f64> for Point {
+    impl MulAssign<f64> for Vector {
         fn mul_assign(&mut self, other: f64) {
             *self = *self * other;
         }
     }
 
-    impl Div<f64> for Point {
-        type Output = Point;
-        fn div(self, rhs: f64) -> Point {
-            Point::new(self.x / rhs, self.y / rhs)
+    impl Div<f64> for Vector {
+        type Output = Vector;
+        fn div(self, rhs: f64) -> Vector {
+            Vector::new(self.x / rhs, self.y / rhs)
         }
     }
 
-    impl DivAssign<f64> for Point {
+    impl DivAssign<f64> for Vector {
         fn div_assign(&mut self, other: f64) {
             *self = *self / other;
         }
     }
 
-    impl Display for Point {
+    impl Display for Vector {
         fn fmt(&self, f: &mut Formatter) -> std::fmt::Result {
             write!(f, "x:{} y:{}", self.x, self.y)
         }
     }
 
-    impl Debug for Point {
+    impl Debug for Vector {
         fn fmt(&self, f: &mut Formatter) -> std::fmt::Result {
             write!(f, "Point: (x: {}, y: {})", self.x, self.y)
         }
@@ -225,8 +225,8 @@ mod plane_float_impl {
 
     #[derive(Copy, Clone)]
     pub struct Line {
-        pub p1: Point,
-        pub p2: Point,
+        pub p1: Vector,
+        pub p2: Vector,
     }
 
     impl From<Segment> for Line {
@@ -239,18 +239,18 @@ mod plane_float_impl {
     }
 
     impl Line {
-        pub fn new(p: Point, q: Point) -> Line {
+        pub fn new(p: Vector, q: Vector) -> Line {
             Line { p1: p, p2: q }
         }
 
         /// # 2直線の内積
         pub fn dot(l: Self, m: Self) -> f64 {
-            Point::dot(m.p2 - m.p1, l.p2 - l.p1)
+            Vector::dot(m.p2 - m.p1, l.p2 - l.p1)
         }
 
         /// # 2直線の外積
         pub fn cross(l: Self, m: Self) -> f64 {
-            Point::cross(m.p2 - m.p1, l.p2 - l.p1)
+            Vector::cross(m.p2 - m.p1, l.p2 - l.p1)
         }
 
         /// # 2直線の直交判定(内積が0)
@@ -264,12 +264,12 @@ mod plane_float_impl {
         }
 
         /// # 2直線の交点
-        pub fn cross_point(l: Self, m: Self) -> Option<Point> {
+        pub fn cross_point(l: Self, m: Self) -> Option<Vector> {
             let d = Self::cross(l, m);
             if d.abs() < EPS {
                 None
             } else {
-                Some(l.p1 + (l.p2 - l.p1) * Point::cross(m.p2 - m.p1, m.p2 - l.p1) / d)
+                Some(l.p1 + (l.p2 - l.p1) * Vector::cross(m.p2 - m.p1, m.p2 - l.p1) / d)
             }
         }
 
@@ -296,7 +296,7 @@ mod plane_float_impl {
         }
 
         /// # 直線と点の距離
-        pub fn distance(self, p: Point) -> f64 {
+        pub fn distance(self, p: Vector) -> f64 {
             if (self.p1.x - self.p2.x).abs() < EPS {
                 return (p.x - self.p1.x).abs();
             }
@@ -312,15 +312,24 @@ mod plane_float_impl {
 
         /// # 射影
         /// 点から直線に引いた垂線の足
-        pub fn projection(self, p: Point) -> Point {
-            let t = Point::dot(p - self.p1, self.p1 - self.p2) / Point::norm(self.p1 - self.p2);
+        pub fn projection(self, p: Vector) -> Vector {
+            let t = Vector::dot(p - self.p1, self.p1 - self.p2) / Vector::norm(self.p1 - self.p2);
             self.p1 + (self.p1 - self.p2) * t
         }
 
         /// # 反射
         /// 直線を対称軸として点$P$と線対称にある位置の点
-        pub fn reflection(self, p: Point) -> Point {
+        pub fn reflection(self, p: Vector) -> Vector {
             p + (self.projection(p) - p) * 2.0
+        }
+
+        /// # 法線ベクトル
+        pub fn normal_vector(self) -> Self {
+            let a = self.p2 - self.p1;
+            Self {
+                p1: a.rot90(),
+                p2: Vector::default(),
+            }
         }
     }
 
@@ -333,9 +342,9 @@ mod plane_float_impl {
     #[derive(Copy, Clone)]
     pub struct Segment {
         /// 端点1
-        pub p1: Point,
+        pub p1: Vector,
         /// 端点2
-        pub p2: Point,
+        pub p2: Vector,
     }
 
     impl From<Line> for Segment {
@@ -348,12 +357,12 @@ mod plane_float_impl {
     }
 
     impl Segment {
-        pub fn new(p1: Point, p2: Point) -> Self {
+        pub fn new(p1: Vector, p2: Vector) -> Self {
             Self { p1, p2 }
         }
 
         /// # 線分同士の交点
-        pub fn cross_point(l: Self, m: Self) -> Option<Point> {
+        pub fn cross_point(l: Self, m: Self) -> Option<Vector> {
             if Self::is_intersect(l, m) {
                 Line::cross_point(l.into(), m.into())
             } else {
@@ -373,10 +382,10 @@ mod plane_float_impl {
         /// $\angle\mathrm{P_2P_1P}$が鈍角 $\Leftrightarrow$ $\mathrm{P_1P}$が距離
         /// $\angle\mathrm{P_1P_2P}$が鈍角 $\Leftrightarrow$ $\mathrm{P_2P}$が距離
         /// 上記以外は垂線の足が距離
-        pub fn distance_to_point(s: Self, p: Point) -> f64 {
-            if Point::dot(s.p2 - s.p1, p - s.p1) < 0.0 {
+        pub fn distance_to_point(s: Self, p: Vector) -> f64 {
+            if Vector::dot(s.p2 - s.p1, p - s.p1) < 0.0 {
                 (p - s.p1).abs()
-            } else if Point::dot(s.p1 - s.p2, p - s.p2) < 0.0 {
+            } else if Vector::dot(s.p1 - s.p2, p - s.p2) < 0.0 {
                 (p - s.p2).abs()
             } else {
                 Line::from(s).distance(p)
@@ -405,8 +414,8 @@ mod test {
 
     #[test]
     fn cross_point() {
-        let l1 = Line::new(Point::new(0.0, 0.0), Point::new(5.0, 5.0));
-        let l2 = Line::new(Point::new(0.0, 5.0), Point::new(5.0, 0.0));
+        let l1 = Line::new(Vector::new(0.0, 0.0), Vector::new(5.0, 5.0));
+        let l2 = Line::new(Vector::new(0.0, 5.0), Vector::new(5.0, 0.0));
 
         let cp = Line::cross_point(l1, l2).unwrap();
         assert_eq!(cp.x, 2.5);
@@ -415,14 +424,14 @@ mod test {
 
     #[test]
     fn cross_point_as_segment() {
-        let l1 = Segment::new(Point::new(0.0, 0.0), Point::new(5.0, 5.0));
-        let l2 = Segment::new(Point::new(0.0, 0.0), Point::new(2.49, 2.49));
-        let l3 = Segment::new(Point::new(2.51, 2.51), Point::new(5.0, 5.0));
-        let l4 = Segment::new(Point::new(5.0, 5.0), Point::new(2.51, 2.51));
-        let m = Segment::new(Point::new(0.0, 5.0), Point::new(5.0, 0.0));
+        let l1 = Segment::new(Vector::new(0.0, 0.0), Vector::new(5.0, 5.0));
+        let l2 = Segment::new(Vector::new(0.0, 0.0), Vector::new(2.49, 2.49));
+        let l3 = Segment::new(Vector::new(2.51, 2.51), Vector::new(5.0, 5.0));
+        let l4 = Segment::new(Vector::new(5.0, 5.0), Vector::new(2.51, 2.51));
+        let m = Segment::new(Vector::new(0.0, 5.0), Vector::new(5.0, 0.0));
 
-        assert_eq!(Some(Point::new(2.5, 2.5)), Segment::cross_point(l1, m));
-        assert_eq!(Some(Point::new(2.5, 2.5)), Segment::cross_point(m, l1));
+        assert_eq!(Some(Vector::new(2.5, 2.5)), Segment::cross_point(l1, m));
+        assert_eq!(Some(Vector::new(2.5, 2.5)), Segment::cross_point(m, l1));
         assert_eq!(None, Segment::cross_point(l2, m));
         assert_eq!(None, Segment::cross_point(m, l2));
         assert_eq!(None, Segment::cross_point(m, l3));
@@ -430,36 +439,36 @@ mod test {
         assert_eq!(None, Segment::cross_point(l4, m));
         assert_eq!(None, Segment::cross_point(m, l4));
 
-        let l1 = Segment::new(Point::new(0.0, 0.0), Point::new(5.0, 0.0));
-        let m1 = Segment::new(Point::new(2.5, 0.01), Point::new(2.5, 1.0));
-        let m2 = Segment::new(Point::new(2.5, 0.0), Point::new(2.5, 1.0));
-        let m3 = Segment::new(Point::new(2.5, -0.01), Point::new(2.5, 1.0));
+        let l1 = Segment::new(Vector::new(0.0, 0.0), Vector::new(5.0, 0.0));
+        let m1 = Segment::new(Vector::new(2.5, 0.01), Vector::new(2.5, 1.0));
+        let m2 = Segment::new(Vector::new(2.5, 0.0), Vector::new(2.5, 1.0));
+        let m3 = Segment::new(Vector::new(2.5, -0.01), Vector::new(2.5, 1.0));
         assert_eq!(None, Segment::cross_point(l1, m1));
-        assert_eq!(Some(Point::new(2.5, 0.0)), Segment::cross_point(l1, m2));
-        assert_eq!(Some(Point::new(2.5, 0.0)), Segment::cross_point(l1, m3));
+        assert_eq!(Some(Vector::new(2.5, 0.0)), Segment::cross_point(l1, m2));
+        assert_eq!(Some(Vector::new(2.5, 0.0)), Segment::cross_point(l1, m3));
     }
 
     #[test]
     fn distance() {
-        let l = Line::new(Point::new(0.0, 0.0), Point::new(5.0, 5.0));
-        let p = Point::new(5.0, 0.0);
+        let l = Line::new(Vector::new(0.0, 0.0), Vector::new(5.0, 5.0));
+        let p = Vector::new(5.0, 0.0);
 
         let d = l.distance(p);
         assert_eq!(d, (2.5f64 * 2.5 + 2.5 * 2.5).sqrt());
 
-        let l = Line::new(Point::new(0.0, 0.0), Point::new(5.0, 0.0));
-        let p = Point::new(3.0, 2.0);
+        let l = Line::new(Vector::new(0.0, 0.0), Vector::new(5.0, 0.0));
+        let p = Vector::new(3.0, 2.0);
         assert_eq!(l.distance(p), 2.0);
 
-        let l = Line::new(Point::new(0.0, 0.0), Point::new(0.0, 5.0));
-        let p = Point::new(3.0, 2.0);
+        let l = Line::new(Vector::new(0.0, 0.0), Vector::new(0.0, 5.0));
+        let p = Vector::new(3.0, 2.0);
         assert_eq!(l.distance(p), 3.0);
     }
 
     #[test]
     fn xy() {
-        let p1 = Point::new(0.0, 0.0);
-        let p2 = Point::new(5.0, 10.0);
+        let p1 = Vector::new(0.0, 0.0);
+        let p2 = Vector::new(5.0, 10.0);
         let line = Line::new(p1, p2);
         assert_eq!(line.x(2.0), Some(1.0));
         assert_eq!(line.y(1.0), Some(2.0));
@@ -467,34 +476,34 @@ mod test {
 
     #[test]
     fn declination() {
-        let p = Point::new(0.0, 0.0);
+        let p = Vector::new(0.0, 0.0);
         assert_eq!(None, p.declination());
 
-        let p = Point::new(1.0, 0.0);
+        let p = Vector::new(1.0, 0.0);
         assert_eq!(Some(std::f64::consts::PI * 0.0 / 4.0), p.declination());
 
-        let p = Point::new(1.0, 1.0);
+        let p = Vector::new(1.0, 1.0);
         assert_eq!(Some(std::f64::consts::PI * 1.0 / 4.0), p.declination());
 
-        let p = Point::new(0.0, 1.0);
+        let p = Vector::new(0.0, 1.0);
         assert_eq!(Some(std::f64::consts::PI * 2.0 / 4.0), p.declination());
 
-        let p = Point::new(-1.0, 1.0);
+        let p = Vector::new(-1.0, 1.0);
         assert_eq!(Some(std::f64::consts::PI * 3.0 / 4.0), p.declination());
 
-        let p = Point::new(-1.0, 0.0);
+        let p = Vector::new(-1.0, 0.0);
         assert_eq!(Some(std::f64::consts::PI * 4.0 / 4.0), p.declination());
 
-        let p = Point::new(-1.0, -1.0);
+        let p = Vector::new(-1.0, -1.0);
         assert_eq!(Some(std::f64::consts::PI * 5.0 / 4.0), p.declination());
 
-        let p = Point::new(0.0, -1.0);
+        let p = Vector::new(0.0, -1.0);
         assert_eq!(Some(std::f64::consts::PI * 6.0 / 4.0), p.declination());
 
-        let p = Point::new(1.0, -1.0);
+        let p = Vector::new(1.0, -1.0);
         assert_eq!(Some(std::f64::consts::PI * 7.0 / 4.0), p.declination());
 
-        let p = Point::new(1.0, -0.0);
+        let p = Vector::new(1.0, -0.0);
         assert_eq!(Some(std::f64::consts::PI * 0.0 / 4.0), p.declination());
     }
 }
