@@ -1,12 +1,13 @@
 //! # 円
-use plane_float::{Line, Vector, EPS};
+use float_value::{FValue, EPS};
+use plane_float::{Line, Vector};
 use prelude::*;
 
 #[snippet(name = "circle", doc_hidden)]
 pub use circle_impl::{Circle, CircleIntersection, Triangle};
 #[snippet(name = "circle", doc_hidden)]
 mod circle_impl {
-    use super::{Line, Vector, EPS};
+    use super::{FValue, Line, Vector, EPS};
     #[derive(Copy, Clone)]
     pub struct Triangle {
         p1: Vector,
@@ -23,7 +24,7 @@ mod circle_impl {
         fn is_valid(&self) -> bool {
             let a = self.p2 - self.p1;
             let b = self.p3 - self.p1;
-            (a.x * b.y - a.y * b.x).abs() >= EPS
+            (a.x.0 * b.y.0 - a.y.0 * b.x.0).abs() >= EPS
         }
 
         /// # 内接円
@@ -47,7 +48,7 @@ mod circle_impl {
         }
 
         /// # 内接円の半径
-        fn inner_circle_radius(&self) -> f64 {
+        fn inner_circle_radius(&self) -> FValue {
             let a = (self.p1 - self.p2).abs();
             let b = (self.p2 - self.p3).abs();
             let c = (self.p3 - self.p1).abs();
@@ -59,7 +60,7 @@ mod circle_impl {
         pub fn area(&self) -> f64 {
             let a = self.p2 - self.p1;
             let b = self.p3 - self.p1;
-            (a.x * b.y - a.y * b.x).abs() / 2.0
+            (a.x.0 * b.y.0 - a.y.0 * b.x.0).abs() / 2.0
         }
 
         /// # 外接円
@@ -87,41 +88,41 @@ mod circle_impl {
     #[derive(Copy, Clone)]
     pub struct Circle {
         pub center: Vector,
-        pub radius: f64,
+        pub radius: FValue,
     }
 
     impl Circle {
         pub fn new(center_x: f64, center_y: f64, radius: f64) -> Self {
             Self {
                 center: Vector::new(center_x, center_y),
-                radius,
+                radius: radius.into(),
             }
         }
 
         /// # 二つの円の距離
         /// 交わっているときは0、片方の円が内包するときは負の値を返す
-        pub fn distance(&self, another: &Self) -> f64 {
+        pub fn distance(&self, another: &Self) -> FValue {
             let d = self.center.distance(&another.center);
             if d > self.radius + another.radius {
                 d - (self.radius + another.radius)
-            } else if d < (self.radius - another.radius).abs() {
+            } else if d < self.radius - another.radius {
                 d - (self.radius - another.radius)
             } else {
-                0.0
+                0.0.into()
             }
         }
 
         /// # 二つの円の交点
         /// 順序は不定
         pub fn cross_points(&self, another: &Self) -> Vec<Vector> {
-            if self.distance(another) == 0.0 {
+            if self.distance(another) == 0.0.into() {
                 let p = another.center - self.center;
                 let rad2 = self.radius * self.radius;
                 let xxyy = p.x * p.x + p.y * p.y;
-                let a = (xxyy + rad2 - another.radius * another.radius) / 2.0;
-                let sq = (xxyy * rad2 - a * a).sqrt();
+                let a = (xxyy + rad2 - (another.radius * another.radius)).0 / 2.0;
+                let sq = (xxyy * rad2 - a * a).0.sqrt();
                 if sq < std::f64::EPSILON {
-                    vec![Vector::new(a * p.x / xxyy, a * p.y / xxyy)]
+                    vec![Vector::new(p.x * a / xxyy, a * p.y / xxyy)]
                 } else {
                     vec![
                         Vector::new((a * p.x + p.y * sq) / xxyy, (a * p.y - p.x * sq) / xxyy),
@@ -133,13 +134,22 @@ mod circle_impl {
             }
         }
 
+        /// # 円と直線の交点
+        /// - 円と直線が遠いとき: 交点なし
+        /// - 円と直線が接するとき: 円の中心から直線への射影
+        /// - 円と直線が交わるとき: 円の中心から直線への射影から、法線ベクトルの$ph$倍
+        ///   - $ph$は三平方の定理で求められる
         pub fn cross_point_to_line(&self, line: &Line) -> Vec<Vector> {
             let d = line.distance(self.center);
             let s = d - self.radius;
-            if s > EPS {
+            if s > FValue::eps() {
                 Vec::new()
-            } else if s < -EPS {
-                vec![]
+            } else if s < -FValue::eps() {
+                let proj = line.projection(self.center);
+                // 法線ベクトル
+                let e = line.normalize();
+                let ph = (self.radius * self.radius - d * d).sqrt();
+                vec![proj + e * ph, proj - e * ph]
             } else {
                 vec![line.projection(self.center)]
             }
@@ -165,9 +175,9 @@ mod circle_impl {
             let d = c1.center.distance(&c2.center);
             if d > c1.radius + c2.radius + EPS {
                 CircleIntersection::NotCross
-            } else if (d - (c1.radius + c2.radius)).abs() < EPS {
+            } else if (d - (c1.radius + c2.radius)).abs() < FValue::eps() {
                 CircleIntersection::Circumscribed
-            } else if (d - (c1.radius - c2.radius).abs()).abs() < EPS {
+            } else if (d - (c1.radius - c2.radius).abs()).abs() < FValue::eps() {
                 CircleIntersection::Inscribed
             } else if d < (c1.radius - c2.radius).abs() - EPS {
                 CircleIntersection::Included
@@ -185,24 +195,24 @@ fn circumcenter() {
     let p3 = Vector::new(2.0, 2.0 * 3.0f64.sqrt());
     let tr = Triangle::new(p1, p2, p3);
     let cc = tr.circumcenter().unwrap();
-    assert_eq!(cc.x, 2.0);
-    assert_eq!(cc.y, 2.0f64 / 3.0f64.sqrt());
+    assert_eq!(cc.x.0, 2.0);
+    assert_eq!(cc.y.0, 2.0f64 / 3.0f64.sqrt());
 }
 
 #[test]
 fn cicrle_distance() {
     let a = Circle::new(0.0, 0.0, 1.0);
     let b = Circle::new(1.0, 1.0, 1.0);
-    assert_eq!(0.0, a.distance(&b));
+    assert_eq!(0.0, a.distance(&b).0);
 
     let c = Circle::new(2.0, 0.0, 1.0);
-    assert_eq!(0.0, a.distance(&c));
+    assert_eq!(0.0, a.distance(&c).0);
 
     let d = Circle::new(3.0, 0.0, 1.0);
-    assert_eq!(1.0, a.distance(&d));
+    assert_eq!(1.0, a.distance(&d).0);
 
     let e = Circle::new(0.0, 0.0, 0.5);
-    assert_eq!(-0.5, a.distance(&e));
+    assert_eq!(-0.5, a.distance(&e).0);
 }
 
 #[test]

@@ -7,6 +7,7 @@ edition = "2018"
 prelude = { path = "../../prelude" }
 min_max_macro = { path = "../../util/min_max_macro" }
 plane_float = { path = "../plane_float" }
+float_value = { path = "../../element/float_value" }
 
 [dev-dependencies]
 io_util = { path = "../../util/io_util" }

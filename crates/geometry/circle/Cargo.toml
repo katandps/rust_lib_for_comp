@@ -7,6 +7,7 @@ edition = "2018"
 prelude = { path = "../../prelude" }
 min_max_macro = { path = "../../util/min_max_macro" }
 plane_float = { path = "../plane_float" }
+float_value = { path = "../../element/float_value" }
 
 [dev-dependencies]
 io_util = { path = "../../util/io_util" }
@@ -26,3 +27,7 @@ path = "./incircle_of_a_triangle.rs"
 [[example]]
 name = "circumscribed-circle-of-a-triangle"
 path = "./circumscribed_circle_of_a_triangle.rs"
+
+[[example]]
+name = "cross-points-of-a-circle-and-a-line"
+path = "cross_points_of_a_circle_and_a_line.rs"

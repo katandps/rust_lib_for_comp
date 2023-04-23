@@ -1,23 +1,23 @@
 //! # 二次元平面(浮動小数点数)
+use float_value::FValue;
 use min_max_macro::min;
 use prelude::*;
 
 #[snippet(name = "plane-float", doc_hidden)]
-pub use plane_float_impl::{ClockwiseDirection, Line, Segment, Vector, EPS};
+pub use plane_float_impl::{ClockwiseDirection, Line, Segment, Vector};
 #[snippet(name = "plane-float", doc_hidden)]
 mod plane_float_impl {
     use super::{
-        min, Add, AddAssign, Debug, Display, Div, DivAssign, Formatter, Mul, MulAssign, Neg, Sub,
-        SubAssign,
+        min, Add, AddAssign, Debug, Display, Div, DivAssign, FValue, Formatter, Mul, MulAssign,
+        Neg, Ordering, Sub, SubAssign,
     };
 
-    pub const EPS: f64 = std::f64::EPSILON;
-
-    /// 点ベクトル
-    #[derive(Copy, Clone, Default, PartialOrd)]
+    /// # ベクトル
+    /// 始点を$(0, 0)$、終点を$(x, y)$とするベクトル
+    #[derive(Copy, Clone, Default, Eq, PartialEq, PartialOrd, Ord)]
     pub struct Vector {
-        pub x: f64,
-        pub y: f64,
+        pub x: FValue,
+        pub y: FValue,
     }
 
     /// # Tuple(x, y)から生成
@@ -27,40 +27,34 @@ mod plane_float_impl {
         }
     }
 
-    impl PartialEq for Vector {
-        fn eq(&self, other: &Self) -> bool {
-            let p = *self - *other;
-            p.x.abs() < EPS && p.y.abs() < EPS
-        }
-    }
-
     impl Vector {
-        pub fn new(x: f64, y: f64) -> Vector {
-            Vector { x, y }
+        pub fn new<X: Into<FValue>, Y: Into<FValue>>(x: X, y: Y) -> Vector {
+            Vector {
+                x: x.into(),
+                y: y.into(),
+            }
         }
 
         /// # 偏角を求める($0.0 <= rad <= 2\pi$)
         /// 原点だった場合はNone
         pub fn declination(&self) -> Option<f64> {
             use std::f64::consts::PI;
-            if self.x == 0.0 {
-                if self.y == 0.0 {
-                    None
-                } else if self.y > 0.0 {
-                    Some(PI / 2.0)
-                } else {
-                    Some(PI * 3.0 / 2.0)
+            if self.x == 0.0.into() {
+                match self.y.cmp(&0.0.into()) {
+                    Ordering::Equal => None,
+                    Ordering::Greater => Some(PI / 2.0),
+                    Ordering::Less => Some(PI * 3.0 / 2.0),
                 }
             } else {
-                Some((self.y).atan2(self.x).rem_euclid(PI * 2.0))
+                Some((self.y.0).atan2(self.x.0).rem_euclid(PI * 2.0))
             }
         }
 
         /// 原点を軸にradian回転させる
         pub fn rot(self, radian: f64) -> Vector {
             Vector::new(
-                radian.cos() * self.x - radian.sin() * self.y,
-                radian.sin() * self.x + radian.cos() * self.y,
+                radian.cos() * self.x.0 - radian.sin() * self.y.0,
+                radian.sin() * self.x.0 + radian.cos() * self.y.0,
             )
         }
 
@@ -69,39 +63,44 @@ mod plane_float_impl {
             Vector::new(self.y, self.x)
         }
 
-        /// ## 原点を軸にpi/2回転させる
+        /// ## 始点を軸にpi/2回転させる
         pub fn rot90(self) -> Vector {
-            Vector::new(-self.y, self.x)
+            Vector::new(-self.y.0, self.x)
         }
 
         /// ## x軸に対して反転
         pub fn conj(self) -> Vector {
-            Vector::new(self.x, -self.y)
+            Vector::new(self.x, -self.y.0)
         }
 
-        /// ## 原点からのベクトルとして見た時の外積
-        pub fn cross(p: Self, q: Self) -> f64 {
+        /// ## 外積
+        pub fn cross(p: Self, q: Self) -> FValue {
             p.x * q.y - p.y * q.x
         }
 
-        /// ## 原点からのベクトルとして見た時の内積
-        pub fn dot(p: Self, q: Self) -> f64 {
+        /// ## 内積
+        pub fn dot(p: Self, q: Self) -> FValue {
             p.x * q.x + p.y * q.y
         }
 
-        /// ## 原点からのベクトルとして見た時のノルム
-        pub fn norm(self) -> f64 {
+        /// ## ノルム
+        pub fn norm(self) -> FValue {
             Self::dot(self, self)
         }
 
-        /// ## 原点からのベクトルとして見た時の大きさ
-        pub fn abs(self) -> f64 {
+        /// ## ベクトルの大きさ
+        pub fn abs(self) -> FValue {
             self.norm().sqrt()
         }
 
         /// # 2点間の距離
-        pub fn distance(&self, another: &Self) -> f64 {
+        pub fn distance(&self, another: &Self) -> FValue {
             (*self - *another).abs()
+        }
+
+        /// # 正規化
+        pub fn normalize(self) -> Self {
+            self / self.abs()
         }
     }
 
@@ -125,11 +124,11 @@ mod plane_float_impl {
         pub fn direction(a: Vector, b: Vector, c: Vector) -> Self {
             let (b, c) = (b - a, c - a);
             let cross = Vector::cross(b, c);
-            if cross > EPS {
+            if cross > FValue::eps() {
                 Self::CounterClockwise
-            } else if cross < -EPS {
+            } else if cross < -FValue::eps() {
                 Self::Clockwise
-            } else if Vector::dot(b, c) < 0.0 {
+            } else if Vector::dot(b, c) < 0.0.into() {
                 Self::OneLineCAB
             } else if b.norm() < c.norm() {
                 Self::OneLineABC
@@ -155,14 +154,14 @@ mod plane_float_impl {
     impl Neg for Vector {
         type Output = Vector;
         fn neg(self) -> Self::Output {
-            Vector::new(-self.x, -self.y)
+            Vector::new(-self.x.0, -self.y.0)
         }
     }
 
     impl Add<Vector> for Vector {
         type Output = Vector;
         fn add(self, rhs: Vector) -> Vector {
-            Vector::new(self.x + rhs.x, self.y + rhs.y)
+            Vector::new(self.x.0 + rhs.x.0, self.y.0 + rhs.y.0)
         }
     }
 
@@ -175,7 +174,7 @@ mod plane_float_impl {
     impl Sub<Vector> for Vector {
         type Output = Vector;
         fn sub(self, rhs: Vector) -> Vector {
-            Vector::new(self.x - rhs.x, self.y - rhs.y)
+            Vector::new(self.x.0 - rhs.x.0, self.y.0 - rhs.y.0)
         }
     }
 
@@ -185,23 +184,25 @@ mod plane_float_impl {
         }
     }
 
-    impl Mul<f64> for Vector {
+    impl<T: Into<f64>> Mul<T> for Vector {
         type Output = Vector;
-        fn mul(self, rhs: f64) -> Vector {
-            Vector::new(self.x * rhs, self.y * rhs)
+        fn mul(self, rhs: T) -> Vector {
+            let v = rhs.into();
+            Vector::new(self.x.0 * v, self.y.0 * v)
         }
     }
 
-    impl MulAssign<f64> for Vector {
-        fn mul_assign(&mut self, other: f64) {
-            *self = *self * other;
+    impl<T: Into<f64>> MulAssign<T> for Vector {
+        fn mul_assign(&mut self, other: T) {
+            *self = *self * other.into();
         }
     }
 
-    impl Div<f64> for Vector {
+    impl<T: Into<f64>> Div<T> for Vector {
         type Output = Vector;
-        fn div(self, rhs: f64) -> Vector {
-            Vector::new(self.x / rhs, self.y / rhs)
+        fn div(self, rhs: T) -> Vector {
+            let v = rhs.into();
+            Vector::new(self.x / v, self.y / v)
         }
     }
 
@@ -243,30 +244,35 @@ mod plane_float_impl {
             Line { p1: p, p2: q }
         }
 
+        /// # 方向単位ベクトル
+        pub fn normalize(&self) -> Vector {
+            (self.p1 - self.p2).normalize()
+        }
+
         /// # 2直線の内積
-        pub fn dot(l: Self, m: Self) -> f64 {
+        pub fn dot(l: Self, m: Self) -> FValue {
             Vector::dot(m.p2 - m.p1, l.p2 - l.p1)
         }
 
         /// # 2直線の外積
-        pub fn cross(l: Self, m: Self) -> f64 {
+        pub fn cross(l: Self, m: Self) -> FValue {
             Vector::cross(m.p2 - m.p1, l.p2 - l.p1)
         }
 
         /// # 2直線の直交判定(内積が0)
         pub fn is_orthogonal(l: Self, r: Self) -> bool {
-            Self::dot(l, r).abs() < EPS
+            Self::dot(l, r).abs() < FValue::eps()
         }
 
         /// # 2直線の平行判定(外積が0)
         pub fn is_parallel(l: Self, r: Self) -> bool {
-            Self::cross(l, r).abs() < EPS
+            Self::cross(l, r).abs() < FValue::eps()
         }
 
         /// # 2直線の交点
         pub fn cross_point(l: Self, m: Self) -> Option<Vector> {
             let d = Self::cross(l, m);
-            if d.abs() < EPS {
+            if d.abs() < FValue::eps() {
                 None
             } else {
                 Some(l.p1 + (l.p2 - l.p1) * Vector::cross(m.p2 - m.p1, m.p2 - l.p1) / d)
@@ -274,8 +280,8 @@ mod plane_float_impl {
         }
 
         /// # xを与えたときのyの値を求める
-        pub fn y(self, x: f64) -> Option<f64> {
-            if (self.p1.x - self.p2.x).abs() < EPS {
+        pub fn y(self, x: f64) -> Option<FValue> {
+            if (self.p1.x - self.p2.x).abs() < FValue::eps() {
                 None
             } else {
                 Some(
@@ -285,8 +291,8 @@ mod plane_float_impl {
         }
 
         /// # yを与えたときのxの値を求める
-        pub fn x(self, y: f64) -> Option<f64> {
-            if (self.p1.y - self.p2.y).abs() < EPS {
+        pub fn x(self, y: f64) -> Option<FValue> {
+            if (self.p1.y - self.p2.y).abs() < FValue::eps() {
                 None
             } else {
                 Some(
@@ -296,17 +302,17 @@ mod plane_float_impl {
         }
 
         /// # 直線と点の距離
-        pub fn distance(self, p: Vector) -> f64 {
-            if (self.p1.x - self.p2.x).abs() < EPS {
+        pub fn distance(self, p: Vector) -> FValue {
+            if (self.p1.x - self.p2.x).abs() < FValue::eps() {
                 return (p.x - self.p1.x).abs();
             }
-            if (self.p1.y - self.p2.y).abs() < EPS {
+            if (self.p1.y - self.p2.y).abs() < FValue::eps() {
                 return (p.y - self.p1.y).abs();
             }
             let l = Line::new(p, p + (self.p2 - self.p1).rot90());
             match Self::cross_point(self, l) {
                 Some(cp) => (p - cp).abs(),
-                None => 0.0,
+                None => 0.0.into(),
             }
         }
 
@@ -324,12 +330,10 @@ mod plane_float_impl {
         }
 
         /// # 法線ベクトル
-        pub fn normal_vector(self) -> Self {
+        /// 法線ベクトルを求めたのち、単位ベクトルに変換して返す
+        pub fn normal_vector(self) -> Vector {
             let a = self.p2 - self.p1;
-            Self {
-                p1: a.rot90(),
-                p2: Vector::default(),
-            }
+            a.rot90().normalize()
         }
     }
 
@@ -382,10 +386,10 @@ mod plane_float_impl {
         /// $\angle\mathrm{P_2P_1P}$が鈍角 $\Leftrightarrow$ $\mathrm{P_1P}$が距離
         /// $\angle\mathrm{P_1P_2P}$が鈍角 $\Leftrightarrow$ $\mathrm{P_2P}$が距離
         /// 上記以外は垂線の足が距離
-        pub fn distance_to_point(s: Self, p: Vector) -> f64 {
-            if Vector::dot(s.p2 - s.p1, p - s.p1) < 0.0 {
+        pub fn distance_to_point(s: Self, p: Vector) -> FValue {
+            if Vector::dot(s.p2 - s.p1, p - s.p1) < 0.0.into() {
                 (p - s.p1).abs()
-            } else if Vector::dot(s.p1 - s.p2, p - s.p2) < 0.0 {
+            } else if Vector::dot(s.p1 - s.p2, p - s.p2) < 0.0.into() {
                 (p - s.p2).abs()
             } else {
                 Line::from(s).distance(p)
@@ -393,9 +397,9 @@ mod plane_float_impl {
         }
 
         /// # 線分同士の距離
-        pub fn distance(l: Self, m: Self) -> f64 {
+        pub fn distance(l: Self, m: Self) -> FValue {
             if Self::is_intersect(l, m) {
-                0.0
+                0.0.into()
             } else {
                 min!(
                     Self::distance_to_point(l, m.p1),
@@ -418,8 +422,8 @@ mod test {
         let l2 = Line::new(Vector::new(0.0, 5.0), Vector::new(5.0, 0.0));
 
         let cp = Line::cross_point(l1, l2).unwrap();
-        assert_eq!(cp.x, 2.5);
-        assert_eq!(cp.y, 2.5);
+        assert_eq!(cp.x, 2.5.into());
+        assert_eq!(cp.y, 2.5.into());
     }
 
     #[test]
@@ -454,15 +458,15 @@ mod test {
         let p = Vector::new(5.0, 0.0);
 
         let d = l.distance(p);
-        assert_eq!(d, (2.5f64 * 2.5 + 2.5 * 2.5).sqrt());
+        assert_eq!(d, (2.5f64 * 2.5 + 2.5 * 2.5).sqrt().into());
 
         let l = Line::new(Vector::new(0.0, 0.0), Vector::new(5.0, 0.0));
         let p = Vector::new(3.0, 2.0);
-        assert_eq!(l.distance(p), 2.0);
+        assert_eq!(l.distance(p), 2.0.into());
 
         let l = Line::new(Vector::new(0.0, 0.0), Vector::new(0.0, 5.0));
         let p = Vector::new(3.0, 2.0);
-        assert_eq!(l.distance(p), 3.0);
+        assert_eq!(l.distance(p), 3.0.into());
     }
 
     #[test]
@@ -470,8 +474,8 @@ mod test {
         let p1 = Vector::new(0.0, 0.0);
         let p2 = Vector::new(5.0, 10.0);
         let line = Line::new(p1, p2);
-        assert_eq!(line.x(2.0), Some(1.0));
-        assert_eq!(line.y(1.0), Some(2.0));
+        assert_eq!(line.x(2.0), Some(1.0.into()));
+        assert_eq!(line.y(1.0), Some(2.0.into()));
     }
 
     #[test]

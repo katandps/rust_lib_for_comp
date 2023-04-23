@@ -1,13 +1,14 @@
 //! # 凸包
+use float_value::FValue;
 use min_max_macro::{chmax, max};
-use plane_float::{ClockwiseDirection, Line, Segment, Vector, EPS};
+use plane_float::{ClockwiseDirection, Line, Segment, Vector};
 use prelude::*;
 
 #[snippet(name = "convex-hull", doc_hidden)]
 pub use convex_hull_impl::{Including, Polygon};
 #[snippet(name = "convex-hull", doc_hidden)]
 mod convex_hull_impl {
-    use super::{chmax, max, ClockwiseDirection, Index, IndexMut, Line, Segment, Vector, EPS};
+    use super::{chmax, max, ClockwiseDirection, FValue, Index, IndexMut, Line, Segment, Vector};
 
     /// # 多角形
     #[derive(Clone, Debug)]
@@ -58,10 +59,10 @@ mod convex_hull_impl {
         ///
         /// ## 計算量
         /// $O(N)$
-        pub fn area(&self) -> f64 {
-            let mut res = 0.0;
+        pub fn area(&self) -> FValue {
+            let mut res: FValue = 0.0.into();
             for i in 0..self.nodes.len() {
-                res += Vector::cross(self[i], self[i + 1]);
+                res = res + Vector::cross(self[i], self[i + 1]);
             }
             res * 0.5
         }
@@ -71,7 +72,7 @@ mod convex_hull_impl {
         ///
         /// ## 計算量
         /// $O(N\log N)$
-        pub fn diameter(&self) -> f64 {
+        pub fn diameter(&self) -> FValue {
             assert!(self.is_convex());
             let n = self.nodes.len();
             let (mut i, mut j) = (0, 0);
@@ -83,11 +84,11 @@ mod convex_hull_impl {
                     j = k
                 }
             }
-            let mut res = 0.0;
+            let mut res = 0.0.into();
             let (si, sj) = (i, j);
             while i != sj || j != si {
                 chmax!(res, Vector::distance(&self[i], &self[j]));
-                if Vector::cross(self[i + 1] - self[i], self[j + 1] - self[j]) < 0.0 {
+                if Vector::cross(self[i + 1] - self[i], self[j + 1] - self[j]) < 0.0.into() {
                     i = (i + 1) % n
                 } else {
                     j = (j + 1) % n
@@ -123,12 +124,12 @@ mod convex_hull_impl {
             let mut sum = 0.0f64;
             for i in 0..self.nodes.len() {
                 let (p1, p2) = (self.nodes[i], self.nodes[(i + 1) % self.nodes.len()]);
-                if Segment::distance_to_point(Segment::new(p1, p2), p) < EPS {
+                if Segment::distance_to_point(Segment::new(p1, p2), p) < FValue::eps() {
                     return Including::OnLine;
                 }
                 let dot = Vector::dot(p1 - p, p2 - p);
                 let cross = Vector::cross(p1 - p, p2 - p);
-                sum += cross.atan2(dot)
+                sum += cross.0.atan2(dot.0)
             }
             // 角度和は$2\pi$の整数倍の値になる 誤差を考慮して$\pi$で判定する
             if sum.abs() >= std::f64::consts::PI {
@@ -156,7 +157,9 @@ mod convex_hull_impl {
                         nodes[nodes.len() - 1] - nodes[nodes.len() - 2],
                         p - nodes[nodes.len() - 2],
                     );
-                    if (include_on_line && c < -EPS) || (!include_on_line && c < EPS) {
+                    if (include_on_line && c < -FValue::eps())
+                        || (!include_on_line && c < FValue::eps())
+                    {
                         nodes.pop();
                     } else {
                         break;
@@ -172,7 +175,9 @@ mod convex_hull_impl {
                         nodes[nodes.len() - 1] - nodes[nodes.len() - 2],
                         p - nodes[nodes.len() - 1],
                     );
-                    if (include_on_line && c < -EPS) || (!include_on_line && c < EPS) {
+                    if (include_on_line && c < -FValue::eps())
+                        || (!include_on_line && c < FValue::eps())
+                    {
                         nodes.pop();
                     } else {
                         break;
@@ -225,13 +230,13 @@ mod convex_hull_impl {
             for i in 0..self.nodes.len() {
                 let c1 = Vector::cross(l.p2 - l.p1, self[i] - l.p1);
                 let c2 = Vector::cross(l.p2 - l.p1, self[i + 1] - l.p1);
-                if c1 * c2 < EPS {
+                if c1 * c2 < FValue::eps() {
                     let edge = Line::new(self[i], self[i + 1]);
                     if let Some(cp) = Line::cross_point(edge, l) {
                         q.push(cp)
                     }
                 }
-                if c2 > -EPS {
+                if c2 > -FValue::eps() {
                     q.push(self[i + 1])
                 }
             }
