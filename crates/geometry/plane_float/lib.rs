@@ -6,6 +6,7 @@ use prelude::*;
 #[snippet(name = "plane-float", doc_hidden)]
 pub use plane_float_impl::{ClockwiseDirection, Line, Segment, Vector};
 #[snippet(name = "plane-float", doc_hidden)]
+#[rustfmt::skip]
 mod plane_float_impl {
     use super::{
         min, Add, AddAssign, Debug, Display, Div, DivAssign, FValue, Formatter, Mul, MulAssign,

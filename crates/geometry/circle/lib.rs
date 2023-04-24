@@ -6,6 +6,7 @@ use prelude::*;
 #[snippet(name = "circle", doc_hidden)]
 pub use circle_impl::{Circle, CircleIntersection, Triangle};
 #[snippet(name = "circle", doc_hidden)]
+#[rustfmt::skip]
 mod circle_impl {
     use super::{FValue, Line, Vector, EPS};
     #[derive(Copy, Clone)]

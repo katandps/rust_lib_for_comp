@@ -2,7 +2,10 @@
 //! EPSの設定を自分でやる
 use prelude::*;
 
+#[snippet(name = "float_value", doc_hidden)]
 pub use float_value_impl::{FValue, EPS};
+#[snippet(name = "float_value", doc_hidden)]
+#[rustfmt::skip]
 mod float_value_impl {
     use super::{Add, Debug, Display, Div, Formatter, Mul, Neg, Ordering, Sub};
     pub const EPS: f64 = std::f64::EPSILON;
