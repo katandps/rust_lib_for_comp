@@ -6,7 +6,7 @@ use prelude::*;
 #[snippet(name = "circle", doc_hidden)]
 pub use circle_impl::{Circle, CircleIntersection, Triangle};
 #[snippet(name = "circle", doc_hidden)]
-#[rustfmt::skip]
+#[rustfmt::skip] 
 mod circle_impl {
     use super::{FValue, Line, Vector, EPS};
     #[derive(Copy, Clone)]
@@ -201,7 +201,7 @@ fn circumcenter() {
 }
 
 #[test]
-fn cicrle_distance() {
+fn circle_distance() {
     let a = Circle::new(0.0, 0.0, 1.0);
     let b = Circle::new(1.0, 1.0, 1.0);
     assert_eq!(0.0, a.distance(&b).0);
