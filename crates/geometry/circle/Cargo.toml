@@ -31,3 +31,7 @@ path = "./circumscribed_circle_of_a_triangle.rs"
 [[example]]
 name = "cross-points-of-a-circle-and-a-line"
 path = "cross_points_of_a_circle_and_a_line.rs"
+
+[[example]]
+name = "cross-points-of-circles"
+path = "cross_points_of_circles.rs"

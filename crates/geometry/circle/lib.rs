@@ -6,7 +6,7 @@ use prelude::*;
 #[snippet(name = "circle", doc_hidden)]
 pub use circle_impl::{Circle, CircleIntersection, Triangle};
 #[snippet(name = "circle", doc_hidden)]
-#[rustfmt::skip] 
+#[rustfmt::skip]
 mod circle_impl {
     use super::{FValue, Line, Vector, EPS};
     #[derive(Copy, Clone)]
@@ -155,9 +155,51 @@ mod circle_impl {
                 vec![line.projection(self.center)]
             }
         }
+
+        pub fn cross_point_to_circle(&self, circle: &Circle) -> Vec<Vector> {
+            use CircleIntersection::*;
+            match CircleIntersection::intersect(self, circle) {
+                NotCross => Vec::new(),
+                Circumscribed => {
+                    let t = self.radius / (self.radius + circle.radius);
+                    vec![self.center + (circle.center - self.center) * t]
+                }
+                Intersect => {
+                    // 求める2点は ax + by + c = 0 を通る
+                    let (a, b, c) = (
+                        (circle.center.x - self.center.x) * 2.0,
+                        (circle.center.y - self.center.y) * 2.0,
+                        (self.center.x + circle.center.x) * (self.center.x - circle.center.x)
+                            + (self.center.y + circle.center.y) * (self.center.y - circle.center.y)
+                            + (circle.radius + self.radius) * (circle.radius - self.radius),
+                    );
+                    let l = if a == 0.0.into() {
+                        Line::new(Vector::new(0.0, -c / b), Vector::new(1.0, -c / b))
+                    } else if b == 0.0.into() {
+                        Line::new(Vector::new(-c / a, 0.0), Vector::new(-c / a, 1.0))
+                    } else if c == 0.0.into() {
+                        Line::new(Vector::new(0.0, 0.0), Vector::new(1.0, -a / b))
+                    } else {
+                        Line::new(Vector::new(0.0, -c / b), Vector::new(-c / a, 0.0))
+                    };
+                    self.cross_point_to_line(&l)
+                }
+                Inscribed => vec![if circle.radius < self.radius - EPS {
+                    self.center
+                        + (circle.center - self.center)
+                            * (self.radius / self.center.distance(&circle.center))
+                } else {
+                    self.center
+                        + (circle.center - self.center)
+                            * (circle.radius / self.center.distance(&circle.center))
+                }],
+                Included => Vec::new(),
+            }
+        }
     }
 
     /// # 二円の位置関係
+    #[derive(Clone, Debug)]
     pub enum CircleIntersection {
         // 遠い(共有点なし)
         NotCross,

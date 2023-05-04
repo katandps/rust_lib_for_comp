@@ -225,7 +225,7 @@ mod plane_float_impl {
         }
     }
 
-    #[derive(Copy, Clone)]
+    #[derive(Copy, Clone, Debug)]
     pub struct Line {
         pub p1: Vector,
         pub p2: Vector,
