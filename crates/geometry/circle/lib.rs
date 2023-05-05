@@ -156,6 +156,7 @@ mod circle_impl {
             }
         }
 
+        /// # 2円の交点
         pub fn cross_point_to_circle(&self, circle: &Circle) -> Vec<Vector> {
             use CircleIntersection::*;
             match CircleIntersection::intersect(self, circle) {
@@ -195,6 +196,14 @@ mod circle_impl {
                 }],
                 Included => Vec::new(),
             }
+        }
+
+        /// # 点$P$を通る円への接線における接点(2つorなし)
+        pub fn tangent(&self, p: Vector) -> Vec<Vector> {
+            self.cross_point_to_circle(&Self {
+                center: p,
+                radius: ((self.center - p).norm() - self.radius * self.radius).sqrt(),
+            })
         }
     }
 
