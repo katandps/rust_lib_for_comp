@@ -19,7 +19,7 @@ master に push するとテスト/静的解析/Doc 生成が走る
 
 #### Install
 
-`cargo-snippet` `fd` `oj-verify` を使用しています。
+`cargo-snippet` `oj-verify` を使用しています。
 
 ```sh
 rustup component add rustfmt
@@ -27,13 +27,9 @@ cargo install cargo-snippet --features="binaries"
 ```
 
 ```sh
-cargo install fd-find
-```
-
-```sh
 sudo apt update
 sudo apt install python3-pip
-pip3 installonline-judge-verify-helper
+pip3 install online-judge-verify-helper
 ```
 
 #### Export
