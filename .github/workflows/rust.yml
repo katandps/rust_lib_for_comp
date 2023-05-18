@@ -39,8 +39,8 @@ jobs:
         with:
           shared-key: "lib"
 
-      - name: Restore mtime
-        run: python ./git-restore-mtime.py # for inclimental build:checkoutしたファイルのタイムスタンプを書き換える
+      - name: Restore timestamps
+        uses: chetan/git-restore-mtime-action@v2
 
       - name: Run tests
         env:
