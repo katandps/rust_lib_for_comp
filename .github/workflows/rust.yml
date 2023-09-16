@@ -33,7 +33,8 @@ jobs:
           rustup install stable
           rustup default stable
           rustup set profile minimal
-          rustup component add clippy
+          rustup component add clippy llvm-tools-preview
+          cargo instlal cargo-llvm-cov
   
       - uses: Swatinem/rust-cache@v2
         with:
@@ -42,16 +43,21 @@ jobs:
       - name: Restore timestamps
         uses: chetan/git-restore-mtime-action@v2
 
-      - name: Run tests
+      - name: Lint
+        run: cargo clippy --workspace -- -D warnings
+
+      - name: Compile
+        run: cargo +1.70.0 check     
+
+      - name: Test with coverage
+        run: cargo llvm-cov --html
+
+      - name: Verify problems
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           YUKICODER_TOKEN: ${{ secrets.YUKICODER_TOKEN }}
           GH_PAT: ${{ secrets.GH_PAT }}
-        run: |
-          cargo +1.70.0 check
-          cargo clippy --workspace -- -D warnings
-          cargo test --workspace
-          oj-verify run -j 32
+        run: oj-verify run -j 32
 
       - name: Generate docs
         run: |
@@ -61,10 +67,11 @@ jobs:
           bundle install
           bundle exec jekyll build
           cd ../../
-          mkdir public
+          mkdir -p public/coverage
           cp -frP .verify-helper/markdown/_site/* public/
           cargo doc --workspace --no-deps
           cp -rP target/doc/* public/
+          cp -rP target/llvm-cov/html/* public/
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           YUKICODER_TOKEN: ${{ secrets.YUKICODER_TOKEN }}
