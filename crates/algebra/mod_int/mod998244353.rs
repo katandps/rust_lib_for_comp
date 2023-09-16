@@ -13,7 +13,7 @@ pub mod mod_998_244_353_impl {
 
     pub type Mi = ModInt<Mod998_244_353>;
 
-    #[derive(Copy, Clone, Eq, PartialEq, Debug, Default)]
+    #[derive(Copy, Clone, Eq, PartialEq, Debug, Default, Hash)]
     pub struct Mod998_244_353;
     impl Mod for Mod998_244_353 {
         const MOD: u32 = 998_244_353;
@@ -40,9 +40,13 @@ fn const_test() {
 }
 
 #[test]
-fn a() {
-    let exp = (Mi::zero() - 1) / Mi::new(2).pow(23);
-    dbg!(exp);
-    dbg!(Mi::new(3).pow(exp.into()));
-    dbg!(Mi::new(998244352).pow(2));
+fn primitive_root() {
+    use std::collections::HashSet;
+    let mut set = HashSet::new();
+    for i in 0..Mi::DIVIDE_LIMIT {
+        let n = Mi::primitive_root().pow((1 << i).into());
+        set.insert(n);
+        assert_eq!(n.pow(1 << (23 - i)), Mi::one());
+    }
+    assert_eq!(set.len(), 23);
 }

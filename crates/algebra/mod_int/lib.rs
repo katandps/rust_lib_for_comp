@@ -30,7 +30,7 @@ pub trait Mod: Copy + Clone + Debug {
 }
 
 #[snippet(name = "mod-int", doc_hidden)]
-#[derive(Copy, Clone, Eq, PartialEq, Default)]
+#[derive(Copy, Clone, Eq, PartialEq, Default, Hash)]
 pub struct ModInt<M: Mod>(u32, PhantomData<fn() -> M>);
 
 #[snippet(name = "mod-int", doc_hidden)]
