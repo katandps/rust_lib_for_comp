@@ -34,7 +34,7 @@ jobs:
           rustup default stable
           rustup set profile minimal
           rustup component add clippy llvm-tools-preview
-          cargo instlal cargo-llvm-cov
+          cargo install cargo-llvm-cov
   
       - uses: Swatinem/rust-cache@v2
         with:
