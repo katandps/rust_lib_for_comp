@@ -3,7 +3,7 @@
 //! $2^{32}$を$R$とするモンゴメリ乗算を使用して実装
 use algebra::*;
 use fxhasher::HashMap;
-pub use mod1000000007::{mi, Mi};
+pub use mod1000000007::Mi;
 use prelude::*;
 
 pub mod mod1000000007;
