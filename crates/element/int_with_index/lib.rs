@@ -12,20 +12,19 @@ pub struct IntWithIndex<I: Integral> {
 #[snippet(name = "int-with-index", doc_hidden)]
 impl<I: Integral> PartialOrd for IntWithIndex<I> {
     fn partial_cmp(&self, rhs: &Self) -> Option<Ordering> {
-        use Ordering::*;
-        let r = match self.value.cmp(&rhs.value) {
-            Greater => Greater,
-            Less => Less,
-            Equal => self.index.cmp(&rhs.index),
-        };
-        Some(r)
+        Some(self.cmp(rhs))
     }
 }
 
 #[snippet(name = "int-with-index", doc_hidden)]
 impl<I: Integral> Ord for IntWithIndex<I> {
     fn cmp(&self, rhs: &Self) -> Ordering {
-        self.partial_cmp(rhs).unwrap()
+        use Ordering::*;
+        match self.value.cmp(&rhs.value) {
+            Greater => Greater,
+            Less => Less,
+            Equal => self.index.cmp(&rhs.index),
+        }
     }
 }
 

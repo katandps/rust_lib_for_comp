@@ -35,7 +35,7 @@ mod float_value_impl {
     impl Eq for FValue {}
     impl PartialOrd for FValue {
         fn partial_cmp(&self, other: &Self) -> Option<Ordering> {
-            self.0.partial_cmp(&other.0)
+            Some(self.cmp(other))
         }
     }
     impl Ord for FValue {

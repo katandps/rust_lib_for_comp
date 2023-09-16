@@ -45,7 +45,7 @@ where
     }
 
     // returns (各頂点までの最短距離, 頂点に向かう辺)
-    fn dijkstra(&self, s: usize, potential: &mut [Co]) -> (Vec<Option<Co>>, Vec<Option<usize>>) {
+    fn dijkstra(&self, s: usize, potential: &[Co]) -> (Vec<Option<Co>>, Vec<Option<usize>>) {
         let mut min_cost = vec![None; self.graph.size()];
         let mut prev: Vec<Option<usize>> = vec![None; self.graph.size()];
         let mut pq: BinaryHeap<Reverse<(Co, usize)>> = BinaryHeap::new();
@@ -96,7 +96,7 @@ where
         let mut ret = vec![(Fl::zero(), Co::zero())];
         let mut potential = vec![Co::zero(); self.graph.size()];
         while f > Fl::zero() {
-            let (min_cost, prev_edge) = self.dijkstra(s, &mut potential);
+            let (min_cost, prev_edge) = self.dijkstra(s, &potential);
             if min_cost[t].is_none() {
                 break;
             }

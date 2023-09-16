@@ -13,11 +13,7 @@ pub struct Trie<K: Hash + Eq, T> {
 impl<K: Copy + Hash + Eq + Default, T: Default> Trie<K, T> {
     pub fn insert(&mut self, key: &[K], value: T) {
         match key.first() {
-            Some(c) => self
-                .childs
-                .entry(*c)
-                .or_insert_with(Trie::default)
-                .insert(&key[1..], value),
+            Some(c) => self.childs.entry(*c).or_default().insert(&key[1..], value),
             None => self.value = Some(value),
         }
     }
