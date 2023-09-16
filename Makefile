@@ -10,7 +10,7 @@ lint:
 	cargo clippy --workspace -- -D warnings
 
 check:
-	cargo +1.42.0 check --workspace
+	cargo +1.70.0 check --workspace
 
 test:
 	cargo test --workspace
