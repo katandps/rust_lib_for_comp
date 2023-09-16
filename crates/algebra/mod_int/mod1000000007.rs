@@ -3,14 +3,11 @@ use super::{Mod, ModInt};
 use prelude::*;
 
 #[snippet(name = "mod1000000007", doc_hidden)]
-pub use mod_1_000_000_007_impl::{mi, Mi, Mod1_000_000_007};
+pub use mod_1_000_000_007_impl::{Mi, Mod1_000_000_007};
 
 #[snippet(name = "mod1000000007", doc_hidden)]
 mod mod_1_000_000_007_impl {
     use super::{Mod, ModInt};
-    pub fn mi(i: i64) -> Mi {
-        Mi::from(i)
-    }
 
     pub type Mi = ModInt<Mod1_000_000_007>;
 

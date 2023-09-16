@@ -5,14 +5,11 @@ use algebra::*;
 use prelude::*;
 
 #[snippet(name = "mod998244353", doc_hidden)]
-pub use mod_998_244_353_impl::{mi, Mi, Mod998_244_353};
+pub use mod_998_244_353_impl::{Mi, Mod998_244_353};
 
 #[snippet(name = "mod998244353", doc_hidden)]
 pub mod mod_998_244_353_impl {
     use super::{Mod, ModInt, Pow, PrimitiveRoot, Zero};
-    pub fn mi(i: u32) -> Mi {
-        Mi::new(i)
-    }
 
     pub type Mi = ModInt<Mod998_244_353>;
 

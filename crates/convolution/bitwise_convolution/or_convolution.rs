@@ -10,7 +10,7 @@ pub struct OrConvolution;
 
 #[snippet(name = "or-convolution", doc_hidden)]
 impl ConvolutionType for OrConvolution {
-    fn fwht<M: Mod>(src: &mut Vec<ModInt<M>>, rev: bool) {
+    fn fwht<M: Mod>(src: &mut [ModInt<M>], rev: bool) {
         let n = src.len();
         let mut i = 1;
         while i < n {
@@ -32,8 +32,9 @@ impl ConvolutionType for OrConvolution {
 
 #[cfg(test)]
 mod test {
-    use super::{super::convolution, OrConvolution};
-    use mod_int::mod998244353::{mi, Mod998_244_353};
+    use super::{super::convolution, ModInt, OrConvolution};
+    use algebra::Zero;
+    use mod_int::mod998244353::Mod998_244_353;
     use xor_shift::XorShift;
     #[test]
     fn rand() {
@@ -47,7 +48,7 @@ mod test {
             let b = (0..b_len)
                 .map(|_| xor_shift.rand_range(0..998244353).into())
                 .collect::<Vec<_>>();
-            let mut expect = vec![mi(0); max!(a.len(), b.len()).next_power_of_two()];
+            let mut expect = vec![ModInt::zero(); max!(a.len(), b.len()).next_power_of_two()];
             for i in 0..a_len {
                 for j in 0..b_len {
                     expect[i | j] += a[i] * b[j];

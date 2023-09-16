@@ -12,7 +12,7 @@ pub mod xor_convolution;
 
 #[snippet(name = "bitwise-convolution", doc_hidden)]
 pub trait ConvolutionType {
-    fn fwht<M: Mod>(poly: &mut Vec<ModInt<M>>, rev: bool);
+    fn fwht<M: Mod>(poly: &mut [ModInt<M>], rev: bool);
 }
 
 #[snippet(name = "bitwise-convolution", doc_hidden)]

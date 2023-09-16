@@ -261,7 +261,7 @@ pub struct PowTable(HashMap<i64, Mi>);
 #[snippet(name = "pow-table", doc_hidden)]
 impl PowTable {
     pub fn pow(&mut self, e: i64) -> Mi {
-        *self.0.entry(e).or_insert_with(|| mi(2).pow(e))
+        *self.0.entry(e).or_insert_with(|| Mi::new(2).pow(e))
     }
 }
 
@@ -280,7 +280,7 @@ mod test {
             let x: i64 = between.sample_iter(&mut rng).take(1).collect::<Vec<i64>>()[0];
             let y: i64 = between.sample_iter(&mut rng).take(1).collect::<Vec<i64>>()[0];
 
-            let (mx, my) = (mi(x), mi(y));
+            let (mx, my) = (Mi::new(x as u32), Mi::new(y as u32));
 
             assert_eq!((x + y) % MOD, (mx + my).into());
             assert_eq!((x + y) % MOD, (mx + y).into());
@@ -314,7 +314,7 @@ mod test {
             let x: i64 = between.sample_iter(&mut rng).take(1).collect::<Vec<i64>>()[0];
             let y: i64 = between.sample_iter(&mut rng).take(1).collect::<Vec<i64>>()[0];
 
-            let (mx, my) = (mi(x), mi(y));
+            let (mx, my) = (Mi::new(x as u32), Mi::new(y as u32));
 
             assert_eq!((x * y) % MOD, (mx * my).into());
             assert_eq!((x * y) % MOD, (mx * y).into());
@@ -358,9 +358,9 @@ mod test {
     fn edge_cases() {
         assert_eq!(1, (Mi::from(MOD + 1)).reduce());
         assert_eq!(291172004, (Mi::from(std::i64::MAX) + 1).reduce(),);
-        assert_eq!(Mi::new(1_000_000_000) * std::i64::MAX, mi(961796000));
-        assert_eq!(Mi::new(1_000_000_000) + std::i64::MAX, mi(291171996));
-        assert_eq!(Mi::new(1_000_000_000) - std::i64::MAX, mi(708827997));
+        assert_eq!(Mi::new(1_000_000_000) * std::i64::MAX, Mi::new(961796000));
+        assert_eq!(Mi::new(1_000_000_000) + std::i64::MAX, Mi::new(291171996));
+        assert_eq!(Mi::new(1_000_000_000) - std::i64::MAX, Mi::new(708827997));
         assert_eq!(
             (Mi::new(1_000_000_000) / std::i64::MAX * std::i64::MAX).reduce(),
             1_000_000_000
@@ -385,9 +385,9 @@ mod test {
 
     #[test]
     fn comb() {
-        assert_eq!(mi(10), Mi::comb(5, 2));
+        assert_eq!(Mi::new(10), Mi::comb(5, 2));
         assert_eq!(
-            mi(1) * 1000000007 * 1000000008 * 1000000009 / 6,
+            Mi::new(1) * 1000000007 * 1000000008 * 1000000009 / 6,
             Mi::comb(MOD + 2, 3)
         );
     }

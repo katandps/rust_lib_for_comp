@@ -257,20 +257,20 @@ mod matrix_impl {
 mod test {
     use super::matrix_impl::{ColumnVector, Determinant, RowVector};
     use super::*;
-    use mod_int::mod998244353::{mi, Mi};
+    use mod_int::mod998244353::Mi;
     use std::convert::TryInto;
 
     #[test]
     fn test() {
-        let data = vec![vec![mi(3), mi(2)], vec![mi(5), mi(4)]];
+        let data = vec![vec![Mi::new(3), Mi::new(2)], vec![Mi::new(5), Mi::new(4)]];
         let matrix: Matrix<Mi> = data.try_into().unwrap();
-        assert_eq!(matrix.determinant(), Some(mi(2)));
+        assert_eq!(matrix.determinant(), Some(Mi::new(2)));
 
         let data = vec![
-            vec![mi(0), mi(1), mi(2), mi(3)],
-            vec![mi(4), mi(5), mi(6), mi(7)],
-            vec![mi(8), mi(9), mi(10), mi(11)],
-            vec![mi(12), mi(13), mi(14), mi(15)],
+            vec![Mi::new(0), Mi::new(1), Mi::new(2), Mi::new(3)],
+            vec![Mi::new(4), Mi::new(5), Mi::new(6), Mi::new(7)],
+            vec![Mi::new(8), Mi::new(9), Mi::new(10), Mi::new(11)],
+            vec![Mi::new(12), Mi::new(13), Mi::new(14), Mi::new(15)],
         ];
         let matrix: Matrix<Mi> = data.try_into().unwrap();
         let sub_matrix = matrix.sub_matrix(2, 3);
@@ -282,11 +282,11 @@ mod test {
         .try_into()
         .unwrap();
         assert_eq!(sub_matrix, expect_sub_matrix);
-        assert_eq!(sub_matrix.determinant(), Some(mi(0)));
+        assert_eq!(sub_matrix.determinant(), Some(Mi::new(0)));
 
-        let lhs: Matrix<Mi> = Matrix::row_vector(&vec![mi(1), mi(2), mi(3)]);
-        let rhs: Matrix<Mi> = Matrix::column_vector(&vec![mi(4), mi(5), mi(6)]);
-        let expect: Matrix<Mi> = vec![vec![mi(32)]].try_into().unwrap();
+        let lhs: Matrix<Mi> = Matrix::row_vector(&vec![Mi::new(1), Mi::new(2), Mi::new(3)]);
+        let rhs: Matrix<Mi> = Matrix::column_vector(&vec![Mi::new(4), Mi::new(5), Mi::new(6)]);
+        let expect: Matrix<Mi> = vec![vec![Mi::new(32)]].try_into().unwrap();
         assert_eq!(lhs * rhs, Some(expect));
     }
 }

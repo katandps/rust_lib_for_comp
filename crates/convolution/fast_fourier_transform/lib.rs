@@ -188,7 +188,7 @@ mod fast_fourier_transform_impl {
 #[cfg(test)]
 mod test {
     use super::FFT;
-    use mod_int::mod998244353::{mi, Mod998_244_353};
+    use mod_int::mod998244353::{Mi, Mod998_244_353};
     use mod_int::ModInt;
     use xor_shift::XorShift;
     #[test]
@@ -205,7 +205,7 @@ mod test {
                 .map(|_| xor_shift.rand_range(0..998244353).into())
                 .collect::<Vec<_>>();
             let size = a_len + b_len - 1;
-            let mut expect = vec![mi(0); size];
+            let mut expect = vec![Mi::new(0); size];
             for i in 0..a_len {
                 for j in 0..b_len {
                     expect[i + j] += a[i] * b[j];
@@ -219,14 +219,14 @@ mod test {
     #[test]
     fn hand() {
         let fft = FFT::setup();
-        let a = (1..=4).map(mi).collect();
-        let b = (5..=9).map(mi).collect();
+        let a = (1..=4).map(Mi::new).collect();
+        let b = (5..=9).map(Mi::new).collect();
         let result = fft.convolution(a, b);
         assert_eq!(
             result,
             vec![5, 16, 34, 60, 70, 70, 59, 36]
                 .into_iter()
-                .map(mi)
+                .map(Mi::new)
                 .collect::<Vec<_>>()
         );
     }
