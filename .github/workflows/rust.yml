@@ -29,7 +29,7 @@ jobs:
 
       - name: Install Rust
         run: |
-          rustup install 1.42.0
+          rustup install 1.70.0
           rustup install stable
           rustup default stable
           rustup set profile minimal
@@ -48,7 +48,7 @@ jobs:
           YUKICODER_TOKEN: ${{ secrets.YUKICODER_TOKEN }}
           GH_PAT: ${{ secrets.GH_PAT }}
         run: |
-          cargo +1.42.0 check
+          cargo +1.70.0 check
           cargo clippy --workspace -- -D warnings
           cargo test --workspace
           oj-verify run -j 32
