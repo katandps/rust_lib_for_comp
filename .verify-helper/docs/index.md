@@ -1,1 +1,2 @@
 - [Rustdoc](/solver/)
+- [Coverage](/coverage/)

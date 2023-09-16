@@ -1,5 +1,7 @@
-[![Rust](https://github.com/katandps/rust_lib_for_comp/actions/workflows/rust.yml/badge.svg?branch=master)](https://github.com/katandps/rust_lib_for_comp/actions/workflows/rust.yml)
-[![rustdoc](https://img.shields.io/badge/Doc-GitHubPages-brightgreen)](https://library.katand.net/)
+[![CI](https://github.com/katandps/rust_lib_for_comp/actions/workflows/rust.yml/badge.svg?branch=master)](https://github.com/katandps/rust_lib_for_comp/actions/workflows/rust.yml)
+[![verification](https://img.shields.io/badge/Doc-GitHubPages-brightgreen)](https://library.katand.net/)
+[![rustdoc](https://img.shields.io/badge/Doc-GitHubPages-brightgreen)](https://library.katand.net/solver/)
+[![coverage](https://img.shields.io/badge/Doc-GitHubPages-brightgreen)](https://library.katand.net/coverage/)
 
 # Rust Library for Competitive Programming
 
