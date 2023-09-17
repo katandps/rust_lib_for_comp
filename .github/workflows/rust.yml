@@ -30,7 +30,6 @@ jobs:
       - name: Install Rust
         run: |
           rustup install 1.70.0
-          rustup install nightly
           rustup default nightly
           rustup set profile minimal
           rustup component add clippy
