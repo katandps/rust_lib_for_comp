@@ -520,10 +520,11 @@ pub fn cgl_1_c(
     _q: usize,
     xy: &[(f64, f64)],
 ) -> Vec<ClockwiseDirection> {
-    let (p1, p2) = (Vector::new(p1.0, p1.1), Vector::new(p2.0, p2.1));
+    let (p1, p2) = (p1.into(), p2.into());
     xy.iter()
+        .cloned()
         .map(|(x, y)| {
-            let p3 = Vector::new(*x, *y);
+            let p3 = (x, y).into();
             ClockwiseDirection::direction(p1, p2, p3)
         })
         .collect()
@@ -558,8 +559,8 @@ fn test_cgl_1_c() {
 /// <https://onlinejudge.u-aizu.ac.jp/courses/library/4/CGL/2/CGL_2_C>
 pub fn cgl_2_c(p0: (f64, f64), p1: (f64, f64), p2: (f64, f64), p3: (f64, f64)) -> (FValue, FValue) {
     if let Some(result) = Segment::cross_point(
-        Segment::new(Vector::new(p0.0, p0.1), Vector::new(p1.0, p1.1)),
-        Segment::new(Vector::new(p2.0, p2.1), Vector::new(p3.0, p3.1)),
+        Segment::new(p0.into(), p1.into()),
+        Segment::new(p2.into(), p3.into()),
     ) {
         (result.x, result.y)
     } else {
@@ -586,8 +587,8 @@ fn test_cgl_2_c() {
 /// <https://onlinejudge.u-aizu.ac.jp/courses/library/4/CGL/2/CGL_2_C>
 pub fn cgl_2_d(p0: (f64, f64), p1: (f64, f64), p2: (f64, f64), p3: (f64, f64)) -> FValue {
     Segment::distance(
-        Segment::new(Vector::new(p0.0, p0.1), Vector::new(p1.0, p1.1)),
-        Segment::new(Vector::new(p2.0, p2.1), Vector::new(p3.0, p3.1)),
+        Segment::new(p0.into(), p1.into()),
+        Segment::new(p2.into(), p3.into()),
     )
 }
 
@@ -605,4 +606,25 @@ fn test_cgl_2_d() {
         cgl_2_d((-1.0, 0.0), (1.0, 0.0), (0.0, 1.0), (0.0, -1.0)),
         0.0.into()
     );
+}
+
+pub fn cgl_2_a(p0: (f64, f64), p1: (f64, f64), p2: (f64, f64), p3: (f64, f64)) -> usize {
+    let (l1, l2) = (
+        Line::new(p0.into(), p1.into()),
+        Line::new(p2.into(), p3.into()),
+    );
+    if Line::is_parallel(l1, l2) {
+        2
+    } else if Line::is_orthogonal(l1, l2) {
+        1
+    } else {
+        0
+    }
+}
+
+#[test]
+fn test_cgl_2_a() {
+    assert_eq!(cgl_2_a((0.0, 0.0), (3.0, 0.0), (0.0, 2.0), (3.0, 2.0)), 2);
+    assert_eq!(cgl_2_a((0.0, 0.0), (3.0, 0.0), (1.0, 1.0), (1.0, 4.0)), 1);
+    assert_eq!(cgl_2_a((0.0, 0.0), (3.0, 0.0), (1.0, 1.0), (2.0, 2.0)), 0);
 }
