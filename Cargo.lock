@@ -60,6 +60,8 @@ checksum = "4b46cbb362ab8752921c97e041f5e366ee6297bd428a31275b9fcf1e380f7299"
 name = "aoj"
 version = "0.1.0"
 dependencies = [
+ "addition",
+ "binary_indexed_tree_2d",
  "circle",
  "convex_hull",
  "dinic",
@@ -134,6 +136,7 @@ version = "0.1.0"
 dependencies = [
  "addition",
  "algebra",
+ "min_max_macro",
  "prelude",
  "rand 0.6.5",
 ]
