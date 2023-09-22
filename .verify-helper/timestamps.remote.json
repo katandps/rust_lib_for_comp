@@ -7,6 +7,7 @@
 "crates/data_structure/sparse_table/rmq.rs": "2023-03-31 15:27:29 +0900",
 "crates/data_structure/wavelet_matrix/rks.rs": "2023-04-16 00:02:31 +0900",
 "crates/data_structure/wavelet_matrix/srf.rs": "2023-04-16 00:02:31 +0900",
+"crates/flow/dinic/aoj/maximum_flow.rs": "2023-09-22 15:36:22 +0900",
 "crates/geometry/circle/circumscribed_circle_of_a_triangle.rs": "2023-09-17 08:55:42 +0900",
 "crates/geometry/circle/cross_points_of_a_circle_and_a_line.rs": "2023-09-17 08:55:42 +0900",
 "crates/geometry/circle/cross_points_of_circles.rs": "2023-09-17 08:55:42 +0900",
