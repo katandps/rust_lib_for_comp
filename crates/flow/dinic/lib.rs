@@ -6,8 +6,6 @@
 //! $O(V^{2}E)$
 //! ただし、ほとんどの場合さらに高速に動作する
 //!
-//! ## verify
-//! [GRL_6_A](https://judge.u-aizu.ac.jp/onlinejudge/review.jsp?rid=6482959#2)
 use adjacency_list::Graph;
 use algebra::*;
 use graph::GraphTrait;

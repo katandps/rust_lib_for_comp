@@ -478,7 +478,9 @@ dependencies = [
  "adjacency_list",
  "algebra",
  "graph",
+ "io_util",
  "prelude",
+ "string_util",
 ]
 
 [[package]]
