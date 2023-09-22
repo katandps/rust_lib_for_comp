@@ -118,7 +118,19 @@ fn test() {
         vec![2, 1, 2, 1, 2],
         vec![2, 2, 2, 2, 2],
     ];
+    let expect_size = vec![
+        vec![1, 1, 1, 1, 1],
+        vec![1, 2, 1, 2, 1],
+        vec![1, 2, 2, 2, 2],
+        vec![3, 2, 3, 2, 3],
+        vec![3, 2, 3, 2, 3],
+        vec![5, 5, 5, 5, 5],
+    ];
     for t in 0..expect.len() {
         assert_eq!(expect[t], (0..5).map(|i| uf.root(i, t)).collect::<Vec<_>>());
+        assert_eq!(
+            expect_size[t],
+            (0..5).map(|i| uf.size(i, t)).collect::<Vec<_>>()
+        );
     }
 }
