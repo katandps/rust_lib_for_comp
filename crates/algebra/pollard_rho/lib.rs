@@ -11,7 +11,6 @@
 //!
 //! ## verify
 //! [ポラードのロー素因数分解法](https://algo-method.com/submissions/683415)
-//! [Factorize](https://judge.yosupo.jp/submission/112482)
 use algebra::*;
 use greatest_common_divisor::Gcd;
 use miller_rabin::MillerRabin;
