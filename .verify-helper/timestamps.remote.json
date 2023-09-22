@@ -24,5 +24,11 @@
 "verifications/aoj/intersection_of_circles.rs": "2023-09-22 22:30:44 +0900",
 "verifications/aoj/is_convex.rs": "2023-09-22 22:30:44 +0900",
 "verifications/aoj/maximum_flow.rs": "2023-09-22 22:30:44 +0900",
-"verifications/aoj/parallel_orthogonal.rs": "2023-09-22 22:30:44 +0900"
+"verifications/aoj/parallel_orthogonal.rs": "2023-09-22 22:30:44 +0900",
+"verifications/aoj/polygon_point_containment.rs": "2023-09-22 22:30:44 +0900",
+"verifications/aoj/projection.rs": "2023-09-22 22:30:44 +0900",
+"verifications/aoj/reflection.rs": "2023-09-22 22:30:44 +0900",
+"verifications/aoj/tangent_to_a_circle.rs": "2023-09-22 22:30:44 +0900",
+"verifications/library_checker/factorize.rs": "2023-09-22 22:32:29 +0900",
+"verifications/library_checker/rmq_distjoint_sparse_table.rs": "2023-09-22 22:37:40 +0900"
 }
