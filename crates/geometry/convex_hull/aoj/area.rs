@@ -8,7 +8,18 @@ fn main() {
     let mut io = IO::default();
     let n = io.v::<usize>();
     let xy = io.vec2::<f64, f64>(n);
-    let polygon = Polygon::from(&xy[..]);
-    io.out(polygon.area().line());
+    io.out(solve(n, xy).line());
     io.flush();
+}
+
+fn solve(_n: usize, xy: Vec<(f64, f64)>) -> float_value::FValue {
+    let polygon = Polygon::from(&xy[..]);
+    polygon.area()
+}
+
+#[test]
+fn test() {
+    let n = 4;
+    let xy = vec![(0.0, 0.0), (1.0, 1.0), (1.0, 2.0), (0.0, 2.0)];
+    assert_eq!(1.5, solve(n, xy).0)
 }
