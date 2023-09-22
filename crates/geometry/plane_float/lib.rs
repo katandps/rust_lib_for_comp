@@ -28,6 +28,12 @@ mod plane_float_impl {
         }
     }
 
+    impl From<Vector> for (FValue, FValue) {
+        fn from(val: Vector) -> Self {
+            (val.x, val.y)
+        }
+    }
+
     impl Vector {
         pub fn new<X: Into<FValue>, Y: Into<FValue>>(x: X, y: Y) -> Vector {
             Vector {
