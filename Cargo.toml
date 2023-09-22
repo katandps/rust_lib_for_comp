@@ -1,5 +1,6 @@
 [workspace]
 members = [
+    'crates/aoj',
     'crates/algebra',
     'crates/algebra/binary_operation/addition',
     'crates/algebra/binary_operation/bit_or_operation',

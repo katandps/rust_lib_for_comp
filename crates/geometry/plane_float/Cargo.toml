@@ -8,37 +8,5 @@ prelude = { path = "../../prelude" }
 min_max_macro = { path = "../../util/min_max_macro" }
 float_value = { path = "../../element/float_value" }
 
-[dev-dependencies]
-io_util = { path = "../../util/io_util" }
-string_util = { path = "../../util/string_util" }
-
 [lib]
 path = "lib.rs"
-
-[[example]]
-name = "projection"
-path = "./aoj/projection.rs"
-
-[[example]]
-name = "reflection"
-path = "./aoj/reflection.rs"
-
-[[example]]
-name = "counter-clockwise"
-path = "./aoj/counter_clockwise.rs"
-
-[[example]]
-name = "parallel-orthogonal"
-path = "./aoj/parallel_orthogonal.rs"
-
-[[example]]
-name = "intersection"
-path = "./aoj/intersection.rs"
-
-[[example]]
-name = "cross-point"
-path = "./aoj/cross_point.rs"
-
-[[example]]
-name = "distance"
-path = "./aoj/distance.rs"

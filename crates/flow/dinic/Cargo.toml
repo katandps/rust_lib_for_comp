@@ -9,13 +9,5 @@ graph = { path = "../../graph" }
 adjacency_list = { path = "../../graph/adjacency_list" }
 algebra = { path = "../../algebra" }
 
-[dev-dependencies]
-io_util = { path = "../../util/io_util" }
-string_util = { path = "../../util/string_util" }
-
 [lib]
 path = "lib.rs"
-
-[[example]]
-name = "maximum_flow"
-path = "./aoj/maximum_flow.rs"

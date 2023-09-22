@@ -1,0 +1,95 @@
+[package]
+name = "aoj"
+version = "0.1.0"
+edition = "2018"
+
+[dev-dependencies]
+prelude = { path = "../prelude" }
+plane_float = { path = "../geometry/plane_float" }
+float_value = { path = "../element/float_value" }
+circle = { path = "../geometry/circle" }
+convex_hull = { path = "../geometry/convex_hull" }
+io_util = { path = "../util/io_util" }
+string_util = { path = "../util/string_util" }
+min_max_macro = { path = "../util/min_max_macro" }
+dinic = { path = "../flow/dinic" }
+
+[[example]]
+name = "intersection-of-circles"
+path = "intersection_of_circles.rs"
+
+[[example]]
+name = "incircle-of-a-triangle"
+path = "incircle_of_a_triangle.rs"
+
+[[example]]
+name = "circumscribed-circle-of-a-triangle"
+path = "circumscribed_circle_of_a_triangle.rs"
+
+[[example]]
+name = "cross-points-of-a-circle-and-a-line"
+path = "cross_points_of_a_circle_and_a_line.rs"
+
+[[example]]
+name = "cross-points-of-circles"
+path = "cross_points_of_circles.rs"
+
+[[example]]
+name = "tangent-to-a-circle"
+path = "tangent_to_a_circle.rs"
+
+[[example]]
+name = "area"
+path = "area.rs"
+
+[[example]]
+name = "is-convex"
+path = "is_convex.rs"
+
+[[example]]
+name = "polygon-point-containment"
+path = "polygon_point_containment.rs"
+
+[[example]]
+name = "convex-hull"
+path = "convex_hull.rs"
+
+[[example]]
+name = "diameter-of-a-convex-polygon"
+path = "diameter_of_a_convex_polygon.rs"
+
+[[example]]
+name = "convex-cut"
+path = "convex_cut.rs"
+
+[[example]]
+name = "maximum_flow"
+path = "maximum_flow.rs"
+
+[[example]]
+name = "projection"
+path = "projection.rs"
+
+[[example]]
+name = "reflection"
+path = "reflection.rs"
+
+[[example]]
+name = "counter-clockwise"
+path = "counter_clockwise.rs"
+
+[[example]]
+name = "parallel-orthogonal"
+path = "parallel_orthogonal.rs"
+
+[[example]]
+name = "intersection"
+path = "intersection.rs"
+
+[[example]]
+name = "cross-point"
+path = "cross_point.rs"
+
+[[example]]
+name = "distance"
+path = "distance.rs"

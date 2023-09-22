@@ -57,6 +57,21 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "4b46cbb362ab8752921c97e041f5e366ee6297bd428a31275b9fcf1e380f7299"
 
 [[package]]
+name = "aoj"
+version = "0.1.0"
+dependencies = [
+ "circle",
+ "convex_hull",
+ "dinic",
+ "float_value",
+ "io_util",
+ "min_max_macro",
+ "plane_float",
+ "prelude",
+ "string_util",
+]
+
+[[package]]
 name = "atty"
 version = "0.2.14"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -286,11 +301,9 @@ name = "circle"
 version = "0.1.0"
 dependencies = [
  "float_value",
- "io_util",
  "min_max_macro",
  "plane_float",
  "prelude",
- "string_util",
 ]
 
 [[package]]
@@ -362,11 +375,9 @@ name = "convex_hull"
 version = "0.1.0"
 dependencies = [
  "float_value",
- "io_util",
  "min_max_macro",
  "plane_float",
  "prelude",
- "string_util",
 ]
 
 [[package]]
@@ -478,9 +489,7 @@ dependencies = [
  "adjacency_list",
  "algebra",
  "graph",
- "io_util",
  "prelude",
- "string_util",
 ]
 
 [[package]]
@@ -1049,10 +1058,8 @@ name = "plane_float"
 version = "0.1.0"
 dependencies = [
  "float_value",
- "io_util",
  "min_max_macro",
  "prelude",
- "string_util",
 ]
 
 [[package]]
