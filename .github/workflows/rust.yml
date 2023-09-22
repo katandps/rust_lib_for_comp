@@ -20,6 +20,7 @@ jobs:
       - uses: actions/cache@v2
         with:
           path: |
+            ~/.vendor/bundle
             ~/.cache/pip
           key: "oj-helper"
 
