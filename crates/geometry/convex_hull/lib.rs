@@ -250,3 +250,16 @@ mod convex_hull_impl {
         Outside,
     }
 }
+
+/// <https://onlinejudge.u-aizu.ac.jp/courses/library/4/CGL/all/CGL_3_A>
+pub fn cgl_3_a(_n: usize, xy: Vec<(f64, f64)>) -> float_value::FValue {
+    let polygon = Polygon::from(&xy[..]);
+    polygon.area()
+}
+
+#[test]
+fn cgl_3_a_test() {
+    let n = 4;
+    let xy = vec![(0.0, 0.0), (1.0, 1.0), (1.0, 2.0), (0.0, 2.0)];
+    assert_eq!(1.5, cgl_3_a(n, xy).0)
+}
