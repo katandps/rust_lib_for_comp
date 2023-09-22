@@ -58,12 +58,15 @@ jobs:
         run: oj-verify run -j 32
       
       - name: Generate code coverage
-        run: cargo +nightly llvm-cov --all-features --workspace --lcov --doctests --output-path lcov.info
+        run: cargo +nightly llvm-cov --workspace --doctests --lcov --output-path lcov.info
+
+      - name: Generate code coverage examples
+        run: cargo +nightly llvm-cov --examples --lcov --output-path lcov_example.info
 
       - name: Upload coverage to Codecov
         uses: codecov/codecov-action@v3
         with:
-          files: lcov.info
+          files: lcov.info,lcov_example.info
           fail_ci_if_error: true
 
       - name: Generate docs
