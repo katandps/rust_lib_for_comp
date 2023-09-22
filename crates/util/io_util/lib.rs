@@ -260,3 +260,14 @@ mod tests {
         assert_eq!(res, vec![1, 2, 3, 4, 5, 6]);
     }
 }
+
+#[test]
+fn default() {
+    let io = IO::default();
+    let cloned = io.clone();
+    let debug = format!("{:?}", cloned);
+    assert_eq!(
+        debug.as_str(),
+        "IO { reader: ReaderFromStdin { buf: [] }, writer: WriterToStdout { buf: \"\" } }"
+    );
+}
