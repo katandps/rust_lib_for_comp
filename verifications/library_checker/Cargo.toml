@@ -1,0 +1,14 @@
+[package]
+name = "library_checker"
+version = "0.1.0"
+edition = "2018"
+
+[dev-dependencies]
+prelude = { path = "../../crates/prelude" }
+io_util = { path = "../../crates/util/io_util" }
+string_util = { path = "../../crates/util/string_util" }
+pollard_rho = { path = "../../crates/algebra/pollard_rho" }
+
+[[example]]
+name = "factorize"
+path = "factorize.rs"

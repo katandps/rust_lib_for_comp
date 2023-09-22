@@ -4,15 +4,15 @@ version = "0.1.0"
 edition = "2018"
 
 [dev-dependencies]
-prelude = { path = "../prelude" }
-plane_float = { path = "../geometry/plane_float" }
-float_value = { path = "../element/float_value" }
-circle = { path = "../geometry/circle" }
-convex_hull = { path = "../geometry/convex_hull" }
-io_util = { path = "../util/io_util" }
-string_util = { path = "../util/string_util" }
-min_max_macro = { path = "../util/min_max_macro" }
-dinic = { path = "../flow/dinic" }
+prelude = { path = "../../crates/prelude" }
+plane_float = { path = "../../crates/geometry/plane_float" }
+float_value = { path = "../../crates/element/float_value" }
+circle = { path = "../../crates/geometry/circle" }
+convex_hull = { path = "../../crates/geometry/convex_hull" }
+io_util = { path = "../../crates/util/io_util" }
+string_util = { path = "../../crates/util/string_util" }
+min_max_macro = { path = "../../crates/util/min_max_macro" }
+dinic = { path = "../../crates/flow/dinic" }
 
 [[example]]
 name = "intersection-of-circles"

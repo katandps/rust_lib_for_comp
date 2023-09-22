@@ -104,10 +104,11 @@ impl PollardRho for u64 {
 }
 #[test]
 fn test() {
-    assert_eq!(vec![7, 17, 17], 2023.prime_factorize());
+    assert_eq!(1.prime_factorize(), Vec::new());
+    assert_eq!(2023.prime_factorize(), vec![7, 17, 17]);
     assert_eq!(
-        vec![3, 3, 53, 79, 265371653],
-        9999999999999.prime_factorize()
+        9999999999999.prime_factorize(),
+        vec![3, 3, 53, 79, 265371653]
     );
-    assert!(10023859281455311421.prime_factorize().len() == 2);
+    assert_eq!(10023859281455311421.prime_factorize().len(), 2);
 }
