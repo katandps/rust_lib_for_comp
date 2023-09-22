@@ -43,6 +43,11 @@ mod float_value_impl {
             self.0.partial_cmp(&other.0).expect("something went wrong")
         }
     }
+    impl From<i64> for FValue {
+        fn from(value: i64) -> Self {
+            FValue(value as f64)
+        }
+    }
 
     impl From<f64> for FValue {
         fn from(value: f64) -> Self {

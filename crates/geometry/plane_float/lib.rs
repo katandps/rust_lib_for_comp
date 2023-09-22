@@ -512,3 +512,45 @@ mod test {
         assert_eq!(Some(std::f64::consts::PI * 0.0 / 4.0), p.declination());
     }
 }
+
+/// <https://onlinejudge.u-aizu.ac.jp/courses/library/4/CGL/all/CGL_1_C>
+pub fn cgl_1_c(
+    p1: (f64, f64),
+    p2: (f64, f64),
+    _q: usize,
+    xy: &[(f64, f64)],
+) -> Vec<ClockwiseDirection> {
+    let (p1, p2) = (Vector::new(p1.0, p1.1), Vector::new(p2.0, p2.1));
+    xy.iter()
+        .map(|(x, y)| {
+            let p3 = Vector::new(*x, *y);
+            ClockwiseDirection::direction(p1, p2, p3)
+        })
+        .collect()
+}
+
+#[test]
+fn test_cgl_1_c() {
+    let ans = cgl_1_c(
+        (0.0, 0.0),
+        (2.0, 0.0),
+        5,
+        &vec![
+            (-1.0, 1.0),
+            (-1.0, -1.0),
+            (-1.0, 0.0),
+            (0.0, 0.0),
+            (3.0, 0.0),
+        ],
+    );
+    assert_eq!(
+        ans,
+        vec![
+            ClockwiseDirection::CounterClockwise,
+            ClockwiseDirection::Clockwise,
+            ClockwiseDirection::OneLineCAB,
+            ClockwiseDirection::OneLineACB,
+            ClockwiseDirection::OneLineABC
+        ]
+    )
+}
