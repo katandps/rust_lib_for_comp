@@ -7,8 +7,15 @@ edition = "2018"
 prelude = { path = "../../crates/prelude" }
 io_util = { path = "../../crates/util/io_util" }
 string_util = { path = "../../crates/util/string_util" }
+range_traits = { path = "../../crates/range_traits" }
 pollard_rho = { path = "../../crates/algebra/pollard_rho" }
+minimization = { path = "../../crates/algebra/binary_operation/minimization" }
+disjoint_sparse_table = { path = "../../crates/data_structure/disjoint_sparse_table" }
 
 [[example]]
 name = "factorize"
 path = "factorize.rs"
+
+[[example]]
+name = "rmq-disjoint-sparse-table"
+path = "rmq_distjoint_sparse_table.rs"
