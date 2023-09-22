@@ -112,7 +112,7 @@ impl<C: Copy + Display + Debug + Add<Output = C>> Dinic<C> {
     }
 }
 
-/// https://judge.u-aizu.ac.jp/onlinejudge/description.jsp?id=GRL_6_A
+/// <https://judge.u-aizu.ac.jp/onlinejudge/description.jsp?id=GRL_6_A>
 pub fn grl_6_a(v: usize, _e: usize, uvc: &[(usize, usize, i64)]) -> i64 {
     let mut dinic = Dinic::new(v);
     for &(u, v, c) in uvc {

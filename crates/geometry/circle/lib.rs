@@ -287,7 +287,7 @@ fn circle_cross_points() {
     assert_eq!(Vec::<Vector>::new(), a.cross_points(&e));
 }
 
-/// https://onlinejudge.u-aizu.ac.jp/courses/library/4/CGL/7/CGL_7_C
+/// <https://onlinejudge.u-aizu.ac.jp/courses/library/4/CGL/7/CGL_7_C>
 pub fn cgl_7_c(xy: &[(f64, f64)]) -> (f64, f64, f64) {
     let p: Vec<_> = xy.iter().cloned().map(Vector::from).collect();
     let tri = Triangle::new(p[0], p[1], p[2]);
