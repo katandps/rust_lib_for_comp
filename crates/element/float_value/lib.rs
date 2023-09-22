@@ -8,7 +8,7 @@ pub use float_value_impl::{FValue, EPS};
 #[rustfmt::skip]
 mod float_value_impl {
     use super::{Add, Debug, Display, Div, Formatter, Mul, Neg, Ordering, Sub};
-    pub const EPS: f64 = std::f64::EPSILON;
+    pub const EPS: f64 = 0.000_000_001;
 
     /// # 浮動小数点数
     /// 誤差判定をうまく行うための構造体
