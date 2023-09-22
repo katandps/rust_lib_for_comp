@@ -286,3 +286,20 @@ fn circle_cross_points() {
     let e = Circle::new(0.0, 0.0, 0.5);
     assert_eq!(Vec::<Vector>::new(), a.cross_points(&e));
 }
+
+/// https://onlinejudge.u-aizu.ac.jp/courses/library/4/CGL/7/CGL_7_C
+pub fn cgl_7_c(xy: &[(f64, f64)]) -> (f64, f64, f64) {
+    let p: Vec<_> = xy.into_iter().cloned().map(Vector::from).collect();
+    let tri = Triangle::new(p[0], p[1], p[2]);
+    let circle = tri.circumscribed_circle().unwrap();
+    (circle.center.x.0, circle.center.y.0, circle.radius.0)
+}
+
+#[test]
+fn test_cgl_7_c() {
+    let ans = cgl_7_c(&vec![(1.0, -2.0), (3.0, 2.0), (-2.0, 0.0)]);
+    assert_eq!(
+        ans,
+        (0.625.into(), 0.6875.into(), 2.71353666826155124291.into())
+    )
+}

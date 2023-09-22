@@ -111,3 +111,19 @@ impl<C: Copy + Display + Debug + Add<Output = C>> Dinic<C> {
         }
     }
 }
+
+/// https://judge.u-aizu.ac.jp/onlinejudge/description.jsp?id=GRL_6_A
+pub fn grl_6_a(v: usize, _e: usize, uvc: &[(usize, usize, i64)]) -> i64 {
+    let mut dinic = Dinic::new(v);
+    for &(u, v, c) in uvc {
+        dinic.add_edge(u, v, c);
+    }
+    dinic.max_flow(0, v - 1)
+}
+
+#[test]
+fn test_grl_6_a() {
+    let (u, v) = (4, 5);
+    let uvc = vec![(0, 1, 2), (0, 2, 1), (1, 2, 1), (1, 3, 1), (2, 3, 2)];
+    assert_eq!(3, grl_6_a(u, v, &uvc));
+}
