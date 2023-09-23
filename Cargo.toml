@@ -121,6 +121,8 @@ members = [
     'crates/util/solver',
     'crates/util/string_util',
     'crates/util/time_keeper',
+    'solvers/aoj',
+    'solvers/library_checker',
     'verifications/aoj',
     'verifications/library_checker',
 ]

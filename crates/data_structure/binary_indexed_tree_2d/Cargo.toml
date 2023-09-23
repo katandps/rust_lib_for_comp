@@ -6,8 +6,6 @@ edition = "2018"
 [dependencies]
 prelude = { path = "../../prelude" }
 algebra = { path = "../../algebra" }
-addition = { path = "../../algebra/binary_operation/addition" }
-min_max_macro = { path = "../../util/min_max_macro" }
 
 [dev-dependencies]
 rand = "0.6"

@@ -13,7 +13,7 @@ use prelude::*;
 
 #[snippet(name = "dijkstra", doc_hidden)]
 pub struct Dijkstra<W> {
-    dist: Vec<W>,
+    pub dist: Vec<W>,
     prev: Vec<usize>,
 }
 

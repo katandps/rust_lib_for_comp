@@ -1,5 +1,5 @@
 [package]
-name = "aoj"
+name = "aoj_verification"
 version = "0.1.0"
 edition = "2018"
 
@@ -15,6 +15,7 @@ min_max_macro = { path = "../../crates/util/min_max_macro" }
 dinic = { path = "../../crates/flow/dinic" }
 binary_indexed_tree_2d = { path = "../../crates/data_structure/binary_indexed_tree_2d" }
 addition = { path = "../../crates/algebra/binary_operation/addition" }
+aoj_solver = { path = "../../solvers/aoj" }
 
 [[example]]
 name = "intersection-of-circles"
@@ -99,3 +100,7 @@ path = "distance.rs"
 [[example]]
 name = "the-maximum-number-of-overlaps"
 path = "the_maximum_number_of_overlaps.rs"
+
+[[example]]
+name = "dag_reachability"
+path = "dag_reachability.rs"

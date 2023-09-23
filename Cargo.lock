@@ -57,10 +57,32 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "4b46cbb362ab8752921c97e041f5e366ee6297bd428a31275b9fcf1e380f7299"
 
 [[package]]
-name = "aoj"
+name = "aoj_solver"
 version = "0.1.0"
 dependencies = [
  "addition",
+ "adjacency_list",
+ "binary_indexed_tree_2d",
+ "circle",
+ "convex_hull",
+ "dijkstra",
+ "dinic",
+ "directed_acyclic_graph",
+ "float_value",
+ "io_debug",
+ "io_util",
+ "min_max_macro",
+ "plane_float",
+ "prelude",
+ "string_util",
+]
+
+[[package]]
+name = "aoj_verification"
+version = "0.1.0"
+dependencies = [
+ "addition",
+ "aoj_solver",
  "binary_indexed_tree_2d",
  "circle",
  "convex_hull",
@@ -134,9 +156,7 @@ dependencies = [
 name = "binary_indexed_tree_2d"
 version = "0.1.0"
 dependencies = [
- "addition",
  "algebra",
- "min_max_macro",
  "prelude",
  "rand 0.6.5",
 ]
@@ -499,7 +519,9 @@ dependencies = [
 name = "directed_acyclic_graph"
 version = "0.1.0"
 dependencies = [
+ "adjacency_list",
  "graph",
+ "io_debug",
  "prelude",
 ]
 
@@ -841,7 +863,26 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "9cdc71e17332e86d2e1d38c1f99edcb6288ee11b815fb1a4b049eaa2114d369b"
 
 [[package]]
-name = "library_checker"
+name = "library_checker_solver"
+version = "0.1.0"
+dependencies = [
+ "addition",
+ "algebra",
+ "disjoint_sparse_table",
+ "dynamic_li_chao_tree",
+ "io_util",
+ "lazy_segment_tree",
+ "minimization",
+ "pollard_rho",
+ "prelude",
+ "range_traits",
+ "segment_tree",
+ "sparse_table",
+ "string_util",
+]
+
+[[package]]
+name = "library_checker_verification"
 version = "0.1.0"
 dependencies = [
  "addition",

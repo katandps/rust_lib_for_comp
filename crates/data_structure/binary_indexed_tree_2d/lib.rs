@@ -5,9 +5,7 @@
 //! ## verify
 //! [Typical90_028](https://atcoder.jp/contests/typical90/submissions/26701638)
 
-use addition::Addition;
 use algebra::AbelianGroup;
-use min_max_macro::{chmax, max};
 use prelude::*;
 
 #[snippet(name = "binary-indexed-tree-2d", doc_hidden)]
@@ -80,36 +78,4 @@ where
         }
         write!(f, "{}", buf)
     }
-}
-
-pub fn dsl_5_b(_n: usize, lr: &[(usize, usize, usize, usize)]) -> i64 {
-    let mut bit2d = BinaryIndexedTree2::<Addition<i64>>::new(1010, 1010);
-    for &(lx, ly, rx, ry) in lr {
-        bit2d.add(lx + 1, ly + 1, 1);
-        bit2d.add(lx + 1, ry + 1, -1);
-        bit2d.add(rx + 1, ly + 1, -1);
-        bit2d.add(rx + 1, ry + 1, 1);
-    }
-    let mut ans = 0;
-    for i in 0..1010 {
-        for j in 0..1010 {
-            chmax!(ans, bit2d.sum(i, j));
-        }
-    }
-    ans
-}
-
-#[test]
-fn test_dsl_5_b() {
-    let n = 2;
-    let lr = vec![(0, 0, 3, 2), (2, 1, 4, 3)];
-    assert_eq!(dsl_5_b(n, &lr), 2);
-
-    let n = 2;
-    let lr = vec![(0, 0, 2, 2), (2, 0, 4, 2)];
-    assert_eq!(dsl_5_b(n, &lr), 1);
-
-    let n = 3;
-    let lr = vec![(0, 0, 2, 2), (0, 0, 2, 2), (0, 0, 2, 2)];
-    assert_eq!(dsl_5_b(n, &lr), 3);
 }

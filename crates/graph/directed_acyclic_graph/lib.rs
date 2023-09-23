@@ -19,6 +19,11 @@ pub trait Dag {
     /// ## 経路の数え上げ
     /// lを始点とする各点までの経路数をDPで求める
     fn path(&self, l: usize) -> Vec<usize>;
+
+    /// ## 到達可能性(オフライン)
+    /// 各query: (start, goal)が到達できるかどうかをVecで返す
+    /// オフラインで処理することにより、wordsize圧縮ができる
+    fn reachability(&self, queries: &[(usize, usize)]) -> Vec<bool>;
 }
 
 #[snippet(name = "directed-acyclic-graph", doc_hidden)]
@@ -56,5 +61,29 @@ impl<G: GraphTrait> Dag for G {
             }
         }
         dp
+    }
+
+    fn reachability(&self, queries: &[(usize, usize)]) -> Vec<bool> {
+        let (n, q) = (self.size(), queries.len());
+        let order = self.topological_sort();
+        let mut ret = vec![false; q];
+        let mut l = 0;
+        while l < q {
+            let r = min(q, l + 64);
+            let mut dp = vec![0; n];
+            for k in l..r {
+                dp[queries[k].0] |= 1 << (k - l);
+            }
+            for &src in &order {
+                for (dst, _) in self.edges(src) {
+                    dp[dst] |= dp[src];
+                }
+            }
+            for k in l..r {
+                ret[k] = (dp[queries[k].1] >> (k - l)) & 1 > 0;
+            }
+            l += 64
+        }
+        ret
     }
 }

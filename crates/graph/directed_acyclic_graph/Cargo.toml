@@ -6,6 +6,10 @@ edition = "2018"
 [dependencies]
 prelude = { path = "../../prelude" }
 graph = { path = "../../graph" }
+adjacency_list = { path = "../../graph/adjacency_list" }
+
+[dev-dependencies]
+io_debug = { path = "../../util/io_debug" }
 
 [lib]
 path = "lib.rs"
