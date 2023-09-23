@@ -104,3 +104,7 @@ path = "the_maximum_number_of_overlaps.rs"
 [[example]]
 name = "dag_reachability"
 path = "dag_reachability.rs"
+
+[[example]]
+name = "closest_pair"
+path = "closest_pair.rs"

@@ -64,6 +64,7 @@ dependencies = [
  "adjacency_list",
  "binary_indexed_tree_2d",
  "circle",
+ "closest_pair",
  "convex_hull",
  "dijkstra",
  "dinic",
@@ -355,11 +356,9 @@ name = "closest_pair"
 version = "0.1.0"
 dependencies = [
  "float_value",
- "io_util",
  "min_max_macro",
  "plane_float",
  "prelude",
- "string_util",
 ]
 
 [[package]]

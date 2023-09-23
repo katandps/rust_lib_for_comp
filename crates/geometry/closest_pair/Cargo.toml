@@ -9,13 +9,5 @@ min_max_macro = { path = "../../util/min_max_macro" }
 plane_float = { path = "../plane_float" }
 float_value = { path = "../../element/float_value" }
 
-[dev-dependencies]
-io_util = { path = "../../util/io_util" }
-string_util = { path = "../../util/string_util" }
-
 [lib]
 path = "lib.rs"
-
-[[example]]
-name = "closest_pair"
-path = "./closest_pair.rs"
