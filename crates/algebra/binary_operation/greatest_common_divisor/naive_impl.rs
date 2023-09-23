@@ -33,3 +33,15 @@ mod gcd_impl {
     impl<S: Clone + Debug + RemAssign + PartialOrd + Zero> Commutative for Gcd<S> {}
     impl<S: Clone + Debug + RemAssign + PartialOrd + Zero> Idempotent for Gcd<S> {}
 }
+
+#[test]
+fn test() {
+    assert_eq!(1, Gcd::op(&3, &5));
+    assert_eq!(2, Gcd::op(&4, &6));
+    assert_eq!(3, Gcd::op(&3, &9));
+    assert_eq!(3, Gcd::op(&9, &3));
+    assert_eq!(11, Gcd::op(&11, &11));
+    assert_eq!(1, Gcd::op(&1_000_000_007, &998_244_353));
+    assert_eq!(100, Gcd::op(&100, &0));
+    assert_eq!(100, Gcd::op(&0, &100));
+}
