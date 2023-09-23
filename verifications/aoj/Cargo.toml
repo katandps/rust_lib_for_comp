@@ -112,3 +112,7 @@ path = "closest_pair.rs"
 [[example]]
 name = "aoj_0275"
 path = "aoj_0275.rs"
+
+[[example]]
+name = "minimum_cost_flow"
+path = "minimum_cost_flow.rs"

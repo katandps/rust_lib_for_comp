@@ -75,6 +75,7 @@ dependencies = [
  "min_max_macro",
  "plane_float",
  "prelude",
+ "primal_dual",
  "string_util",
 ]
 

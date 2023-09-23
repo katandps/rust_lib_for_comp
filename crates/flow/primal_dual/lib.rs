@@ -1,8 +1,6 @@
 //! # Primal-dual法
 //! 最小費用流問題を最短路反復(with Dijkstra)で解く。
 //!
-//! ## verify
-//! [GRL_6_B](https://judge.u-aizu.ac.jp/onlinejudge/review.jsp?rid=6493214)
 use adjacency_list::Graph;
 use algebra::*;
 use graph::GraphTrait;
