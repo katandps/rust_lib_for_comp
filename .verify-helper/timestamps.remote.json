@@ -3,6 +3,7 @@
 "crates/data_structure/wavelet_matrix/srf.rs": "2023-09-22 22:17:07 +0900",
 "crates/graph/tree/heavy_light_decomposition/vertex_add_path_sum.rs": "2023-09-22 22:17:07 +0900",
 "crates/graph/tree/heavy_light_decomposition/vertex_add_path_sum2.rs": "2023-09-22 22:17:07 +0900",
+"verifications/aoj/aoj_0275.rs": "2023-09-23 20:58:14 +0900",
 "verifications/aoj/area.rs": "2023-09-23 16:38:40 +0900",
 "verifications/aoj/circumscribed_circle_of_a_triangle.rs": "2023-09-23 16:38:40 +0900",
 "verifications/aoj/closest_pair.rs": "2023-09-23 16:38:40 +0900",
