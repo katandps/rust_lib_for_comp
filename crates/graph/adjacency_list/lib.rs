@@ -113,17 +113,24 @@ mod impl_graph_adjacency_list {
 
 #[test]
 fn test() {
-    let mut g = Graph::new(5);
-    g.add_edge(1, 2, 3);
-    g.add_arc(3, 4, 10);
-    assert_eq!(vec![(2, 3)], g.edges(1));
-    assert_eq!(vec![(2, 3)], g.rev_edges(1));
-    assert_eq!(vec![(1, 3)], g.edges(2));
-    assert_eq!(vec![(1, 3)], g.rev_edges(2));
-    assert_eq!(vec![(4, 10)], g.edges(3));
-    assert_eq!(Vec::<(usize, i32)>::new(), g.rev_edges(3));
-    assert_eq!(Vec::<(usize, i32)>::new(), g.edges(4));
-    assert_eq!(vec![(3, 10)], g.rev_edges(4));
+    let mut graph = Graph::new(5);
+    graph.add_edge(1, 2, 3);
+    graph.add_arc(3, 4, 10);
+    let graph = graph.clone();
+    assert_eq!(vec![(2, 3)], graph.edges(1));
+    assert_eq!(vec![(2, 3)], graph.rev_edges(1));
+    assert_eq!(vec![(1, 3)], graph.edges(2));
+    assert_eq!(vec![(1, 3)], graph.rev_edges(2));
+    assert_eq!(vec![(4, 10)], graph.edges(3));
+    assert_eq!(Vec::<(usize, i32)>::new(), graph.rev_edges(3));
+    assert_eq!(Vec::<(usize, i32)>::new(), graph.edges(4));
+    assert_eq!(vec![(3, 10)], graph.rev_edges(4));
+    assert_eq!(vec![(1, 2, 3), (2, 1, 3), (3, 4, 10)], graph.all_edges());
+
+    assert_eq!(
+        "n: 5, m: 3\n(1 -> 2): 3\n(2 -> 1): 3\n(3 -> 4): 10\n",
+        format!("{:?}", graph).as_str()
+    );
 }
 
 #[test]
@@ -134,12 +141,13 @@ fn index_rev() {
     let mut graph = Graph::new(n);
     let m = xorshift.rand_range(10000..20000) as usize;
     for _ in 0..m {
-        graph.add_arc(
+        graph.add_edge(
             xorshift.rand_range(0..n as i64) as usize,
             xorshift.rand_range(0..n as i64) as usize,
             xorshift.rand_range(0..1000000000),
         );
     }
+
     for e in 0..graph.edges.len() {
         if let Some(rev) = graph.rev[e] {
             let (s, d, w) = graph[e];
