@@ -108,3 +108,7 @@ path = "dag_reachability.rs"
 [[example]]
 name = "closest_pair"
 path = "closest_pair.rs"
+
+[[example]]
+name = "aoj_0275"
+path = "aoj_0275.rs"
