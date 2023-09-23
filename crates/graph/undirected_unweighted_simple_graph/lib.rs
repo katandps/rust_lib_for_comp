@@ -9,7 +9,7 @@ use string_util::{AddLineTrait, JoinTrait};
 pub use undirected_unweighted_simple_graph_impl::UndirectedUnweightedSimpleGraph;
 #[snippet(name = "unweighted-graph", doc_hidden)]
 mod undirected_unweighted_simple_graph_impl {
-    use super::{swap, AddLineTrait, BitSet, Debug, Display, Formatter, GraphTrait, JoinTrait};
+    use super::{swap, AddLineTrait, BitSet, Debug, Formatter, GraphTrait, JoinTrait};
     #[derive(Clone)]
     pub struct UndirectedUnweightedSimpleGraph {
         b: BitSet,
@@ -70,19 +70,6 @@ mod undirected_unweighted_simple_graph_impl {
         }
     }
 
-    impl Display for UndirectedUnweightedSimpleGraph {
-        fn fmt(&self, f: &mut Formatter<'_>) -> std::fmt::Result {
-            write!(
-                f,
-                "{}",
-                (0..self.n * (self.n - 1) / 2)
-                    .map(|i| if self.b[i] { "1" } else { "0" })
-                    .join("")
-                    .line()
-            )
-        }
-    }
-
     impl Debug for UndirectedUnweightedSimpleGraph {
         fn fmt(&self, f: &mut Formatter<'_>) -> std::fmt::Result {
             write!(
@@ -90,11 +77,10 @@ mod undirected_unweighted_simple_graph_impl {
                 "\n{}",
                 (0..self.n)
                     .map(|i| (0..self.n)
-                        .map(|j| if self.get(i, j) { "1" } else { "0" })
+                        .map(|j| usize::from(self.get(i, j)))
                         .join("")
                         .line())
                     .join("")
-                    .line()
             )
         }
     }
@@ -115,5 +101,9 @@ mod test {
         assert_eq!(graph.edges(2), vec![(1, 1)]);
         assert_eq!(graph.edges(3), vec![(4, 1)]);
         assert_eq!(graph.edges(4), vec![(3, 1)]);
+
+        let cloned = graph.clone();
+        let debug = format!("{:?}", cloned);
+        assert_eq!(debug.as_str(), "\n01000\n10100\n01000\n00001\n00010\n");
     }
 }
