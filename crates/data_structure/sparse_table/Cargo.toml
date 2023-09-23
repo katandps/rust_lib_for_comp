@@ -12,12 +12,5 @@ string_util = { path = "../../util/string_util" }
 minimization = { path = "../../algebra/binary_operation/minimization" }
 io_util = { path = "../../util/io_util" }
 
-[dev-dependencies]
-addition = { path = "../../algebra/binary_operation/addition" }
-
 [lib]
 path = "lib.rs"
-
-[[example]]
-name = "rmq-sparse-table"
-path = "rmq.rs"

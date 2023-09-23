@@ -11,14 +11,10 @@ range_traits = { path = "../../range_traits" }
 minimization = { path = "../../algebra/binary_operation/minimization" }
 io_util = { path = "../../util/io_util" }
 string_util = { path = "../../util/string_util" }
-section = {path = "../../element/section" }
+section = { path = "../../element/section" }
 
 [dev-dependencies]
 addition = { path = "../../algebra/binary_operation/addition" }
 
 [lib]
 path = "lib.rs"
-
-[[example]]
-name = "rmq-lazy-segment-tree"
-path = "rmq.rs"

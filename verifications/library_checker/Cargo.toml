@@ -6,12 +6,17 @@ edition = "2018"
 [dev-dependencies]
 prelude = { path = "../../crates/prelude" }
 io_util = { path = "../../crates/util/io_util" }
+algebra = { path = "../../crates/algebra" }
 string_util = { path = "../../crates/util/string_util" }
 range_traits = { path = "../../crates/range_traits" }
 pollard_rho = { path = "../../crates/algebra/pollard_rho" }
+addition = { path = "../../crates/algebra/binary_operation/addition" }
 minimization = { path = "../../crates/algebra/binary_operation/minimization" }
 disjoint_sparse_table = { path = "../../crates/data_structure/disjoint_sparse_table" }
 dynamic_li_chao_tree = { path = "../../crates/data_structure/dynamic_li_chao_tree" }
+sparse_table = { path = "../../crates/data_structure/sparse_table" }
+segment_tree = { path = "../../crates/data_structure/segment_tree" }
+lazy_segment_tree = { path = "../../crates/data_structure/lazy_segment_tree" }
 
 [[example]]
 name = "factorize"
@@ -22,9 +27,21 @@ name = "rmq-disjoint-sparse-table"
 path = "rmq_distjoint_sparse_table.rs"
 
 [[example]]
+name = "rmq-sparse-table"
+path = "rmq_sparse_table.rs"
+
+[[example]]
+name = "rmq-segment-tree"
+path = "rmq_segment_tree.rs"
+
+[[example]]
+name = "rmq-lazy-segment-tree"
+path = "rmq_lazy_segment_tree.rs"
+
+[[example]]
 name = "segment_add_get_min_dlct"
-path = "./segment_add_get_min.rs"
+path = "segment_add_get_min.rs"
 
 [[example]]
 name = "line_add_get_min_dlct"
-path = "./line_add_get_min.rs"
+path = "line_add_get_min.rs"

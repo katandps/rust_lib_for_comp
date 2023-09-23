@@ -86,3 +86,12 @@ fn test() {
         }
     }
 }
+
+#[test]
+fn debug_test() {
+    use minimization::Minimization;
+    let src = vec![1i64, 5, 6, 2, 3, 9, 7, 4, 0, 8];
+    let sparse_table = SparseTable::<Minimization<i64>>::from(&src[..]);
+    let debug = format!("{:?}", sparse_table);
+    assert_eq!(debug.as_str(), "\n1 5 6 2 3 9 7 4 0 8\n");
+}

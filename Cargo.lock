@@ -844,13 +844,18 @@ checksum = "9cdc71e17332e86d2e1d38c1f99edcb6288ee11b815fb1a4b049eaa2114d369b"
 name = "library_checker"
 version = "0.1.0"
 dependencies = [
+ "addition",
+ "algebra",
  "disjoint_sparse_table",
  "dynamic_li_chao_tree",
  "io_util",
+ "lazy_segment_tree",
  "minimization",
  "pollard_rho",
  "prelude",
  "range_traits",
+ "segment_tree",
+ "sparse_table",
  "string_util",
 ]
 
@@ -1545,7 +1550,6 @@ dependencies = [
 name = "sparse_table"
 version = "0.1.0"
 dependencies = [
- "addition",
  "algebra",
  "io_util",
  "minimization",
