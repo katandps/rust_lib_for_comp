@@ -41,7 +41,7 @@ mod undirected_unweighted_simple_graph_impl {
         #[inline]
         pub fn add_edge(&mut self, i: usize, j: usize) {
             if i == j {
-                return;
+                panic!("Can not add self loop.");
             }
             self.b.set(self.index(i, j), true)
         }
@@ -93,6 +93,7 @@ mod test {
     #[test]
     fn test() {
         let mut graph = UndirectedUnweightedSimpleGraph::new(5);
+        assert_eq!(graph.count_ones(), 0);
         graph.add_edge(0, 1);
         graph.add_edge(1, 2);
         graph.add_edge(3, 4);
@@ -102,8 +103,25 @@ mod test {
         assert_eq!(graph.edges(3), vec![(4, 1)]);
         assert_eq!(graph.edges(4), vec![(3, 1)]);
 
+        // reverse is same
+        assert_eq!(graph.rev_edges(0), vec![(1, 1)]);
+        assert_eq!(graph.rev_edges(1), vec![(0, 1), (2, 1)]);
+        assert_eq!(graph.rev_edges(2), vec![(1, 1)]);
+        assert_eq!(graph.rev_edges(3), vec![(4, 1)]);
+        assert_eq!(graph.rev_edges(4), vec![(3, 1)]);
+
+        assert_eq!(graph.count_ones(), 3);
+        assert_eq!(graph.size(), 5);
+
         let cloned = graph.clone();
         let debug = format!("{:?}", cloned);
         assert_eq!(debug.as_str(), "\n01000\n10100\n01000\n00001\n00010\n");
+    }
+
+    #[test]
+    #[should_panic]
+    fn test_self_loop() {
+        let mut graph = UndirectedUnweightedSimpleGraph::new(3);
+        graph.add_edge(1, 1);
     }
 }
