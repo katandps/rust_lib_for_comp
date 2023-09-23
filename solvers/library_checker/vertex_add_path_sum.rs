@@ -1,4 +1,4 @@
-//# verification-helper: PROBLEM https://judge.yosupo.jp/problem/vertex_add_path_sum
+//! <https://judge.yosupo.jp/problem/vertex_add_path_sum>
 use addition::Addition;
 use adjacency_list::Graph;
 use binary_indexed_tree::BinaryIndexedTree;
