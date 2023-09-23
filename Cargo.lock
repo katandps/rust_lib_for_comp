@@ -520,6 +520,7 @@ dependencies = [
 name = "dynamic_li_chao_tree"
 version = "0.1.0"
 dependencies = [
+ "io_debug",
  "io_util",
  "min_max_macro",
  "prelude",
@@ -844,6 +845,7 @@ name = "library_checker"
 version = "0.1.0"
 dependencies = [
  "disjoint_sparse_table",
+ "dynamic_li_chao_tree",
  "io_util",
  "minimization",
  "pollard_rho",

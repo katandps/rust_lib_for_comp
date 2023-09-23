@@ -12,15 +12,6 @@ range_traits = { path = "../../range_traits" }
 xor_shift = { path = "../../algo/xor_shift" }
 string_util = { path = "../../util/string_util" }
 io_util = { path = "../../util/io_util" }
-
-
+io_debug = { path = "../../util/io_debug" }
 [lib]
 path = "lib.rs"
-
-[[example]]
-name = "segment_add_get_min_dlct"
-path = "./segment_add_get_min.rs"
-
-[[example]]
-name = "line_add_get_min_dlct"
-path = "./line_add_get_min.rs"

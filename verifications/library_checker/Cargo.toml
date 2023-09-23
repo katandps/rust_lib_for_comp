@@ -11,6 +11,7 @@ range_traits = { path = "../../crates/range_traits" }
 pollard_rho = { path = "../../crates/algebra/pollard_rho" }
 minimization = { path = "../../crates/algebra/binary_operation/minimization" }
 disjoint_sparse_table = { path = "../../crates/data_structure/disjoint_sparse_table" }
+dynamic_li_chao_tree = { path = "../../crates/data_structure/dynamic_li_chao_tree" }
 
 [[example]]
 name = "factorize"
@@ -19,3 +20,11 @@ path = "factorize.rs"
 [[example]]
 name = "rmq-disjoint-sparse-table"
 path = "rmq_distjoint_sparse_table.rs"
+
+[[example]]
+name = "segment_add_get_min_dlct"
+path = "./segment_add_get_min.rs"
+
+[[example]]
+name = "line_add_get_min_dlct"
+path = "./line_add_get_min.rs"

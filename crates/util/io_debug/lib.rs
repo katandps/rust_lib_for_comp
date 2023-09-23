@@ -15,8 +15,8 @@ mod io_debug_impl {
         pub reader: ReaderFromStr,
         pub test_reader: ReaderFromStr,
         pub buf: String,
-        stdout: bool,
-        f: F,
+        enable_stdout: bool,
+        flush: F,
     }
 
     impl<F: FnMut(&mut ReaderFromStr, &mut ReaderFromStr)> WriterTrait for IODebug<F> {
@@ -24,7 +24,7 @@ mod io_debug_impl {
             self.buf.push_str(&s.to_string());
         }
         fn flush(&mut self) {
-            if self.stdout {
+            if self.enable_stdout {
                 let stdout = stdout();
                 let mut writer = BufWriter::new(stdout.lock());
                 write!(writer, "{}", self.buf).expect("Failed to write.");
@@ -32,7 +32,7 @@ mod io_debug_impl {
             }
             self.test_reader.push(&self.buf);
             self.buf.clear();
-            (self.f)(&mut self.test_reader, &mut self.reader)
+            (self.flush)(&mut self.test_reader, &mut self.reader)
         }
     }
 
@@ -43,13 +43,13 @@ mod io_debug_impl {
     }
 
     impl<F> IODebug<F> {
-        pub fn new(str: &str, stdout: bool, f: F) -> Self {
+        pub fn new(initial_input: &str, enable_stdout: bool, flush: F) -> Self {
             Self {
-                reader: ReaderFromStr::new(str),
+                reader: ReaderFromStr::new(initial_input),
                 test_reader: ReaderFromStr::new(""),
                 buf: String::new(),
-                stdout,
-                f,
+                enable_stdout,
+                flush,
             }
         }
     }
@@ -84,6 +84,6 @@ fn interactive_test() {
     assert_eq!(100, io.v());
     io.out(1000);
     io.flush();
-    dbg!(&io.buf);
+    assert_eq!(io.buf, "");
     assert_eq!(1100, io.v());
 }
