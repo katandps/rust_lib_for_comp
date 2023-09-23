@@ -72,7 +72,7 @@ impl<G: GraphTrait> Dag for G {
             let r = min(q, l + 64);
             let mut dp = vec![0; n];
             for k in l..r {
-                dp[queries[k].0] |= 1 << (k - l);
+                dp[queries[k].0] |= 1u64 << (k - l);
             }
             for &src in &order {
                 for (dst, _) in self.edges(src) {
