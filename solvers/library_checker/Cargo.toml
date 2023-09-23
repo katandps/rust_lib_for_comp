@@ -3,7 +3,7 @@ name = "library_checker_solver"
 version = "0.1.0"
 edition = "2018"
 
-[dev-dependencies]
+[dependencies]
 prelude = { path = "../../crates/prelude" }
 io_util = { path = "../../crates/util/io_util" }
 algebra = { path = "../../crates/algebra" }
@@ -17,6 +17,11 @@ dynamic_li_chao_tree = { path = "../../crates/data_structure/dynamic_li_chao_tre
 sparse_table = { path = "../../crates/data_structure/sparse_table" }
 segment_tree = { path = "../../crates/data_structure/segment_tree" }
 lazy_segment_tree = { path = "../../crates/data_structure/lazy_segment_tree" }
+wavelet_matrix = { path = "../../crates/data_structure/wavelet_matrix" }
+io_debug = { path = "../../crates/util/io_debug" }
+adjacency_list = { path = "../../crates/graph/adjacency_list" }
+binary_indexed_tree = { path = "../../crates/data_structure/binary_indexed_tree" }
+heavy_light_decomposition = { path = "../../crates/graph/tree/heavy_light_decomposition" }
 
 [lib]
 path = "lib.rs"

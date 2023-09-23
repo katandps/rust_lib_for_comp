@@ -17,6 +17,7 @@ dynamic_li_chao_tree = { path = "../../crates/data_structure/dynamic_li_chao_tre
 sparse_table = { path = "../../crates/data_structure/sparse_table" }
 segment_tree = { path = "../../crates/data_structure/segment_tree" }
 lazy_segment_tree = { path = "../../crates/data_structure/lazy_segment_tree" }
+library_checker_solver = { path = "../../solvers/library_checker" }
 
 [[example]]
 name = "factorize"
@@ -45,3 +46,19 @@ path = "segment_add_get_min.rs"
 [[example]]
 name = "line_add_get_min_dlct"
 path = "line_add_get_min.rs"
+
+[[example]]
+name = "range_kth_smallest"
+path = "range_kth_smallest.rs"
+
+[[example]]
+name = "static_range_frequency"
+path = "static_range_frequency.rs"
+
+[[example]]
+name = "vertex_add_path_sum"
+path = "vertex_add_path_sum.rs"
+
+[[example]]
+name = "vertex_add_path_sum2"
+path = "vertex_add_path_sum2.rs"

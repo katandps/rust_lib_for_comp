@@ -6,8 +6,7 @@ use heavy_light_decomposition::HLDecomposition;
 use io_util::*;
 use string_util::*;
 
-fn main() {
-    let mut io = IO::default();
+pub fn solve<IO: ReaderTrait + WriterTrait>(mut io: IO) {
     let (n, q) = io.v2::<usize, usize>();
     let a = io.vec::<i64>(n);
     let mut graph = Graph::new(n);
@@ -27,4 +26,35 @@ fn main() {
         }
     }
     io.flush();
+}
+
+#[test]
+fn test() {
+    let io = io_debug::IODebug::new(
+        "5 5
+            1 10 100 1000 10000
+            0 1
+            1 2
+            2 3
+            1 4
+            1 0 3
+            1 2 4
+            0 1 100000
+            1 1 3
+            1 3 2",
+        false,
+        |outer: &mut ReaderFromStr, _inner: &mut ReaderFromStr| {
+            let mut expect = ReaderFromStr::new(
+                "1111
+                10110
+                101110
+                1100",
+            );
+            while let Some(a) = outer.next() {
+                assert_eq!(Some(a), expect.next())
+            }
+            assert_eq!(None, expect.next())
+        },
+    );
+    solve(io);
 }

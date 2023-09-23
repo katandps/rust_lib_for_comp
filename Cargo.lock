@@ -866,9 +866,13 @@ name = "library_checker_solver"
 version = "0.1.0"
 dependencies = [
  "addition",
+ "adjacency_list",
  "algebra",
+ "binary_indexed_tree",
  "disjoint_sparse_table",
  "dynamic_li_chao_tree",
+ "heavy_light_decomposition",
+ "io_debug",
  "io_util",
  "lazy_segment_tree",
  "minimization",
@@ -878,6 +882,7 @@ dependencies = [
  "segment_tree",
  "sparse_table",
  "string_util",
+ "wavelet_matrix",
 ]
 
 [[package]]
@@ -890,6 +895,7 @@ dependencies = [
  "dynamic_li_chao_tree",
  "io_util",
  "lazy_segment_tree",
+ "library_checker_solver",
  "minimization",
  "pollard_rho",
  "prelude",
