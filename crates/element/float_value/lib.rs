@@ -7,6 +7,8 @@ pub use float_value_impl::{FValue, EPS};
 #[snippet(name = "float_value", doc_hidden)]
 #[rustfmt::skip]
 mod float_value_impl {
+    use prelude::FromStr;
+
     use super::{Add, Debug, Display, Div, Formatter, Mul, Neg, Ordering, Sub};
     pub const EPS: f64 = 0.000_000_001;
 
@@ -48,7 +50,13 @@ mod float_value_impl {
             FValue(value as f64)
         }
     }
-
+    impl FromStr for FValue {
+        type Err = std::num::ParseFloatError;
+        #[inline]
+        fn from_str(s: &str) -> Result<Self, Self::Err> {
+            Ok(Self::from(s.parse::<f64>()?))
+        }
+    }
     impl From<f64> for FValue {
         fn from(value: f64) -> Self {
             if value.is_nan() {
@@ -134,8 +142,22 @@ mod test {
     #[test]
     fn arith() {
         let f = FValue::from(1.0);
-        assert_eq!(FValue::from(3.0), f + 2.0);
-        assert_eq!(FValue::from(3.0), 2.0 + f);
-        assert_eq!(FValue::from(3.0), FValue::from(2.0) + f);
+        let three = FValue::from(3.0);
+        assert_eq!(three, f + 2.0);
+        assert_eq!(three, 2.0 + f);
+        assert_eq!(three, FValue::from(2.0) + f);
+        assert_eq!(FValue::from(0.5), f / 2.0);
+    }
+
+    #[test]
+    fn debug() {
+        let f = FValue::from(1.5);
+        assert_eq!(&format!("{:?}", f), "1.5");
+    }
+
+    #[test]
+    #[should_panic]
+    fn find_nan() {
+        let _ = FValue::from(f64::NAN);
     }
 }

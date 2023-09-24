@@ -123,7 +123,6 @@ fn test() {
                     1",
             );
             while let Some(a) = outer.next() {
-                dbg!("case");
                 if let Some(b) = expect.next() {
                     assert_eq!(a, b, "expect '{}' but actual '{}'", b, a);
                 } else {
