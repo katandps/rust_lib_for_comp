@@ -15,7 +15,7 @@ use prelude::*;
 pub struct BitMatrix {
     height: usize,
     width: usize,
-    val: Vec<BitSet>,
+    pub val: Vec<BitSet>,
 }
 
 #[snippet(name = "bit-matrix", doc_hidden)]
@@ -23,6 +23,11 @@ impl BitMatrix {
     pub fn new(height: usize, width: usize) -> BitMatrix {
         let val = vec![BitSet::new(width); height];
         BitMatrix { height, width, val }
+    }
+
+    /// # y行目x列目にvalを設定する
+    pub fn set(&mut self, y: usize, x: usize, val: bool) {
+        self.val[y].set(x, val)
     }
 
     /// ## ガウス・ジョルダンの消去法

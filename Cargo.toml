@@ -123,6 +123,7 @@ members = [
     'crates/util/time_keeper',
     'solvers/aoj',
     'solvers/library_checker',
+    'solvers/atcoder',
     'verifications/aoj',
     'verifications/library_checker',
 ]

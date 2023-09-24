@@ -98,6 +98,31 @@ dependencies = [
 ]
 
 [[package]]
+name = "atcoder_solver"
+version = "0.1.0"
+dependencies = [
+ "addition",
+ "adjacency_list",
+ "algebra",
+ "binary_indexed_tree",
+ "bit_matrix",
+ "disjoint_sparse_table",
+ "dynamic_li_chao_tree",
+ "heavy_light_decomposition",
+ "io_debug",
+ "io_util",
+ "lazy_segment_tree",
+ "minimization",
+ "pollard_rho",
+ "prelude",
+ "range_traits",
+ "segment_tree",
+ "sparse_table",
+ "string_util",
+ "wavelet_matrix",
+]
+
+[[package]]
 name = "atty"
 version = "0.2.14"
 source = "registry+https://github.com/rust-lang/crates.io-index"
