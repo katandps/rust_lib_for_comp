@@ -36,6 +36,12 @@ mod bitset_impl {
                 self.bits[index >> Self::BLOCK_LEN_LEN] &= !(1 << (index & (Self::BLOCK_LEN - 1)));
             }
         }
+        /// indexビット目のbitを反転する
+        pub fn rev(&mut self, index: usize) {
+            assert!(index < self.size);
+            self.bits[index >> Self::BLOCK_LEN_LEN] ^= 1 << (index & (Self::BLOCK_LEN - 1));
+        }
+
         /// 立っているビットの数を数える
         pub fn count_ones(&self) -> u32 {
             self.bits.iter().map(|b| b.count_ones()).sum()

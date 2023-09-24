@@ -3,9 +3,6 @@
 //!
 //! ## dependency
 //! [bit-set](BitSet)
-//!
-//! ## verify
-//! unverified
 
 use bit_set::BitSet;
 use prelude::*;
@@ -23,6 +20,11 @@ impl BitMatrix {
     pub fn new(height: usize, width: usize) -> BitMatrix {
         let val = vec![BitSet::new(width); height];
         BitMatrix { height, width, val }
+    }
+
+    /// # y行目x列目の値を取得する
+    pub fn get(&self, y: usize, x: usize) -> bool {
+        self.val[y][x]
     }
 
     /// # y行目x列目にvalを設定する
@@ -70,15 +72,14 @@ impl BitMatrix {
         let mut m = BitMatrix::new(self.height, self.width + 1);
         (0..self.height).for_each(|i| {
             (0..self.width).for_each(|j| {
-                m.val[i].set(j, self.val[i][j]);
+                m.set(i, j, self.val[i][j]);
             });
-            m.val[i].set(self.width, b[i]);
+            m.set(i, self.width, b[i]);
         });
-        let rank = self.elimination(true);
-
+        let rank = m.elimination(true);
         if m.val.iter().skip(rank).filter(|bm| bm[self.width]).count() == 0 {
             Some((
-                (0..self.width).map(|i| m.val[i][self.width]).collect(),
+                (0..self.width).map(|i| m.get(i, self.width)).collect(),
                 rank,
             ))
         } else {

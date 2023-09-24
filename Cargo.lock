@@ -63,6 +63,7 @@ dependencies = [
  "addition",
  "adjacency_list",
  "binary_indexed_tree_2d",
+ "bit_matrix",
  "circle",
  "closest_pair",
  "convex_hull",

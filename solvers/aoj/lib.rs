@@ -1,4 +1,5 @@
 pub mod aoj_0275;
+pub mod aoj_1308;
 pub mod cgl_1_c;
 pub mod cgl_2_a;
 pub mod cgl_2_c;
