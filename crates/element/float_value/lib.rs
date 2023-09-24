@@ -143,10 +143,12 @@ mod test {
     fn arith() {
         let f = FValue::from(1.0);
         let three = FValue::from(3.0);
+        assert_eq!(FValue::from(0.0), FValue::default());
         assert_eq!(three, f + 2.0);
         assert_eq!(three, 2.0 + f);
         assert_eq!(three, FValue::from(2.0) + f);
         assert_eq!(FValue::from(0.5), f / 2.0);
+        assert_eq!(FValue::from(0.5), 1.0 / FValue::from(2.0));
     }
 
     #[test]
