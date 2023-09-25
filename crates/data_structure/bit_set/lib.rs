@@ -18,10 +18,10 @@ mod bitset_impl {
     };
     impl BitSet {
         /// bitの長さ $2^6 = 64$
-        const BLOCK_LEN: usize = 1 << Self::BLOCK_LEN_LEN;
+        const BLOCK_LEN: usize = u64::BITS as usize;
         /// # bitの長さの長さ
         /// indexからu64単位の場所を割り出すのに使う
-        const BLOCK_LEN_LEN: usize = 6;
+        const BLOCK_LEN_LEN: usize = Self::BLOCK_LEN.trailing_zeros() as usize;
         pub fn new(size: usize) -> Self {
             let bits = vec![0; (size + Self::BLOCK_LEN - 1) / Self::BLOCK_LEN];
             Self { bits, size }

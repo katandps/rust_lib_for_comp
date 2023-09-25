@@ -82,7 +82,7 @@ impl<G: GraphTrait> Dag for G {
             for k in l..r {
                 ret[k] = (dp[queries[k].1] >> (k - l)) & 1 > 0;
             }
-            l += 64
+            l += u64::BITS as usize
         }
         ret
     }
