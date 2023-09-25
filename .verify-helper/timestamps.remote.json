@@ -31,5 +31,8 @@
 "verifications/library_checker/rmq_lazy_segment_tree.rs": "2023-09-25 15:23:19 +0900",
 "verifications/library_checker/rmq_segment_tree.rs": "2023-09-25 15:23:19 +0900",
 "verifications/library_checker/rmq_sparse_table.rs": "2023-09-25 15:23:19 +0900",
-"verifications/library_checker/segment_add_get_min.rs": "2023-09-25 15:23:19 +0900"
+"verifications/library_checker/segment_add_get_min.rs": "2023-09-25 15:23:19 +0900",
+"verifications/library_checker/static_range_frequency.rs": "2023-09-25 15:23:19 +0900",
+"verifications/library_checker/vertex_add_path_sum.rs": "2023-09-25 15:23:19 +0900",
+"verifications/library_checker/vertex_add_path_sum2.rs": "2023-09-25 15:23:19 +0900"
 }
