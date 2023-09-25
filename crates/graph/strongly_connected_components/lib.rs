@@ -1,56 +1,95 @@
-//! 後退解析(ゲーム問題)
-
+//! 強連結成分分解(SCC)
+use adjacency_list::Graph;
+use algebra::*;
+use fxhasher::HashSet;
 use graph::GraphTrait;
 use prelude::*;
 
-#[snippet(name = "retrograde-analysis", doc_hidden)]
-#[derive(Clone, Copy, Debug, PartialEq, Eq)]
-pub enum WinLose {
-    DRAW,
-    WIN,
-    LOSE,
-}
-
-#[snippet(name = "retrograde-analysis", doc_hidden)]
-/// 後退解析で各点をスタートとしたときの勝敗
-pub struct RetrogradeAnalysis {
-    result: Vec<WinLose>,
-}
-
-#[snippet(name = "retrograde-analysis", doc_hidden)]
-impl RetrogradeAnalysis {
-    pub fn build<W, G>(g: &G) -> RetrogradeAnalysis
-    where
-        G: GraphTrait<Weight = W>,
-    {
-        let mut deg = g.outdegree();
-        let mut ret = vec![WinLose::DRAW; g.size()];
-
-        let mut q = VecDeque::new();
-        for i in 0..g.size() {
-            if deg[i] == 0 {
-                ret[i] = WinLose::LOSE;
-                q.push_back(i);
-            }
-        }
-        while let Some(src) = q.pop_front() {
-            g.rev_edges(src).into_iter().for_each(|(dst, _weight)| {
-                if ret[dst] == WinLose::DRAW {
-                    deg[dst] -= 1;
-                    if ret[src] == WinLose::LOSE {
-                        ret[dst] = WinLose::WIN;
-                        q.push_back(dst);
-                    } else if deg[dst] == 0 {
-                        ret[dst] = WinLose::LOSE;
-                        q.push_back(dst);
-                    }
-                }
-            });
-        }
-        RetrogradeAnalysis { result: ret }
+#[snippet(name = "strongly-connected-components", doc_hidden)]
+pub use scc_impl::SCC;
+#[snippet(name = "strongly-connected-components", doc_hidden)]
+mod scc_impl {
+    use super::*;
+    pub struct SCC<W, G> {
+        /// もとの頂点と強連結成分の対応
+        pub group: Vec<usize>,
+        /// 強連結成分をまとめたグラフ(DAG)
+        pub graph: Graph<W>,
+        /// 強連結成分ごとの個数
+        pub size: Vec<usize>,
+        /// 強連結成分の個数
+        pub n: usize,
+        _marker: PhantomData<fn() -> G>,
     }
 
-    pub fn get(&self, i: usize) -> WinLose {
-        self.result[i]
+    impl<W, G> SCC<W, G>
+    where
+        W: Clone + One,
+        G: GraphTrait<Weight = W>,
+    {
+        /// SCCを構築する O(N + M)
+        pub fn build(g: &G) -> Self {
+            let mut rest = (0..g.size()).collect::<HashSet<_>>();
+            let mut back_queue = VecDeque::new();
+            while let Some(&src) = rest.iter().next() {
+                Self::dfs(g, src, &mut back_queue, &mut rest);
+            }
+            let mut result = vec![None; g.size()];
+            let mut i = 0;
+            while let Some(src) = back_queue.pop_front() {
+                if result[src].is_some() {
+                    continue;
+                }
+                Self::dfs2(g, src, i, &mut result);
+                i += 1;
+            }
+
+            let mut size = vec![0; g.size()];
+            let mut graph = Graph::new(i);
+            let mut group = vec![0; g.size()];
+            for i in 0..g.size() {
+                assert!(result[i].is_some());
+                size[result[i].unwrap()] += 1;
+                group[i] = result[i].unwrap();
+            }
+
+            for src in 0..g.size() {
+                for (dst, _weight) in g.edges(src) {
+                    let (s, t) = (group[src], group[dst]);
+                    if s != t {
+                        graph.add_arc(s, t, W::one());
+                    }
+                }
+            }
+
+            SCC {
+                group,
+                graph,
+                size,
+                n: i,
+                _marker: Default::default(),
+            }
+        }
+
+        fn dfs(g: &G, src: usize, back_queue: &mut VecDeque<usize>, rest: &mut HashSet<usize>) {
+            if !rest.contains(&src) {
+                return;
+            }
+            rest.remove(&src);
+            for (dst, _weight) in g.edges(src) {
+                Self::dfs(g, dst, back_queue, rest);
+            }
+            back_queue.push_front(src);
+        }
+
+        fn dfs2(g: &G, src: usize, flag: usize, result: &mut Vec<Option<usize>>) {
+            if result[src].is_some() {
+                return;
+            }
+            result[src] = Some(flag);
+            for (dst, _weight) in g.rev_edges(src) {
+                Self::dfs2(g, dst, flag, result);
+            }
+        }
     }
 }

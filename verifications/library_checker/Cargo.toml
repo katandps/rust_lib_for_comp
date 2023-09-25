@@ -62,3 +62,7 @@ path = "vertex_add_path_sum.rs"
 [[example]]
 name = "vertex_add_path_sum2"
 path = "vertex_add_path_sum2.rs"
+
+[[example]]
+name = "strongly_connected_components"
+path = "strongly_connected_components.rs"

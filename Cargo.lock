@@ -896,6 +896,7 @@ dependencies = [
  "adjacency_list",
  "algebra",
  "binary_indexed_tree",
+ "directed_acyclic_graph",
  "disjoint_sparse_table",
  "dynamic_li_chao_tree",
  "heavy_light_decomposition",
@@ -909,6 +910,7 @@ dependencies = [
  "segment_tree",
  "sparse_table",
  "string_util",
+ "strongly_connected_components",
  "wavelet_matrix",
 ]
 
@@ -1675,6 +1677,8 @@ name = "strongly_connected_components"
 version = "0.1.0"
 dependencies = [
  "adjacency_list",
+ "algebra",
+ "fxhasher",
  "graph",
  "prelude",
 ]
