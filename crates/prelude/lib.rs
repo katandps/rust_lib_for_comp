@@ -14,7 +14,7 @@ pub use std::{
     fmt::{Debug, Display, Formatter},
     hash::{BuildHasherDefault, Hash, Hasher},
     io::{stdin, stdout, BufRead, BufWriter, Read, StdoutLock, Write},
-    iter::{repeat, Product, Sum},
+    iter::{repeat, FromIterator, Product, Sum},
     marker::PhantomData,
     mem::swap,
     ops::{

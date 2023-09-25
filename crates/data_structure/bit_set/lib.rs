@@ -1,21 +1,21 @@
 //! # BitSet
 //! bitの大きな配列に対するbit演算を省メモリかつ高速に行うデータ構造
-
 use prelude::*;
 
 #[snippet(name = "bit-set", doc_hidden)]
-#[derive(Clone, Eq, PartialEq)]
-pub struct BitSet {
-    bits: Vec<u64>,
-    size: usize,
-}
-
+pub use bitset_impl::BitSet;
 #[snippet(name = "bit-set", doc_hidden)]
 mod bitset_impl {
     use super::{
-        BitAnd, BitOr, BitSet, BitXor, Debug, Display, Formatter, Index, Not, Shl, ShlAssign, Shr,
-        ShrAssign,
+        BitAnd, BitOr, BitXor, Debug, Display, Formatter, FromIterator, Index, Not, Shl, ShlAssign,
+        Shr, ShrAssign,
     };
+    #[derive(Clone, Eq, PartialEq)]
+    pub struct BitSet {
+        bits: Vec<u64>,
+        size: usize,
+    }
+
     impl BitSet {
         /// bitの長さ $2^6 = 64$
         const BLOCK_LEN: usize = u64::BITS as usize;
@@ -217,6 +217,28 @@ mod bitset_impl {
             )
         }
     }
+
+    impl<Item: Into<bool>> FromIterator<Item> for BitSet {
+        fn from_iter<T: IntoIterator<Item = Item>>(iter: T) -> Self {
+            let mut bits = Vec::new();
+            let mut size = 0;
+            let mut cur = 0;
+            for item in iter.into_iter() {
+                if item.into() {
+                    cur += 1 << (size % 64);
+                }
+                size += 1;
+                if size % u64::BITS as usize == 0 {
+                    bits.push(cur);
+                    cur = 0;
+                }
+            }
+            if size % u64::BITS as usize != 0 {
+                bits.push(cur)
+            }
+            Self { bits, size }
+        }
+    }
 }
 
 #[cfg(test)]
@@ -237,5 +259,29 @@ mod test {
         assert_eq!(1, bitset.count_ones());
         bitset <<= 1;
         assert_eq!(0, bitset.count_ones());
+    }
+
+    #[test]
+    fn from_iterator() {
+        let bitset = (0..10usize).map(|i| i % 2 == 1).collect::<BitSet>();
+        let mut expect = BitSet::new(10);
+        expect.set(1, true);
+        expect.set(3, true);
+        expect.set(5, true);
+        expect.set(7, true);
+        expect.set(9, true);
+        assert_eq!(bitset, expect);
+        assert_eq!(bitset.clone(), expect);
+
+        let mut expect = BitSet::new(11);
+        expect.set(1, true);
+        expect.set(3, true);
+        expect.set(5, true);
+        expect.set(7, true);
+        expect.set(9, true);
+        assert_ne!(bitset, expect);
+
+        assert_eq!("0101010101", format!("{:?}", bitset));
+        assert_eq!("01010101010", format!("{:?}", expect));
     }
 }
