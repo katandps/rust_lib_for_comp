@@ -212,6 +212,7 @@ mod bitset_impl {
                 f,
                 "{}",
                 (0..self.size)
+                    .rev()
                     .map(|i| usize::from(self[i]).to_string())
                     .collect::<String>()
             )
@@ -281,7 +282,41 @@ mod test {
         expect.set(9, true);
         assert_ne!(bitset, expect);
 
-        assert_eq!("0101010101", format!("{:?}", bitset));
+        assert_eq!("1010101010", format!("{:?}", bitset));
         assert_eq!("01010101010", format!("{:?}", expect));
+    }
+
+    #[test]
+    fn shift() {
+        let mut bitset = (0..100).map(|i| i % 2 == 1).collect::<BitSet>();
+        assert_eq!("1010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010", format!("{:?}", bitset));
+        bitset >>= 3;
+        assert_eq!("0001010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101", format!("{:?}", bitset));
+        bitset = bitset >> 90;
+        assert_eq!("0000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000001010101", format!("{:?}", bitset));
+        bitset = bitset << 90;
+        assert_eq!("0001010101000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000", format!("{:?}", bitset));
+        let mut bitset = (0..10).map(|i| i % 2 == 1).collect::<BitSet>();
+        bitset <<= 10;
+        assert_eq!(BitSet::new(10), bitset);
+        let mut bitset = (0..10).map(|i| i % 2 == 1).collect::<BitSet>();
+        bitset >>= 10;
+        assert_eq!(BitSet::new(10), bitset);
+    }
+
+    #[test]
+    fn bit_operator() {
+        let bitset = (0..100).map(|i| i % 2 == 1).collect::<BitSet>();
+        assert_eq!("1010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010", format!("{:?}", bitset));
+        let not_bitset = !bitset.clone();
+        assert_eq!("0101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101", format!("{:?}", not_bitset));
+        let and_bitset1 = bitset.clone() & not_bitset.clone();
+        let and_bitset2 = bitset.clone() & bitset.clone();
+        assert_eq!("0000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000", format!("{:?}", and_bitset1));
+        assert_eq!(bitset, and_bitset2);
+        let or_bitset = bitset.clone() | not_bitset;
+        let or_bitset2 = bitset.clone() | bitset.clone();
+        assert_eq!("1111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111", format!("{:?}", or_bitset));
+        assert_eq!(bitset, or_bitset2);
     }
 }
