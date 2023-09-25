@@ -386,9 +386,22 @@ mod test {
     #[test]
     fn comb() {
         assert_eq!(Mi::new(10), Mi::comb(5, 2));
+        assert_eq!(Mi::new(10), Mi::comb(5, 3));
         assert_eq!(
             Mi::new(1) * 1000000007 * 1000000008 * 1000000009 / 6,
             Mi::comb(MOD + 2, 3)
         );
+    }
+
+    #[test]
+    fn display() {
+        assert_eq!("1", &format!("{}", Mi::new(1)));
+    }
+
+    #[test]
+    fn from_str() {
+        assert_eq!(Ok(Mi::new(5)), Mi::from_str("5"));
+        assert_eq!(Ok(Mi::new(1)), Mi::from_str("1000000008"));
+        assert!(Mi::from_str("5a").is_err());
     }
 }
