@@ -1,7 +1,6 @@
 //! 強連結成分分解(SCC)
 use adjacency_list::Graph;
 use algebra::*;
-use fxhasher::HashSet;
 use graph::GraphTrait;
 use prelude::*;
 
@@ -29,10 +28,12 @@ mod scc_impl {
     {
         /// SCCを構築する O(N + M)
         pub fn build(g: &G) -> Self {
-            let mut rest = (0..g.size()).collect::<HashSet<_>>();
+            let mut rest = vec![true; g.size()];
             let mut back_queue = VecDeque::new();
-            while let Some(&src) = rest.iter().next() {
-                Self::dfs(g, src, &mut back_queue, &mut rest);
+            for src in 0..g.size() {
+                if rest[src] {
+                    Self::dfs(g, src, &mut back_queue, &mut rest[..]);
+                }
             }
             let mut result = vec![None; g.size()];
             let mut i = 0;
@@ -71,11 +72,11 @@ mod scc_impl {
             }
         }
 
-        fn dfs(g: &G, src: usize, back_queue: &mut VecDeque<usize>, rest: &mut HashSet<usize>) {
-            if !rest.contains(&src) {
+        fn dfs(g: &G, src: usize, back_queue: &mut VecDeque<usize>, rest: &mut [bool]) {
+            if !rest[src] {
                 return;
             }
-            rest.remove(&src);
+            rest[src] = false;
             for (dst, _weight) in g.edges(src) {
                 Self::dfs(g, dst, back_queue, rest);
             }

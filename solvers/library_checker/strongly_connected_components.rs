@@ -41,8 +41,8 @@ fn test() {
         |outer: &mut ReaderFromStr, _inner: &mut ReaderFromStr| {
             let mut expect = ReaderFromStr::new(
                 "4
-                2 1 4
                 1 5
+                2 1 4
                 1 2
                 2 0 3
                 ",

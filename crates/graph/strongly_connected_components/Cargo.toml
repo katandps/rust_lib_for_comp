@@ -8,7 +8,6 @@ prelude = { path = "../../prelude" }
 graph = { path = "../../graph" }
 adjacency_list = { path = "../../graph/adjacency_list" }
 algebra = { path = "../../algebra" }
-fxhasher = { path = "../../algo/fxhasher" }
 
 [lib]
 path = "lib.rs"
