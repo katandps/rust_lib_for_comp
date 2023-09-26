@@ -70,3 +70,7 @@ path = "strongly_connected_components.rs"
 [[example]]
 name = "shortest_path"
 path = "shortest_path.rs"
+
+[[example]]
+name = "sum_of_floor_of_linear"
+path = "sum_of_floor_of_linear.rs"

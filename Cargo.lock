@@ -900,6 +900,7 @@ dependencies = [
  "directed_acyclic_graph",
  "disjoint_sparse_table",
  "dynamic_li_chao_tree",
+ "floor_sum",
  "heavy_light_decomposition",
  "io_debug",
  "io_util",
