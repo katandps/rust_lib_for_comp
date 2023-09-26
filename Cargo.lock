@@ -896,6 +896,7 @@ dependencies = [
  "adjacency_list",
  "algebra",
  "binary_indexed_tree",
+ "dijkstra",
  "directed_acyclic_graph",
  "disjoint_sparse_table",
  "dynamic_li_chao_tree",

@@ -66,3 +66,7 @@ path = "vertex_add_path_sum2.rs"
 [[example]]
 name = "strongly_connected_components"
 path = "strongly_connected_components.rs"
+
+[[example]]
+name = "shortest_path"
+path = "shortest_path.rs"
