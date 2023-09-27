@@ -13,6 +13,7 @@ pub mod cgl_3_c;
 pub mod cgl_4_a;
 pub mod cgl_4_c;
 pub mod cgl_5_a;
+pub mod cgl_7_a;
 pub mod cgl_7_b;
 pub mod cgl_7_c;
 pub mod cgl_7_f;
