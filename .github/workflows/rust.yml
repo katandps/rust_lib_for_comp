@@ -19,19 +19,26 @@ jobs:
         with: 
           fetch-depth: 0 # for inclimental build: ファイルがcommitされた時刻を取得する
 
+      - uses: actions/setup-python@v1
+
       - uses: actions/cache@v2
         with:
           path: |
             ~/.vendor/bundle
             ~/.cache/pip
             ~/.verify-helper
-          key: "oj-helper"
+            ~/.cargo/bin/
+            ~/.cargo/registry/index/
+            ~/.cargo/registry/cache/
+            ~/.cargo/git/db/
+            target/
+          key: ${{ runner.os }}-cargo-${{ hashFiles('**/Cargo.lock') }}
 
-      - uses: actions/setup-python@v1
       - uses: ruby/setup-ruby@v1
         with:
           ruby-version: '3.2'
           bundler-cache: true
+  
       - run: pip3 install -U online-judge-verify-helper
 
       - name: Install Rust
