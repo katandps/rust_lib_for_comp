@@ -30,3 +30,12 @@ fn test() {
         0.5000000000 0.5000000000",
     ))
 }
+#[test]
+#[should_panic]
+fn unreachable() {
+    solve(io_debug::IODebug::static_assert(
+        "1
+        0 0 1 1 0 1 1 2",
+        "unreachable",
+    ))
+}
