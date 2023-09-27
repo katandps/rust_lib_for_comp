@@ -1,11 +1,15 @@
 //! <https://onlinejudge.u-aizu.ac.jp/problems/DSL_5_B>
 use addition::Addition;
 use binary_indexed_tree_2d::BinaryIndexedTree2;
+use io_util::*;
 use min_max_macro::{chmax, max};
+use string_util::*;
 
-pub fn solve(_n: usize, lr: &[(usize, usize, usize, usize)]) -> i64 {
+pub fn solve<IO: ReaderTrait + WriterTrait>(mut io: IO) {
+    let n = io.v::<usize>();
+    let lr = io.vec4::<usize, usize, usize, usize>(n);
     let mut bit2d = BinaryIndexedTree2::<Addition<i64>>::new(1010, 1010);
-    for &(lx, ly, rx, ry) in lr {
+    for (lx, ly, rx, ry) in lr {
         bit2d.add(lx + 1, ly + 1, 1);
         bit2d.add(lx + 1, ry + 1, -1);
         bit2d.add(rx + 1, ly + 1, -1);
@@ -17,20 +21,29 @@ pub fn solve(_n: usize, lr: &[(usize, usize, usize, usize)]) -> i64 {
             chmax!(ans, bit2d.sum(i, j));
         }
     }
-    ans
+    io.out(ans.line());
+    io.flush();
 }
 
 #[test]
 fn test() {
-    let n = 2;
-    let lr = vec![(0, 0, 3, 2), (2, 1, 4, 3)];
-    assert_eq!(solve(n, &lr), 2);
-
-    let n = 2;
-    let lr = vec![(0, 0, 2, 2), (2, 0, 4, 2)];
-    assert_eq!(solve(n, &lr), 1);
-
-    let n = 3;
-    let lr = vec![(0, 0, 2, 2), (0, 0, 2, 2), (0, 0, 2, 2)];
-    assert_eq!(solve(n, &lr), 3);
+    solve(io_debug::IODebug::static_assert(
+        "2
+        0 0 3 2
+        2 1 4 3",
+        "2",
+    ));
+    solve(io_debug::IODebug::fvalue_assert(
+        "2
+        0 0 2 2
+        2 0 4 2",
+        "1",
+    ));
+    solve(io_debug::IODebug::fvalue_assert(
+        "3
+        0 0 2 2
+        0 0 2 2
+        0 0 2 2",
+        "3",
+    ))
 }
