@@ -4,6 +4,7 @@ pub mod cgl_1_a;
 pub mod cgl_1_b;
 pub mod cgl_1_c;
 pub mod cgl_2_a;
+pub mod cgl_2_b;
 pub mod cgl_2_c;
 pub mod cgl_2_d;
 pub mod cgl_3_a;
