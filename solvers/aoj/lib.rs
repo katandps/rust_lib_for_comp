@@ -17,6 +17,7 @@ pub mod cgl_7_a;
 pub mod cgl_7_b;
 pub mod cgl_7_c;
 pub mod cgl_7_d;
+pub mod cgl_7_e;
 pub mod cgl_7_f;
 pub mod dsl_5_b;
 pub mod grl_6_a;
