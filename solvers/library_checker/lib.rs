@@ -1,6 +1,10 @@
+pub mod factorize;
 pub mod line_add_get_min;
 pub mod range_kth_smallest;
 pub mod rmq_disjoint_sparse_table;
+pub mod rmq_lazy_segment_tree;
+pub mod rmq_segment_tree;
+pub mod rmq_sparse_table;
 pub mod segment_add_get_min;
 pub mod shortest_path;
 pub mod static_range_frequency;
