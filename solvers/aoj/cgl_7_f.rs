@@ -1,26 +1,34 @@
 //! <https://onlinejudge.u-aizu.ac.jp/courses/library/4/CGL/7/CGL_7_F>
 use circle::*;
-use float_value::FValue;
-pub fn solve(p: (f64, f64), c: (f64, f64), r: f64) -> ((FValue, FValue), (FValue, FValue)) {
+use io_util::*;
+use string_util::*;
+
+pub fn solve<IO: ReaderTrait + WriterTrait>(mut io: IO) {
+    let p = io.v2::<f64, f64>();
+    let c = io.v2::<f64, f64>();
+    let r = io.v::<f64>();
     let p = p.into();
     let c = Circle::new(c.0, c.1, r);
 
     let mut ans = c.tangent(p);
     ans.sort();
-    (ans[0].into(), ans[1].into())
+    io.out(format!("{} {}", ans[0].x, ans[0].y).line());
+    io.out(format!("{} {}", ans[1].x, ans[1].y).line());
+    io.flush();
 }
 
 #[test]
 fn test() {
-    assert_eq!(
-        solve((0.0, 0.0), (2.0, 2.0), 2.0),
-        ((0.0.into(), 2.0.into()), (2.0.into(), 0.0.into()))
-    );
-    assert_eq!(
-        solve((-3.0, 0.0), (2.0, 2.0), 2.0),
-        (
-            (0.6206896552.into(), 3.4482758621.into()),
-            (2.0.into(), 0.0.into())
-        )
-    )
+    solve(io_debug::IODebug::fvalue_assert(
+        "0 0
+        2 2 2",
+        "0.0000000000 2.0000000000
+        2.0000000000 0.0000000000",
+    ));
+    solve(io_debug::IODebug::fvalue_assert(
+        "-3 0
+        2 2 2",
+        "0.6206896552 3.4482758621
+        2.0000000000 0.0000000000",
+    ))
 }

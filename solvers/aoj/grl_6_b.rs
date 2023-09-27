@@ -30,5 +30,10 @@ fn test() {
         1 3 1 3
         2 3 2 1",
         "6",
+    ));
+    solve(io_debug::IODebug::static_assert(
+        "2 1 10
+    0 1 5 5",
+        "-1",
     ))
 }
