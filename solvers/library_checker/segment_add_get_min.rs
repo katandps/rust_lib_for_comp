@@ -48,5 +48,10 @@ fn test() {
         -10
         -10
         -3",
+    ));
+    solve(io_debug::IODebug::static_assert(
+        "0 1
+        1 0",
+        "INFINITY",
     ))
 }
