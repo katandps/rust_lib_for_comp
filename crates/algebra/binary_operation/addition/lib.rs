@@ -33,3 +33,12 @@ mod addition_impl {
         }
     }
 }
+
+#[test]
+fn test() {
+    assert_eq!(0, Addition::unit());
+    let addition = Addition::default();
+    assert_eq!(15, addition.clone().pow(1i64, 15));
+    assert_eq!(25600, addition.pow(100i64, 256));
+    let _ = format!("{:?}", addition);
+}
