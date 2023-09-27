@@ -44,4 +44,6 @@ fn test() {
     assert_eq!(1, Gcd::op(&1_000_000_007, &998_244_353));
     assert_eq!(100, Gcd::op(&100, &0));
     assert_eq!(100, Gcd::op(&0, &100));
+    assert_eq!(100, Gcd::op(&Gcd::unit(), &100));
+    assert_eq!(100, Gcd::op(&100, &Gcd::unit()));
 }
