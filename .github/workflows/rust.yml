@@ -26,12 +26,12 @@ jobs:
           path: |
             ~/.vendor/bundle
             ~/.cache/pip
-            ~/.verify-helper
             ~/.cargo/bin/
             ~/.cargo/registry/index/
             ~/.cargo/registry/cache/
             ~/.cargo/git/db/
             target/
+            .verify-helper/
           key: ${{ runner.os }}-cargo-${{ hashFiles('**/Cargo.lock') }}
 
       - uses: ruby/setup-ruby@v1
