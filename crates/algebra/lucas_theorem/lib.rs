@@ -3,6 +3,7 @@
 //!
 //! ```
 //! # use lucas_theorem::*;
+//! assert_eq!(0, lucas_theorem(5, 2, 1));
 //! assert_eq!(1 % 3, lucas_theorem(5, 0, 3));
 //! assert_eq!(5 % 3, lucas_theorem(5, 1, 3));
 //! assert_eq!(10 % 3, lucas_theorem(5, 2, 3));
