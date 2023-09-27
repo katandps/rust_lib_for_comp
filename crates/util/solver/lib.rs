@@ -48,31 +48,12 @@ fn test_1() {
 /// # テスト実行用ヘルパー
 #[snippet("tester", doc_hidden)]
 #[allow(dead_code)]
-fn test_helper<Suit: ToString + Send + Sized>(input: Suit, expect: Suit) {
-    let s = input.to_string();
-    let expect = expect
-        .to_string()
-        .split_whitespace()
-        .map(ToString::to_string)
-        .collect::<Vec<String>>();
+fn test_helper(input: &'static str, expect: &'static str) {
     std::thread::Builder::new()
         .name("extend stack size".into())
         .stack_size(128 * 1024 * 1024)
         .spawn(move || {
-            let mut io = IODebug::new(
-                s.as_str(),
-                false,
-                |output: &mut ReaderFromStr, _input: &mut ReaderFromStr| {
-                    let mut result = Vec::new();
-                    while let Some(s) = output.next() {
-                        result.push(s);
-                    }
-                    assert_eq!(expect, result);
-                    // solverの出力はoutputで入力される
-                    // inputで出力した内容がsolver側で入力として受け取れる
-                    // input.out(outer.v::<String>())
-                },
-            );
+            let mut io = IODebug::static_assert(input, expect);
             solve(&mut io);
             io.flush();
         })

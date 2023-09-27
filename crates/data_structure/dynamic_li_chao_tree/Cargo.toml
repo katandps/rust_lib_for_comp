@@ -10,8 +10,6 @@ range_traits = { path = "../../range_traits" }
 
 [dev-dependencies]
 xor_shift = { path = "../../algo/xor_shift" }
-string_util = { path = "../../util/string_util" }
-io_util = { path = "../../util/io_util" }
-io_debug = { path = "../../util/io_debug" }
+
 [lib]
 path = "lib.rs"

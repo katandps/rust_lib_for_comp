@@ -7,6 +7,7 @@ edition = "2018"
 algebra = { path = "../../algebra" }
 prelude = { path = "../../prelude" }
 io_util = { path = "../io_util" }
+float_value = { path = "../../element/float_value" }
 
 [dev-dependencies]
 string_util = { path = "../string_util" }

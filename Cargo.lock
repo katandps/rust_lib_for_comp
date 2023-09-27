@@ -547,7 +547,6 @@ version = "0.1.0"
 dependencies = [
  "adjacency_list",
  "graph",
- "io_debug",
  "prelude",
 ]
 
@@ -568,12 +567,9 @@ dependencies = [
 name = "dynamic_li_chao_tree"
 version = "0.1.0"
 dependencies = [
- "io_debug",
- "io_util",
  "min_max_macro",
  "prelude",
  "range_traits",
- "string_util",
  "xor_shift",
 ]
 
@@ -792,6 +788,7 @@ name = "io_debug"
 version = "0.1.0"
 dependencies = [
  "algebra",
+ "float_value",
  "io_util",
  "prelude",
  "string_util",

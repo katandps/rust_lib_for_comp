@@ -20,35 +20,13 @@ pub fn solve<IO: ReaderTrait + WriterTrait>(mut io: IO) {
 
 #[test]
 fn test() {
-    use float_value::FValue;
-    use std::str::FromStr;
-
-    let io = io_debug::IODebug::new(
+    solve(io_debug::IODebug::fvalue_assert(
         "3
         0 0 2 0 1 1 1 -1
         0 0 1 1 0 1 1 0
         0 0 1 1 1 0 0 1",
-        false,
-        |outer: &mut ReaderFromStr, _inner: &mut ReaderFromStr| {
-            let mut expect = ReaderFromStr::new(
-                "1.0000000000 0.0000000000
-                0.5000000000 0.5000000000
-                0.5000000000 0.5000000000",
-            );
-            while let Some(a) = outer.next() {
-                if let Some(b) = expect.next() {
-                    assert_eq!(
-                        FValue::from_str(&a),
-                        FValue::from_str(&b),
-                        "expect '{}' but actual '{}'",
-                        b,
-                        a
-                    );
-                } else {
-                    assert_eq!("expect exit but actual {}", a)
-                }
-            }
-        },
-    );
-    solve(io)
+        "1.0000000000 0.0000000000
+        0.5000000000 0.5000000000
+        0.5000000000 0.5000000000",
+    ))
 }

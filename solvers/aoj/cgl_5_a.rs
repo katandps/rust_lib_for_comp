@@ -18,17 +18,10 @@ pub fn solve<IO: ReaderTrait + WriterTrait>(mut io: IO) {
 
 #[test]
 fn test() {
-    solve(io_debug::IODebug::new(
+    solve(io_debug::IODebug::static_assert(
         "2
         0.0 0.0
         1.0 0.0",
-        false,
-        |outer: &mut ReaderFromStr, _inner: &mut ReaderFromStr| {
-            let mut expect = ReaderFromStr::new("1");
-            while let Some(a) = outer.next() {
-                assert_eq!(Some(a), expect.next())
-            }
-            assert_eq!(None, expect.next())
-        },
+        "1",
     ))
 }

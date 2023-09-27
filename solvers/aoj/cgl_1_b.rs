@@ -17,63 +17,27 @@ pub fn solve<IO: ReaderTrait + WriterTrait>(mut io: IO) {
 
 #[test]
 fn test() {
-    use float_value::FValue;
-    use std::str::FromStr;
-    let io = io_debug::IODebug::new(
+    solve(io_debug::IODebug::fvalue_assert(
         "0 0 3 4
         3
         2 5
         1 4
         0 3",
-        false,
-        |outer: &mut ReaderFromStr, _inner: &mut ReaderFromStr| {
-            let mut expect = ReaderFromStr::new(
-                "4.24 3.32
-            3.56 2.08
-            2.88 0.84",
-            );
-            while let Some(a) = outer.next() {
-                if let Some(b) = expect.next() {
-                    assert_eq!(
-                        FValue::from_str(&a),
-                        FValue::from_str(&b),
-                        "expect '{}' but actual '{}'",
-                        b,
-                        a
-                    );
-                } else {
-                    assert_eq!("expect exit but actual {}", a)
-                }
-            }
-            assert_eq!(None, expect.next())
-        },
-    );
-    solve(io);
+        "4.24 3.32
+        3.56 2.08
+        2.88 0.84",
+    ))
 }
 #[test]
 fn test2() {
-    let io = io_debug::IODebug::new(
+    solve(io_debug::IODebug::fvalue_assert(
         "0 0 2 0
         3
         -1 1
         0 1
         1 1",
-        false,
-        |outer: &mut ReaderFromStr, _inner: &mut ReaderFromStr| {
-            let mut expect = ReaderFromStr::new(
-                "-1 -1
-                0 -1
-                1 -1",
-            );
-            while let Some(a) = outer.next() {
-                if let Some(b) = expect.next() {
-                    assert_eq!(a, b, "expect '{}' but actual '{}'", b, a);
-                } else {
-                    assert_eq!("expect exit but actual {}", a)
-                }
-            }
-            assert_eq!(None, expect.next())
-        },
-    );
-    solve(io);
+        "-1 -1
+        0 -1
+        1 -1",
+    ))
 }

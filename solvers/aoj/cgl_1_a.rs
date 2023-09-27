@@ -14,52 +14,26 @@ pub fn solve<IO: ReaderTrait + WriterTrait>(mut io: IO) {
     }
     io.flush();
 }
-
 #[test]
 fn test() {
-    let io = io_debug::IODebug::new(
+    solve(io_debug::IODebug::fvalue_assert(
         "0 0 3 4
         1
         2 5",
-        false,
-        |outer: &mut ReaderFromStr, _inner: &mut ReaderFromStr| {
-            let mut expect = ReaderFromStr::new("3.12 4.16");
-            while let Some(a) = outer.next() {
-                if let Some(b) = expect.next() {
-                    assert_eq!(a, b, "expect '{}' but actual '{}'", b, a);
-                } else {
-                    assert_eq!("expect exit but actual {}", a)
-                }
-            }
-            assert_eq!(None, expect.next())
-        },
-    );
-    solve(io);
+        "3.12 4.16",
+    ))
 }
 #[test]
+#[cfg(test)]
 fn test2() {
-    let io = io_debug::IODebug::new(
+    solve(io_debug::IODebug::fvalue_assert(
         "0 0 2 0
         3
         -1 1
         0 1
         1 1",
-        false,
-        |outer: &mut ReaderFromStr, _inner: &mut ReaderFromStr| {
-            let mut expect = ReaderFromStr::new(
-                "-1 0
-            0 0
-            1 0",
-            );
-            while let Some(a) = outer.next() {
-                if let Some(b) = expect.next() {
-                    assert_eq!(a, b, "expect '{}' but actual '{}'", b, a);
-                } else {
-                    assert_eq!("expect exit but actual {}", a)
-                }
-            }
-            assert_eq!(None, expect.next())
-        },
-    );
-    solve(io);
+        "-1 0
+        0 0
+        1 0",
+    ))
 }

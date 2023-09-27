@@ -1,4 +1,7 @@
+pub mod line_add_get_min;
 pub mod range_kth_smallest;
+pub mod rmq_disjoint_sparse_table;
+pub mod segment_add_get_min;
 pub mod shortest_path;
 pub mod static_range_frequency;
 pub mod strongly_connected_components;

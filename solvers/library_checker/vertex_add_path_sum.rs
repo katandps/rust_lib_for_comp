@@ -30,31 +30,21 @@ pub fn solve<IO: ReaderTrait + WriterTrait>(mut io: IO) {
 
 #[test]
 fn test() {
-    let io = io_debug::IODebug::new(
+    solve(io_debug::IODebug::static_assert(
         "5 5
-            1 10 100 1000 10000
-            0 1
-            1 2
-            2 3
-            1 4
-            1 0 3
-            1 2 4
-            0 1 100000
-            1 1 3
-            1 3 2",
-        false,
-        |outer: &mut ReaderFromStr, _inner: &mut ReaderFromStr| {
-            let mut expect = ReaderFromStr::new(
-                "1111
-                10110
-                101110
-                1100",
-            );
-            while let Some(a) = outer.next() {
-                assert_eq!(Some(a), expect.next())
-            }
-            assert_eq!(None, expect.next())
-        },
-    );
-    solve(io);
+        1 10 100 1000 10000
+        0 1
+        1 2
+        2 3
+        1 4
+        1 0 3
+        1 2 4
+        0 1 100000
+        1 1 3
+        1 3 2",
+        "1111
+        10110
+        101110
+        1100",
+    ))
 }

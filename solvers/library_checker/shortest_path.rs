@@ -27,7 +27,7 @@ pub fn solve<IO: ReaderTrait + WriterTrait>(mut io: IO) {
 
 #[test]
 fn test() {
-    let io = io_debug::IODebug::new(
+    solve(io_debug::IODebug::static_assert(
         "5 7 2 3
         0 3 5
         0 4 3
@@ -36,36 +36,18 @@ fn test() {
         4 0 7
         2 1 5
         1 0 1",
-        false,
-        |outer: &mut ReaderFromStr, _inner: &mut ReaderFromStr| {
-            let mut expect = ReaderFromStr::new(
-                "11 3
-                2 1
-                1 0
-                0 3",
-            );
-            while let Some(a) = outer.next() {
-                assert_eq!(Some(a), expect.next())
-            }
-            assert_eq!(None, expect.next())
-        },
-    );
-    solve(io);
+        "11 3
+        2 1
+        1 0
+        0 3",
+    ))
 }
 
 #[test]
 fn test2() {
-    let io = io_debug::IODebug::new(
+    solve(io_debug::IODebug::static_assert(
         "2 1 0 1
         1 0 10",
-        false,
-        |outer: &mut ReaderFromStr, _inner: &mut ReaderFromStr| {
-            let mut expect = ReaderFromStr::new("-1");
-            while let Some(a) = outer.next() {
-                assert_eq!(Some(a), expect.next())
-            }
-            assert_eq!(None, expect.next())
-        },
-    );
-    solve(io);
+        "-1",
+    ))
 }
