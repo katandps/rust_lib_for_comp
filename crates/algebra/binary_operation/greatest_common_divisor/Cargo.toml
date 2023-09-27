@@ -8,7 +8,7 @@ prelude = { path = "../../../prelude" }
 algebra = { path = "../../" }
 
 [dev-dependencies]
-criterion = "0.4"
+criterion = "0.5.1"
 xor_shift = { path = "../../../algo/xor_shift" }
 
 [lib]
