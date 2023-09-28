@@ -70,6 +70,7 @@ dependencies = [
  "adjacency_list",
  "binary_indexed_tree_2d",
  "bit_matrix",
+ "chinese_remainder_theorem",
  "circle",
  "closest_pair",
  "convex_hull",

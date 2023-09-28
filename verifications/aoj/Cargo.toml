@@ -116,3 +116,7 @@ path = "minimum_cost_flow.rs"
 [[example]]
 name = "awkward_lights"
 path = "awkward_lights.rs"
+
+[[example]]
+name = "chopsticks"
+path = "chopsticks.rs"
