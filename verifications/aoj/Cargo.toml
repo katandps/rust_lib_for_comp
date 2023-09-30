@@ -124,3 +124,7 @@ path = "chopsticks.rs"
 [[example]]
 name = "matrix_multiplication"
 path = "matrix_multiplication.rs"
+
+[[example]]
+name = "single_source_shortest_path"
+path = "single_source_shortest_path.rs"
