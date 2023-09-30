@@ -239,6 +239,12 @@ mod matrix_impl {
 
     impl<T: ToString> Display for Matrix<T> {
         fn fmt(&self, f: &mut Formatter<'_>) -> std::fmt::Result {
+            Debug::fmt(self, f)
+        }
+    }
+
+    impl<T: ToString> Debug for Matrix<T> {
+        fn fmt(&self, f: &mut Formatter<'_>) -> std::fmt::Result {
             write!(
                 f,
                 "{}",
@@ -252,12 +258,6 @@ mod matrix_impl {
                     .collect::<Vec<_>>()
                     .join("\n")
             )
-        }
-    }
-
-    impl<T: ToString> Debug for Matrix<T> {
-        fn fmt(&self, f: &mut Formatter<'_>) -> std::fmt::Result {
-            Display::fmt(self, f)
         }
     }
 }
