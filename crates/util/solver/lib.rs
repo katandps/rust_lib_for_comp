@@ -19,6 +19,7 @@ use string_util::*;
 #[snippet(include = "range-traits")]
 #[snippet(include = "faster-hashmap")]
 #[snippet(include = "string-util")]
+#[snippet(include = "float_value")]
 #[rustfmt::skip]
 pub fn main() {
     std::thread::Builder::new()
