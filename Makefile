@@ -14,6 +14,8 @@ check:
 
 test:
 	cargo test --workspace
+
+verify:
 	oj-verify run
 
 coverage:
@@ -23,7 +25,7 @@ snippet:
 	mkdir -p $(SNIPPETS_DIR)
 	cargo snippet -t vscode crates > $(SNIPPETS_DIR)/$(SNIPPETS_FILE).$(SNIPPETS_SUFFIX)
 
-build: fmt lint check test snippet
+build: fmt lint check coverage verify snippet
 
 doc:
 	RUSTDOCFLAGS=$(KATEX_FLAG) cargo doc --workspace --no-deps
