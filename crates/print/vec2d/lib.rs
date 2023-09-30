@@ -12,7 +12,7 @@ where
         for cell in row {
             buf.push_str(&format!("{:digit$}", cell, digit = digit));
         }
-        buf.push_str("\n");
+        buf.push('\n');
     }
     buf
 }
