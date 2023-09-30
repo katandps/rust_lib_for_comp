@@ -7,7 +7,7 @@ pub use float_value_impl::{FValue, EPS};
 #[snippet(name = "float_value", doc_hidden)]
 #[rustfmt::skip]
 mod float_value_impl {
-    use prelude::FromStr;
+    use super::FromStr;
 
     use super::{Add, Debug, Display, Div, Formatter, Mul, Neg, Ordering, Sub};
     pub const EPS: f64 = 0.000_000_001;
