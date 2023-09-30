@@ -1,13 +1,14 @@
 //! # 文字列から入力/標準出力+読み込みに出力のセット
 
+use float_value::FValue;
 use io_util::*;
 use prelude::*;
 
 #[snippet(name = "io-debug", doc_hidden)]
-// #[rustfmt::skip]
+#[rustfmt::skip]
 pub use io_debug_impl::{Assertion, FValueAssertion, IODebug, NoAssertion, StaticAssertion};
 #[snippet(name = "io-debug", doc_hidden)]
-// #[rustfmt::skip]
+#[rustfmt::skip]
 mod io_debug_impl {
     use super::{stdout, BufWriter, Display, ReaderFromStr, ReaderTrait, Write, WriterTrait};
 
@@ -101,7 +102,7 @@ mod io_debug_impl {
     }
     impl Assertion for FValueAssertion {
         fn assert(&mut self, output: &mut ReaderFromStr, _: &mut ReaderFromStr) {
-            use float_value::FValue;
+            use super::FValue;
             use std::str::FromStr;
             while let Some(a) = output.next() {
                 if let Some(b) = self.expect.next() {
