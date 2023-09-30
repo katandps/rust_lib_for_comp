@@ -17,7 +17,7 @@ test:
 	oj-verify run
 
 coverage:
-	cargo llvm-cov --workspace
+	cargo +nightly llvm-cov --workspace --doctests --ignore-filename-regex .*verifications\/.* --lcov --output-path lcov.info
 
 snippet:
 	mkdir -p $(SNIPPETS_DIR)
