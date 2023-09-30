@@ -2,3 +2,4 @@ target
 .vscode
 *.code-snippets
 .idea
+lcov.info
