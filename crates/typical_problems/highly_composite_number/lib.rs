@@ -59,3 +59,11 @@ impl HighlyCompositeNumber {
         hcn
     }
 }
+
+#[test]
+fn test() {
+    let hc = HighlyCompositeNumber::hcn();
+    assert_eq!(hc.len(), 156);
+    assert_eq!(hc[0], (1, 1, Vec::new()));
+    assert_eq!(hc[9], (120, 16, vec![3, 1, 1])); // 2*2*2*3*5
+}
