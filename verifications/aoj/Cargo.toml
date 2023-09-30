@@ -120,3 +120,7 @@ path = "awkward_lights.rs"
 [[example]]
 name = "chopsticks"
 path = "chopsticks.rs"
+
+[[example]]
+name = "matrix_multiplication"
+path = "matrix_multiplication.rs"

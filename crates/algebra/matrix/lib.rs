@@ -9,7 +9,8 @@ pub use matrix_impl::Matrix;
 #[snippet(name = "matrix", doc_hidden)]
 mod matrix_impl {
     use super::{
-        Add, AddAssign, Debug, Div, Formatter, Mul, MulAssign, Neg, One, Pow, Sub, SubAssign, Zero,
+        Add, AddAssign, Debug, Display, Div, Formatter, Mul, MulAssign, Neg, One, Pow, Sub,
+        SubAssign, Zero,
     };
 
     #[derive(Clone, Eq, PartialEq)]
@@ -165,6 +166,7 @@ mod matrix_impl {
     impl<T: AddAssign + Clone> Add<Matrix<T>> for Matrix<T> {
         type Output = Self;
         fn add(mut self, rhs: Self) -> Self {
+            assert_eq!(self.size(), rhs.size());
             for i in 0..self.0.len() {
                 for j in 0..self.0[0].len() {
                     self.0[i][j] += rhs.0[i][j].clone()
@@ -196,6 +198,7 @@ mod matrix_impl {
     impl<T: Neg<Output = T> + AddAssign + Clone> Sub<Matrix<T>> for Matrix<T> {
         type Output = Self;
         fn sub(self, rhs: Self) -> Self {
+            assert_eq!(self.size(), rhs.size());
             self + (-rhs)
         }
     }
@@ -234,7 +237,7 @@ mod matrix_impl {
         }
     }
 
-    impl<T: ToString> Debug for Matrix<T> {
+    impl<T: ToString> Display for Matrix<T> {
         fn fmt(&self, f: &mut Formatter<'_>) -> std::fmt::Result {
             write!(
                 f,
@@ -249,6 +252,12 @@ mod matrix_impl {
                     .collect::<Vec<_>>()
                     .join("\n")
             )
+        }
+    }
+
+    impl<T: ToString> Debug for Matrix<T> {
+        fn fmt(&self, f: &mut Formatter<'_>) -> std::fmt::Result {
+            Display::fmt(self, f)
         }
     }
 }

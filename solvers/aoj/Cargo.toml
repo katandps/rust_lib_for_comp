@@ -23,6 +23,7 @@ closest_pair = { path = "../../crates/geometry/closest_pair" }
 primal_dual = { path = "../../crates/flow/primal_dual" }
 bit_matrix = { path = "../../crates/data_structure/bit_matrix" }
 chinese_remainder_theorem = { path = "../../crates/algebra/chinese_remainder_theorem" }
+matrix = { path = "../../crates/algebra/matrix" }
 
 [lib]
 path = "lib.rs"

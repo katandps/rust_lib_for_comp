@@ -80,6 +80,7 @@ dependencies = [
  "float_value",
  "io_debug",
  "io_util",
+ "matrix",
  "min_max_macro",
  "plane_float",
  "prelude",
