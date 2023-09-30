@@ -924,6 +924,7 @@ dependencies = [
  "prelude",
  "range_traits",
  "segment_tree",
+ "slice_bounds",
  "sparse_table",
  "string_util",
  "strongly_connected_components",
@@ -1674,13 +1675,6 @@ name = "sqrt"
 version = "0.1.0"
 dependencies = [
  "prelude",
-]
-
-[[package]]
-name = "static_range_frequency"
-version = "0.1.0"
-dependencies = [
- "slice_bounds",
 ]
 
 [[package]]

@@ -8,6 +8,7 @@ pub mod rmq_sparse_table;
 pub mod segment_add_get_min;
 pub mod shortest_path;
 pub mod static_range_frequency;
+pub mod static_range_frequency_wavelet_matrix;
 pub mod strongly_connected_components;
 pub mod sum_of_floor_of_linear;
 pub mod vertex_add_path_sum;

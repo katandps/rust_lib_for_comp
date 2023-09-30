@@ -113,7 +113,6 @@ members = [
     'crates/string/z_algorithm',
     'crates/typical_problems/highly_composite_number',
     'crates/typical_problems/range_query/static_range_set_query',
-    'crates/typical_problems/range_query/static_range_frequency',
     'crates/util/dbg_macro',
     'crates/util/io_debug',
     'crates/util/io_util',

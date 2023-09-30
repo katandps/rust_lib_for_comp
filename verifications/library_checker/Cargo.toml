@@ -56,6 +56,10 @@ name = "static_range_frequency"
 path = "static_range_frequency.rs"
 
 [[example]]
+name = "static_range_frequency_wavelet_matrix"
+path = "static_range_frequency_wavelet_matrix.rs"
+
+[[example]]
 name = "vertex_add_path_sum"
 path = "vertex_add_path_sum.rs"
 

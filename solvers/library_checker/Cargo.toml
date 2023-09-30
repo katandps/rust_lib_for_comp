@@ -26,6 +26,7 @@ strongly_connected_components = { path = "../../crates/graph/strongly_connected_
 directed_acyclic_graph = { path = "../../crates/graph/directed_acyclic_graph" }
 dijkstra = { path = "../../crates/graph/dijkstra" }
 floor_sum = { path = "../../crates/geometry/floor_sum" }
+slice_bounds = { path = "../../crates/algo/slice_bounds" }
 
 [lib]
 path = "lib.rs"
