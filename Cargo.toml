@@ -124,6 +124,10 @@ members = [
     'solvers/library_checker',
     'solvers/atcoder',
     'verifications/aoj',
+    'verifications/aoj/area',
+    'verifications/aoj/awkward_lights',
+    'verifications/aoj/chopsticks',
+    'verifications/aoj/circumscribed_circle_of_a_triangle',
     'verifications/library_checker',
 ]
 

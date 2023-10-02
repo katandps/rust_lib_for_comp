@@ -25,9 +25,6 @@ path = "intersection_of_circles.rs"
 name = "incircle-of-a-triangle"
 path = "incircle_of_a_triangle.rs"
 
-[[example]]
-name = "circumscribed-circle-of-a-triangle"
-path = "circumscribed_circle_of_a_triangle.rs"
 
 [[example]]
 name = "cross-points-of-a-circle-and-a-line"
@@ -40,10 +37,6 @@ path = "cross_points_of_circles.rs"
 [[example]]
 name = "tangent-to-a-circle"
 path = "tangent_to_a_circle.rs"
-
-[[example]]
-name = "area"
-path = "area.rs"
 
 [[example]]
 name = "is-convex"
@@ -113,13 +106,6 @@ path = "closest_pair.rs"
 name = "minimum_cost_flow"
 path = "minimum_cost_flow.rs"
 
-[[example]]
-name = "awkward_lights"
-path = "awkward_lights.rs"
-
-[[example]]
-name = "chopsticks"
-path = "chopsticks.rs"
 
 [[example]]
 name = "matrix_multiplication"

@@ -1,0 +1,14 @@
+[package]
+name = "aoj_solver_awkward_lights"
+version = "0.1.0"
+edition = "2018"
+
+[dependencies]
+io_util = { path = "../../../crates/util/io_util" }
+io_debug = { path = "../../../crates/util/io_debug" }
+string_util = { path = "../../../crates/util/string_util" }
+bit_matrix = { path = "../../../crates/data_structure/bit_matrix" }
+
+[[example]]
+name = "awkward_lights"
+path = "main.rs"

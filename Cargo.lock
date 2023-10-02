@@ -89,6 +89,47 @@ dependencies = [
 ]
 
 [[package]]
+name = "aoj_solver_area"
+version = "0.1.0"
+dependencies = [
+ "convex_hull",
+ "io_debug",
+ "io_util",
+ "string_util",
+]
+
+[[package]]
+name = "aoj_solver_awkward_lights"
+version = "0.1.0"
+dependencies = [
+ "bit_matrix",
+ "io_debug",
+ "io_util",
+ "string_util",
+]
+
+[[package]]
+name = "aoj_solver_chopsticks"
+version = "0.1.0"
+dependencies = [
+ "chinese_remainder_theorem",
+ "io_debug",
+ "io_util",
+ "string_util",
+]
+
+[[package]]
+name = "aoj_solver_circumscribed_circle_of_a_triangle"
+version = "0.1.0"
+dependencies = [
+ "circle",
+ "io_debug",
+ "io_util",
+ "plane_float",
+ "string_util",
+]
+
+[[package]]
 name = "aoj_verification"
 version = "0.1.0"
 dependencies = [

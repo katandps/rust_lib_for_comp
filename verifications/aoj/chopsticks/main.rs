@@ -1,4 +1,10 @@
-//! <https://onlinejudge.u-aizu.ac.jp/problems/2659>
+//# verification-helper: PROBLEM https://onlinejudge.u-aizu.ac.jp/problems/2659
+#![cfg_attr(coverage_nightly, feature(coverage_attribute))]
+#[cfg_attr(coverage_nightly, coverage(off))]
+fn main() {
+    solve(io_util::IO::default());
+}
+
 use chinese_remainder_theorem::CRT;
 use io_util::*;
 use string_util::*;

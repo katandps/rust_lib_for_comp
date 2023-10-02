@@ -72,12 +72,14 @@ jobs:
         run: oj-verify run -j 32
       
       - name: Generate code coverage
-        run: cargo +nightly llvm-cov --workspace --doctests --ignore-filename-regex .*verifications\/.* --lcov --output-path lcov.info
+        run: |
+          cargo +nightly llvm-cov --workspace --doctests --ignore-filename-regex .*verifications\/.* --lcov --output-path lcov.info
+          cargo +nightly llvm-cov --workspace --examples --ignore-filename-regex .*verifications\/.* --lcov --output-path lcov_ex.info
 
       - name: Upload coverage to Codecov
         uses: codecov/codecov-action@v3
         with:
-          files: lcov.info
+          files: lcov.info,lcov_ex.info
           fail_ci_if_error: true
 
       - name: Generate docs

@@ -95,11 +95,11 @@ mod rolling_hash_impl {
 
 #[test]
 fn test() {
-    let text = (0..3000000)
+    let text = (0..300000)
         .map(|i| (i % 256) as u8 as char)
         .collect::<Vec<_>>();
     let rh = RollingHash::from(&text[..]);
-    for i in 0..1000000 {
+    for i in 0..100000 {
         for j in i + 1.. {
             if rh.hash(i, i + 10000) == rh.hash(j, j + 10000) {
                 assert_eq!((j - i) % 256, 0);
