@@ -73,8 +73,8 @@ jobs:
       
       - name: Generate code coverage
         run: |
-          cargo +nightly llvm-cov --workspace --doctests --ignore-filename-regex .*verifications\/.* --lcov --output-path lcov.info
-          cargo +nightly llvm-cov --workspace --examples --ignore-filename-regex .*verifications\/.* --lcov --output-path lcov_ex.info
+          cargo +nightly llvm-cov --workspace --doctests --ignore-filename-regex --lcov --output-path lcov.info
+          cargo +nightly llvm-cov --workspace --examples --ignore-filename-regex --lcov --output-path lcov_ex.info
 
       - name: Upload coverage to Codecov
         uses: codecov/codecov-action@v3
