@@ -1322,6 +1322,16 @@ dependencies = [
 ]
 
 [[package]]
+name = "library_checker_z_algorithm"
+version = "0.1.0"
+dependencies = [
+ "io_debug",
+ "io_util",
+ "string_util",
+ "z_algorithm",
+]
+
+[[package]]
 name = "linux-raw-sys"
 version = "0.4.7"
 source = "registry+https://github.com/rust-lang/crates.io-index"
