@@ -25,15 +25,6 @@ path = "intersection_of_circles.rs"
 name = "incircle-of-a-triangle"
 path = "incircle_of_a_triangle.rs"
 
-
-[[example]]
-name = "cross-points-of-a-circle-and-a-line"
-path = "cross_points_of_a_circle_and_a_line.rs"
-
-[[example]]
-name = "cross-points-of-circles"
-path = "cross_points_of_circles.rs"
-
 [[example]]
 name = "tangent-to-a-circle"
 path = "tangent_to_a_circle.rs"
@@ -47,16 +38,8 @@ name = "polygon-point-containment"
 path = "polygon_point_containment.rs"
 
 [[example]]
-name = "convex-hull"
-path = "convex_hull.rs"
-
-[[example]]
 name = "diameter-of-a-convex-polygon"
 path = "diameter_of_a_convex_polygon.rs"
-
-[[example]]
-name = "convex-cut"
-path = "convex_cut.rs"
 
 [[example]]
 name = "maximum_flow"
@@ -71,10 +54,6 @@ name = "reflection"
 path = "reflection.rs"
 
 [[example]]
-name = "counter-clockwise"
-path = "counter_clockwise.rs"
-
-[[example]]
 name = "parallel-orthogonal"
 path = "parallel_orthogonal.rs"
 
@@ -82,9 +61,6 @@ path = "parallel_orthogonal.rs"
 name = "intersection"
 path = "intersection.rs"
 
-[[example]]
-name = "cross-point"
-path = "cross_point.rs"
 
 [[example]]
 name = "distance"
@@ -97,10 +73,6 @@ path = "the_maximum_number_of_overlaps.rs"
 [[example]]
 name = "dag_reachability"
 path = "dag_reachability.rs"
-
-[[example]]
-name = "closest_pair"
-path = "closest_pair.rs"
 
 [[example]]
 name = "minimum_cost_flow"

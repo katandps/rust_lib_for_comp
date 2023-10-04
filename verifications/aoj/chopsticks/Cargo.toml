@@ -10,6 +10,6 @@ string_util = { path = "../../../crates/util/string_util" }
 
 chinese_remainder_theorem = { path = "../../../crates/algebra/chinese_remainder_theorem" }
 
-[[example]]
+[[bin]]
 name = "chopsticks"
 path = "main.rs"

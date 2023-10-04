@@ -58,13 +58,12 @@ where
                 if cap == Fl::zero() {
                     continue;
                 }
-                if let Some(m) = min_cost[src] {
-                    let next_cost = m + cost + potential[src] - potential[dst];
-                    if min_cost[dst].is_none() || min_cost[dst] > Some(next_cost) {
-                        min_cost[dst] = Some(next_cost);
-                        prev[dst] = Some(i);
-                        pq.push(Reverse((min_cost[dst].unwrap(), dst)))
-                    }
+                let m = min_cost[src].expect("something went wrong");
+                let next_cost = m + cost + potential[src] - potential[dst];
+                if min_cost[dst].is_none() || min_cost[dst] > Some(next_cost) {
+                    min_cost[dst] = Some(next_cost);
+                    prev[dst] = Some(i);
+                    pq.push(Reverse((min_cost[dst].unwrap(), dst)))
                 }
             }
         }

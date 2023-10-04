@@ -11,6 +11,6 @@ string_util = { path = "../../../crates/util/string_util" }
 plane_float = { path = "../../../crates/geometry/plane_float" }
 circle = { path = "../../../crates/geometry/circle" }
 
-[[example]]
+[[bin]]
 name = "chopsticks"
 path = "main.rs"

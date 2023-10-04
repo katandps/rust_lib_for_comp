@@ -1,5 +1,5 @@
 [package]
-name = "aoj_solver_area"
+name = "aoj_solver_cross_points_of_circles"
 version = "0.1.0"
 edition = "2018"
 
@@ -7,8 +7,10 @@ edition = "2018"
 io_util = { path = "../../../crates/util/io_util" }
 io_debug = { path = "../../../crates/util/io_debug" }
 string_util = { path = "../../../crates/util/string_util" }
-convex_hull = { path = "../../../crates/geometry/convex_hull" }
+
+plane_float = { path = "../../../crates/geometry/plane_float" }
+circle = { path = "../../../crates/geometry/circle" }
 
 [[bin]]
-name = "area"
+name = "cross_points_of_circles"
 path = "main.rs"

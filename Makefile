@@ -16,11 +16,10 @@ test:
 	cargo test --workspace
 
 verify:
-	oj-verify run
+	oj-verify run -j 8
 
 coverage:
-	cargo +nightly llvm-cov --workspace --doctests --lcov --output-path lcov.info
-	cargo +nightly llvm-cov --workspace --examples --lcov --output-path lcov_ex.info
+	cargo +nightly llvm-cov --doctests --lcov --output-path lcov.info
 
 snippet:
 	mkdir -p $(SNIPPETS_DIR)

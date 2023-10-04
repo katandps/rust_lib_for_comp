@@ -130,6 +130,81 @@ dependencies = [
 ]
 
 [[package]]
+name = "aoj_solver_closest_pair"
+version = "0.1.0"
+dependencies = [
+ "closest_pair",
+ "io_debug",
+ "io_util",
+ "plane_float",
+ "string_util",
+]
+
+[[package]]
+name = "aoj_solver_convex_cut"
+version = "0.1.0"
+dependencies = [
+ "convex_hull",
+ "io_debug",
+ "io_util",
+ "plane_float",
+ "string_util",
+]
+
+[[package]]
+name = "aoj_solver_convex_hull"
+version = "0.1.0"
+dependencies = [
+ "convex_hull",
+ "io_debug",
+ "io_util",
+ "plane_float",
+ "string_util",
+]
+
+[[package]]
+name = "aoj_solver_cross_point"
+version = "0.1.0"
+dependencies = [
+ "io_debug",
+ "io_util",
+ "plane_float",
+ "string_util",
+]
+
+[[package]]
+name = "aoj_solver_cross_points_of_a_circle_and_a_line"
+version = "0.1.0"
+dependencies = [
+ "circle",
+ "io_debug",
+ "io_util",
+ "plane_float",
+ "string_util",
+]
+
+[[package]]
+name = "aoj_solver_cross_points_of_circles"
+version = "0.1.0"
+dependencies = [
+ "circle",
+ "io_debug",
+ "io_util",
+ "plane_float",
+ "string_util",
+]
+
+[[package]]
+name = "aoj_solver_plane_float"
+version = "0.1.0"
+dependencies = [
+ "io_debug",
+ "io_util",
+ "plane_float",
+ "string_util",
+]
+
+[[package]]
 name = "aoj_verification"
 version = "0.1.0"
 dependencies = [

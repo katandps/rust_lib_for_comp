@@ -128,6 +128,13 @@ members = [
     'verifications/aoj/awkward_lights',
     'verifications/aoj/chopsticks',
     'verifications/aoj/circumscribed_circle_of_a_triangle',
+    'verifications/aoj/closest_pair',
+    'verifications/aoj/convex_cut',
+    'verifications/aoj/convex_hull',
+    'verifications/aoj/counter_clockwise',
+    'verifications/aoj/cross_point',
+    'verifications/aoj/cross_points_of_a_circle_and_a_line',
+    'verifications/aoj/cross_points_of_circles',
     'verifications/library_checker',
 ]
 
