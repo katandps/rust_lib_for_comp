@@ -1,0 +1,15 @@
+[package]
+name = "library_checker_solver_static_range_frequency"
+version = "0.1.0"
+edition = "2018"
+
+[dependencies]
+io_util = { path = "../../../crates/util/io_util" }
+io_debug = { path = "../../../crates/util/io_debug" }
+string_util = { path = "../../../crates/util/string_util" }
+
+slice_bounds = { path = "../../../crates/algo/slice_bounds" }
+
+[[bin]]
+name = "static_range_frequency"
+path = "main.rs"

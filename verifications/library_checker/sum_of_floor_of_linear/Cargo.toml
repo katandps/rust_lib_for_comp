@@ -1,0 +1,15 @@
+[package]
+name = "library_checker_sum_of_floor_of_linear"
+version = "0.1.0"
+edition = "2018"
+
+[dependencies]
+io_util = { path = "../../../crates/util/io_util" }
+io_debug = { path = "../../../crates/util/io_debug" }
+string_util = { path = "../../../crates/util/string_util" }
+
+floor_sum = { path = "../../../crates/geometry/floor_sum" }
+
+[[bin]]
+name = "sum_of_floor_of_linear"
+path = "main.rs"

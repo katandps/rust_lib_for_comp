@@ -1,0 +1,17 @@
+[package]
+name = "library_checker_solver_rmq_disjoint_sparse_table"
+version = "0.1.0"
+edition = "2018"
+
+[dependencies]
+io_util = { path = "../../../crates/util/io_util" }
+io_debug = { path = "../../../crates/util/io_debug" }
+string_util = { path = "../../../crates/util/string_util" }
+
+range_traits = { path = "../../../crates/range_traits" }
+minimization = { path = "../../../crates/algebra/binary_operation/minimization" }
+disjoint_sparse_table = { path = "../../../crates/data_structure/disjoint_sparse_table" }
+
+[[bin]]
+name = "rmq_disjoint_sparse_table"
+path = "main.rs"

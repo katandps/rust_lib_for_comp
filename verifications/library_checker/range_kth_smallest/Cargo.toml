@@ -1,0 +1,15 @@
+[package]
+name = "library_checker_solver_range_kth_smallest"
+version = "0.1.0"
+edition = "2018"
+
+[dependencies]
+io_util = { path = "../../../crates/util/io_util" }
+io_debug = { path = "../../../crates/util/io_debug" }
+string_util = { path = "../../../crates/util/string_util" }
+
+wavelet_matrix = { path = "../../../crates/data_structure/wavelet_matrix" }
+
+[[bin]]
+name = "range_kth_smallest"
+path = "main.rs"

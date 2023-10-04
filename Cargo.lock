@@ -1154,51 +1154,170 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "9cdc71e17332e86d2e1d38c1f99edcb6288ee11b815fb1a4b049eaa2114d369b"
 
 [[package]]
-name = "library_checker_solver"
+name = "library_checker_solver_factorize"
 version = "0.1.0"
 dependencies = [
- "addition",
- "adjacency_list",
- "algebra",
- "binary_indexed_tree",
- "dijkstra",
- "directed_acyclic_graph",
- "disjoint_sparse_table",
- "dynamic_li_chao_tree",
- "floor_sum",
- "heavy_light_decomposition",
  "io_debug",
  "io_util",
- "lazy_segment_tree",
- "minimization",
  "pollard_rho",
- "prelude",
- "range_traits",
- "segment_tree",
- "slice_bounds",
- "sparse_table",
  "string_util",
- "strongly_connected_components",
+]
+
+[[package]]
+name = "library_checker_solver_line_add_get_min"
+version = "0.1.0"
+dependencies = [
+ "dynamic_li_chao_tree",
+ "io_debug",
+ "io_util",
+ "string_util",
+]
+
+[[package]]
+name = "library_checker_solver_range_kth_smallest"
+version = "0.1.0"
+dependencies = [
+ "io_debug",
+ "io_util",
+ "string_util",
  "wavelet_matrix",
 ]
 
 [[package]]
-name = "library_checker_verification"
+name = "library_checker_solver_rmq_disjoint_sparse_table"
+version = "0.1.0"
+dependencies = [
+ "disjoint_sparse_table",
+ "io_debug",
+ "io_util",
+ "minimization",
+ "range_traits",
+ "string_util",
+]
+
+[[package]]
+name = "library_checker_solver_rmq_lazy_segment_tree"
+version = "0.1.0"
+dependencies = [
+ "algebra",
+ "io_debug",
+ "io_util",
+ "lazy_segment_tree",
+ "minimization",
+ "range_traits",
+ "string_util",
+]
+
+[[package]]
+name = "library_checker_solver_rmq_segment_tree"
+version = "0.1.0"
+dependencies = [
+ "io_debug",
+ "io_util",
+ "minimization",
+ "range_traits",
+ "segment_tree",
+ "string_util",
+]
+
+[[package]]
+name = "library_checker_solver_rmq_sparse_table"
+version = "0.1.0"
+dependencies = [
+ "io_debug",
+ "io_util",
+ "minimization",
+ "range_traits",
+ "sparse_table",
+ "string_util",
+]
+
+[[package]]
+name = "library_checker_solver_segment_add_get_min"
+version = "0.1.0"
+dependencies = [
+ "dynamic_li_chao_tree",
+ "io_debug",
+ "io_util",
+ "string_util",
+]
+
+[[package]]
+name = "library_checker_solver_shortest_path"
+version = "0.1.0"
+dependencies = [
+ "adjacency_list",
+ "dijkstra",
+ "io_debug",
+ "io_util",
+ "string_util",
+]
+
+[[package]]
+name = "library_checker_solver_static_range_frequency"
+version = "0.1.0"
+dependencies = [
+ "io_debug",
+ "io_util",
+ "slice_bounds",
+ "string_util",
+]
+
+[[package]]
+name = "library_checker_solver_static_range_frequency_wavelet_matrix"
+version = "0.1.0"
+dependencies = [
+ "io_debug",
+ "io_util",
+ "string_util",
+ "wavelet_matrix",
+]
+
+[[package]]
+name = "library_checker_solver_strongly_connected_components"
+version = "0.1.0"
+dependencies = [
+ "adjacency_list",
+ "directed_acyclic_graph",
+ "io_debug",
+ "io_util",
+ "string_util",
+ "strongly_connected_components",
+]
+
+[[package]]
+name = "library_checker_sum_of_floor_of_linear"
+version = "0.1.0"
+dependencies = [
+ "floor_sum",
+ "io_debug",
+ "io_util",
+ "string_util",
+]
+
+[[package]]
+name = "library_checker_vertex_add_path_sum"
 version = "0.1.0"
 dependencies = [
  "addition",
- "algebra",
- "disjoint_sparse_table",
- "dynamic_li_chao_tree",
+ "adjacency_list",
+ "binary_indexed_tree",
+ "heavy_light_decomposition",
+ "io_debug",
  "io_util",
- "lazy_segment_tree",
- "library_checker_solver",
- "minimization",
- "pollard_rho",
- "prelude",
- "range_traits",
+ "string_util",
+]
+
+[[package]]
+name = "library_checker_vertex_add_path_sum2"
+version = "0.1.0"
+dependencies = [
+ "addition",
+ "adjacency_list",
+ "heavy_light_decomposition",
+ "io_debug",
+ "io_util",
  "segment_tree",
- "sparse_table",
  "string_util",
 ]
 

@@ -1,0 +1,15 @@
+[package]
+name = "library_checker_solver_line_add_get_min"
+version = "0.1.0"
+edition = "2018"
+
+[dependencies]
+io_util = { path = "../../../crates/util/io_util" }
+io_debug = { path = "../../../crates/util/io_debug" }
+string_util = { path = "../../../crates/util/string_util" }
+
+dynamic_li_chao_tree = { path = "../../../crates/data_structure/dynamic_li_chao_tree" }
+
+[[bin]]
+name = "line_add_get_min"
+path = "main.rs"
