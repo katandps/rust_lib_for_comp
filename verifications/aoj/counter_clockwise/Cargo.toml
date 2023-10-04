@@ -1,5 +1,5 @@
 [package]
-name = "aoj_solver_plane_float"
+name = "aoj_solver_counter_clockwise"
 version = "0.1.0"
 edition = "2018"
 
@@ -11,5 +11,5 @@ string_util = { path = "../../../crates/util/string_util" }
 plane_float = { path = "../../../crates/geometry/plane_float" }
 
 [[bin]]
-name = "aoj_solver_plane_float"
+name = "aoj_solver_counter_clockwise"
 path = "main.rs"

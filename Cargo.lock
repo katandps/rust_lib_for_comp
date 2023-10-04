@@ -137,6 +137,16 @@ dependencies = [
 ]
 
 [[package]]
+name = "aoj_solver_counter_clockwise"
+version = "0.1.0"
+dependencies = [
+ "io_debug",
+ "io_util",
+ "plane_float",
+ "string_util",
+]
+
+[[package]]
 name = "aoj_solver_cross_point"
 version = "0.1.0"
 dependencies = [
@@ -275,16 +285,6 @@ dependencies = [
 
 [[package]]
 name = "aoj_solver_parallel_orthogonal"
-version = "0.1.0"
-dependencies = [
- "io_debug",
- "io_util",
- "plane_float",
- "string_util",
-]
-
-[[package]]
-name = "aoj_solver_plane_float"
 version = "0.1.0"
 dependencies = [
  "io_debug",
