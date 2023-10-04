@@ -11,5 +11,5 @@ string_util = { path = "../../../crates/util/string_util" }
 floor_sum = { path = "../../../crates/geometry/floor_sum" }
 
 [[bin]]
-name = "sum_of_floor_of_linear"
+name = "library_checker_sum_of_floor_of_linear"
 path = "main.rs"

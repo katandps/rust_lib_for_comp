@@ -13,5 +13,5 @@ min_max_macro = { path = "../../../crates/util/min_max_macro" }
 binary_indexed_tree_2d = { path = "../../../crates/data_structure/binary_indexed_tree_2d" }
 
 [[bin]]
-name = "the_maximum_number_of_overlaps"
+name = "aoj_solver_the_maximum_number_of_overlaps"
 path = "main.rs"

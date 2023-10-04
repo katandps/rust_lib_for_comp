@@ -12,5 +12,5 @@ plane_float = { path = "../../../crates/geometry/plane_float" }
 convex_hull = { path = "../../../crates/geometry/convex_hull" }
 
 [[bin]]
-name = "diameter_of_a_convex_polygons"
+name = "aoj_solver_diameter_of_a_convex_polygons"
 path = "main.rs"

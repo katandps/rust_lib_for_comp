@@ -11,5 +11,5 @@ string_util = { path = "../../../crates/util/string_util" }
 pollard_rho = { path = "../../../crates/algebra/pollard_rho" }
 
 [[bin]]
-name = "factorize"
+name = "library_checker_solver_factorize"
 path = "main.rs"

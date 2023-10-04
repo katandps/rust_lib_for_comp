@@ -12,5 +12,5 @@ convex_hull = { path = "../../../crates/geometry/convex_hull" }
 plane_float = { path = "../../../crates/geometry/plane_float" }
 
 [[bin]]
-name = "convex_cut"
+name = "aoj_solver_convex_cut"
 path = "main.rs"

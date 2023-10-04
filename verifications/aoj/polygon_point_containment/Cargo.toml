@@ -12,5 +12,5 @@ plane_float = { path = "../../../crates/geometry/plane_float" }
 convex_hull = { path = "../../../crates/geometry/convex_hull" }
 
 [[bin]]
-name = "polygon_point_containment"
+name = "aoj_solver_polygon_point_containment"
 path = "main.rs"

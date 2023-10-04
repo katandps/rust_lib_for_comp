@@ -10,5 +10,5 @@ string_util = { path = "../../../crates/util/string_util" }
 
 z_algorithm = { path = "../../../crates/string/z_algorithm" }
 [[bin]]
-name = "z_algorithm"
+name = "library_checker_z_algorithm"
 path = "main.rs"

@@ -12,5 +12,5 @@ plane_float = { path = "../../../crates/geometry/plane_float" }
 circle = { path = "../../../crates/geometry/circle" }
 
 [[bin]]
-name = "incircle_of_a_triangle"
+name = "aoj_solver_incircle_of_a_triangle"
 path = "main.rs"

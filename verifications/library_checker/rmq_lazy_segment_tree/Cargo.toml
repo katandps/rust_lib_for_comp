@@ -14,5 +14,5 @@ minimization = { path = "../../../crates/algebra/binary_operation/minimization" 
 lazy_segment_tree = { path = "../../../crates/data_structure/lazy_segment_tree" }
 
 [[bin]]
-name = "rmq_lazy_segment_tree"
+name = "library_checker_solver_rmq_lazy_segment_tree"
 path = "main.rs"

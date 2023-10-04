@@ -11,5 +11,5 @@ string_util = { path = "../../../crates/util/string_util" }
 dynamic_li_chao_tree = { path = "../../../crates/data_structure/dynamic_li_chao_tree" }
 
 [[bin]]
-name = "segment_add_get_min"
+name = "library_checker_solver_segment_add_get_min"
 path = "main.rs"

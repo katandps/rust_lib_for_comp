@@ -169,6 +169,18 @@ dependencies = [
 ]
 
 [[package]]
+name = "aoj_solver_dag_reachability"
+version = "0.1.0"
+dependencies = [
+ "adjacency_list",
+ "dijkstra",
+ "directed_acyclic_graph",
+ "io_debug",
+ "io_util",
+ "string_util",
+]
+
+[[package]]
 name = "aoj_solver_diameter_of_a_convex_polygons"
 version = "0.1.0"
 dependencies = [
@@ -768,18 +780,6 @@ name = "cumulative_sum"
 version = "0.1.0"
 dependencies = [
  "prelude",
-]
-
-[[package]]
-name = "dag_reachability"
-version = "0.1.0"
-dependencies = [
- "adjacency_list",
- "dijkstra",
- "directed_acyclic_graph",
- "io_debug",
- "io_util",
- "string_util",
 ]
 
 [[package]]

@@ -13,5 +13,5 @@ minimization = { path = "../../../crates/algebra/binary_operation/minimization" 
 segment_tree = { path = "../../../crates/data_structure/segment_tree" }
 
 [[bin]]
-name = "rmq_segment_tree"
+name = "library_checker_solver_rmq_segment_tree"
 path = "main.rs"

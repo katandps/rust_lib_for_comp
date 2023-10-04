@@ -12,5 +12,5 @@ plane_float = { path = "../../../crates/geometry/plane_float" }
 closest_pair = { path = "../../../crates/geometry/closest_pair" }
 
 [[bin]]
-name = "closest_pair"
+name = "aoj_solver_closest_pair"
 path = "main.rs"

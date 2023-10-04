@@ -11,5 +11,5 @@ string_util = { path = "../../../crates/util/string_util" }
 plane_float = { path = "../../../crates/geometry/plane_float" }
 
 [[bin]]
-name = "parallel_orthogonal"
+name = "aoj_solver_parallel_orthogonal"
 path = "main.rs"

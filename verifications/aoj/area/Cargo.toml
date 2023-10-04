@@ -10,5 +10,5 @@ string_util = { path = "../../../crates/util/string_util" }
 convex_hull = { path = "../../../crates/geometry/convex_hull" }
 
 [[bin]]
-name = "area"
+name = "aoj_solver_area"
 path = "main.rs"

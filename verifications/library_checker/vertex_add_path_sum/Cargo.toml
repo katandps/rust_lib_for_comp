@@ -14,5 +14,5 @@ heavy_light_decomposition = { path = "../../../crates/graph/tree/heavy_light_dec
 binary_indexed_tree = { path = "../../../crates/data_structure/binary_indexed_tree" }
 
 [[bin]]
-name = "vertex_add_path_sum"
+name = "library_checker_vertex_add_path_sum"
 path = "main.rs"

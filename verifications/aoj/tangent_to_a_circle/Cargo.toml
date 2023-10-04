@@ -11,5 +11,5 @@ string_util = { path = "../../../crates/util/string_util" }
 circle = { path = "../../../crates/geometry/circle" }
 
 [[bin]]
-name = "tangent_to_a_circle"
+name = "aoj_solver_tangent_to_a_circle"
 path = "main.rs"

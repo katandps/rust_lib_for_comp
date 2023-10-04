@@ -12,5 +12,5 @@ adjacency_list = { path = "../../../crates/graph/adjacency_list" }
 dijkstra = { path = "../../../crates/graph/dijkstra" }
 
 [[bin]]
-name = "shortest_path"
+name = "library_checker_solver_shortest_path"
 path = "main.rs"

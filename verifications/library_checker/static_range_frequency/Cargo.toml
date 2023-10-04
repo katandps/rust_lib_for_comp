@@ -11,5 +11,5 @@ string_util = { path = "../../../crates/util/string_util" }
 slice_bounds = { path = "../../../crates/algo/slice_bounds" }
 
 [[bin]]
-name = "static_range_frequency"
+name = "library_checker_solver_static_range_frequency"
 path = "main.rs"

@@ -11,5 +11,5 @@ string_util = { path = "../../../crates/util/string_util" }
 chinese_remainder_theorem = { path = "../../../crates/algebra/chinese_remainder_theorem" }
 
 [[bin]]
-name = "chopsticks"
+name = "aoj_solver_chopsticks"
 path = "main.rs"

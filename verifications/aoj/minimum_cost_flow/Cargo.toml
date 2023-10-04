@@ -11,5 +11,5 @@ string_util = { path = "../../../crates/util/string_util" }
 primal_dual = { path = "../../../crates/flow/primal_dual" }
 
 [[bin]]
-name = "minimum_cost_flow"
+name = "aoj_solver_minimum_cost_flow"
 path = "main.rs"

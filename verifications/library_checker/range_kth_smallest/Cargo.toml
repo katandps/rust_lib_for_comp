@@ -11,5 +11,5 @@ string_util = { path = "../../../crates/util/string_util" }
 wavelet_matrix = { path = "../../../crates/data_structure/wavelet_matrix" }
 
 [[bin]]
-name = "range_kth_smallest"
+name = "library_checker_solver_range_kth_smallest"
 path = "main.rs"

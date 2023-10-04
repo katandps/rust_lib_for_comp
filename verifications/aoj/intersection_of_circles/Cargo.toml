@@ -11,5 +11,5 @@ string_util = { path = "../../../crates/util/string_util" }
 circle = { path = "../../../crates/geometry/circle" }
 
 [[bin]]
-name = "intersection_of_circles"
+name = "aoj_solver_intersection_of_circles"
 path = "main.rs"

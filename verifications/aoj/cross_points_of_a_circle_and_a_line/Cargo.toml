@@ -12,5 +12,5 @@ plane_float = { path = "../../../crates/geometry/plane_float" }
 circle = { path = "../../../crates/geometry/circle" }
 
 [[bin]]
-name = "cross_points_of_a_circle_and_a_line"
+name = "aoj_solver_cross_points_of_a_circle_and_a_line"
 path = "main.rs"

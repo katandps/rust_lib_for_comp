@@ -11,5 +11,5 @@ string_util = { path = "../../../crates/util/string_util" }
 dinic = { path = "../../../crates/flow/dinic" }
 
 [[bin]]
-name = "maximum_flow"
+name = "aoj_solver_maximum_flow"
 path = "main.rs"
