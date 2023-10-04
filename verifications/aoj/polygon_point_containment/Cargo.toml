@@ -1,0 +1,16 @@
+[package]
+name = "aoj_solver_polygon_point_containment"
+version = "0.1.0"
+edition = "2018"
+
+[dependencies]
+io_util = { path = "../../../crates/util/io_util" }
+io_debug = { path = "../../../crates/util/io_debug" }
+string_util = { path = "../../../crates/util/string_util" }
+
+plane_float = { path = "../../../crates/geometry/plane_float" }
+convex_hull = { path = "../../../crates/geometry/convex_hull" }
+
+[[bin]]
+name = "polygon_point_containment"
+path = "main.rs"

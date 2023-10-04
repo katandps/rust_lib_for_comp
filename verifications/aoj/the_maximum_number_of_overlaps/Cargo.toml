@@ -1,0 +1,17 @@
+[package]
+name = "aoj_solver_the_maximum_number_of_overlaps"
+version = "0.1.0"
+edition = "2018"
+
+[dependencies]
+io_util = { path = "../../../crates/util/io_util" }
+io_debug = { path = "../../../crates/util/io_debug" }
+string_util = { path = "../../../crates/util/string_util" }
+
+addition = { path = "../../../crates/algebra/binary_operation/addition" }
+min_max_macro = { path = "../../../crates/util/min_max_macro" }
+binary_indexed_tree_2d = { path = "../../../crates/data_structure/binary_indexed_tree_2d" }
+
+[[bin]]
+name = "the_maximum_number_of_overlaps"
+path = "main.rs"

@@ -1,0 +1,15 @@
+[package]
+name = "aoj_solver_maximum_flow"
+version = "0.1.0"
+edition = "2018"
+
+[dependencies]
+io_util = { path = "../../../crates/util/io_util" }
+io_debug = { path = "../../../crates/util/io_debug" }
+string_util = { path = "../../../crates/util/string_util" }
+
+dinic = { path = "../../../crates/flow/dinic" }
+
+[[bin]]
+name = "maximum_flow"
+path = "main.rs"

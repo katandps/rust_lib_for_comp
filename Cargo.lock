@@ -63,32 +63,6 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "b84bf0a05bbb2a83e5eb6fa36bb6e87baa08193c35ff52bbf6b38d8af2890e46"
 
 [[package]]
-name = "aoj_solver"
-version = "0.1.0"
-dependencies = [
- "addition",
- "adjacency_list",
- "binary_indexed_tree_2d",
- "bit_matrix",
- "chinese_remainder_theorem",
- "circle",
- "closest_pair",
- "convex_hull",
- "dijkstra",
- "dinic",
- "directed_acyclic_graph",
- "float_value",
- "io_debug",
- "io_util",
- "matrix",
- "min_max_macro",
- "plane_float",
- "prelude",
- "primal_dual",
- "string_util",
-]
-
-[[package]]
 name = "aoj_solver_area"
 version = "0.1.0"
 dependencies = [
@@ -195,6 +169,109 @@ dependencies = [
 ]
 
 [[package]]
+name = "aoj_solver_diameter_of_a_convex_polygons"
+version = "0.1.0"
+dependencies = [
+ "convex_hull",
+ "io_debug",
+ "io_util",
+ "plane_float",
+ "string_util",
+]
+
+[[package]]
+name = "aoj_solver_distance"
+version = "0.1.0"
+dependencies = [
+ "io_debug",
+ "io_util",
+ "plane_float",
+ "string_util",
+]
+
+[[package]]
+name = "aoj_solver_incircle_of_a_triangle"
+version = "0.1.0"
+dependencies = [
+ "circle",
+ "io_debug",
+ "io_util",
+ "plane_float",
+ "string_util",
+]
+
+[[package]]
+name = "aoj_solver_intersection"
+version = "0.1.0"
+dependencies = [
+ "io_debug",
+ "io_util",
+ "plane_float",
+ "string_util",
+]
+
+[[package]]
+name = "aoj_solver_intersection_of_circles"
+version = "0.1.0"
+dependencies = [
+ "circle",
+ "io_debug",
+ "io_util",
+ "string_util",
+]
+
+[[package]]
+name = "aoj_solver_is_convex"
+version = "0.1.0"
+dependencies = [
+ "convex_hull",
+ "io_debug",
+ "io_util",
+ "string_util",
+]
+
+[[package]]
+name = "aoj_solver_matrix_multiplication"
+version = "0.1.0"
+dependencies = [
+ "io_debug",
+ "io_util",
+ "matrix",
+ "prelude",
+ "string_util",
+]
+
+[[package]]
+name = "aoj_solver_maximum_flow"
+version = "0.1.0"
+dependencies = [
+ "dinic",
+ "io_debug",
+ "io_util",
+ "string_util",
+]
+
+[[package]]
+name = "aoj_solver_minimum_cost_flow"
+version = "0.1.0"
+dependencies = [
+ "io_debug",
+ "io_util",
+ "primal_dual",
+ "string_util",
+]
+
+[[package]]
+name = "aoj_solver_parallel_orthogonal"
+version = "0.1.0"
+dependencies = [
+ "io_debug",
+ "io_util",
+ "plane_float",
+ "string_util",
+]
+
+[[package]]
 name = "aoj_solver_plane_float"
 version = "0.1.0"
 dependencies = [
@@ -205,20 +282,66 @@ dependencies = [
 ]
 
 [[package]]
-name = "aoj_verification"
+name = "aoj_solver_polygon_point_containment"
+version = "0.1.0"
+dependencies = [
+ "convex_hull",
+ "io_debug",
+ "io_util",
+ "plane_float",
+ "string_util",
+]
+
+[[package]]
+name = "aoj_solver_projection"
+version = "0.1.0"
+dependencies = [
+ "io_debug",
+ "io_util",
+ "plane_float",
+ "string_util",
+]
+
+[[package]]
+name = "aoj_solver_reflection"
+version = "0.1.0"
+dependencies = [
+ "io_debug",
+ "io_util",
+ "plane_float",
+ "string_util",
+]
+
+[[package]]
+name = "aoj_solver_single_source_shortest_path"
+version = "0.1.0"
+dependencies = [
+ "adjacency_list",
+ "dijkstra",
+ "io_debug",
+ "io_util",
+ "string_util",
+]
+
+[[package]]
+name = "aoj_solver_tangent_to_a_circle"
+version = "0.1.0"
+dependencies = [
+ "circle",
+ "io_debug",
+ "io_util",
+ "string_util",
+]
+
+[[package]]
+name = "aoj_solver_the_maximum_number_of_overlaps"
 version = "0.1.0"
 dependencies = [
  "addition",
- "aoj_solver",
  "binary_indexed_tree_2d",
- "circle",
- "convex_hull",
- "dinic",
- "float_value",
+ "io_debug",
  "io_util",
  "min_max_macro",
- "plane_float",
- "prelude",
  "string_util",
 ]
 
@@ -645,6 +768,18 @@ name = "cumulative_sum"
 version = "0.1.0"
 dependencies = [
  "prelude",
+]
+
+[[package]]
+name = "dag_reachability"
+version = "0.1.0"
+dependencies = [
+ "adjacency_list",
+ "dijkstra",
+ "directed_acyclic_graph",
+ "io_debug",
+ "io_util",
+ "string_util",
 ]
 
 [[package]]
