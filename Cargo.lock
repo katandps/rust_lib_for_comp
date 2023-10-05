@@ -2164,15 +2164,6 @@ dependencies = [
 ]
 
 [[package]]
-name = "tree"
-version = "0.1.0"
-dependencies = [
- "adjacency_list",
- "graph",
- "prelude",
-]
-
-[[package]]
 name = "trie"
 version = "0.1.0"
 dependencies = [
@@ -2208,6 +2199,17 @@ dependencies = [
 name = "union_of_ranges"
 version = "0.1.0"
 dependencies = [
+ "prelude",
+]
+
+[[package]]
+name = "unweighted_tree"
+version = "0.1.0"
+dependencies = [
+ "adjacency_list",
+ "algebra",
+ "graph",
+ "min_max_macro",
  "prelude",
 ]
 

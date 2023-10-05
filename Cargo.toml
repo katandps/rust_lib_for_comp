@@ -88,7 +88,7 @@ members = [
     'crates/graph/prim',
     'crates/graph/retrograde_analysis',
     'crates/graph/strongly_connected_components',
-    'crates/graph/tree',
+    'crates/graph/tree/unweighted_tree',
     'crates/graph/tree/euler_tour',
     'crates/graph/tree/heavy_light_decomposition',
     'crates/graph/tree/lowest_common_ancestor',
