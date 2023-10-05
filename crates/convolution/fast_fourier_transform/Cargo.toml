@@ -7,9 +7,5 @@ edition = "2018"
 algebra = { path = "../../algebra" }
 prelude = { path = "../../prelude" }
 
-[dev-dependencies]
-xor_shift = { path = "../../algo/xor_shift" }
-mod_int = { path = "../../algebra/mod_int" }
-
 [lib]
 path = "lib.rs"

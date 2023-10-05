@@ -1,0 +1,16 @@
+[package]
+name = "library_checker_solver_convolution"
+version = "0.1.0"
+edition = "2018"
+
+[dependencies]
+io_util = { path = "../../../crates/util/io_util" }
+io_debug = { path = "../../../crates/util/io_debug" }
+string_util = { path = "../../../crates/util/string_util" }
+
+fast_fourier_transform = { path = "../../../crates/convolution/fast_fourier_transform" }
+mod_int = { path = "../../../crates/algebra/mod_int" }
+
+[[bin]]
+name = "library_checker_solver_convolution"
+path = "main.rs"

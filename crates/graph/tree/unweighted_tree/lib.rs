@@ -45,7 +45,7 @@ mod tree_graph_impl {
         ///
         /// ```
         /// use adjacency_list::Graph;
-        /// use tree::TreeGraph;
+        /// use unweighted_tree::TreeGraph;
         /// let graph = Graph::<i32>::new(5);
         ///
         /// // l to rが直径

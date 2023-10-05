@@ -899,9 +899,7 @@ name = "fast_fourier_transform"
 version = "0.1.0"
 dependencies = [
  "algebra",
- "mod_int",
  "prelude",
- "xor_shift",
 ]
 
 [[package]]
@@ -1152,6 +1150,17 @@ name = "libc"
 version = "0.2.148"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "9cdc71e17332e86d2e1d38c1f99edcb6288ee11b815fb1a4b049eaa2114d369b"
+
+[[package]]
+name = "library_checker_solver_convolution"
+version = "0.1.0"
+dependencies = [
+ "fast_fourier_transform",
+ "io_debug",
+ "io_util",
+ "mod_int",
+ "string_util",
+]
 
 [[package]]
 name = "library_checker_solver_enumerate_palindromes"
