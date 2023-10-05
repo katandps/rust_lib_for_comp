@@ -1,47 +1,81 @@
-//! # 最長回文半径 Manachar's Algorithm
+//! # 最長回文長 Manachar's Algorithm
 //!
 //! ## 計算量
 //! $O(N)$
 
-use prelude::*;
-
 #[snippet(name = "manachar", doc_hidden)]
-/// 返り値は中心をiとしたときの最大回文半径
-/// 偶数長の回文半径がほしければsrcにダミー文字を挟む(ex. abba -> a_b_b_a
-pub fn manachar<T: Eq>(src: &[T]) -> Vec<usize> {
-    let mut i = 0;
-    let mut j = 0;
-    let mut dp = vec![0; src.len()];
-    while i < src.len() {
-        while i >= j && i + j < src.len() && src[i - j] == src[i + j] {
-            j += 1;
+pub use manachar_impl::Manachar;
+use prelude::*;
+#[snippet(name = "manachar", doc_hidden)]
+mod manachar_impl {
+    use super::Debug;
+    pub struct Manachar;
+    impl Manachar {
+        /// # 文字 $i$ を中心とした(奇数長の)最大回文長
+        pub fn manachar_item_center<T: Eq>(src: &[T]) -> Vec<usize> {
+            Self::logic(src).into_iter().map(|r| r * 2 - 1).collect()
         }
-        dp[i] = j;
-        let mut k = 1;
-        while i >= k && k + dp[i - k] < j {
-            dp[i + k] = dp[i - k];
-            k += 1;
+        /// # 最大回文長
+        pub fn manachar<T: Eq + Clone + Debug>(src: &[T]) -> Vec<usize> {
+            if src.is_empty() {
+                return Vec::new();
+            }
+            let mut v = vec![src[0].clone(); src.len() * 2 - 1];
+            for i in 0..src.len() {
+                v[i * 2] = src[i].clone();
+                if i * 2 + 1 < v.len() {
+                    v[i * 2 + 1] = src[0].clone();
+                }
+            }
+            Self::logic(&v)
+                .into_iter()
+                .enumerate()
+                .map(|(i, r)| if (i ^ r) & 1 == 0 { r - 1 } else { r })
+                .collect()
         }
-        i += k;
-        j -= k;
+
+        fn logic<T: Eq>(src: &[T]) -> Vec<usize> {
+            let (mut i, mut j, mut rad) = (0, 0, vec![0; src.len()]);
+            while i < src.len() {
+                while i >= j && i + j < src.len() && src[i - j] == src[i + j] {
+                    j += 1;
+                }
+                rad[i] = j;
+                let mut k = 1;
+                while i >= k && k + rad[i - k] < j {
+                    rad[i + k] = rad[i - k];
+                    k += 1;
+                }
+                i += k;
+                j -= k;
+            }
+            rad
+        }
     }
-    dp
 }
 
+#[snippet(name = "manachar", doc_hidden)]
 #[cfg(test)]
 mod test {
     use super::*;
 
     #[test]
-    fn test() {
-        let src: Vec<_> = "abaaababa".chars().collect();
-        let res = manachar(&src);
-        assert_eq!(vec![1, 2, 1, 4, 1, 2, 3, 2, 1], res);
+    fn test_empty() {
+        let empty = vec![1];
+        assert_eq!(Manachar::manachar(&empty[0..0]), Vec::new());
     }
 
     #[test]
-    fn test_fast_enough() {
-        let src: Vec<_> = (0..5000000).map(|i| i % 4).collect();
-        let _res = manachar(&src);
+    fn test_item_center() {
+        let src: Vec<_> = "abaaababa".chars().collect();
+        let res: Vec<usize> = Manachar::manachar_item_center(&src);
+        assert_eq!(vec![1, 3, 1, 7, 1, 3, 5, 3, 1], res);
+    }
+
+    #[test]
+    fn test() {
+        let src: Vec<_> = "abcbcba".chars().collect();
+        let res: Vec<usize> = Manachar::manachar(&src);
+        assert_eq!(vec![1, 0, 1, 0, 3, 0, 7, 0, 3, 0, 1, 0, 1], res);
     }
 }
