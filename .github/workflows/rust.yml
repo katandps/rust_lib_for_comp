@@ -24,14 +24,14 @@ jobs:
       - uses: actions/cache@v2
         with:
           path: |
-            ~/.vendor/bundle
-            ~/.cache/pip
+            ~/.local/bin/
+            ~/.cache/pip/
             ~/.cargo/bin/
             ~/.cargo/registry/index/
             ~/.cargo/registry/cache/
             ~/.cargo/git/db/
             target/
-            .verify-helper/
+            .verify-helper/markdown/.vendor/bundle
           key: always
 
       - uses: ruby/setup-ruby@v1
@@ -84,7 +84,7 @@ jobs:
       - name: Generate docs
         run: |
           oj-verify docs
-          cd .verify-helper/markdown
+          cd .verify-helper/markdown        
           bundle config set --local path '.vendor/bundle'
           bundle install
           bundle exec jekyll build
