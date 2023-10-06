@@ -1,0 +1,14 @@
+[package]
+name = "library_checker_solver_suffix_array"
+version = "0.1.0"
+edition = "2018"
+
+[dependencies]
+io_util = { path = "../../../crates/util/io_util" }
+io_debug = { path = "../../../crates/util/io_debug" }
+string_util = { path = "../../../crates/util/string_util" }
+
+suffix_array = { path = "../../../crates/string/suffix_array" }
+[[bin]]
+name = "library_checker_solver_suffix_array"
+path = "main.rs"

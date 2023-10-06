@@ -42,7 +42,12 @@ mod test {
 
     #[test]
     fn test() {
-        let sa = SuffixArray::build(b"mississippi");
+        let sa = SuffixArray::build(
+            &b"mississippi"
+                .iter()
+                .map(|&u| u as usize)
+                .collect::<Vec<_>>(),
+        );
         let lcp = LCPArray::build(&sa);
         assert_eq!(vec![11, 10, 7, 4, 1, 0, 9, 8, 6, 3, 5, 2], sa.sa);
         assert_eq!(vec![0, 0, 1, 1, 4, 0, 0, 1, 0, 2, 1, 3], lcp._lcp);

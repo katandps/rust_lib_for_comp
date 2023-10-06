@@ -74,14 +74,14 @@ mod io_impl {
             self.split(b'0')
         }
 
-        /// 英小文字からなる文字列の入力を $'a' = 0$ となる数値の配列で得る
+        /// 英小文字からなる文字列の入力を $'a' = 1$ となる数値の配列で得る
         fn lowercase(&mut self) -> Vec<usize> {
-            self.split(b'a')
+            self.split(b'a' - 1)
         }
 
-        /// 英大文字からなる文字列の入力を $'A' = 0$ となる数値の配列で得る
+        /// 英大文字からなる文字列の入力を $'A' = 1$ となる数値の配列で得る
         fn uppercase(&mut self) -> Vec<usize> {
-            self.split(b'A')
+            self.split(b'A' - 1)
         }
 
         /// 改行された文字列の入力を2次元配列とみなし、charの2次元Vecとして得る

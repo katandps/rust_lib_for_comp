@@ -7,27 +7,23 @@ use prelude::*;
 #[derive(Debug, Clone)]
 pub struct SuffixArray {
     pub sa: Vec<usize>,
-    pub source: Vec<u8>,
+    pub source: Vec<usize>,
 }
 
 #[snippet(name = "suffix-array", doc_hidden)]
 impl SuffixArray {
-    /// create by SA-IS. O(N)
-    pub fn build(source: &[u8]) -> Self {
+    /// ## create by SA-IS. O(N)
+    /// 番兵として $0$ を挿入する sourceに$0$が混じらないよう注意
+    pub fn build(source: &[usize]) -> Self {
         let mut source: Vec<_> = source.to_vec();
         source.push(0);
         let mut sais = Sais::new(source.len());
-        let sa = sais.suffix_array(
-            &compress(&source)
-                .iter()
-                .map(|&u| u as u8)
-                .collect::<Vec<_>>(),
-        );
+        let sa = sais.suffix_array(&compress(&source));
         Self { sa, source }
     }
 
     /// targetがsourceに含まれるとき、そのindexの一つを返す
-    pub fn search(&self, target: &[u8]) -> Option<usize> {
+    pub fn search(&self, target: &[usize]) -> Option<usize> {
         let mut l = 0;
         let mut r = self.sa.len();
         while r - l > 1 {
@@ -57,7 +53,7 @@ struct Sais {
     pos: Vec<usize>,
     lms_pos: Vec<usize>,
     reduced_text_pos: Vec<usize>,
-    bucket_sizes: BTreeMap<u8, usize>,
+    bucket_sizes: BTreeMap<usize, usize>,
     bucket_start: Vec<usize>,
     bucket_end: Vec<usize>,
 }
@@ -75,7 +71,7 @@ impl Sais {
         }
     }
 
-    fn init_bucket_start(&mut self, source: &[u8]) {
+    fn init_bucket_start(&mut self, source: &[usize]) {
         self.bucket_sizes.clear();
         self.bucket_start.clear();
         for &c in source {
@@ -88,7 +84,7 @@ impl Sais {
         }
     }
 
-    fn init_bucket_end(&mut self, source: &[u8]) {
+    fn init_bucket_end(&mut self, source: &[usize]) {
         self.bucket_end.clear();
         for &r in &self.bucket_start[1..] {
             self.bucket_end.push(r - 1);
@@ -96,19 +92,19 @@ impl Sais {
         self.bucket_end.push(source.len() - 1);
     }
 
-    fn construct(&mut self, source: &[u8]) {
+    fn construct(&mut self, source: &[usize]) {
         let pos_types = PosTypes::new(source);
 
         self.calc_lms_pos(source, &pos_types);
         self.calc_pos(source, &pos_types);
     }
 
-    fn suffix_array(&mut self, source: &[u8]) -> Vec<usize> {
+    fn suffix_array(&mut self, source: &[usize]) -> Vec<usize> {
         self.construct(source);
         self.pos.clone()
     }
 
-    fn calc_lms_pos(&mut self, source: &[u8], pos_types: &PosTypes) {
+    fn calc_lms_pos(&mut self, source: &[usize], pos_types: &PosTypes) {
         let n = source.len();
         self.lms_pos.clear();
         let mut i = 0;
@@ -125,14 +121,14 @@ impl Sais {
         self.sort_lms_suffixes(source, pos_types, lms_substring_count);
     }
 
-    fn calc_pos(&mut self, source: &[u8], pos_types: &PosTypes) {
+    fn calc_pos(&mut self, source: &[usize], pos_types: &PosTypes) {
         let n = source.len();
         self.pos.clear();
         self.init_bucket_start(source);
         self.init_bucket_end(source);
         self.pos.resize(n, n);
         for &p in self.lms_pos.iter().rev() {
-            let c = source[p] as usize;
+            let c = source[p];
             self.pos[self.bucket_end[c]] = p;
             self.bucket_end[c] = self.bucket_end[c].wrapping_sub(1);
         }
@@ -144,7 +140,7 @@ impl Sais {
             if p == n || p == 0 {
                 continue;
             }
-            let c = source[p - 1] as usize;
+            let c = source[p - 1];
             self.pos[self.bucket_start[c]] = p - 1;
             self.bucket_start[c] += 1;
         }
@@ -155,14 +151,14 @@ impl Sais {
                 continue;
             }
             if pos_types.is_s(p - 1) {
-                let c = source[p - 1] as usize;
+                let c = source[p - 1];
                 self.pos[self.bucket_end[c]] = p - 1;
                 self.bucket_end[c] = self.bucket_end[c].wrapping_sub(1);
             }
         }
     }
 
-    fn lms_substring_eq(&self, source: &[u8], pos_types: &PosTypes, i: usize, j: usize) -> bool {
+    fn lms_substring_eq(&self, source: &[usize], pos_types: &PosTypes, i: usize, j: usize) -> bool {
         for k in 0.. {
             let lmsi = pos_types.is_lms(i + k);
             let lmsj = pos_types.is_lms(j + k);
@@ -181,13 +177,13 @@ impl Sais {
 
     fn sort_lms_suffixes(
         &mut self,
-        source: &[u8],
+        source: &[usize],
         pos_types: &PosTypes,
         lms_substring_count: usize,
     ) {
         if lms_substring_count > 1 {
-            let mut reduced_text = vec![0u8; lms_substring_count];
-            let mut label = 0;
+            let mut reduced_text = vec![0usize; lms_substring_count];
+            let mut label = 0usize;
             reduced_text[self.reduced_text_pos[self.pos[0]]] = label;
             let mut prev = None;
             for &p in &self.pos {
@@ -200,7 +196,7 @@ impl Sais {
                     prev = Some(p)
                 }
             }
-            if label as usize + 1 < lms_substring_count {
+            if label + 1 < lms_substring_count {
                 let lms_pos = self.lms_pos.clone();
                 self.construct(&reduced_text);
                 self.lms_pos.clear();
@@ -224,7 +220,7 @@ struct PosTypes(Vec<bool>);
 
 #[snippet(name = "suffix-array", doc_hidden)]
 impl PosTypes {
-    fn new(source: &[u8]) -> Self {
+    fn new(source: &[usize]) -> Self {
         let n = source.len();
         let mut v = vec![false; n];
         v[n - 1] = true;
@@ -255,24 +251,19 @@ mod test {
 
     #[test]
     fn search_test() {
-        assert!(build_u8_vec("abc") <= build_u8_vec("abcd"));
-        assert!(build_u8_vec("abc") <= build_u8_vec("abc"));
-        assert!(!(build_u8_vec("abc") <= build_u8_vec("ab")));
-        assert!(build_u8_vec("abc") <= build_u8_vec("abd"));
-
-        let s: Vec<_> = build_u8_vec("mmiissiissiippii");
+        let s: Vec<_> = build_usize_vec("mmiissiissiippii");
         let sa = SuffixArray::build(&s);
-        assert!(sa.search(&build_u8_vec("")).is_some());
-        assert!(sa.search(&build_u8_vec("i")).is_some());
-        assert_eq!(Some(0), sa.search(&build_u8_vec("mmiissiissiippii")));
-        assert_eq!(Some(3), sa.search(&build_u8_vec("issiis")));
-        assert_eq!(Some(12), sa.search(&build_u8_vec("ppii")));
-        assert_eq!(None, sa.search(&build_u8_vec("issiisss")));
-        assert_eq!(None, sa.search(&build_u8_vec("ppiii")));
-        assert_eq!(None, sa.search(&build_u8_vec("b")));
+        assert!(sa.search(&build_usize_vec("")).is_some());
+        assert!(sa.search(&build_usize_vec("i")).is_some());
+        assert_eq!(Some(0), sa.search(&build_usize_vec("mmiissiissiippii")));
+        assert_eq!(Some(3), sa.search(&build_usize_vec("issiis")));
+        assert_eq!(Some(12), sa.search(&build_usize_vec("ppii")));
+        assert_eq!(None, sa.search(&build_usize_vec("issiisss")));
+        assert_eq!(None, sa.search(&build_usize_vec("ppiii")));
+        assert_eq!(None, sa.search(&build_usize_vec("b")));
     }
 
-    fn build_u8_vec(s: &str) -> Vec<u8> {
-        s.chars().map(|c| c as u8).collect()
+    fn build_usize_vec(s: &str) -> Vec<usize> {
+        s.chars().map(|c| c as usize).collect()
     }
 }

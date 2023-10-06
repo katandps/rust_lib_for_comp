@@ -1305,6 +1305,16 @@ dependencies = [
 ]
 
 [[package]]
+name = "library_checker_solver_suffix_array"
+version = "0.1.0"
+dependencies = [
+ "io_debug",
+ "io_util",
+ "string_util",
+ "suffix_array",
+]
+
+[[package]]
 name = "library_checker_sum_of_floor_of_linear"
 version = "0.1.0"
 dependencies = [
