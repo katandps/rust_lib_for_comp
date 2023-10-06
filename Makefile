@@ -16,7 +16,7 @@ test:
 	cargo test --workspace
 
 verify:
-	oj-verify run -j 8
+	oj-verify run
 
 coverage:
 	cargo +nightly llvm-cov --doctests --lcov --output-path lcov.info
