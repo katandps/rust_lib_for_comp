@@ -1,0 +1,15 @@
+[package]
+name = "library_checker_solver_number_of_substrings"
+version = "0.1.0"
+edition = "2018"
+
+[dependencies]
+io_util = { path = "../../../crates/util/io_util" }
+io_debug = { path = "../../../crates/util/io_debug" }
+string_util = { path = "../../../crates/util/string_util" }
+
+longest_common_prefix_array = { path = "../../../crates/string/longest_common_prefix_array" }
+suffix_array = { path = "../../../crates/string/suffix_array" }
+[[bin]]
+name = "library_checker_solver_number_of_substrings"
+path = "main.rs"

@@ -1193,6 +1193,17 @@ dependencies = [
 ]
 
 [[package]]
+name = "library_checker_solver_number_of_substrings"
+version = "0.1.0"
+dependencies = [
+ "io_debug",
+ "io_util",
+ "longest_common_prefix_array",
+ "string_util",
+ "suffix_array",
+]
+
+[[package]]
 name = "library_checker_solver_range_kth_smallest"
 version = "0.1.0"
 dependencies = [

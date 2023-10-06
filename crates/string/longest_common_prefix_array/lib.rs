@@ -4,7 +4,7 @@ use suffix_array::SuffixArray;
 
 #[snippet(name = "longest-common-prefix-array", doc_hidden)]
 pub struct LCPArray {
-    _lcp: Vec<usize>,
+    pub lcp: Vec<usize>,
 }
 
 #[snippet(name = "longest-common-prefix-array", doc_hidden)]
@@ -32,7 +32,7 @@ impl LCPArray {
             }
             lcp[rank[i]] = h;
         }
-        LCPArray { _lcp: lcp }
+        LCPArray { lcp }
     }
 }
 
@@ -50,6 +50,6 @@ mod test {
         );
         let lcp = LCPArray::build(&sa);
         assert_eq!(vec![11, 10, 7, 4, 1, 0, 9, 8, 6, 3, 5, 2], sa.sa);
-        assert_eq!(vec![0, 0, 1, 1, 4, 0, 0, 1, 0, 2, 1, 3], lcp._lcp);
+        assert_eq!(vec![0, 0, 1, 1, 4, 0, 0, 1, 0, 2, 1, 3], lcp.lcp);
     }
 }
