@@ -216,17 +216,15 @@ jobs:
 
       - name: Generate docs
         run: cargo doc --workspace --no-deps
-
-      - name: Upload result artifact
-        uses: actions/upload-artifact@v3
+      - name: Upload artifact
+        id: upload-pages
+        uses: actions/upload-pages-artifact@v1
         with:
-          name: Result-${{ runner.os }}
           path: ${{runner.temp}}/target/doc/*
-          retention-days: 1
 
   deploy:
     if: always() && github.ref == 'refs/heads/main' && needs.docs-and-check.outputs.upload-pages == 'true'
-    needs: docs-and-check
+    needs: [docs-and-check, test]
     environment:
       name: github-pages
       url: ${{ steps.deployment.outputs.page_url }}
