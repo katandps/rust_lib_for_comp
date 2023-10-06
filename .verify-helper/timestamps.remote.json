@@ -38,5 +38,9 @@
 "verifications/library_checker/rmq_sparse_table/main.rs": "2023-10-04 23:33:17 +0900",
 "verifications/library_checker/segment_add_get_min/main.rs": "2023-10-04 23:33:17 +0900",
 "verifications/library_checker/shortest_path/main.rs": "2023-10-04 23:33:17 +0900",
-"verifications/library_checker/static_range_frequency/main.rs": "2023-10-04 23:33:17 +0900"
+"verifications/library_checker/static_range_frequency/main.rs": "2023-10-04 23:33:17 +0900",
+"verifications/library_checker/static_range_frequency_wavelet_matrix/main.rs": "2023-10-04 23:33:17 +0900",
+"verifications/library_checker/strongly_connected_components/main.rs": "2023-10-04 23:33:17 +0900",
+"verifications/library_checker/sum_of_floor_of_linear/main.rs": "2023-10-04 23:33:17 +0900",
+"verifications/library_checker/vertex_add_path_sum/main.rs": "2023-10-04 23:33:17 +0900"
 }
