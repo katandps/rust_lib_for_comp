@@ -220,7 +220,7 @@ jobs:
         id: upload-pages
         uses: actions/upload-pages-artifact@v1
         with:
-          path: ${{runner.temp}}/target/doc/*
+          path: ./target/doc
 
   deploy:
     if: always() && github.ref == 'refs/heads/main' && needs.docs-and-check.outputs.upload-pages == 'true'
