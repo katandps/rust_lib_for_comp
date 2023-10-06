@@ -42,5 +42,7 @@
 "verifications/library_checker/static_range_frequency_wavelet_matrix/main.rs": "2023-10-04 23:33:17 +0900",
 "verifications/library_checker/strongly_connected_components/main.rs": "2023-10-04 23:33:17 +0900",
 "verifications/library_checker/sum_of_floor_of_linear/main.rs": "2023-10-04 23:33:17 +0900",
-"verifications/library_checker/vertex_add_path_sum/main.rs": "2023-10-04 23:33:17 +0900"
+"verifications/library_checker/vertex_add_path_sum/main.rs": "2023-10-04 23:33:17 +0900",
+"verifications/library_checker/vertex_add_path_sum2/main.rs": "2023-10-04 23:33:17 +0900",
+"verifications/library_checker/z_algorithm/main.rs": "2023-10-05 00:11:48 +0900"
 }
