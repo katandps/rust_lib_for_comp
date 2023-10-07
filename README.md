@@ -1,36 +1,33 @@
-[![CI](https://github.com/katandps/rust_lib_for_comp/actions/workflows/rust.yml/badge.svg?branch=main)](https://github.com/katandps/rust_lib_for_comp/actions/workflows/rust.yml)
-[![verification](https://img.shields.io/badge/Doc-GitHubPages-brightgreen)](https://library.katand.net/)
-[![codecov](https://codecov.io/gh/katandps/rust_lib_for_comp/graph/badge.svg?token=MQ3QNO200B)](https://codecov.io/gh/katandps/rust_lib_for_comp)
-
 # Rust Library for Competitive Programming
 
-競技プログラミングで使用できるライブラリ及び、各種サイトに参加するためのテンプレート
-ディレクトリ構成は作者の都合により変わることがあります
+[![Rust](https://github.com/katandps/rust_lib_for_comp/actions/workflows/rust.yml/badge.svg)](https://github.com/katandps/rust_lib_for_comp/actions/workflows/rust.yml)
+[![document](https://img.shields.io/badge/Doc-GitHubPages-brightgreen)](https://library.katand.net/)
+[![codecov](https://codecov.io/gh/katandps/rust_lib_for_comp/graph/badge.svg?token=MQ3QNO200B)](https://codecov.io/gh/katandps/rust_lib_for_comp)
 
 ## About
-
-各ライブラリについて crate にしてある
-crate の依存関係は Cargo.toml に記載している
-
-master に push するとテスト/静的解析/Doc 生成が走る
+競技プログラミングで使用できるライブラリ及び、各種サイトに参加するためのテンプレート
 
 ## Usage
+Makefileを見るべし
+
 
 ### Export snippets
 
 #### Install
 
-`cargo-snippet` `oj-verify` を使用しています。
+`cargo-snippet` `competitive-verifier` を使用しています。
+
+##### Install cargo-snippet
 
 ```sh
 rustup component add rustfmt
 cargo install cargo-snippet --features="binaries"
 ```
 
+##### Install competitive-verifier
+
 ```sh
-sudo apt update
-sudo apt install python3-pip
-pip3 install online-judge-verify-helper
+pip install competitive-verifier
 ```
 
 #### Export
@@ -39,16 +36,4 @@ pip3 install online-judge-verify-helper
 
 ```
 make build
-```
-
-### Benchmark
-
-criterion によるベンチマークに対応しています。
-
-#### Install
-
-#### bench
-
-```
-cargo bench
 ```

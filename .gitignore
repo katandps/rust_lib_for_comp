@@ -3,4 +3,3 @@ target
 *.code-snippets
 .idea
 lcov.info
-lcov_ex.info
