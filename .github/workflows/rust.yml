@@ -34,19 +34,10 @@ jobs:
           cache-pip: true
       
       - uses: Swatinem/rust-cache@v2
-        with:
-          shared-key: "lib"
-
       - name: Set up Rust (nightly)
         uses: dtolnay/rust-toolchain@stable
         with:
           toolchain: nightly
-          targets: x86_64-unknown-linux-gnu
-
-      - name: Set up Rust (1.70.0)
-        uses: dtolnay/rust-toolchain@stable
-        with:
-          toolchain: "1.70.0"
           targets: x86_64-unknown-linux-gnu
 
       - name: Install cargo-udeps for Rust
@@ -54,9 +45,6 @@ jobs:
         with:
           crate: cargo-udeps
           cache-key: cargo-udeps-key
-
-      - name: Install cargo-llvm-cov
-        uses: taiki-e/install-action@cargo-llvm-cov
 
       - name: oj-resolve
         uses: competitive-verifier/actions/oj-resolve@v1
@@ -193,8 +181,13 @@ jobs:
     steps:
       - uses: actions/checkout@v3
       - uses: Swatinem/rust-cache@v2
+      - name: Set up Rust (nightly)
+        uses: dtolnay/rust-toolchain@stable
         with:
-          shared-key: "lib"
+          toolchain: nightly
+          targets: x86_64-unknown-linux-gnu      
+      - name: Install cargo-llvm-cov
+        uses: taiki-e/install-action@cargo-llvm-cov
       - name: Generate code coverage
         run: cargo +nightly llvm-cov --doctests --lcov --output-path lcov.info
 
@@ -217,8 +210,11 @@ jobs:
     steps:
       - uses: actions/checkout@v3
       - uses: Swatinem/rust-cache@v2
+      - name: Set up Rust (1.70.0)
+        uses: dtolnay/rust-toolchain@stable
         with:
-          shared-key: "lib"
+          toolchain: "1.70.0"
+          targets: x86_64-unknown-linux-gnu
       - run: cargo +1.70.0 check
 
   docs:
