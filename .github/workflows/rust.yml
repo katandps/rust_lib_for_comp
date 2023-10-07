@@ -231,7 +231,7 @@ jobs:
           name: rustdoc
           path: ./target/doc
   build:
-    if: needs.docs-and-check.outputs.upload-pages == 'true' && needs.test.outputs.rustdoc == 'true'
+    if: always() && needs.docs-and-check.outputs.upload-pages == 'true' && needs.test.outputs.rustdoc == 'true'
     needs: [docs-and-check, test]
     outputs:
       upload: ${{steps.upload.outcome == 'success'}}
