@@ -219,6 +219,7 @@ jobs:
     needs: setup
     runs-on: ubuntu-latest
     steps:
+      - uses: actions/checkout@v3
       - name: Generate docs
         run: cargo doc --workspace --no-deps
 
@@ -245,7 +246,7 @@ jobs:
           fail_ci_if_error: true
 
   build:
-    needs: [test,lint,compile,docs-and-check]
+    needs: [test,lint,compile,docs,docs-and-check]
     outputs:
       upload: ${{steps.upload.outcome == 'success'}}
     runs-on: ubuntu-latest
