@@ -231,7 +231,6 @@ jobs:
           name: rustdoc
           path: ./target/doc
   build:
-    if: always() && needs.docs-and-check.outputs.upload-pages == 'true' && needs.test.outputs.rustdoc == 'true'
     needs: [docs-and-check, test]
     outputs:
       upload: ${{steps.upload.outcome == 'success'}}
@@ -252,7 +251,6 @@ jobs:
           path: ./public
 
   deploy:
-    if: always() && github.ref == 'refs/heads/main' && needs.build.outputs.upload == 'true'
     needs: build
     runs-on: ubuntu-latest
     environment:
