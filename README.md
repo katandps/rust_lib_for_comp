@@ -5,11 +5,12 @@
 [![codecov](https://codecov.io/gh/katandps/rust_lib_for_comp/graph/badge.svg?token=MQ3QNO200B)](https://codecov.io/gh/katandps/rust_lib_for_comp)
 
 ## About
+
 競技プログラミングで使用できるライブラリ及び、各種サイトに参加するためのテンプレート
 
 ## Usage
-Makefileを見るべし
 
+Makefileを見るべし
 
 ### Export snippets
 
@@ -34,6 +35,6 @@ pip install competitive-verifier
 
 テスト/verify を行った後、snippet を指定したフォルダに格納します
 
-```
+```sh
 make build
 ```
