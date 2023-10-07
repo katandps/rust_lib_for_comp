@@ -1,4 +1,4 @@
-[![CI](https://github.com/katandps/rust_lib_for_comp/actions/workflows/rust.yml/badge.svg?branch=master)](https://github.com/katandps/rust_lib_for_comp/actions/workflows/rust.yml)
+[![CI](https://github.com/katandps/rust_lib_for_comp/actions/workflows/rust.yml/badge.svg?branch=main)](https://github.com/katandps/rust_lib_for_comp/actions/workflows/rust.yml)
 [![verification](https://img.shields.io/badge/Doc-GitHubPages-brightgreen)](https://library.katand.net/)
 [![codecov](https://codecov.io/gh/katandps/rust_lib_for_comp/graph/badge.svg?token=MQ3QNO200B)](https://codecov.io/gh/katandps/rust_lib_for_comp)
 
