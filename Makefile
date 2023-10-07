@@ -21,7 +21,7 @@ test:
 
 # verify libraries
 verify:
-    competitive-verifier oj-resolve > .competitive-verifier/verify.json
+	competitive-verifier oj-resolve > .competitive-verifier/verify.json
 	competitive-verifier verify --verify-json .competitive-verifier/verify.json --output .competitive-verifier/result.json
 
 # test and make coverage
