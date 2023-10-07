@@ -1204,6 +1204,16 @@ dependencies = [
 ]
 
 [[package]]
+name = "library_checker_solver_primality_test"
+version = "0.1.0"
+dependencies = [
+ "io_debug",
+ "io_util",
+ "miller_rabin",
+ "string_util",
+]
+
+[[package]]
 name = "library_checker_solver_range_kth_smallest"
 version = "0.1.0"
 dependencies = [
