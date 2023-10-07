@@ -1,4 +1,4 @@
-//# verification-helper: PROBLEM https://judge.yosupo.jp/problem/number_of_substrings
+// verification-helper: PROBLEM https://judge.yosupo.jp/problem/number_of_substrings
 //! # 部分文字列の個数
 #![cfg_attr(coverage_nightly, feature(coverage_attribute))]
 #[cfg_attr(coverage_nightly, coverage(off))]

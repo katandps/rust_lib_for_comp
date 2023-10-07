@@ -1,4 +1,4 @@
-//# verification-helper: PROBLEM https://judge.yosupo.jp/problem/static_range_frequency
+// verification-helper: PROBLEM https://judge.yosupo.jp/problem/static_range_frequency
 //! # Static Range Frequency (整数の出現回数)
 //! <https://judge.yosupo.jp/problem/static_range_frequency>
 //!

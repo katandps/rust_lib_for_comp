@@ -1,4 +1,4 @@
-//# verification-helper: PROBLEM https://judge.yosupo.jp/problem/scc
+// verification-helper: PROBLEM https://judge.yosupo.jp/problem/scc
 #![cfg_attr(coverage_nightly, feature(coverage_attribute))]
 #[cfg_attr(coverage_nightly, coverage(off))]
 fn main() {

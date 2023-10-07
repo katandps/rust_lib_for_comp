@@ -1,4 +1,4 @@
-//# verification-helper: PROBLEM https://judge.yosupo.jp/problem/sum_of_floor_of_linear
+// verification-helper: PROBLEM https://judge.yosupo.jp/problem/sum_of_floor_of_linear
 
 #![cfg_attr(coverage_nightly, feature(coverage_attribute))]
 #[cfg_attr(coverage_nightly, coverage(off))]

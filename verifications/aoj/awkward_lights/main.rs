@@ -1,4 +1,4 @@
-//# verification-helper: PROBLEM https://onlinejudge.u-aizu.ac.jp/problems/1308
+// verification-helper: PROBLEM https://onlinejudge.u-aizu.ac.jp/problems/1308
 #![cfg_attr(coverage_nightly, feature(coverage_attribute))]
 #[cfg_attr(coverage_nightly, coverage(off))]
 fn main() {
