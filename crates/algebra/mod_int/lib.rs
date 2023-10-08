@@ -48,7 +48,7 @@ mod mod_int_impl {
 
     impl<M: Mod> ModInt<M> {
         #[inline]
-        pub fn new(mut n: u32) -> Self {
+        pub const fn new(mut n: u32) -> Self {
             if n >= Self::MOD {
                 n = n.rem_euclid(Self::MOD);
             }
@@ -56,27 +56,59 @@ mod mod_int_impl {
             Self(Self::mrmul(n, Self::R_POW2), PhantomData)
         }
 
+        pub const fn one() -> Self {
+            Self(M::R, PhantomData)
+        }
+
+        pub const fn zero() -> Self {
+            Self(0, PhantomData)
+        }
+
+        pub const fn mul(&self, rhs: Self) -> Self {
+            Self(Self::mrmul(self.0, rhs.0), PhantomData)
+        }
+        pub const fn div(&self, rhs: Self) -> Self {
+            Self::mul(self, rhs.pow(Self::MOD as i64 - 2))
+        }
+
+        pub const fn pow(mut self, mut e: i64) -> Self {
+            debug_assert!(e > 0);
+            let mut t = if e & 1 == 0 { M::R } else { self.0 };
+            e >>= 1;
+            while e != 0 {
+                self.0 = Self::mrmul(self.0, self.0);
+                if e & 1 != 0 {
+                    t = Self::mrmul(t, self.0);
+                }
+                e >>= 1;
+            }
+            self.0 = t;
+            self
+        }
+
         /// # 組み合わせnCr
         /// 前計算なし
         /// ## 計算量
         /// $M$を法として $O(r + \log M)$
-        pub fn comb(n: i64, mut r: i64) -> Self {
+        pub const fn comb(n: i64, mut r: i64) -> Self {
             assert!(0 <= r && r <= n);
             if r > n - r {
                 r = n - r;
             }
             let (mut ret, mut rev) = (Self::one(), Self::one());
-            for k in 0..r {
-                ret *= n - k;
-                rev *= r - k;
+            let mut i = 0;
+            while i < r {
+                ret = Self::mul(&ret, Self::new((n - i) as u32));
+                rev = Self::mul(&rev, Self::new((r - i) as u32));
+                i += 1;
             }
-            ret / rev
+            Self::div(&ret, rev)
         }
 
         /// # モンゴメリ表現同士の積
         /// # $mul(ar, br) == (a * b) * r \mod N$
         #[inline]
-        pub fn mrmul(ar: u32, br: u32) -> u32 {
+        pub const fn mrmul(ar: u32, br: u32) -> u32 {
             let t: u64 = (ar as u64) * (br as u64);
             let (t, f) = ((t >> 32) as u32).overflowing_sub(
                 ((((t as u32).wrapping_mul(Self::MOD_INV) as u128) * Self::MOD as u128) >> 32)
@@ -92,7 +124,7 @@ mod mod_int_impl {
         /// # モンゴメリ表現 $AR$ から $A$の復元
         /// return $a \frac R \mod N$
         #[inline]
-        pub fn reduce(self) -> u32 {
+        pub const fn reduce(self) -> u32 {
             let (t, f) = (((((self.0.wrapping_mul(Self::MOD_INV)) as u128) * (Self::MOD as u128))
                 >> 32) as u32)
                 .overflowing_neg();
@@ -109,19 +141,8 @@ mod mod_int_impl {
     /// $M$を法として $ O(\log M) $
     impl<M: Mod> Pow for ModInt<M> {
         #[inline]
-        fn pow(mut self, mut e: i64) -> Self {
-            debug_assert!(e > 0);
-            let mut t = if e & 1 == 0 { M::R } else { self.0 };
-            e >>= 1;
-            while e != 0 {
-                self.0 = Self::mrmul(self.0, self.0);
-                if e & 1 != 0 {
-                    t = Self::mrmul(t, self.0);
-                }
-                e >>= 1;
-            }
-            self.0 = t;
-            self
+        fn pow(self, e: i64) -> Self {
+            Self::pow(self, e)
         }
     }
     impl<M: Mod, Rhs: Into<Self>> Add<Rhs> for ModInt<M> {
@@ -171,29 +192,27 @@ mod mod_int_impl {
     impl<M: Mod, Rhs: Into<Self>> Mul<Rhs> for ModInt<M> {
         type Output = Self;
         #[inline]
-        fn mul(mut self, rhs: Rhs) -> Self {
-            self *= rhs.into();
-            self
+        fn mul(self, rhs: Rhs) -> Self {
+            Self::mul(&self, rhs.into())
         }
     }
     impl<M: Mod, Rhs: Into<Self>> MulAssign<Rhs> for ModInt<M> {
         #[inline]
         fn mul_assign(&mut self, rhs: Rhs) {
-            self.0 = Self::mrmul(self.0, rhs.into().0)
+            self.0 = Self::mul(self, rhs.into()).0
         }
     }
     impl<M: Mod, Rhs: Into<Self>> Div<Rhs> for ModInt<M> {
         type Output = Self;
         #[inline]
-        fn div(mut self, rhs: Rhs) -> Self {
-            self /= rhs;
-            self
+        fn div(self, rhs: Rhs) -> Self {
+            Self::div(&self, rhs.into())
         }
     }
     impl<M: Mod, Rhs: Into<Self>> DivAssign<Rhs> for ModInt<M> {
         #[inline]
         fn div_assign(&mut self, rhs: Rhs) {
-            *self *= rhs.into().pow(Self::MOD as i64 - 2)
+            self.0 = Self::div(self, rhs.into()).0
         }
     }
     impl<M: Mod> Display for ModInt<M> {
@@ -243,13 +262,13 @@ mod mod_int_impl {
     impl<M: Mod> Zero for ModInt<M> {
         #[inline]
         fn zero() -> Self {
-            Self(0, PhantomData)
+            Self::zero()
         }
     }
     impl<M: Mod> One for ModInt<M> {
         #[inline]
         fn one() -> Self {
-            Self(M::R, PhantomData)
+            Self::one()
         }
     }
 }

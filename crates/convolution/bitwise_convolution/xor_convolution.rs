@@ -3,7 +3,6 @@
 //! ## verify
 //! [Bitwise Xor Convolution](https://judge.yosupo.jp/submission/109189)
 use super::ConvolutionType;
-use algebra::*;
 use mod_int::{Mod, ModInt};
 use prelude::*;
 
@@ -39,7 +38,6 @@ impl ConvolutionType for XorConvolution {
 #[cfg(test)]
 mod test {
     use super::{super::convolution, ModInt, XorConvolution};
-    use algebra::Zero;
     use mod_int::mod998244353::Mod998_244_353;
     use xor_shift::XorShift;
 

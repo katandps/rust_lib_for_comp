@@ -1,6 +1,5 @@
 //! # 高速アダマール変換 (Fast Walsh Hadamard Transform)
 
-use algebra::*;
 use mod_int::{Mod, ModInt};
 use prelude::*;
 

@@ -35,7 +35,6 @@ impl ConvolutionType for AndConvolution {
 #[cfg(test)]
 mod test {
     use super::{super::convolution, AndConvolution, ModInt};
-    use algebra::Zero;
     use mod_int::mod998244353::Mod998_244_353;
     use xor_shift::XorShift;
     #[test]

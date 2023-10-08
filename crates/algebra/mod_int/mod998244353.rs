@@ -9,7 +9,7 @@ pub use mod_998_244_353_impl::{Mi, Mod998_244_353};
 
 #[snippet(name = "mod998244353", doc_hidden)]
 pub mod mod_998_244_353_impl {
-    use super::{Mod, ModInt, Pow, PrimitiveRoot, Zero};
+    use super::{Mod, ModInt, PrimitiveRoot};
 
     pub type Mi = ModInt<Mod998_244_353>;
 
