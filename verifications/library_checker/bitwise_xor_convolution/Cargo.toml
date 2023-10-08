@@ -1,0 +1,16 @@
+[package]
+name = "library_checker_solver_bitwise_xor_convolution"
+version = "0.1.0"
+edition = "2018"
+
+[dependencies]
+io_util = { path = "../../../crates/util/io_util" }
+io_debug = { path = "../../../crates/util/io_debug" }
+string_util = { path = "../../../crates/util/string_util" }
+
+mod_int = { path = "../../../crates/algebra/mod_int" }
+bitwise_convolution = { path = "../../../crates/convolution/bitwise_convolution" }
+
+[[bin]]
+name = "library_checker_solver_bitwise_xor_convolution"
+path = "main.rs"

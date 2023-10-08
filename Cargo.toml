@@ -149,6 +149,7 @@ members = [
     'verifications/aoj/single_source_shortest_path',
     'verifications/aoj/tangent_to_a_circle',
     'verifications/aoj/the_maximum_number_of_overlaps',
+    'verifications/library_checker/bitwise_xor_convolution',
     'verifications/library_checker/convolution',
     'verifications/library_checker/enumerate_palindromes',
     'verifications/library_checker/factorize',

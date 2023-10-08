@@ -1,7 +1,5 @@
 //! # XOR畳み込み
 //!
-//! ## verify
-//! [Bitwise Xor Convolution](https://judge.yosupo.jp/submission/109189)
 use super::ConvolutionType;
 use mod_int::{Mod, ModInt};
 use prelude::*;
