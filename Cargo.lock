@@ -1372,6 +1372,19 @@ dependencies = [
 ]
 
 [[package]]
+name = "library_checker_vertex_add_subtree_sum"
+version = "0.1.0"
+dependencies = [
+ "addition",
+ "adjacency_list",
+ "binary_indexed_tree",
+ "heavy_light_decomposition",
+ "io_debug",
+ "io_util",
+ "string_util",
+]
+
+[[package]]
 name = "library_checker_z_algorithm"
 version = "0.1.0"
 dependencies = [

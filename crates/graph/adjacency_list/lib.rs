@@ -65,7 +65,6 @@ mod impl_graph_adjacency_list {
                 rev: Vec::new(),
             }
         }
-
         /// 一方にのみ移動できる辺をつける
         pub fn add_arc(&mut self, src: usize, dst: usize, w: W) -> usize {
             let i = self.edges.len();
@@ -74,6 +73,15 @@ mod impl_graph_adjacency_list {
             self.rev_index[dst].push(i);
             self.rev.push(None);
             i
+        }
+    }
+    impl Graph<()> {
+        pub fn tree_root_0(parent: &[usize]) -> Self {
+            let mut this = Self::new(parent.len() + 1);
+            for (i, p) in parent.iter().enumerate() {
+                this.add_edge(i + 1, *p, ());
+            }
+            this
         }
     }
     impl<W> Index<usize> for Graph<W> {

@@ -118,6 +118,7 @@ mod heavy_light_decomposition_impl {
             self.upward.update_at(self.in_time[p], weight);
         }
 
+        /// # Pathの値の総和
         pub fn prod_path(&self, u: usize, v: usize) -> <D::Magma as Magma>::M
         where
             D: RangeProduct<usize>,
@@ -133,6 +134,14 @@ mod heavy_light_decomposition_impl {
                 ret = D::Magma::op(&ret, item)
             }
             ret
+        }
+
+        /// # rを根とする部分木の値の総和
+        pub fn prod_subtree(&self, r: usize) -> <D::Magma as Magma>::M
+        where
+            D: RangeProduct<usize>,
+        {
+            self.upward.product(self.subtree_to_range(r))
         }
 
         /// 部分木のサイズを求めつつ、直接の子のうち、部分木のサイズが最も大きいもののリストを返す
