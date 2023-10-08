@@ -165,7 +165,10 @@ jobs:
         run: cargo doc --workspace --no-deps
       
       - name: merge rustdocs
-        run: cp -r ./target/doc/* _site
+        run: |
+          mkdir public
+          cp -r ./target/doc/* public
+          cp -r ./_site/* public
   
       - name: Upload pages artifact
         uses: actions/upload-pages-artifact@v1
