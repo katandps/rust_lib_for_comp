@@ -687,6 +687,14 @@ dependencies = [
 ]
 
 [[package]]
+name = "const_mod_val_table"
+version = "0.1.0"
+dependencies = [
+ "mod_int",
+ "prelude",
+]
+
+[[package]]
 name = "convex_hull"
 version = "0.1.0"
 dependencies = [

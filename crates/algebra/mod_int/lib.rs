@@ -63,6 +63,21 @@ mod mod_int_impl {
         pub const fn zero() -> Self {
             Self(0, PhantomData)
         }
+        pub const fn add(&self, rhs: Self) -> Self {
+            let mut x = self.0 + rhs.0;
+            if x >= Self::MOD {
+                x -= Self::MOD
+            }
+            Self(x, PhantomData)
+        }
+        pub const fn sub(&self, rhs: Self) -> Self {
+            let x = if self.0 >= rhs.0 {
+                self.0 - rhs.0
+            } else {
+                self.0 + Self::MOD - rhs.0
+            };
+            Self(x, PhantomData)
+        }
 
         pub const fn mul(&self, rhs: Self) -> Self {
             Self(Self::mrmul(self.0, rhs.0), PhantomData)
@@ -148,19 +163,14 @@ mod mod_int_impl {
     impl<M: Mod, Rhs: Into<Self>> Add<Rhs> for ModInt<M> {
         type Output = Self;
         #[inline]
-        fn add(mut self, rhs: Rhs) -> Self {
-            self += rhs;
-            self
+        fn add(self, rhs: Rhs) -> Self {
+            Self::add(&self, rhs.into())
         }
     }
     impl<M: Mod, Rhs: Into<Self>> AddAssign<Rhs> for ModInt<M> {
         #[inline]
         fn add_assign(&mut self, rhs: Rhs) {
-            let rhs = rhs.into();
-            self.0 = self.0 + rhs.0;
-            if self.0 >= Self::MOD {
-                self.0 -= Self::MOD
-            }
+            self.0 = Self::add(self, rhs.into()).0
         }
     }
     impl<M: Mod> Neg for ModInt<M> {
@@ -173,20 +183,14 @@ mod mod_int_impl {
     impl<M: Mod, Rhs: Into<Self>> Sub<Rhs> for ModInt<M> {
         type Output = Self;
         #[inline]
-        fn sub(mut self, rhs: Rhs) -> Self {
-            self -= rhs;
-            self
+        fn sub(self, rhs: Rhs) -> Self {
+            Self::sub(&self, rhs.into())
         }
     }
     impl<M: Mod, Rhs: Into<Self>> SubAssign<Rhs> for ModInt<M> {
         #[inline]
         fn sub_assign(&mut self, rhs: Rhs) {
-            let rhs = rhs.into();
-            self.0 = if self.0 >= rhs.0 {
-                self.0 - rhs.0
-            } else {
-                self.0 + Self::MOD - rhs.0
-            }
+            self.0 = Self::sub(self, rhs.into()).0
         }
     }
     impl<M: Mod, Rhs: Into<Self>> Mul<Rhs> for ModInt<M> {
