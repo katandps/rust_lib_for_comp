@@ -5,21 +5,20 @@
 use mod_int::{Mod, ModInt};
 use prelude::*;
 
-#[snippet(name = "mod-val-table", doc_hidden)]
-#[derive(Debug, Clone)]
-pub struct ModValTable<M, const N: usize> {
-    /// # inv$\[i] = i$の逆元
-    pub inv: [M; N],
-    /// # fact$\[i] = i!$
-    pub fact: [M; N],
-    /// # fact_inv$\[i] = i!$の逆元
-    pub fact_inv: [M; N],
-}
-
-#[snippet(name = "mod-val-table", doc_hidden)]
+#[snippet(name = "const-mod-val-table", doc_hidden)]
+pub use mod_val_table_impl::ModValTable;
+#[snippet(name = "const-mod-val-table", doc_hidden)]
 pub mod mod_val_table_impl {
-    use super::{Mod, ModInt, ModValTable};
-
+    use super::{Mod, ModInt};
+    #[derive(Debug, Clone)]
+    pub struct ModValTable<M, const N: usize> {
+        /// # inv$\[i] = i$の逆元
+        // inv: [M; N],
+        /// # fact$\[i] = i!$
+        fact: [M; N],
+        /// # fact_inv$\[i] = i!$の逆元
+        fact_inv: [M; N],
+    }
     impl<M: Mod, const N: usize> ModValTable<ModInt<M>, N> {
         /// # 初期化
         /// あるnについてModValTableを初期化する
@@ -41,7 +40,7 @@ pub mod mod_val_table_impl {
                 i += 1;
             }
             Self {
-                inv,
+                // inv,
                 fact,
                 fact_inv,
             }
@@ -75,6 +74,7 @@ pub mod mod_val_table_impl {
         /// assert_eq!(60, five.permutation(5, 3).reduce());
         /// assert_eq!(120, five.permutation(5, 4).reduce());
         /// assert_eq!(120, five.permutation(5, 5).reduce());
+        /// assert_eq!(0, five.permutation(5, 6).reduce());
         /// ```
         pub const fn permutation(&self, n: i64, r: i64) -> ModInt<M> {
             if n < r {
@@ -97,6 +97,7 @@ pub mod mod_val_table_impl {
         /// assert_eq!(10, five.combination(5, 3).reduce());
         /// assert_eq!(5, five.combination(5, 4).reduce());
         /// assert_eq!(1, five.combination(5, 5).reduce());
+        /// assert_eq!(0, five.combination(5, 6).reduce());
         /// ```
         pub const fn combination(&self, n: i64, r: i64) -> ModInt<M> {
             if n < r {

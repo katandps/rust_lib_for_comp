@@ -6,21 +6,21 @@ use mod_int::{Mod, ModInt};
 use prelude::*;
 
 #[snippet(name = "mod-val-table", doc_hidden)]
-#[derive(Debug, Clone)]
-pub struct ModValTable<M> {
-    /// # inv$\[i] = i$の逆元
-    pub inv: Vec<M>,
-    /// # fact$\[i] = i!$
-    pub fact: Vec<M>,
-    /// # fact_inv$\[i] = i!$の逆元
-    pub fact_inv: Vec<M>,
-    /// 初期化済みのindex
-    limit: usize,
-}
-
+pub use mod_val_table_impl::ModValTable;
 #[snippet(name = "mod-val-table", doc_hidden)]
 pub mod mod_val_table_impl {
-    use super::{Mod, ModInt, ModValTable, One, Zero};
+    use super::{Mod, ModInt, One, Zero};
+    #[derive(Debug, Clone)]
+    pub struct ModValTable<M> {
+        /// # inv$\[i] = i$の逆元
+        inv: Vec<M>,
+        /// # fact$\[i] = i!$
+        fact: Vec<M>,
+        /// # fact_inv$\[i] = i!$の逆元
+        fact_inv: Vec<M>,
+        /// 初期化済みのindex
+        limit: usize,
+    }
     impl<M: Zero + One> Default for ModValTable<M> {
         fn default() -> Self {
             let inv = vec![M::zero(), M::one()];
@@ -103,6 +103,7 @@ pub mod mod_val_table_impl {
         /// assert_eq!(60, five.permutation(5, 3).reduce());
         /// assert_eq!(120, five.permutation(5, 4).reduce());
         /// assert_eq!(120, five.permutation(5, 5).reduce());
+        /// assert_eq!(0, five.permutation(5, 6).reduce());
         /// ```
         pub fn permutation(&mut self, n: i64, r: i64) -> ModInt<M> {
             if n < r {
@@ -126,6 +127,7 @@ pub mod mod_val_table_impl {
         /// assert_eq!(10, five.combination(5, 3).reduce());
         /// assert_eq!(5, five.combination(5, 4).reduce());
         /// assert_eq!(1, five.combination(5, 5).reduce());
+        /// assert_eq!(0, five.combination(5, 6).reduce());
         /// ```
         pub fn combination(&mut self, n: i64, r: i64) -> ModInt<M> {
             if n < r {
