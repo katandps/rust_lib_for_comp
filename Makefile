@@ -23,6 +23,8 @@ test:
 verify:
 	competitive-verifier oj-resolve > .competitive-verifier/verify.json
 	competitive-verifier verify --verify-json .competitive-verifier/verify.json --output .competitive-verifier/result.json
+
+verify-doc:
 	competitive-verifier docs --verify-json .competitive-verifier/verify.json .competitive-verifier/result.json
 
 # test and make coverage
@@ -43,5 +45,5 @@ rustdoc:
 	RUSTDOCFLAGS=$(KATEX_FLAG) cargo doc --workspace --no-deps
 
 # build verification docs
-doc: verify
+doc: verify-doc
 	cd .competitive-verifier/_jekyll && bundle exec jekyll serve --incremental
