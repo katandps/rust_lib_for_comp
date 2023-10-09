@@ -1,7 +1,5 @@
 //! # AND畳み込み
 //!
-//! ## verify
-//! [Bitwise And Convolution](https://judge.yosupo.jp/submission/109188)
 
 use super::ConvolutionType;
 use mod_int::{Mod, ModInt};
@@ -13,12 +11,10 @@ pub struct AndConvolution;
 
 #[snippet(name = "and-convolution", doc_hidden)]
 impl ConvolutionType for AndConvolution {
-    #[allow(clippy::many_single_char_names)]
     fn fwht<M: Mod>(src: &mut [ModInt<M>], rev: bool) {
-        let n = src.len();
         let mut i = 1;
-        while i < n {
-            for j in 0..n {
+        while i < src.len() {
+            for j in 0..src.len() {
                 if i & j == 0 {
                     src[j] = if !rev {
                         src[j] + src[i | j]
