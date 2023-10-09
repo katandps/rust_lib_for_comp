@@ -1223,6 +1223,18 @@ dependencies = [
 ]
 
 [[package]]
+name = "library_checker_solver_matrix_product"
+version = "0.1.0"
+dependencies = [
+ "io_debug",
+ "io_util",
+ "matrix",
+ "mod_int",
+ "prelude",
+ "string_util",
+]
+
+[[package]]
 name = "library_checker_solver_number_of_substrings"
 version = "0.1.0"
 dependencies = [
