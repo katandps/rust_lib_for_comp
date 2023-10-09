@@ -46,4 +46,4 @@ rustdoc:
 
 # build verification docs
 doc: verify-doc
-	cd .competitive-verifier/_jekyll && bundle exec jekyll serve --incremental
+	cd .competitive-verifier/_jekyll && bundle add webrick &&bundle exec jekyll serve --incremental
