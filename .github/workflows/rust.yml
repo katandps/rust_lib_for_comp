@@ -195,11 +195,11 @@ jobs:
       - name: Generate code coverage
         run: cargo +nightly llvm-cov --doctests --lcov --output-path lcov.info
 
-      - name: Upload coverage artifact
-        uses: actions/upload-artifact@v3
+      - name: Upload coverage to Codecov
+        uses: codecov/codecov-action@v3
         with:
-          name: coverage
-          path: lcov.info
+          files: lcov.info
+          fail_ci_if_error: true
 
   lint:
     needs: setup
@@ -220,21 +220,6 @@ jobs:
           toolchain: "1.70.0"
           targets: x86_64-unknown-linux-gnu
       - run: cargo +1.70.0 check
-
-  upload-coverage:
-    needs: [test, lint, compile, docs-and-check]
-    runs-on: ubuntu-latest
-    steps:
-      - name: Download artifacts
-        uses: actions/download-artifact@v3
-        with:
-          name: coverage
-
-      - name: Upload coverage to Codecov
-        uses: codecov/codecov-action@v3
-        with:
-          files: lcov.info
-          fail_ci_if_error: true
 
   deploy:
     needs: [test, lint, compile, docs-and-check]
