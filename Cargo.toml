@@ -172,6 +172,7 @@ members = [
     'verifications/library_checker/strongly_connected_components',
     'verifications/library_checker/suffix_array',
     'verifications/library_checker/sum_of_floor_of_linear',
+    'verifications/library_checker/unionfind',
     'verifications/library_checker/vertex_add_path_sum',
     'verifications/library_checker/vertex_add_path_sum2',
     'verifications/library_checker/vertex_add_subtree_sum',

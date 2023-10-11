@@ -1,0 +1,15 @@
+[package]
+name = "library_checker_solver_union_find"
+version = "0.1.0"
+edition = "2018"
+
+[dependencies]
+io_util = { path = "../../../crates/util/io_util" }
+io_debug = { path = "../../../crates/util/io_debug" }
+string_util = { path = "../../../crates/util/string_util" }
+
+union_find = { path = "../../../crates/data_structure/union_find" }
+
+[[bin]]
+name = "library_checker_solver_associative_union_find"
+path = "main.rs"

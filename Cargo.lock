@@ -1388,6 +1388,16 @@ dependencies = [
 ]
 
 [[package]]
+name = "library_checker_solver_union_find"
+version = "0.1.0"
+dependencies = [
+ "io_debug",
+ "io_util",
+ "string_util",
+ "union_find",
+]
+
+[[package]]
 name = "library_checker_sum_of_floor_of_linear"
 version = "0.1.0"
 dependencies = [
