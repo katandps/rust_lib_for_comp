@@ -1160,6 +1160,16 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "9cdc71e17332e86d2e1d38c1f99edcb6288ee11b815fb1a4b049eaa2114d369b"
 
 [[package]]
+name = "library_checker_solver_associative_array_treap"
+version = "0.1.0"
+dependencies = [
+ "io_debug",
+ "io_util",
+ "string_util",
+ "treap_map",
+]
+
+[[package]]
 name = "library_checker_solver_bitwise_and_convolution"
 version = "0.1.0"
 dependencies = [
@@ -2252,6 +2262,14 @@ dependencies = [
 
 [[package]]
 name = "treap"
+version = "0.1.0"
+dependencies = [
+ "prelude",
+ "xor_shift",
+]
+
+[[package]]
+name = "treap_map"
 version = "0.1.0"
 dependencies = [
  "prelude",
