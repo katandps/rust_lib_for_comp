@@ -5,6 +5,8 @@ edition = "2018"
 
 [dependencies]
 prelude = { path = "../../prelude" }
+algebra = { path = "../../algebra" }
+range_traits = { path = "../../range_traits" }
 
 [lib]
 path = "lib.rs"

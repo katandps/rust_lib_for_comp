@@ -1,0 +1,17 @@
+[package]
+name = "library_checker_solver_static_range_sum_cumulative_sum"
+version = "0.1.0"
+edition = "2018"
+
+[dependencies]
+io_util = { path = "../../../crates/util/io_util" }
+io_debug = { path = "../../../crates/util/io_debug" }
+string_util = { path = "../../../crates/util/string_util" }
+
+cumulative_sum = { path = "../../../crates/data_structure/cumulative_sum" }
+addition = { path = "../../../crates/algebra/binary_operation/addition" }
+range_traits = { path = "../../../crates/range_traits" }
+
+[[bin]]
+name = "library_checker_solver_static_range_sum_cumulative_sum"
+path = "main.rs"

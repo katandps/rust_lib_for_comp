@@ -5,34 +5,57 @@
 //! ## 計算量
 //! $O(N)$
 //!
-//! ## 使い方
-//!
-//! ```
-//! # use cumulative_sum::*;
-//! let v = vec![2, 3, 4];
-//! assert_eq!(vec![1, 3, 6, 10], v.cumsum(1));
-//! ```
+use algebra::*;
 use prelude::*;
-#[snippet(name = "cumulative-sum", doc_hidden)]
-pub trait CumulativeSum {
-    type Item;
-    fn cumsum(self, initial: Self::Item) -> Vec<Self::Item>;
-}
+use range_traits::*;
 
 #[snippet(name = "cumulative-sum", doc_hidden)]
-impl<T: Clone + Add<Output = T>, I: IntoIterator<Item = T>> CumulativeSum for I {
-    type Item = I::Item;
-    fn cumsum(self, initial: T) -> Vec<T> {
-        let mut ret = vec![initial];
-        for t in self {
-            ret.push(ret[ret.len() - 1].clone() + t);
-        }
-        ret
+pub use cumulative_sum_impl::CumulativeSum;
+#[snippet(name = "cumulative-sum", doc_hidden)]
+mod cumulative_sum_impl {
+    use super::{AbelianGroup, Add, FromIterator, Magma, Monoid, RangeProduct, ToBounds};
+    pub struct CumulativeSum<A: Magma> {
+        n: usize,
+        ret: Vec<A::M>,
     }
-}
 
-#[test]
-fn test() {
-    let v = vec![2, 3, 4];
-    assert_eq!(vec![1, 3, 6, 10], v.cumsum(1));
+    impl<A: Magma> CumulativeSum<A>
+    where
+        A::M: Clone,
+    {
+        /// # sum of $[0, i)$
+        pub fn sum(&self, i: usize) -> A::M {
+            assert!(i < self.n);
+            self.ret[i].clone()
+        }
+    }
+
+    impl<A: AbelianGroup> RangeProduct<usize> for CumulativeSum<A> {
+        type Magma = A;
+        fn product<R: ToBounds<usize>>(&self, range: R) -> A::M {
+            let (a, b) = range.lr();
+            if b == 0 {
+                A::unit()
+            } else if a == 0 {
+                self.sum(b)
+            } else {
+                A::op(&self.sum(b), &A::inv(&self.sum(a)))
+            }
+        }
+    }
+
+    impl<A, T> FromIterator<T> for CumulativeSum<A>
+    where
+        A: Monoid<M = T>,
+        T: Clone + Add<Output = T>,
+    {
+        fn from_iter<I: IntoIterator<Item = T>>(iter: I) -> Self {
+            let mut ret = vec![A::unit()];
+            for t in iter {
+                ret.push(ret[ret.len() - 1].clone() + t);
+            }
+            let n = ret.len();
+            Self { n, ret }
+        }
+    }
 }

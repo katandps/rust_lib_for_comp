@@ -787,7 +787,9 @@ dependencies = [
 name = "cumulative_sum"
 version = "0.1.0"
 dependencies = [
+ "algebra",
  "prelude",
+ "range_traits",
 ]
 
 [[package]]
@@ -1363,6 +1365,18 @@ dependencies = [
  "io_util",
  "string_util",
  "wavelet_matrix",
+]
+
+[[package]]
+name = "library_checker_solver_static_range_sum_cumulative_sum"
+version = "0.1.0"
+dependencies = [
+ "addition",
+ "cumulative_sum",
+ "io_debug",
+ "io_util",
+ "range_traits",
+ "string_util",
 ]
 
 [[package]]
