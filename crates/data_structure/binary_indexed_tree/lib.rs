@@ -6,18 +6,18 @@ use prelude::*;
 use range_traits::{PointUpdate, RangeProduct, ToBounds};
 
 #[snippet(name = "binary-indexed-tree", doc_hidden)]
-#[derive(Clone)]
-pub struct BinaryIndexedTree<A: Magma> {
-    n: usize,
-    bit: Vec<A::M>,
-}
-
+pub use binary_indexed_tree_impl::BinaryIndexedTree;
 #[snippet(name = "binary-indexed-tree", doc_hidden)]
 mod binary_indexed_tree_impl {
     use super::{
-        AbelianGroup, BinaryIndexedTree, Debug, Formatter, LeastSignificantBit, PointUpdate,
-        RangeProduct, ToBounds,
+        AbelianGroup, Debug, Formatter, LeastSignificantBit, Magma, PointUpdate, RangeProduct,
+        ToBounds,
     };
+    #[derive(Clone)]
+    pub struct BinaryIndexedTree<A: Magma> {
+        pub n: usize,
+        bit: Vec<A::M>,
+    }
 
     /// サイズを指定して作成する
     impl<A: AbelianGroup> From<usize> for BinaryIndexedTree<A> {
