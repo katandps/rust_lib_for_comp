@@ -56,7 +56,6 @@ members = [
     'crates/data_structure/sparse_table',
     'crates/data_structure/succinct_indexable_dictionaries',
     'crates/data_structure/treap',
-    'crates/data_structure/treap_map',
     'crates/data_structure/union_find',
     'crates/data_structure/wavelet_matrix',
     'crates/data_structure/weighted_union_find',

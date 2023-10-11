@@ -6,7 +6,7 @@ fn main() {
 }
 use io_util::*;
 use string_util::*;
-use treap_map::Treap;
+use treap::Treap;
 
 pub fn solve<IO: ReaderTrait + WriterTrait>(mut io: IO) {
     let mut map = Treap::default();

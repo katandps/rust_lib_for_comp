@@ -1166,7 +1166,7 @@ dependencies = [
  "io_debug",
  "io_util",
  "string_util",
- "treap_map",
+ "treap",
 ]
 
 [[package]]
@@ -2262,14 +2262,6 @@ dependencies = [
 
 [[package]]
 name = "treap"
-version = "0.1.0"
-dependencies = [
- "prelude",
- "xor_shift",
-]
-
-[[package]]
-name = "treap_map"
 version = "0.1.0"
 dependencies = [
  "prelude",

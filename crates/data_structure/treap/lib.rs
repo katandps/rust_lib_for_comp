@@ -8,16 +8,18 @@ use prelude::*;
 use xor_shift::XorShift;
 
 #[snippet(name = "treap", doc_hidden)]
-#[derive(Default, Clone, Debug)]
-pub struct Treap<T> {
-    randomizer: XorShift,
-    root: Box<treap_impl::OptionalNode<T>>,
-}
-
+pub use treap_impl::{Treap, TreapSet};
 #[snippet(name = "treap", doc_hidden)]
 mod treap_impl {
-    use super::{swap, Debug, Display, Formatter, Ordering, Treap};
-    impl<T> Treap<T> {
+
+    use super::{swap, Debug, Display, Formatter, FromIterator, Ordering, XorShift};
+
+    #[derive(Default, Clone, Debug)]
+    pub struct Treap<K, V> {
+        randomizer: XorShift,
+        root: Box<OptionalNode<K, V>>,
+    }
+    impl<K, V> Treap<K, V> {
         /// # サイズ
         ///
         /// ## 計算量
@@ -35,15 +37,15 @@ mod treap_impl {
         }
     }
 
-    impl<T: PartialOrd + Default> Treap<T> {
+    impl<K: PartialOrd + Default, V> Treap<K, V> {
         /// # 挿入
         /// xを挿入
         ///
         /// ## 計算量
         /// $O(logN)$
-        pub fn insert(&mut self, x: T) {
+        pub fn insert(&mut self, k: K, v: V) {
             self.root
-                .insert(OptionalNode::new(x, self.randomizer.next().unwrap()))
+                .insert(OptionalNode::new(k, v, self.randomizer.next().unwrap()))
         }
 
         /// # 削除
@@ -51,7 +53,7 @@ mod treap_impl {
         ///
         /// ## 計算量
         /// $O(logN)$
-        pub fn remove(&mut self, key: &T) -> Option<T> {
+        pub fn remove(&mut self, key: &K) -> Option<(K, V)> {
             self.root.erase(key)
         }
 
@@ -60,48 +62,52 @@ mod treap_impl {
         ///
         /// ## 計算量
         /// $O(logN)$
-        pub fn find(&self, key: &T) -> bool {
+        pub fn find(&self, key: &K) -> Option<&V> {
             self.root.find(key)
         }
     }
 
-    impl<T: Display> Display for Treap<T> {
+    impl<K: Display, V: Display> Display for Treap<K, V> {
         fn fmt(&self, f: &mut Formatter<'_>) -> std::fmt::Result {
             writeln!(f, "[{}]", self.root)
         }
     }
 
-    impl<T: Clone + PartialOrd + Default + Debug> From<&[T]> for Treap<T> {
-        fn from(src: &[T]) -> Self {
+    impl<K: Default + PartialOrd, V: Default> FromIterator<(K, V)> for Treap<K, V> {
+        #[inline]
+        fn from_iter<I: IntoIterator<Item = (K, V)>>(keys: I) -> Self {
             let mut ret = Self::default();
-            for t in src {
-                ret.insert(t.clone())
+            for (k, v) in keys {
+                ret.insert(k, v);
             }
             ret
         }
     }
 
     #[derive(Debug)]
-    pub struct OptionalNode<T>(Option<Node<T>>);
+    pub struct OptionalNode<K, V>(Option<Node<K, V>>);
 
     #[derive(Clone, Debug, Default)]
-    struct Node<T> {
+    struct Node<K, V> {
         /// キー
-        key: T,
+        key: K,
+        /// 値
+        value: V,
         /// 優先度
         p: u64,
         /// 部分木のサイズ
         size: usize,
         /// 左の子
-        l: Box<OptionalNode<T>>,
+        l: Box<OptionalNode<K, V>>,
         /// 右の子
-        r: Box<OptionalNode<T>>,
+        r: Box<OptionalNode<K, V>>,
     }
 
-    impl<T> OptionalNode<T> {
-        pub fn new(key: T, p: u64) -> Self {
+    impl<K, V> OptionalNode<K, V> {
+        pub fn new(key: K, value: V, p: u64) -> Self {
             Self(Some(Node {
                 key,
+                value,
                 p,
                 size: 1,
                 l: Box::new(Self(None)),
@@ -124,7 +130,7 @@ mod treap_impl {
         }
     }
 
-    impl<T: PartialOrd> OptionalNode<T> {
+    impl<K: PartialOrd, V> OptionalNode<K, V> {
         pub fn insert(&mut self, mut item: Self) {
             match (self.0.as_mut(), item.0.as_mut()) {
                 (Some(tree_node), Some(item_node)) => {
@@ -144,7 +150,7 @@ mod treap_impl {
             self.propagate_from_children();
         }
 
-        pub fn erase(&mut self, key: &T) -> Option<T> {
+        pub fn erase(&mut self, key: &K) -> Option<(K, V)> {
             if let Some(node) = self.0.as_mut() {
                 match &node.key.partial_cmp(key) {
                     Some(Ordering::Equal) => {
@@ -152,7 +158,7 @@ mod treap_impl {
                         temp.merge(&mut node.l);
                         temp.merge(&mut node.r);
                         swap(self, &mut temp);
-                        temp.0.map(|node| node.key)
+                        temp.0.map(|node| (node.key, node.value))
                     }
                     Some(Ordering::Greater) => node.l.erase(key),
                     Some(Ordering::Less) => node.r.erase(key),
@@ -164,7 +170,7 @@ mod treap_impl {
         }
 
         /// selfを l: $[0, key)$ と r: $[key, n)$ に分割する
-        fn split(&mut self, key: &T, l: &mut Self, r: &mut Self) {
+        fn split(&mut self, key: &K, l: &mut Self, r: &mut Self) {
             self.propagate_to_children();
             r.propagate_to_children();
             l.propagate_to_children();
@@ -216,31 +222,32 @@ mod treap_impl {
             r.propagate_from_children();
         }
 
-        pub fn find(&self, key: &T) -> bool {
+        pub fn find(&self, key: &K) -> Option<&V> {
             if let Some(node) = &self.0 {
                 match &node.key.partial_cmp(key) {
-                    Some(Ordering::Equal) => true,
+                    Some(Ordering::Equal) => Some(&node.value),
                     Some(Ordering::Greater) => node.l.find(key),
                     Some(Ordering::Less) => node.r.find(key),
                     _ => panic!("Ordering failed"),
                 }
             } else {
-                false
+                None
             }
         }
     }
 
-    impl<T> Default for OptionalNode<T> {
+    impl<K, V> Default for OptionalNode<K, V> {
         fn default() -> Self {
             Self(None)
         }
     }
 
-    impl<T: Clone> Clone for OptionalNode<T> {
+    impl<K: Clone, V: Clone> Clone for OptionalNode<K, V> {
         fn clone(&self) -> Self {
             match &self.0 {
                 Some(node) => Self(Some(Node {
                     key: node.key.clone(),
+                    value: node.value.clone(),
                     p: node.p,
                     size: node.size,
                     l: node.l.clone(),
@@ -251,7 +258,7 @@ mod treap_impl {
         }
     }
 
-    impl<T: Display> Display for OptionalNode<T> {
+    impl<K: Display, V: Display> Display for OptionalNode<K, V> {
         fn fmt(&self, f: &mut Formatter<'_>) -> std::fmt::Result {
             match &self.0 {
                 Some(node) => write!(f, "{} {} {}", node.l, node.key, node.r),
@@ -259,28 +266,58 @@ mod treap_impl {
             }
         }
     }
-}
-#[test]
-fn size() {
-    let mut treap = Treap::default();
 
-    for i in 0..1000000 {
-        treap.insert(i * 2);
+    pub type TreapSet<K> = Treap<K, ()>;
+    impl<K: Default + PartialOrd> FromIterator<K> for TreapSet<K> {
+        #[inline]
+        fn from_iter<I: IntoIterator<Item = K>>(keys: I) -> Self {
+            let mut ret = Self::default();
+            for k in keys {
+                ret.insert(k, ());
+            }
+            ret
+        }
     }
-    assert_eq!(1000000, treap.len());
 }
 
-#[test]
-fn test() {
-    let mut treap = Treap::from(&vec![0, 1, 2, 3, 4, 5, 6, 7, 8, 9][..]);
-    for i in 0..10 {
-        assert!(treap.find(&i));
+#[cfg(test)]
+mod tests {
+    use super::Treap;
+    #[test]
+    fn size() {
+        let mut treap = Treap::default();
+
+        for i in 0..1000000 {
+            treap.insert(i * 2, 1);
+        }
+        assert_eq!(1000000, treap.len());
     }
 
-    let del = treap.remove(&5);
-    assert_eq!(Some(5), del);
-    treap.remove(&3);
-    for v in vec![0, 1, 2, 4, 6, 7, 8, 9] {
-        assert!(treap.find(&v));
+    #[test]
+    fn test() {
+        let mut treap = vec![
+            (0, 1),
+            (1, 2),
+            (2, 3),
+            (3, 4),
+            (4, 5),
+            (5, 6),
+            (6, 7),
+            (7, 8),
+            (8, 9),
+            (9, 10),
+        ]
+        .into_iter()
+        .collect::<Treap<_, _>>();
+        for i in 0..10 {
+            assert_eq!(Some(&(i + 1)), treap.find(&i));
+        }
+
+        let del = treap.remove(&5);
+        assert_eq!(Some((5, 6)), del);
+        treap.remove(&3);
+        for v in vec![0, 1, 2, 4, 6, 7, 8, 9] {
+            assert_eq!(Some(&(v + 1)), treap.find(&v));
+        }
     }
 }
