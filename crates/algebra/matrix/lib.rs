@@ -5,7 +5,7 @@ use algebra::*;
 use prelude::*;
 
 #[snippet(name = "matrix", doc_hidden)]
-pub use matrix_impl::Matrix;
+pub use matrix_impl::{ColumnVector, Determinant, IdentityMatrix, Matrix, RowVector, ZeroMatrix};
 #[snippet(name = "matrix", doc_hidden)]
 mod matrix_impl {
     use super::{
@@ -95,7 +95,8 @@ mod matrix_impl {
                 + Mul<Output = T>
                 + SubAssign
                 + Div<Output = T>
-                + PartialEq,
+                + PartialEq
+                + Neg<Output = T>,
         > Determinant<T> for Matrix<T>
     {
         fn determinant(&self) -> Option<T> {
@@ -107,13 +108,17 @@ mod matrix_impl {
                 return Some(T::zero());
             }
 
-            let zero = T::zero();
             let mut res = T::one();
             let mut buf = self.0.clone();
             for i in 0..rows {
-                match (i..rows).find(|&ni| buf[ni][i] != zero) {
-                    Some(ni) => buf.swap(i, ni),
-                    None => return Some(zero),
+                match (i..rows).find(|&ni| buf[ni][i] != T::zero()) {
+                    Some(ni) => {
+                        if i != ni {
+                            buf.swap(i, ni);
+                            res = -res
+                        }
+                    }
+                    None => return Some(T::zero()),
                 }
                 res *= buf[i][i].clone();
                 let diag = T::one() / buf[i][i].clone();

@@ -1205,6 +1205,17 @@ dependencies = [
 ]
 
 [[package]]
+name = "library_checker_solver_determinant_of_matrix"
+version = "0.1.0"
+dependencies = [
+ "io_debug",
+ "io_util",
+ "matrix",
+ "mod_int",
+ "string_util",
+]
+
+[[package]]
 name = "library_checker_solver_enumerate_palindromes"
 version = "0.1.0"
 dependencies = [
