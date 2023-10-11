@@ -13,6 +13,9 @@ pub fn solve<IO: ReaderTrait + WriterTrait>(mut io: IO) {
     for _ in 0..io.v() {
         if 0 == io.v() {
             let (k, v) = io.v2::<usize, usize>();
+            if map.find(&k).is_some() {
+                map.remove(&k);
+            }
             map.insert(k, v);
         } else {
             let k = io.v();
