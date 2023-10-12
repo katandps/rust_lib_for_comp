@@ -161,6 +161,7 @@ members = [
     'verifications/library_checker/primality_test',
     'verifications/library_checker/matrix_product',
     'verifications/library_checker/number_of_substrings',
+    'verifications/library_checker/predecessor_problem_binary_trie',
     'verifications/library_checker/range_kth_smallest',
     'verifications/library_checker/rmq_disjoint_sparse_table',
     'verifications/library_checker/rmq_lazy_segment_tree',
