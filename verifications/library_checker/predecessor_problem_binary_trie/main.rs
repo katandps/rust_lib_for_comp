@@ -42,12 +42,10 @@ pub fn solve<IO: ReaderTrait + WriterTrait>(mut io: IO) {
                 } else {
                     io.out((-1).line())
                 }
+            } else if trie.is_empty() {
+                io.out((-1).line())
             } else {
-                if trie.is_empty() {
-                    io.out((-1).line())
-                } else {
-                    io.out(trie.max_element().line())
-                }
+                io.out(trie.max_element().line())
             }
         }
     }

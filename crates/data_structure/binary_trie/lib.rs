@@ -244,21 +244,11 @@ mod binary_trie_impl {
         }
     }
 
-    #[derive(Clone, Debug)]
+    #[derive(Clone, Debug, Default)]
     pub struct TrieNode {
         count: usize,
         on: Box<OptionalNode>,
         off: Box<OptionalNode>,
-    }
-
-    impl Default for TrieNode {
-        fn default() -> Self {
-            Self {
-                count: 0,
-                on: Box::new(OptionalNode::default()),
-                off: Box::new(OptionalNode::default()),
-            }
-        }
     }
 
     impl TrieNode {
