@@ -168,6 +168,7 @@ members = [
     'verifications/library_checker/rmq_segment_tree',
     'verifications/library_checker/rmq_sparse_table',
     'verifications/library_checker/segment_add_get_min',
+    'verifications/library_checker/set_xor_min',
     'verifications/library_checker/shortest_path',
     'verifications/library_checker/static_range_frequency_wavelet_matrix',
     'verifications/library_checker/static_range_frequency',

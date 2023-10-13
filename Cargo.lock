@@ -1358,6 +1358,16 @@ dependencies = [
 ]
 
 [[package]]
+name = "library_checker_solver_set_xor_min"
+version = "0.1.0"
+dependencies = [
+ "binary_trie",
+ "io_debug",
+ "io_util",
+ "string_util",
+]
+
+[[package]]
 name = "library_checker_solver_shortest_path"
 version = "0.1.0"
 dependencies = [
