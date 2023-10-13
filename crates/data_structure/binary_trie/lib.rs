@@ -7,6 +7,8 @@
 use prelude::*;
 use string_util::JoinTrait;
 
+pub mod non_recursive;
+
 #[snippet(name = "binary-trie", doc_hidden)]
 pub use binary_trie_impl::BinaryTrie;
 #[snippet(name = "binary-trie", doc_hidden)]
