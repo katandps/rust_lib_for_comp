@@ -1269,6 +1269,18 @@ dependencies = [
 ]
 
 [[package]]
+name = "library_checker_solver_point_add_range_sum"
+version = "0.1.0"
+dependencies = [
+ "addition",
+ "binary_indexed_tree",
+ "io_debug",
+ "io_util",
+ "range_traits",
+ "string_util",
+]
+
+[[package]]
 name = "library_checker_solver_predecessor_problem_binary_trie"
 version = "0.1.0"
 dependencies = [
