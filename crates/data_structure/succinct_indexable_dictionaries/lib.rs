@@ -13,9 +13,9 @@
 use prelude::*;
 use string_util::JoinTrait;
 #[snippet(name = "succinct-indexable-dictionaries", doc_hidden)]
-#[rustfmt::skip]
-pub use succinct_indexable_dictionaries_impl::{SID,SIDBuilder};
+pub use succinct_indexable_dictionaries_impl::{SIDBuilder, SID};
 #[snippet(name = "succinct-indexable-dictionaries", doc_hidden)]
+#[rustfmt::skip]
 mod succinct_indexable_dictionaries_impl {
     use super::{Debug, Formatter, JoinTrait};
     pub struct SID {

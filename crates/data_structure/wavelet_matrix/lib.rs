@@ -29,6 +29,7 @@ use succinct_indexable_dictionaries::{SIDBuilder, SID};
 pub use wavelet_matrix_impl::WaveletMatrix;
 
 #[snippet(name = "wavelet-matrix", doc_hidden)]
+#[rustfmt::skip]
 mod wavelet_matrix_impl {
     use super::{HashMap, SIDBuilder, ToBounds, SID};
 
@@ -94,7 +95,7 @@ mod wavelet_matrix_impl {
 
     impl WaveletMatrix {
         /// $2^{DEPTH}$まで格納できる
-        const DEPTH: u32 = u64::BITS;
+        const DEPTH: u32 = 64; // u64::BITS;
         /// # Indexを指定して要素を取得
         /// ## 計算量
         /// $O(\log V)$
