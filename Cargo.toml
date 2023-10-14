@@ -136,6 +136,7 @@ members = [
     'verifications/aoj/dag_reachability',
     'verifications/aoj/diameter_of_a_convex_polygons',
     'verifications/aoj/distance',
+    'verifications/aoj/hard_beans',
     'verifications/aoj/incircle_of_a_triangle',
     'verifications/aoj/intersection_of_circles',
     'verifications/aoj/intersection',

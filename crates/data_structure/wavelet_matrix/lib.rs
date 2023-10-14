@@ -34,7 +34,7 @@ mod wavelet_matrix_impl {
 
     #[derive(Debug)]
     pub struct WaveletMatrix {
-        _size: usize,
+        size: usize,
         depth: usize,
         // bitごとにsortした索引 小さい桁から入っている
         matrix: Vec<SID>,
@@ -83,7 +83,7 @@ mod wavelet_matrix_impl {
                 .map(|(i, si)| (*si, i))
                 .collect();
             Self {
-                _size: size,
+                size,
                 depth,
                 matrix,
                 mid,
@@ -181,6 +181,9 @@ mod wavelet_matrix_impl {
         /// ## 計算量
         /// $O(\log V)$
         pub fn range_lower_than(&self, index_range: impl ToBounds<usize>, upper: u64) -> usize {
+            if upper >= 1 << self.depth {
+                return self.size;
+            }
             let (l, r) = index_range.lr();
             let mut ret = 0;
             (0..self.depth).rev().fold((l, r), |(l, r), level| {

@@ -212,6 +212,16 @@ dependencies = [
 ]
 
 [[package]]
+name = "aoj_solver_hard_beans"
+version = "0.1.0"
+dependencies = [
+ "io_debug",
+ "io_util",
+ "string_util",
+ "wavelet_matrix",
+]
+
+[[package]]
 name = "aoj_solver_incircle_of_a_triangle"
 version = "0.1.0"
 dependencies = [
