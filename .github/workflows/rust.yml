@@ -104,6 +104,7 @@ jobs:
           timeout: 1200
         env:
           YUKICODER_TOKEN: ${{secrets.YUKICODER_TOKEN}}
+          DROPBOX_TOKEN: ${{secrets.DROPBOX_TOKEN}}
 
       - name: Upload result artifact
         uses: actions/upload-artifact@v3
