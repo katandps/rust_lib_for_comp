@@ -102,8 +102,8 @@ jobs:
           split-size: ${{ env.SPLIT_SIZE }}
           split-index: ${{ matrix.index }}
           timeout: 1200
-        # env:
-        # YUKICODER_TOKEN: ${{secrets.YUKICODER_TOKEN}}
+        env:
+          YUKICODER_TOKEN: ${{secrets.YUKICODER_TOKEN}}
 
       - name: Upload result artifact
         uses: actions/upload-artifact@v3
