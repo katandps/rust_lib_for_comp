@@ -368,28 +368,13 @@ dependencies = [
 ]
 
 [[package]]
-name = "atcoder_solver"
+name = "atcoder_solver_abc141f"
 version = "0.1.0"
 dependencies = [
- "addition",
- "adjacency_list",
- "algebra",
- "binary_indexed_tree",
  "bit_matrix",
- "disjoint_sparse_table",
- "dynamic_li_chao_tree",
- "heavy_light_decomposition",
  "io_debug",
  "io_util",
- "lazy_segment_tree",
- "minimization",
- "pollard_rho",
- "prelude",
- "range_traits",
- "segment_tree",
- "sparse_table",
  "string_util",
- "wavelet_matrix",
 ]
 
 [[package]]
