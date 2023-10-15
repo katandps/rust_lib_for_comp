@@ -861,6 +861,15 @@ dependencies = [
 ]
 
 [[package]]
+name = "dynamic_mod_int"
+version = "0.1.0"
+dependencies = [
+ "algebra",
+ "prelude",
+ "rand 0.6.5",
+]
+
+[[package]]
 name = "dynamic_segment_tree"
 version = "0.1.0"
 dependencies = [
