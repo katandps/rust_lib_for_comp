@@ -3,6 +3,9 @@ SNIPPETS_FILE := libraries
 SNIPPETS_SUFFIX := code-snippets
 KATEX_FLAG := "--html-in-header katex.html"
 
+VERIFY_FILE_PATH := ".competitive-verifier/verify.json"
+VERIFY_RESULT_PATH := ".competitive-verifier/result.json"
+
 # format project files
 fmt:
 	cargo fmt
@@ -21,11 +24,12 @@ test:
 
 # verify libraries
 verify:
-	competitive-verifier oj-resolve > .competitive-verifier/verify.json
-	competitive-verifier verify --verify-json .competitive-verifier/verify.json --output .competitive-verifier/result.json
+	competitive-verifier oj-resolve > $(VERIFY_FILE_PATH)
+	competitive-verifier download --verify-json $(VERIFY_FILE_PATH)
+	competitive-verifier verify --verify-json $(VERIFY_FILE_PATH) --output $(VERIFY_RESULT_PATH)
 
 verify-doc:
-	competitive-verifier docs --verify-json .competitive-verifier/verify.json .competitive-verifier/result.json
+	competitive-verifier docs --verify-json $(VERIFY_FILE_PATH) $(VERIFY_RESULT_PATH)
 
 # test and make coverage
 coverage:
