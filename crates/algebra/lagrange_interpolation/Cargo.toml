@@ -1,0 +1,14 @@
+[package]
+name = "lagrange_interpolation"
+version = "0.1.0"
+edition = "2018"
+
+[dependencies]
+algebra = { path = "../../algebra" }
+mod_int = { path = "../../algebra/mod_int" }
+prelude = { path = "../../prelude" }
+
+const_mod_val_table = { path = "../const_mod_val_table" }
+
+[lib]
+path = "lib.rs"

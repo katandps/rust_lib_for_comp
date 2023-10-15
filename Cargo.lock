@@ -1154,6 +1154,16 @@ dependencies = [
 ]
 
 [[package]]
+name = "lagrange_interpolation"
+version = "0.1.0"
+dependencies = [
+ "algebra",
+ "const_mod_val_table",
+ "mod_int",
+ "prelude",
+]
+
+[[package]]
 name = "lazy_segment_tree"
 version = "0.1.0"
 dependencies = [
@@ -2633,6 +2643,18 @@ version = "0.1.0"
 dependencies = [
  "prelude",
  "range_traits",
+]
+
+[[package]]
+name = "yukicoder_bernoulli_bernoulli"
+version = "0.1.0"
+dependencies = [
+ "const_mod_val_table",
+ "io_debug",
+ "io_util",
+ "lagrange_interpolation",
+ "mod_int",
+ "string_util",
 ]
 
 [[package]]

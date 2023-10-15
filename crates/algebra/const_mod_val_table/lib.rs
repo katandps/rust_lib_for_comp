@@ -15,9 +15,9 @@ pub mod mod_val_table_impl {
         /// # inv$\[i] = i$の逆元
         // inv: [M; N],
         /// # fact$\[i] = i!$
-        fact: [M; N],
+        pub fact: [M; N],
         /// # fact_inv$\[i] = i!$の逆元
-        fact_inv: [M; N],
+        pub fact_inv: [M; N],
     }
     impl<M: Mod, const N: usize> ModValTable<ModInt<M>, N> {
         /// # 初期化

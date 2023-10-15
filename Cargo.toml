@@ -13,6 +13,7 @@ members = [
     'crates/algebra/complex_number',
     'crates/algebra/const_mod_val_table',
     'crates/algebra/dynamic_mod_int',
+    'crates/algebra/lagrange_interpolation',
     'crates/algebra/lucas_theorem',
     'crates/algebra/matrix',
     'crates/algebra/miller_rabin',
@@ -184,6 +185,7 @@ members = [
     'verifications/library_checker/vertex_add_path_sum2',
     'verifications/library_checker/vertex_add_subtree_sum',
     'verifications/library_checker/z_algorithm',
+    'verifications/yukicoder/bernoulli_bernoulli',
 ]
 
 [profile.release]
