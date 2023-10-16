@@ -60,9 +60,6 @@ jobs:
           DROPBOX_APP_SECRET: ${{secrets.DROPBOX_APP_SECRET}}
           DROPBOX_REFRESH_TOKEN: ${{secrets.DROPBOX_REFRESH_TOKEN}}
 
-      - name: Test dropbox token
-        run: echo ${DROPBOX_TOKEN}
-
       - name: oj-resolve
         uses: competitive-verifier/actions/oj-resolve@v1
         with:
@@ -102,6 +99,9 @@ jobs:
             "10", "11", "12", "13", "14", "15", "16", "17", "18", "19"]
     steps:
       - uses: actions/checkout@v3
+
+      - name: Test dropbox token
+        run: echo ${DROPBOX_TOKEN}
 
       - name: Download verify_files.json
         uses: competitive-verifier/actions/download-verify-artifact@v1
