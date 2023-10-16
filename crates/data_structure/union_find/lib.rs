@@ -2,8 +2,6 @@
 //! size圧縮かつrank圧縮を行うUnionFindTree
 //! ## 計算量
 //!  - クエリ: $O( \alpha )$
-//! ## verify
-//! [ARC056B](https://atcoder.jp/contests/arc056/submissions/26705121)
 
 use prelude::*;
 

@@ -378,6 +378,20 @@ dependencies = [
 ]
 
 [[package]]
+name = "atcoder_solver_abc226f"
+version = "0.1.0"
+dependencies = [
+ "algebra",
+ "const_mod_val_table",
+ "greatest_common_divisor",
+ "io_debug",
+ "io_util",
+ "mod_int",
+ "split_of_natural_number",
+ "string_util",
+]
+
+[[package]]
 name = "atcoder_solver_abc235e"
 version = "0.1.0"
 dependencies = [

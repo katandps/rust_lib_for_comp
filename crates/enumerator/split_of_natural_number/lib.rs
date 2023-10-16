@@ -3,8 +3,6 @@
 //! ## 使用方法
 //! - `From<usize>`: 入力した数の分割をすべて得る
 //! - `From<&[usize]>`: 入力したスライスの合計の分割を途中から得る
-//! ## verify
-//! [ABC226F](https://atcoder.jp/contests/abc226/submissions/27139567)
 
 use prelude::*;
 #[snippet(name = "split-of-natural-number", doc_hidden)]
