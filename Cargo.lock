@@ -1277,6 +1277,17 @@ dependencies = [
 ]
 
 [[package]]
+name = "library_checker_solver_cycle_detection"
+version = "0.1.0"
+dependencies = [
+ "adjacency_list",
+ "find_cycle",
+ "io_debug",
+ "io_util",
+ "string_util",
+]
+
+[[package]]
 name = "library_checker_solver_determinant_of_matrix"
 version = "0.1.0"
 dependencies = [

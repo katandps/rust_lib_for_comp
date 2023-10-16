@@ -7,9 +7,6 @@
 //! ## メモ
 //! 無向グラフに辺を順番に追加していってサイクルができた瞬間を検出するようなものはunion-findを使う
 //!
-//! ## verify
-//! [Cycle Detection](https://judge.yosupo.jp/submission/109527)
-
 use adjacency_list::Graph;
 use graph::GraphTrait;
 use prelude::*;
