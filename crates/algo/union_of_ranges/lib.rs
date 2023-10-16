@@ -9,8 +9,6 @@
 //! assert_eq!(vec![-2..18], unite(&ranges));
 //! ```
 //!
-//! ## verify
-//! [ABC147F](https://atcoder.jp/contests/abc147/submissions/27444751)
 use prelude::*;
 
 #[snippet(name = "union-of-ranges", doc_hidden)]

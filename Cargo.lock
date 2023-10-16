@@ -378,6 +378,17 @@ dependencies = [
 ]
 
 [[package]]
+name = "atcoder_solver_abc147f"
+version = "0.1.0"
+dependencies = [
+ "fxhasher",
+ "io_debug",
+ "io_util",
+ "string_util",
+ "union_of_ranges",
+]
+
+[[package]]
 name = "atcoder_solver_abc226f"
 version = "0.1.0"
 dependencies = [

@@ -1,0 +1,16 @@
+[package]
+name = "atcoder_solver_abc147f"
+version = "0.1.0"
+edition = "2018"
+
+[dependencies]
+io_util = { path = "../../../crates/util/io_util" }
+io_debug = { path = "../../../crates/util/io_debug" }
+string_util = { path = "../../../crates/util/string_util" }
+
+fxhasher = { path = "../../../crates/algo/fxhasher" }
+union_of_ranges = { path = "../../../crates/algo/union_of_ranges" }
+
+[[bin]]
+name = "atcoder_solver_abc147f"
+path = "main.rs"
