@@ -46,6 +46,19 @@ jobs:
           crate: cargo-udeps
           cache-key: cargo-udeps-key
 
+      - name: Get dropbox access token
+        run: |
+          echo "DROPBOX_TOKEN=$(curl https://api.dropbox.com/oauth2/token \
+            -d grant_type=refresh_token \
+            -d refresh_token=${DROPBOX_REFRESH_TOKEN} \
+            -u ${DROPBOX_APP_KEY}:${DROPBOX_APP_SECRET} | \
+            python3 -c "import sys, json; data=json.load(sys.stdin); print(data['access_token'])")" \
+            >> $GITHUB_ENV
+        env:
+          DROPBOX_APP_KEY: ${{secrets.DROPBOX_APP_KEY}}
+          DROPBOX_APP_SECRET: ${{secrets.DROPBOX_APP_SECRET}}
+          DROPBOX_APP_REFRESH_TOKEN: ${{secrets.DROPBOX_REFRESH_TOKEN}}
+
       - name: oj-resolve
         uses: competitive-verifier/actions/oj-resolve@v1
         with:
@@ -104,7 +117,6 @@ jobs:
           timeout: 1200
         env:
           YUKICODER_TOKEN: ${{secrets.YUKICODER_TOKEN}}
-          DROPBOX_TOKEN: ${{secrets.DROPBOX_TOKEN}}
 
       - name: Upload result artifact
         uses: actions/upload-artifact@v3
