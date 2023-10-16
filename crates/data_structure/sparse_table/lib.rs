@@ -3,8 +3,6 @@
 //! 事前計算 $O(N\log N)$で、区間積を$O(1)$で計算できる
 //!
 //! Bandが載る
-//! ## verify
-//! [Static RMQ](https://judge.yosupo.jp/submission/64144)
 use algebra::Band;
 use prelude::*;
 use range_traits::{RangeProduct, ToBounds};

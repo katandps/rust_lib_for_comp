@@ -17,11 +17,6 @@
 //! assert_eq!(-1, wuf.diff(2, 1));
 //! ```
 //!
-//! ## dependency
-//! [algebra](AbelianGroup)
-//!
-//! ## verify
-//! [ARC90_D](https://atcoder.jp/contests/arc090/submissions/26701502)
 use algebra::AbelianGroup;
 use prelude::*;
 
