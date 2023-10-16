@@ -22,10 +22,19 @@ check:
 test:
 	cargo test --workspace
 
+refresh-dropbox-token:
+	curl https://api.dropbox.com/oauth2/token \
+		-d grant_type=refresh_token \
+		-d refresh_token=${DROPBOX_REFRESH_TOKEN} \
+		-u ${DROPBOX_APP_KEY}:${DROPBOX_APP_SECRET} | \
+		python3 -c "import sys, json; data=json.load(sys.stdin); print(data['access_token'], end='')" > temp
+	DROPBOX_TOKEN=$(cat temp)
+	rm temp
+
 verify-resolve:
 	competitive-verifier oj-resolve > $(VERIFY_FILE_PATH)
 
-verify-download: verify-resolve
+verify-download: verify-resolve refresh-dropbox-token
 	competitive-verifier download --verify-json $(VERIFY_FILE_PATH)
 
 # verify libraries
