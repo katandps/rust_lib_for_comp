@@ -12,7 +12,8 @@ use union_of_ranges::unite;
 pub fn solve<IO: ReaderTrait + WriterTrait>(mut io: IO) {
     let (n, mut x, mut d) = io.v3::<i64, i64, i64>();
     if d == 0 {
-        return io.out(if x == 0 { 1 } else { n + 1 }.line());
+        io.out(if x == 0 { 1 } else { n + 1 }.line());
+        return io.flush();
     }
     if d < 0 {
         x = -x;
