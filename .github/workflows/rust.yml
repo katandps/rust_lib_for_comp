@@ -60,6 +60,9 @@ jobs:
           DROPBOX_APP_SECRET: ${{secrets.DROPBOX_APP_SECRET}}
           DROPBOX_REFRESH_TOKEN: ${{secrets.DROPBOX_REFRESH_TOKEN}}
 
+      - name: Test dropbox token
+        run: echo ${DROPBOX_TOKEN}
+
       - name: oj-resolve
         uses: competitive-verifier/actions/oj-resolve@v1
         with:
