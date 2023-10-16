@@ -17,7 +17,8 @@ pub fn solve<IO: ReaderTrait + WriterTrait>(mut io: IO) {
         wuf.unite(x, y, d);
         if wuf.diff(x, y) != d {
             io.out("No".line());
-            return io.flush();
+            io.flush();
+            return;
         }
     }
     io.out("Yes".line());

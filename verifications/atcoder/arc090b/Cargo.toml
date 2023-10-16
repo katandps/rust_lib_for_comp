@@ -1,5 +1,5 @@
 [package]
-name = "atcoder_solver_arc090d"
+name = "atcoder_solver_arc090b"
 version = "0.1.0"
 edition = "2018"
 
@@ -12,5 +12,5 @@ addition = { path = "../../../crates/algebra/binary_operation/addition" }
 weighted_union_find = { path = "../../../crates/data_structure/weighted_union_find" }
 
 [[bin]]
-name = "atcoder_solver_arc090d"
+name = "atcoder_solver_arc090b"
 path = "main.rs"

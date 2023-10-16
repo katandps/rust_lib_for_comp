@@ -425,7 +425,7 @@ dependencies = [
 ]
 
 [[package]]
-name = "atcoder_solver_arc090d"
+name = "atcoder_solver_arc090b"
 version = "0.1.0"
 dependencies = [
  "addition",
