@@ -54,7 +54,7 @@ jobs:
           -u ${DROPBOX_APP_KEY}:${DROPBOX_APP_SECRET} | \
           python3 -c "import sys, json; data=json.load(sys.stdin); print(data['access_token'], end='')" \
            > temp
-          echo "DROPBOX_TOKEN=$(cat temp)" >> $GITHUB_ENV
+          echo "DROPBOX_TOKEN=$(cat temp)" >> "$GITHUB_ENV"
         env:
           DROPBOX_APP_KEY: ${{secrets.DROPBOX_APP_KEY}}
           DROPBOX_APP_SECRET: ${{secrets.DROPBOX_APP_SECRET}}
