@@ -43,4 +43,6 @@ fn test() {
     solve(io_debug::IODebug::static_assert("3 4 2", "8"));
     solve(io_debug::IODebug::static_assert("2 3 -3", "2"));
     solve(io_debug::IODebug::static_assert("100 14 20", "49805"));
+    solve(io_debug::IODebug::static_assert("3 0 0", "1"));
+    solve(io_debug::IODebug::static_assert("3 1 0", "4"));
 }
