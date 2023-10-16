@@ -22,10 +22,14 @@ check:
 test:
 	cargo test --workspace
 
-# verify libraries
-verify:
+verify-resolve:
 	competitive-verifier oj-resolve > $(VERIFY_FILE_PATH)
+
+verify-download: verify-resolve
 	competitive-verifier download --verify-json $(VERIFY_FILE_PATH)
+
+# verify libraries
+verify: verify-download
 	competitive-verifier verify --verify-json $(VERIFY_FILE_PATH) --output $(VERIFY_RESULT_PATH)
 
 verify-doc:
