@@ -24,6 +24,8 @@ concurrency:
 jobs:
   setup:
     runs-on: ubuntu-latest
+    outputs:
+      dropbox_token: ${{ steps.dropbox.outputs.token }}
     steps:
       - uses: actions/checkout@v3
 
@@ -47,6 +49,7 @@ jobs:
           cache-key: cargo-udeps-key
 
       - name: Get dropbox access token
+        id: dropbox
         run: |
           curl https://api.dropbox.com/oauth2/token \
           -d grant_type=refresh_token \
@@ -54,7 +57,7 @@ jobs:
           -u ${DROPBOX_APP_KEY}:${DROPBOX_APP_SECRET} | \
           python3 -c "import sys, json; data=json.load(sys.stdin); print(data['access_token'], end='')" \
            > temp
-          echo "DROPBOX_TOKEN=$(cat temp)" >> "$GITHUB_ENV"
+          echo "token=$(cat temp)" >> $GITHUB_OUTPUT
         env:
           DROPBOX_APP_KEY: ${{secrets.DROPBOX_APP_KEY}}
           DROPBOX_APP_SECRET: ${{secrets.DROPBOX_APP_SECRET}}
@@ -100,8 +103,8 @@ jobs:
     steps:
       - uses: actions/checkout@v3
 
-      - name: Test dropbox token
-        run: echo ${DROPBOX_TOKEN}
+      - name: Get dropbox token
+        run: echo "DROPBOX_TOKEN=${{needs.setup.outputs.dropbox_token}}" >> $GITHUB_ENV
 
       - name: Download verify_files.json
         uses: competitive-verifier/actions/download-verify-artifact@v1
