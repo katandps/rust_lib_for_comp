@@ -153,6 +153,7 @@ members = [
     'verifications/aoj/tangent_to_a_circle',
     'verifications/aoj/the_maximum_number_of_overlaps',
     'verifications/atcoder/abc141f',
+    'verifications/atcoder/abc235e',
     'verifications/library_checker/associative_array_treap',
     'verifications/library_checker/bitwise_and_convolution',
     'verifications/library_checker/bitwise_xor_convolution',

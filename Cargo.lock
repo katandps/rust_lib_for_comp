@@ -378,6 +378,17 @@ dependencies = [
 ]
 
 [[package]]
+name = "atcoder_solver_abc235e"
+version = "0.1.0"
+dependencies = [
+ "io_debug",
+ "io_util",
+ "partially_persistent_union_find",
+ "slice_bounds",
+ "string_util",
+]
+
+[[package]]
 name = "autocfg"
 version = "0.1.8"
 source = "registry+https://github.com/rust-lang/crates.io-index"

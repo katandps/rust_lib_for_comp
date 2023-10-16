@@ -1,8 +1,5 @@
 //! # 部分永続UnionFindTree
 //!
-//! ## verify
-//! [ABC235E](https://atcoder.jp/contests/abc235/submissions/37933979)
-//!
 
 #[snippet(name = "partially-persistent-union-find-tree", doc_hidden)]
 pub use partial_persistent_union_find_impl::PartiallyPersistentUnionFind;
