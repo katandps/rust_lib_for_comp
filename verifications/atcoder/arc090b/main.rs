@@ -1,4 +1,4 @@
-// verification-helper: PROBLEM https://atcoder.jp/contests/abc087/tasks/arc090_b
+// verification-helper: PROBLEM https://atcoder.jp/contests/arc090/tasks/arc090_b
 #![cfg_attr(coverage_nightly, feature(coverage_attribute))]
 #[cfg_attr(coverage_nightly, coverage(off))]
 fn main() {
