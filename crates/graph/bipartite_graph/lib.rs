@@ -2,8 +2,6 @@
 //! グラフが二部グラフかどうか判定する
 //! 二部グラフだったときはその分割方法を1つ返す
 //!
-//! ## verify
-//! [ABC282D](https://atcoder.jp/contests/abc282/tasks/abc282_d)
 use graph::GraphTrait;
 use prelude::*;
 

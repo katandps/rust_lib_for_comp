@@ -1,0 +1,16 @@
+[package]
+name = "atcoder_solver_abc282d"
+version = "0.1.0"
+edition = "2018"
+
+[dependencies]
+io_util = { path = "../../../crates/util/io_util" }
+io_debug = { path = "../../../crates/util/io_debug" }
+string_util = { path = "../../../crates/util/string_util" }
+
+adjacency_list = { path = "../../../crates/graph/adjacency_list" }
+bipartite_graph = { path = "../../../crates/graph/bipartite_graph" }
+
+[[bin]]
+name = "atcoder_solver_abc282d"
+path = "main.rs"
