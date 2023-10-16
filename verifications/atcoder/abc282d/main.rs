@@ -21,11 +21,9 @@ pub fn solve<IO: ReaderTrait + WriterTrait>(mut io: IO) {
         for (c, b) in v {
             cnt[c][usize::from(b)] += 1;
         }
-        let mut ans = 0i64;
-        for i in 0..n {
-            ans += (cnt[i][0] + cnt[i][1]) * (n as i64 - cnt[i][0] - cnt[i][1])
-                + cnt[i][0] * cnt[i][1] * 2;
-        }
+        let ans = cnt.iter().fold(0i64, |x, cnt| {
+            x + (cnt[0] + cnt[1]) * (n as i64 - cnt[0] - cnt[1]) + cnt[0] * cnt[1] * 2
+        });
         ans / 2 - m as i64
     } else {
         0
