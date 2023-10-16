@@ -1,8 +1,6 @@
 //! # 遅延評価セグメント木
 //! 区間更新 $O(\log N)$、区間取得 $O(\log N)$
 //!
-//! ## verify
-//! [ABL E](https://atcoder.jp/contests/abl/submissions/26979080)
 
 use algebra::{Magma, MapMonoid};
 use prelude::*;

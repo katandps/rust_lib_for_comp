@@ -1,9 +1,6 @@
 //! # セグメント木
 //! セグメント木(非再帰)
 //!
-//! ## verify
-//! [ARC133B](https://atcoder.jp/contests/arc133/submissions/28689143)
-//!
 use algebra::*;
 use prelude::*;
 use range_traits::*;

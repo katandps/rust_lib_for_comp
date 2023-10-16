@@ -2,8 +2,6 @@
 //! Convex-hull-trick問題を解く
 //! 複数の直線のうち、各$x$座標について最小の$y$をオンラインで求める
 //!
-//! ## verify
-//! [Line Add Get Min](https://judge.yosupo.jp/submission/108762)
 use min_max_macro::{chmin, min};
 use prelude::*;
 use range_traits::ToBounds;

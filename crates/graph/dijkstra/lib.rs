@@ -5,8 +5,6 @@
 //! 負辺なし
 //! ## 計算量
 //! O(N \log N)
-//! ## verify
-//! [ARC011C](https://atcoder.jp/contests/arc011/submissions/26722909)
 use algebra::{BoundedAbove, Zero};
 use graph::GraphTrait;
 use prelude::*;
