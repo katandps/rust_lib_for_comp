@@ -31,14 +31,14 @@ pub fn solve<IO: ReaderTrait + WriterTrait>(mut io: IO) {
             io.out(usize::from(trie.contains(k)).line())
         } else if c == 3 {
             if let Some(i) = trie.lower_bound(k) {
-                io.out(trie.nth(i).line())
+                io.out(trie.nth(i).unwrap().line())
             } else {
                 io.out((-1).line())
             }
         } else if c == 4 {
             if let Some(i) = trie.upper_bound(k) {
                 if i > 0 {
-                    io.out(trie.nth(i - 1).line())
+                    io.out(trie.nth(i - 1).unwrap().line())
                 } else {
                     io.out((-1).line())
                 }

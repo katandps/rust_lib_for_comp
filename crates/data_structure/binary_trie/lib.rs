@@ -2,35 +2,38 @@
 //! 非負整数をBit列とみなしてトライ木に載せたもの
 //! set的な機能を持つ
 //!
-//! ## verify
-//! [ARC033_C](https://atcoder.jp/contests/arc033/submissions/34635956)
 use prelude::*;
 use string_util::JoinTrait;
-
-pub mod non_recursive;
+pub mod recursive;
 
 #[snippet(name = "binary-trie", doc_hidden)]
 pub use binary_trie_impl::BinaryTrie;
 #[snippet(name = "binary-trie", doc_hidden)]
 mod binary_trie_impl {
-    use super::{swap, Debug, Formatter, JoinTrait};
+    use super::{min, Debug, Formatter, JoinTrait};
     type TrieValue = u64;
     type Bit = i32;
 
-    #[derive(Clone, Default)]
+    #[derive(Clone)]
     pub struct BinaryTrie {
-        root: OptionalNode,
-        xor_val: u64,
-        bit_len: Bit,
+        pub root: usize,
+        pub xor_val: u64,
+        pub bit_len: Bit,
+        pub nodes: Vec<TrieNode>,
     }
 
     impl BinaryTrie {
         /// $2^{63}$ 未満の非負整数を登録できる
         pub fn new(bit_len: Bit) -> Self {
             assert!((0..=63).contains(&bit_len));
+            let mut nodes = Vec::with_capacity(min(1 << bit_len, 100000));
+            nodes.push(TrieNode::default());
+            let (xor_val, root) = (0, 0);
             Self {
+                root,
                 bit_len,
-                ..Default::default()
+                nodes,
+                xor_val,
             }
         }
 
@@ -38,7 +41,7 @@ mod binary_trie_impl {
         /// ## 計算量
         /// $O(1)$
         pub fn len(&self) -> usize {
-            self.root.count()
+            self.nodes[self.root].count
         }
 
         pub fn is_empty(&self) -> bool {
@@ -49,41 +52,152 @@ mod binary_trie_impl {
         /// ## 計算量
         /// $O(\text{BIT\textunderscore LEN})$
         pub fn insert(&mut self, v: u64) {
-            self.root.add(v, self.bit_len);
+            let mut target = self.root;
+            let mut bit = self.bit_len;
+            while bit >= 0 {
+                self.nodes[target].count += 1;
+                if v >> bit & 1 == 0 {
+                    if self.nodes[target].off == !0 {
+                        self.nodes.push(TrieNode::default());
+                        self.nodes[target].off = self.nodes.len() - 1;
+                    }
+                    target = self.nodes[target].off
+                } else {
+                    if self.nodes[target].on == !0 {
+                        self.nodes.push(TrieNode::default());
+                        self.nodes[target].on = self.nodes.len() - 1;
+                    }
+                    target = self.nodes[target].on
+                }
+                bit -= 1;
+            }
+            self.nodes[target].count += 1;
         }
 
         /// vを一つ削除する
         /// ## 計算量
         /// $O(\text{BIT\textunderscore LEN})$
         pub fn erase(&mut self, v: TrieValue) {
-            self.root.sub(v, self.bit_len);
+            let (mut target, mut bit) = (self.root, self.bit_len);
+            while bit >= 0 {
+                if self.nodes[target].count == 0 {
+                    panic!("remove unexist node");
+                }
+                self.nodes[target].count -= 1;
+                if v >> bit & 1 == 0 {
+                    if self.nodes[target].off == !0 {
+                        panic!("remove unexist node");
+                    } else {
+                        target = self.nodes[target].off
+                    }
+                } else if self.nodes[target].on == !0 {
+                    panic!("remove unexist node");
+                } else {
+                    target = self.nodes[target].on
+                }
+
+                bit -= 1;
+            }
+            self.nodes[target].count -= 1;
         }
 
         /// # vが含まれるか
-        pub fn contains(&mut self, v: TrieValue) -> bool {
-            self.root.contains(v, self.bit_len)
+        pub fn contains(&self, v: TrieValue) -> bool {
+            let (mut target, mut bit) = (self.root, self.bit_len);
+            while bit >= 0 {
+                if v >> bit & 1 == 0 {
+                    if self.nodes[target].off == !0 {
+                        return false;
+                    } else {
+                        target = self.nodes[target].off
+                    }
+                } else if self.nodes[target].on == !0 {
+                    return false;
+                } else {
+                    target = self.nodes[target].on
+                }
+
+                bit -= 1;
+            }
+            self.nodes[target].count > 0
         }
 
         /// xor_valとXORをとったときに最小値となるような値を取得する
         /// ## 計算量
         /// $O(\text{BIT\textunderscore LEN})$
         pub fn min_element(&self) -> TrieValue {
-            self.root.get_min(self.xor_val, self.bit_len)
+            let (mut target, mut bit, mut ret) = (self.root, self.bit_len, self.xor_val);
+            while bit >= 0 {
+                let mut child = if ret >> bit & 1 == 0 {
+                    self.nodes[target].off
+                } else {
+                    self.nodes[target].on
+                };
+                if child == !0 {
+                    ret ^= 1 << bit;
+                    child = if ret >> bit & 1 == 0 {
+                        self.nodes[target].off
+                    } else {
+                        self.nodes[target].on
+                    };
+                }
+                target = child;
+                bit -= 1;
+            }
+            ret
         }
 
         /// biasとXORをとったときに最大値となるような値を取得する
         /// ## 計算量
         /// $O(\text{BIT\textunderscore LEN})$
         pub fn max_element(&self) -> TrieValue {
-            self.root.get_min(self.rev_xor_val(), self.bit_len)
+            let mut target = self.root;
+            let mut bit = self.bit_len;
+            let mut ret = self.rev_xor_val();
+            while bit >= 0 {
+                let mut child = if ret >> bit & 1 == 0 {
+                    self.nodes[target].off
+                } else {
+                    self.nodes[target].on
+                };
+                if child == !0 {
+                    ret ^= 1 << bit;
+                    child = if ret >> bit & 1 == 0 {
+                        self.nodes[target].off
+                    } else {
+                        self.nodes[target].on
+                    };
+                }
+                target = child;
+                bit -= 1;
+            }
+            ret
         }
 
         /// 小さい方からn番目の値を取得する
         /// ## 計算量
         /// $O(\text{BIT\textunderscore LEN})$
-        pub fn nth(&self, k: usize) -> TrieValue {
-            assert!(k <= self.len());
-            self.root.get(k as u64, self.bit_len)
+        pub fn nth(&self, k: usize) -> Option<TrieValue> {
+            let (mut target, mut bit, mut cnt, mut ret, k) = (self.root, self.bit_len, 0, 0, k + 1);
+            while bit >= 0 {
+                if self.nodes[target].off == !0 {
+                    ret += 1 << bit;
+                    target = self.nodes[target].on;
+                } else if cnt + self.nodes[self.nodes[target].off].count < k {
+                    // k番目がon側にある
+                    cnt += self.nodes[self.nodes[target].off].count;
+                    ret += 1 << bit;
+                    target = self.nodes[target].on;
+                } else {
+                    target = self.nodes[target].off;
+                }
+
+                if target == !0 {
+                    return None;
+                }
+                bit -= 1;
+            }
+            Some(ret)
         }
 
         /// # 探索
@@ -95,12 +209,31 @@ mod binary_trie_impl {
             if v == 0 {
                 return Some(0);
             }
-
-            let c = self.root.count_lower(v, self.bit_len - 1);
-            if self.len() != c {
-                Some(c)
+            let (mut target, mut bit, mut ret) = (self.root, self.bit_len, 0);
+            while bit >= 0 {
+                if target == !0 {
+                    break;
+                }
+                if v >> bit & 1 == 1 {
+                    ret += self.count(self.nodes[target].off);
+                    target = self.nodes[target].on;
+                } else {
+                    target = self.nodes[target].off;
+                }
+                bit -= 1;
+            }
+            if self.len() != ret {
+                Some(ret)
             } else {
                 None
+            }
+        }
+
+        fn count(&self, node: usize) -> usize {
+            if node == !0 {
+                0
+            } else {
+                self.nodes[node].count
             }
         }
 
@@ -122,150 +255,26 @@ mod binary_trie_impl {
 
     impl Debug for BinaryTrie {
         fn fmt(&self, f: &mut Formatter<'_>) -> std::fmt::Result {
-            write!(f, "{}", (0..self.len()).map(|i| self.nth(i)).join(" "))
+            write!(
+                f,
+                "{}",
+                (0..self.len()).filter_map(|i| self.nth(i)).join(" ")
+            )
         }
     }
-
-    #[derive(Clone, Default, Debug)]
-    struct OptionalNode(Option<TrieNode>);
-
-    impl OptionalNode {
-        fn is_none(&self) -> bool {
-            self.0.is_none()
-        }
-
-        /// # 加算
-        /// $v$に$1$加える
-        /// bは現在の階層
-        fn add(&mut self, v: TrieValue, b: Bit) {
-            match self.0.as_mut() {
-                Some(node) => {
-                    node.count += 1;
-                    if b > 0 {
-                        node.child_mut(v, b - 1).add(v, b - 1)
-                    }
-                }
-                None => {
-                    self.0 = Some(TrieNode::default());
-                    self.add(v, b);
-                }
-            }
-        }
-
-        /// # 減算
-        /// $v$から$1$引く
-        /// bは現在の階層
-        /// 0未満にすることはできない
-        fn sub(&mut self, v: TrieValue, b: Bit) {
-            match self.0.as_mut() {
-                Some(node) => {
-                    if node.count == 1 {
-                        swap(&mut self.0, &mut None);
-                    } else {
-                        node.count -= 1;
-                        if b > 0 {
-                            node.child_mut(v, b - 1).sub(v, b - 1);
-                        }
-                    }
-                }
-                None => panic!("Sub to unexisted node."),
-            }
-        }
-
-        /// # 存在判定
-        /// $v$が1以上か調べる
-        /// bは現在の階層
-        fn contains(&self, v: TrieValue, b: Bit) -> bool {
-            if let Some(node) = &self.0 {
-                // b == 0の場合はこのノードが存在することが答え
-                if b == 0 {
-                    node.count > 0
-                } else {
-                    node.child(v, b - 1).contains(v, b - 1)
-                }
-            } else {
-                false
-            }
-        }
-
-        /// # 最小値
-        fn get_min(&self, mut bias: TrieValue, b: Bit) -> TrieValue {
-            if b == 0 {
-                return bias;
-            }
-            if let Some(node) = &self.0 {
-                let mut child = node.child(bias, b - 1);
-                if child.is_none() {
-                    bias ^= 1 << (b - 1);
-                    child = node.child(bias, b - 1);
-                }
-                child.get_min(bias, b - 1)
-            } else {
-                0
-            }
-        }
-
-        /// # 最大値
-        fn get(&self, k: u64, b: Bit) -> TrieValue {
-            if b == 0 {
-                return 0;
-            }
-            if let Some(node) = &self.0 {
-                let m = node.child(k, b).count() as u64;
-                if k < m {
-                    node.off.get(k, b - 1)
-                } else {
-                    node.on.get(k - m, b - 1) | (1 << (b - 1))
-                }
-            } else {
-                unreachable!("k-th element does not exist.")
-            }
-        }
-
-        /// # v未満の値の個数
-        fn count_lower(&self, v: TrieValue, b: Bit) -> usize {
-            if let Some(node) = &self.0 {
-                if b < 0 {
-                    0
-                } else if v >> b & 1 == 1 {
-                    node.off.count() + node.on.count_lower(v, b - 1)
-                } else {
-                    node.off.count_lower(v, b - 1)
-                }
-            } else {
-                0
-            }
-        }
-
-        fn count(&self) -> usize {
-            if let Some(node) = &self.0 {
-                node.count
-            } else {
-                0
-            }
-        }
-    }
-
-    #[derive(Clone, Debug, Default)]
+    #[derive(Clone, Debug)]
     pub struct TrieNode {
         count: usize,
-        on: Box<OptionalNode>,
-        off: Box<OptionalNode>,
+        on: usize,
+        off: usize,
     }
 
-    impl TrieNode {
-        #[inline]
-        fn child_mut(&mut self, idx: TrieValue, bit: Bit) -> &mut OptionalNode {
-            match () {
-                () if idx >> bit & 1 == 0 => &mut self.off,
-                _ => &mut self.on,
-            }
-        }
-        #[inline]
-        fn child(&self, idx: TrieValue, bit: Bit) -> &OptionalNode {
-            match () {
-                () if idx >> bit & 1 == 0 => &self.off,
-                _ => &self.on,
+    impl Default for TrieNode {
+        fn default() -> Self {
+            TrieNode {
+                count: 0,
+                on: !0,
+                off: !0,
             }
         }
     }
@@ -274,6 +283,7 @@ mod binary_trie_impl {
 #[cfg(test)]
 pub mod test {
     use super::*;
+
     #[test]
     fn test() {
         let mut trie = BinaryTrie::new(4);
@@ -285,11 +295,11 @@ pub mod test {
         assert_eq!(5, trie.len());
         assert_eq!(5, trie.min_element());
         assert_eq!(9, trie.max_element());
-        assert_eq!(5, trie.nth(0));
-        assert_eq!(6, trie.nth(1));
-        assert_eq!(7, trie.nth(2));
-        assert_eq!(8, trie.nth(3));
-        assert_eq!(9, trie.nth(4));
+        assert_eq!(Some(5), trie.nth(0));
+        assert_eq!(Some(6), trie.nth(1));
+        assert_eq!(Some(7), trie.nth(2));
+        assert_eq!(Some(8), trie.nth(3));
+        assert_eq!(Some(9), trie.nth(4));
 
         trie.erase(5);
         trie.erase(7);
@@ -297,13 +307,14 @@ pub mod test {
         trie.insert(6);
 
         assert_eq!(4, trie.len());
-        assert_eq!(6, trie.nth(0));
-        assert_eq!(6, trie.nth(1));
-        assert_eq!(8, trie.nth(2));
-        assert_eq!(9, trie.nth(3));
+        assert_eq!(Some(6), trie.nth(0));
+        assert_eq!(Some(6), trie.nth(1));
+        assert_eq!(Some(8), trie.nth(2));
+        assert_eq!(Some(9), trie.nth(3));
 
         assert_eq!("6 6 8 9", &format!("{:?}", trie));
 
+        assert!(!trie.contains(5));
         assert!(trie.contains(6));
         assert!(!trie.contains(7));
         assert!(trie.contains(8));
@@ -333,8 +344,8 @@ pub mod test {
         assert_eq!(2, trie.len());
         assert_eq!(1, trie.min_element());
         assert_eq!(2, trie.max_element());
-        assert_eq!(1, trie.nth(0));
-        assert_eq!(2, trie.nth(1));
+        assert_eq!(Some(1), trie.nth(0));
+        assert_eq!(Some(2), trie.nth(1));
         assert!(!trie.contains(0));
         assert!(trie.contains(1));
         assert!(trie.contains(2));

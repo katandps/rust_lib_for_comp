@@ -2,39 +2,29 @@
 //! 非負整数をBit列とみなしてトライ木に載せたもの
 //! set的な機能を持つ
 //!
-//! ## verify
-//! [ARC033_C](https://atcoder.jp/contests/arc033/submissions/34635956)
 use prelude::*;
 use string_util::JoinTrait;
 
-#[snippet(name = "binary-trie", doc_hidden)]
 pub use binary_trie_impl::BinaryTrie;
-#[snippet(name = "binary-trie", doc_hidden)]
 mod binary_trie_impl {
-    use super::{min, swap, Debug, Formatter, JoinTrait};
+    use super::{swap, Debug, Formatter, JoinTrait};
     type TrieValue = u64;
     type Bit = i32;
 
-    #[derive(Clone)]
+    #[derive(Clone, Default)]
     pub struct BinaryTrie {
-        root: usize,
+        root: OptionalNode,
         xor_val: u64,
         bit_len: Bit,
-        nodes: Vec<TrieNode>,
     }
 
     impl BinaryTrie {
         /// $2^{63}$ 未満の非負整数を登録できる
         pub fn new(bit_len: Bit) -> Self {
             assert!((0..=63).contains(&bit_len));
-            let mut nodes = Vec::with_capacity(min(1 << bit_len, 100000));
-            nodes.push(TrieNode::default());
-            let (xor_val, root) = (0, 0);
             Self {
-                root,
                 bit_len,
-                nodes,
-                xor_val,
+                ..Default::default()
             }
         }
 
@@ -42,7 +32,7 @@ mod binary_trie_impl {
         /// ## 計算量
         /// $O(1)$
         pub fn len(&self) -> usize {
-            self.nodes[self.root].count
+            self.root.count()
         }
 
         pub fn is_empty(&self) -> bool {
@@ -53,9 +43,6 @@ mod binary_trie_impl {
         /// ## 計算量
         /// $O(\text{BIT\textunderscore LEN})$
         pub fn insert(&mut self, v: u64) {
-            let target = &mut self.nodes[self.root];
-            let mut bit = self.bit_len;
-
             self.root.add(v, self.bit_len);
         }
 
@@ -130,29 +117,6 @@ mod binary_trie_impl {
     impl Debug for BinaryTrie {
         fn fmt(&self, f: &mut Formatter<'_>) -> std::fmt::Result {
             write!(f, "{}", (0..self.len()).map(|i| self.nth(i)).join(" "))
-        }
-    }
-    #[derive(Clone, Debug, Default)]
-    pub struct TrieNode {
-        count: usize,
-        on: usize,
-        off: usize,
-    }
-
-    impl TrieNode {
-        #[inline]
-        fn child_mut(&mut self, idx: TrieValue, bit: Bit) -> &mut OptionalNode {
-            match () {
-                () if idx >> bit & 1 == 0 => &mut self.off,
-                _ => &mut self.on,
-            }
-        }
-        #[inline]
-        fn child(&self, idx: TrieValue, bit: Bit) -> &OptionalNode {
-            match () {
-                () if idx >> bit & 1 == 0 => &self.off,
-                _ => &self.on,
-            }
         }
     }
 
@@ -272,6 +236,30 @@ mod binary_trie_impl {
                 node.count
             } else {
                 0
+            }
+        }
+    }
+
+    #[derive(Clone, Debug, Default)]
+    pub struct TrieNode {
+        count: usize,
+        on: Box<OptionalNode>,
+        off: Box<OptionalNode>,
+    }
+
+    impl TrieNode {
+        #[inline]
+        fn child_mut(&mut self, idx: TrieValue, bit: Bit) -> &mut OptionalNode {
+            match () {
+                () if idx >> bit & 1 == 0 => &mut self.off,
+                _ => &mut self.on,
+            }
+        }
+        #[inline]
+        fn child(&self, idx: TrieValue, bit: Bit) -> &OptionalNode {
+            match () {
+                () if idx >> bit & 1 == 0 => &self.off,
+                _ => &self.on,
             }
         }
     }
