@@ -9,8 +9,8 @@ use io_util::*;
 use string_util::*;
 
 pub fn solve<IO: ReaderTrait + WriterTrait>(mut io: IO) {
-    let mut trie = BinaryTrie::new(32);
-    let (_n, q) = io.v2::<usize, usize>();
+    let (n, q) = io.v2::<usize, usize>();
+    let mut trie = BinaryTrie::new(n.next_power_of_two().trailing_zeros() as i32 + 1);
     let t = io.digits();
     for (i, ti) in t.iter().enumerate() {
         if *ti == 1 {
@@ -30,22 +30,20 @@ pub fn solve<IO: ReaderTrait + WriterTrait>(mut io: IO) {
         } else if c == 2 {
             io.out(usize::from(trie.contains(k)).line())
         } else if c == 3 {
-            if let Some(i) = trie.lower_bound(k) {
-                io.out(trie.nth(i).unwrap().line())
+            if trie.contains(k) {
+                io.out(k.line())
+            } else if let Some(ans) = trie.next(k) {
+                io.out(ans.line())
             } else {
                 io.out((-1).line())
             }
         } else if c == 4 {
-            if let Some(i) = trie.upper_bound(k) {
-                if i > 0 {
-                    io.out(trie.nth(i - 1).unwrap().line())
-                } else {
-                    io.out((-1).line())
-                }
-            } else if trie.is_empty() {
-                io.out((-1).line())
+            if trie.contains(k) {
+                io.out(k.line())
+            } else if let Some(ans) = trie.prev(k) {
+                io.out(ans.line())
             } else {
-                io.out(trie.max_element().line())
+                io.out((-1).line())
             }
         }
     }
