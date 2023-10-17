@@ -23,7 +23,7 @@ pub fn solve<IO: ReaderTrait + WriterTrait>(mut io: IO) {
             }
         } else {
             trie.set_xor_val(x);
-            io.out((trie.min_element() ^ x).line());
+            io.out((trie.min_element().unwrap() ^ x).line());
         }
     }
     io.flush()
