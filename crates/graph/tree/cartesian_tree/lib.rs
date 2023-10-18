@@ -43,9 +43,9 @@ mod cartesian_tree_impl {
             }
             let mut root = !0;
             let mut graph = Graph::new(n);
-            for i in 0..n {
-                if p[i] != !0 {
-                    graph.add_arc(p[i], i, ());
+            for (i, &pi) in p.iter().enumerate() {
+                if pi != !0 {
+                    graph.add_arc(pi, i, ());
                 } else {
                     root = i
                 }
