@@ -80,20 +80,22 @@ mod dynamic_li_chao_tree_impl {
             // 傾きは単調減少にならなければならない
             match line.cmp(&node.line) {
                 Ordering::Greater => {
-                    if let Some(left_child_node_id) = node.l_child {
-                        self._add_line(left_child_node_id, line)
+                    let l_child = node.children[0];
+                    if l_child != !0 {
+                        self._add_line(l_child, line)
                     } else {
-                        let left_child_node_id = next_child_id;
-                        node.l_child = Some(left_child_node_id);
+                        let l_child = next_child_id;
+                        node.children[0] = l_child;
                         self.nodes.push(Node::new(line.clone(), left, m));
                     }
                 }
                 Ordering::Less => {
-                    if let Some(right_child_node_id) = node.r_child {
-                        self._add_line(right_child_node_id, line)
+                    let r_child = node.children[1];
+                    if r_child != !0 {
+                        self._add_line(r_child, line)
                     } else {
-                        let right_child_node_id = next_child_id;
-                        node.r_child = Some(right_child_node_id);
+                        let r_child = next_child_id;
+                        node.children[1] = r_child;
                         self.nodes.push(Node::new(line.clone(), m, right))
                     }
                 }
@@ -125,23 +127,25 @@ mod dynamic_li_chao_tree_impl {
             let m = (left + right) / 2;
 
             // 左右の子にも追加する
-            if let Some(left_child_node_id) = self.nodes[node_id].l_child {
-                self._add_segment(range.clone(), left_child_node_id, line.clone());
+            let l_child = self.nodes[node_id].children[0];
+            if l_child != !0 {
+                self._add_segment(range.clone(), l_child, line.clone());
             } else {
-                let left_child_node_id = self.nodes.len();
-                self.nodes[node_id].l_child = Some(left_child_node_id);
+                let l_child = self.nodes.len();
+                self.nodes[node_id].children[0] = l_child;
                 self.nodes
                     .push(Node::new(Line::default(), self.nodes[node_id].l, m));
-                self._add_segment(range.clone(), left_child_node_id, line.clone());
+                self._add_segment(range.clone(), l_child, line.clone());
             }
-            if let Some(right_child_node_id) = self.nodes[node_id].r_child {
-                self._add_segment(range, right_child_node_id, line);
+            let r_child = self.nodes[node_id].children[1];
+            if r_child != !0 {
+                self._add_segment(range, r_child, line);
             } else {
-                let right_child_node_id = self.nodes.len();
-                self.nodes[node_id].r_child = Some(right_child_node_id);
+                let r_child = self.nodes.len();
+                self.nodes[node_id].children[1] = r_child;
                 self.nodes
                     .push(Node::new(Line::default(), m, self.nodes[node_id].r));
-                self._add_segment(range, right_child_node_id, line);
+                self._add_segment(range, r_child, line);
             }
         }
 
@@ -155,10 +159,11 @@ mod dynamic_li_chao_tree_impl {
                 Self::INF
             } else {
                 let mut ret = node.eval(x);
-                if let Some(l_child) = node.l_child {
+                let (l_child, r_child) = (node.children[0], node.children[1]);
+                if l_child != !0 {
                     chmin!(ret, self._query(l_child, x));
                 }
-                if let Some(r_child) = node.r_child {
+                if r_child != !0 {
                     chmin!(ret, self._query(r_child, x));
                 }
                 ret
@@ -173,18 +178,12 @@ mod dynamic_li_chao_tree_impl {
             while let Some((node, l, r)) = deq.pop_front() {
                 let m = (l + r) / 2;
                 v.push((l, r, self.nodes[node].line.a, self.nodes[node].line.b));
-                match (self.nodes[node].l_child, self.nodes[node].r_child) {
-                    (Some(left), Some(right)) => {
-                        deq.push_back((left, l, m));
-                        deq.push_back((right, m, r));
-                    }
-                    (Some(left), _) => {
-                        deq.push_back((left, l, m));
-                    }
-                    (_, Some(right)) => {
-                        deq.push_back((right, m, r));
-                    }
-                    (_, _) => (),
+                let (l_node, r_node) = (self.nodes[node].children[0], self.nodes[node].children[1]);
+                if l_node != !0 {
+                    deq.push_back((l_node, l, m));
+                }
+                if r_node != !0 {
+                    deq.push_back((r_node, m, r));
                 }
             }
             v.sort_unstable();
@@ -203,10 +202,12 @@ mod dynamic_li_chao_tree_impl {
         l: i64,
         // ノードの右端(含む)
         r: i64,
-        // 左の子のノード番号
-        l_child: Option<usize>,
-        // 右の子のノード番号
-        r_child: Option<usize>,
+        // 子のノード番号
+        children: [usize; 2],
+        // // 左の子のノード番号
+        // l_child: Option<usize>,
+        // // 右の子のノード番号
+        // r_child: Option<usize>,
     }
 
     impl Default for Node {
@@ -215,21 +216,20 @@ mod dynamic_li_chao_tree_impl {
                 l: LEFT_LIMIT,
                 r: RIGHT_LIMIT,
                 line: Line::default(),
-                l_child: None,
-                r_child: None,
+                children: [!0; 2], // l_child: None,
+                                   // r_child: None,
             }
         }
     }
 
     impl Node {
         fn new(line: Line, l: i64, r: i64) -> Self {
-            let (l_child, r_child) = (None, None);
+            let children = [!0, !0];
             Self {
                 line,
                 l,
                 r,
-                l_child,
-                r_child,
+                children,
             }
         }
         /// # 常に、既存の直線が追加する直線より下にある
