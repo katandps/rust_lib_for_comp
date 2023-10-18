@@ -1,0 +1,11 @@
+[package]
+name = "cartesian_tree"
+version = "0.1.0"
+edition = "2018"
+
+[dependencies]
+prelude = { path = "../../../prelude" }
+adjacency_list = { path = "../../../graph/adjacency_list" }
+
+[lib]
+path = "lib.rs"

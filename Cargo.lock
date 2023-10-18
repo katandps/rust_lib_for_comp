@@ -602,6 +602,14 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "5b5d683f04783a882180b7cd232a4e5cb2d01b305e145968e6062a71f66d5ead"
 
 [[package]]
+name = "cartesian_tree"
+version = "0.1.0"
+dependencies = [
+ "adjacency_list",
+ "prelude",
+]
+
+[[package]]
 name = "cast"
 version = "0.3.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -1262,6 +1270,17 @@ dependencies = [
  "io_debug",
  "io_util",
  "mod_int",
+ "string_util",
+]
+
+[[package]]
+name = "library_checker_solver_cartesian_tree"
+version = "0.1.0"
+dependencies = [
+ "cartesian_tree",
+ "graph",
+ "io_debug",
+ "io_util",
  "string_util",
 ]
 
