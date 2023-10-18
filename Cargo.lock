@@ -1424,6 +1424,17 @@ dependencies = [
 ]
 
 [[package]]
+name = "library_checker_solver_rmq_cartesian_tree"
+version = "0.1.0"
+dependencies = [
+ "cartesian_tree",
+ "io_debug",
+ "io_util",
+ "lowest_common_ancestor",
+ "string_util",
+]
+
+[[package]]
 name = "library_checker_solver_rmq_disjoint_sparse_table"
 version = "0.1.0"
 dependencies = [
