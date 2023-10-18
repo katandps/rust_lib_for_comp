@@ -1359,6 +1359,17 @@ dependencies = [
 ]
 
 [[package]]
+name = "library_checker_solver_lowest_common_ancestor"
+version = "0.1.0"
+dependencies = [
+ "adjacency_list",
+ "io_debug",
+ "io_util",
+ "lowest_common_ancestor",
+ "string_util",
+]
+
+[[package]]
 name = "library_checker_solver_matrix_product"
 version = "0.1.0"
 dependencies = [
