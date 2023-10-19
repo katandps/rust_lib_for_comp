@@ -106,7 +106,7 @@ mod test {
     #[test]
     fn test() {
         let a = vec![1i64, 2, 3, 4, 5];
-        let mut segtree = DualSegmentTree::new(&a, Composition::<i64>::new());
+        let mut segtree = DualSegmentTree::new(&a, Composition::default());
         segtree.update_range(0..3, Affine::new(3, 2));
         assert_eq!(5, segtree.get(0));
         assert_eq!(8, segtree.get(1));

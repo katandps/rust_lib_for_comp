@@ -14,7 +14,7 @@ use string_util::*;
 pub fn solve<IO: ReaderTrait + WriterTrait>(mut io: IO) {
     let (n, q) = io.v2::<usize, usize>();
     let a = io.vec::<Mi>(n);
-    let mut segtree = DualSegmentTree::new(&a, Composition::new());
+    let mut segtree = DualSegmentTree::new(&a, Composition::default());
     for _ in 0..q {
         if 0 == io.v() {
             let (l, r, b, c) = io.v4::<usize, usize, Mi, Mi>();

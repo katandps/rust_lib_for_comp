@@ -41,11 +41,6 @@ mod affine_impl {
     #[derive(Debug, Clone)]
     pub struct Composition<T>(fn() -> PhantomData<T>);
 
-    impl<T> Composition<T> {
-        pub fn new() -> Self {
-            Self(|| PhantomData)
-        }
-    }
     impl<T: Clone + PartialEq + Debug + Mul<Output = T> + Add<Output = T>> Magma for Composition<T> {
         type M = Affine<T>;
         fn op(x: &Self::M, y: &Self::M) -> Self::M {
