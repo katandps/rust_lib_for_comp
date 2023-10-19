@@ -4,29 +4,9 @@
 use algebra::*;
 use prelude::*;
 
-#[snippet(name = "mod-int", doc_hidden)]
-pub trait Mod: Copy + Clone + Debug {
-    /// # 法$N$
-    const MOD: u32;
-    /// # $NN^{-1}$ \equiv 1 \pmod{2^32}}$ となる$N^{-1}$
-    const MOD_INV: u32 = {
-        let (mut n_inv, mut i) = (Self::MOD, 0);
-        while i < 5 {
-            n_inv = n_inv.wrapping_mul(2u32.wrapping_sub(Self::MOD.wrapping_mul(n_inv)));
-            i += 1;
-        }
-        n_inv
-    };
-    /// # $2^{64} \pmod N$
-    /// すなわち、$1$のモンゴメリ表現
-    const R: u32 = Self::MOD.wrapping_neg() % Self::MOD;
-    /// # $(2^{64})^2 \pmod N$
-    const R_POW2: u32 = ((Self::MOD as u64).wrapping_neg() % Self::MOD as u64) as u32;
-}
-
 #[snippet(name = "dynamic-mod-int", doc_hidden)]
 pub use dynamic_mod_int_impl::ModInt;
-#[snippet(name = "mod-int", doc_hidden)]
+#[snippet(name = "dynamic-mod-int", doc_hidden)]
 // #[rustfmt::skip]
 mod dynamic_mod_int_impl {
     use std::num::ParseIntError;
@@ -314,17 +294,6 @@ mod dynamic_mod_int_impl {
         fn one() -> Self {
             Self::one()
         }
-    }
-}
-
-#[snippet(name = "pow-table", doc_hidden)]
-#[derive(Clone, Debug, Default)]
-/// # 2のべき乗を都度生成するDefaultDict
-pub struct PowTable(std::collections::HashMap<i64, ModInt>);
-#[snippet(name = "pow-table", doc_hidden)]
-impl PowTable {
-    pub fn pow(&mut self, e: i64) -> ModInt {
-        *self.0.entry(e).or_insert_with(|| ModInt::new(2).pow(e))
     }
 }
 

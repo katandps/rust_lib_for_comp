@@ -9,7 +9,7 @@ pub use algebra_traits::{
 };
 
 #[snippet(name = "algebra", doc_hidden)]
-// #[rustfmt::skip]
+#[rustfmt::skip]
 mod algebra_traits {
     use super::{
         Add, AddAssign, BitAnd, BitAndAssign, BitOr, BitOrAssign, BitXor, BitXorAssign, Debug,
