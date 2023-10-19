@@ -28,6 +28,14 @@ dependencies = [
 ]
 
 [[package]]
+name = "affine"
+version = "0.1.0"
+dependencies = [
+ "algebra",
+ "prelude",
+]
+
+[[package]]
 name = "aho-corasick"
 version = "1.0.5"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -902,6 +910,19 @@ dependencies = [
 ]
 
 [[package]]
+name = "dual_segment_tree"
+version = "0.1.0"
+dependencies = [
+ "affine",
+ "algebra",
+ "io_util",
+ "minimization",
+ "prelude",
+ "range_traits",
+ "string_util",
+]
+
+[[package]]
 name = "dynamic_li_chao_tree"
 version = "0.1.0"
 dependencies = [
@@ -1421,6 +1442,19 @@ dependencies = [
  "io_debug",
  "io_util",
  "miller_rabin",
+ "string_util",
+]
+
+[[package]]
+name = "library_checker_solver_range_affine_point_get"
+version = "0.1.0"
+dependencies = [
+ "affine",
+ "dual_segment_tree",
+ "io_debug",
+ "io_util",
+ "mod_int",
+ "range_traits",
  "string_util",
 ]
 

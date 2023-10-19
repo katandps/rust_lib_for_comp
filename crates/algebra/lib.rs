@@ -4,12 +4,12 @@ use prelude::*;
 #[rustfmt::skip]
 pub use algebra_traits::{
     AbelianGroup, Associative, Band, BoundedAbove, BoundedBelow, Commutative, CommutativeMonoid,
-    Group, Idempotent, Integral, Invertible, LeastSignificantBit, Magma, MapMonoid, Monoid, One,
-    Pow, PrimitiveRoot, SemiGroup, TrailingZeros, Unital, Zero,
+    Group, Idempotent, Integral, Invertible, LeastSignificantBit, Magma, MapMonoid, Monoid,
+    MonoidOperation, One, Pow, PrimitiveRoot, SemiGroup, TrailingZeros, Unital, Zero,
 };
 
 #[snippet(name = "algebra", doc_hidden)]
-#[rustfmt::skip]
+// #[rustfmt::skip]
 mod algebra_traits {
     use super::{
         Add, AddAssign, BitAnd, BitAndAssign, BitOr, BitOrAssign, BitXor, BitXorAssign, Debug,
@@ -95,7 +95,14 @@ mod algebra_traits {
     impl<M: Magma + Associative + Unital + Commutative + Invertible> AbelianGroup for M {}
     impl<M: Magma + Associative + Idempotent> Band for M {}
 
-    /// # 作用付きモノイド
+    /// # 作用モノイド
+    /// 作用で、その合成がモノイドをなすもの
+    pub trait MonoidOperation: Magma + Associative + Unital {
+        type V: Clone + Debug;
+        fn apply(&self, f: &Self::M, value: &Self::V) -> Self::V;
+    }
+
+    /// # 作用モノイド付きモノイド
     pub trait MapMonoid {
         /// モノイドM
         type Mono: Monoid;

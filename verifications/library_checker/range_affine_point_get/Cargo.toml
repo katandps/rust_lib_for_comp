@@ -1,0 +1,18 @@
+[package]
+name = "library_checker_solver_range_affine_point_get"
+version = "0.1.0"
+edition = "2018"
+
+[dependencies]
+io_util = { path = "../../../crates/util/io_util" }
+io_debug = { path = "../../../crates/util/io_debug" }
+string_util = { path = "../../../crates/util/string_util" }
+
+dual_segment_tree = { path = "../../../crates/data_structure/dual_segment_tree" }
+affine = { path = "../../../crates/element/affine" }
+mod_int = { path = "../../../crates/algebra/mod_int" }
+range_traits = { path = "../../../crates/range_traits" }
+
+[[bin]]
+name = "library_checker_solver_range_affine_point_get"
+path = "main.rs"
