@@ -61,20 +61,25 @@ mod fast_fourier_transform_impl {
                 } else {
                     // 基数4
                     let p = 1 << (height - phase - 1);
+                    let p2 = p + p;
+                    let p3 = p2 + p;
                     for s in 0..1 << (phase - 1) {
                         let rot2 = rot * rot;
                         let rot3 = rot2 * rot;
                         let offset = s << (height - phase + 1);
                         for i in offset..offset + p {
-                            let (p1, p2, p3, p4) = (i, i + p, i + 2 * p, i + 3 * p);
-                            let (a0, a1, a2, a3) =
-                                (src[p1], src[p2] * rot, src[p3] * rot2, src[p4] * rot3);
+                            let (a0, a1, a2, a3) = (
+                                src[i],
+                                src[i + p] * rot,
+                                src[i + p2] * rot2,
+                                src[i + p3] * rot3,
+                            );
                             let (a0a2, a0na2, a1a3, a1na3) =
                                 (a0 + a2, a0 - a2, a1 + a3, (a1 - a3) * imag);
-                            src[p1] = a0a2 + a1a3;
-                            src[p2] = a0a2 - a1a3;
-                            src[p3] = a0na2 + a1na3;
-                            src[p4] = a0na2 - a1na3;
+                            src[i] = a0a2 + a1a3;
+                            src[i + p] = a0a2 - a1a3;
+                            src[i + p2] = a0na2 + a1na3;
+                            src[i + p3] = a0na2 - a1na3;
                         }
                         rot *= self.rate3[(!s).trailing_zeros() as usize];
                     }
@@ -88,6 +93,8 @@ mod fast_fourier_transform_impl {
             let mut phase = height;
             while phase > 0 {
                 let (mut rot_inv, p) = (T::one(), 1 << (height - phase));
+                let p2 = p + p;
+                let p3 = p2 + p;
                 if phase == 1 {
                     // 基数2
                     for s in 0..1 << (phase - 1) {
@@ -107,14 +114,13 @@ mod fast_fourier_transform_impl {
                         let rot3_inv = rot2_inv * rot_inv;
                         let offset = s << (height - phase + 2);
                         for i in offset..offset + p {
-                            let (p1, p2, p3, p4) = (i, i + p, i + 2 * p, i + 3 * p);
-                            let (a0, a1, a2, a3) = (src[p1], src[p2], src[p3], src[p4]);
+                            let (a0, a1, a2, a3) = (src[i], src[i + p], src[i + p2], src[i + p3]);
                             let (a0a1, a0na1, a2a3, a2na3) =
                                 (a0 + a1, a0 - a1, a2 + a3, (a2 - a3) * imag_inv);
-                            src[p1] = a0a1 + a2a3;
-                            src[p2] = (a0na1 + a2na3) * rot_inv;
-                            src[p3] = (a0a1 - a2a3) * rot2_inv;
-                            src[p4] = (a0na1 - a2na3) * rot3_inv;
+                            src[i] = a0a1 + a2a3;
+                            src[i + p] = (a0na1 + a2na3) * rot_inv;
+                            src[i + p2] = (a0a1 - a2a3) * rot2_inv;
+                            src[i + p3] = (a0na1 - a2na3) * rot3_inv;
                         }
                         rot_inv *= self.rate3_inv[(!s).trailing_zeros() as usize];
                     }
