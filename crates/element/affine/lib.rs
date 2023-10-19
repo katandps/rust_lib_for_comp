@@ -46,7 +46,7 @@ mod affine_impl {
         fn op(x: &Self::M, y: &Self::M) -> Self::M {
             Affine {
                 a: x.a.clone() * y.a.clone(),
-                b: x.a.clone() * y.b.clone() + x.b.clone(),
+                b: x.b.clone() * y.a.clone() + y.b.clone(),
             }
         }
     }
@@ -77,5 +77,5 @@ fn test() {
     let one = Affine::one();
     assert_eq!(Composition::op(&a, &one), a);
     let b = Affine::new(5, 5);
-    assert_eq!(Composition::op(&a, &b), Affine::new(15, 17));
+    assert_eq!(Composition::op(&a, &b), Affine::new(15, 15));
 }
