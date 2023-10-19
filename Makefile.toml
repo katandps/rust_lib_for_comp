@@ -1,0 +1,104 @@
+[config]
+skip_core_tasks = true
+default_to_workspace = false
+
+[env]
+VERIFY_DIR = ".competitive-verifier"
+VERIFY_FILE = "verify.json"
+VERIFY_RESULT_FILE = "result.json"
+
+[tasks.format]
+description = "Reformat files"
+install_crate = "rustfmt"
+category = "Development"
+command = "cargo"
+args = ["fmt"]
+
+[tasks.lint]
+description = "Lint project files"
+install_crate = "clippy"
+category = "Development"
+command = "cargo"
+args = ["clippy", "--", "-D", "warnings"]
+
+[tasks.check]
+description = "Check compile for Rust 1.70.0"
+toolchain = "1.70.0"
+category = "Development"
+command = "cargo"
+args = ["check"]
+
+[tasks.test]
+description = "Run unit tests"
+category = "Development"
+command = "cargo"
+args = ["test"]
+
+[tasks.coverage]
+description = "Run unit tests with coverage"
+toolchain = "nightly"
+command = "cargo"
+category = "Coverage"
+args = ["llvm-cov", "--doctests", "--lcov", "--output-path", "lcov.info"]
+
+[tasks.snippet]
+env = { SNIPPETS_DIR = "../rust_cp_workspace/.vscode", SNIPPETS_FILE = "libraries", SNIPPETS_SUFFIX = "code-snippets" }
+category = "Development"
+script = '''
+mkdir -p ${SNIPPETS_DIR}
+cargo snippet -t vscode crates > ${SNIPPETS_DIR}/${SNIPPETS_FILE}.${SNIPPETS_SUFFIX}
+'''
+
+[tasks.build]
+dependencies = ["format", "lint", "check", "coverage", "verify", "snippet"]
+
+[tasks.rustdoc]
+env = { RUSTDOCFLAGS = "--html-in-header katex.html" }
+description = "Generate rustdoc with KATEX"
+command = "cargo"
+category = "Documentation"
+args = ["doc", "--no-deps"]
+
+[tasks.refresh-dropbox-token]
+description = "Refresh local dropbox token"
+category = "Verification"
+script = '''
+	curl https://api.dropbox.com/oauth2/token \
+		-d grant_type=refresh_token \
+		-d refresh_token=${DROPBOX_REFRESH_TOKEN} \
+		-u ${DROPBOX_APP_KEY}:${DROPBOX_APP_SECRET} | \
+		python3 -c "import sys, json; data=json.load(sys.stdin); print(data['access_token'], end='')" > temp
+	DROPBOX_TOKEN=$(cat temp)
+	rm temp
+'''
+
+[tasks.verify-resolve]
+description = "resolve verification by oj-resolve"
+category = "Verification"
+script = '''
+    competitive-verifier oj-resolve > ${VERIFY_DIR}/${VERIFY_FILE}
+'''
+
+[tasks.verify-download]
+description = "download verification problems"
+dependencies = ["verify-resolve", "refresh-dropbox-token"]
+category = "Verification"
+script = '''
+	competitive-verifier download --verify-json ${VERIFY_DIR}/${VERIFY_FILE}
+'''
+
+[tasks.verify]
+description = "verify problems"
+dependencies = ["verify-download"]
+category = "Verification"
+script = '''
+    competitive-verifier verify --verify-json ${VERIFY_DIR}/${VERIFY_FILE} --output ${VERIFY_DIR}/${VERIFY_RESULT_FILE}
+'''
+
+[tasks.verify-doc]
+description = "build verify docs by result"
+category = "Verification"
+script = '''
+    competitive-verifier docs --verify-json ${VERIFY_DIR}/${VERIFY_FILE} ${VERIFY_DIR}/${VERIFY_RESULT_FILE}
+    cd .competitive-verifier/_jekyll && bundle add webrick &&bundle exec jekyll serve --incremental
+'''
