@@ -54,7 +54,7 @@ mod warshall_floyd_impl {
                     return true;
                 }
             }
-            return false;
+            false
         }
     }
 }
