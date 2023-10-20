@@ -8,16 +8,16 @@ use algebra::Magma;
 use const_mod_val_table::ModValTable;
 use greatest_common_divisor::Gcd;
 use io_util::*;
-use mod_int::mod998244353::Mi;
+use mod_int::ModInt;
 use split_of_natural_number::SplitOfNumber;
 use string_util::*;
 
 pub fn solve<IO: ReaderTrait + WriterTrait>(mut io: IO) {
     let (n, k) = io.v2::<usize, usize>();
-    let mut ans = Mi::zero();
-    let mvt: ModValTable<_, 10010> = ModValTable::new();
+    let mut ans = ModInt::<998_244_353>::zero();
+    let mvt: ModValTable<998_244_353, 10010> = ModValTable::new();
     for p in SplitOfNumber::from(n) {
-        let mut score = Mi::from(
+        let mut score = ModInt::from(
             p.iter()
                 .fold(1, |a, x| a * *x as i64 / Gcd::op(&a, &(*x as i64))),
         )

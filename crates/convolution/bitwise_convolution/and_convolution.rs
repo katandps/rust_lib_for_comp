@@ -2,7 +2,7 @@
 //!
 
 use super::ConvolutionType;
-use mod_int::{Mod, ModInt};
+use mod_int::ModInt;
 use prelude::*;
 
 #[snippet(name = "and-convolution", doc_hidden)]
@@ -11,7 +11,7 @@ pub struct AndConvolution;
 
 #[snippet(name = "and-convolution", doc_hidden)]
 impl ConvolutionType for AndConvolution {
-    fn fwht<M: Mod>(src: &mut [ModInt<M>], rev: bool) {
+    fn fwht<const M: u32>(src: &mut [ModInt<M>], rev: bool) {
         let mut i = 1;
         while i < src.len() {
             for j in 0..src.len() {
@@ -31,7 +31,6 @@ impl ConvolutionType for AndConvolution {
 #[cfg(test)]
 mod test {
     use super::{super::convolution, AndConvolution, ModInt};
-    use mod_int::mod998244353::Mod998_244_353;
     use xor_shift::XorShift;
     #[test]
     fn rand() {
@@ -51,7 +50,7 @@ mod test {
                     expect[i & j] += a[i] * b[j];
                 }
             }
-            let result = convolution::<Mod998_244_353, AndConvolution>(a, b);
+            let result = convolution::<AndConvolution, 998_244_353>(a, b);
             assert_eq!(expect, result);
         }
     }

@@ -7,18 +7,18 @@ fn main() {
 use const_mod_val_table::ModValTable;
 use io_util::*;
 use lagrange_interpolation::lagrange_polynomical;
-use mod_int::mod1000000007::Mi;
+use mod_int::ModInt;
 use string_util::*;
 
 pub fn solve<IO: ReaderTrait + WriterTrait>(mut io: IO) {
     let (n, k) = io.v2::<usize, usize>();
     let mut v = Vec::new();
-    let mut cur = Mi::zero();
+    let mut cur = ModInt::zero();
     for i in 0..=k + 1 {
         v.push(cur);
-        cur += Mi::from(i + 1).pow(k as i64);
+        cur += ModInt::from(i + 1).pow(k as i64);
     }
-    let mvt: ModValTable<mod_int::ModInt<_>, 10010> = ModValTable::new();
+    let mvt: ModValTable<1_000_000_007, 10010> = ModValTable::new();
     let ans = lagrange_polynomical(&mvt, &v, n);
     io.out(ans.line());
     io.flush();

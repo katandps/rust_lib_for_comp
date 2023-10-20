@@ -8,14 +8,14 @@ fn main() {
 
 use io_util::*;
 use matrix::Matrix;
-use mod_int::mod998244353::Mi;
+use mod_int::ModInt;
 use prelude::TryFrom;
 use string_util::*;
 
 pub fn solve<IO: ReaderTrait + WriterTrait>(mut io: IO) {
     let (n, m, k) = io.v3::<usize, usize, usize>();
-    let a = io.matrix::<Mi>(n, m);
-    let b = io.matrix::<Mi>(m, k);
+    let a = io.matrix::<ModInt>(n, m);
+    let b = io.matrix::<ModInt>(m, k);
     let am = Matrix::try_from(a).unwrap();
     let bm = Matrix::try_from(b).unwrap();
     let c = (am * bm).unwrap();

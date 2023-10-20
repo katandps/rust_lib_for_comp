@@ -3,72 +3,63 @@
 //! $2^{32}$を$R$とするモンゴメリ乗算を使用して実装
 use algebra::*;
 use fxhasher::HashMap;
-pub use mod1000000007::Mi;
 use prelude::*;
 
-pub mod mod1000000007;
-pub mod mod998244353;
+pub type Mi = ModInt<998_244_353>;
 
 #[snippet(name = "mod-int", doc_hidden)]
-pub trait Mod: Copy + Clone + Debug {
-    /// # 法$N$
-    const MOD: u32;
-    /// # $NN^{-1}$ \equiv 1 \pmod{2^32}}$ となる$N^{-1}$
-    const MOD_INV: u32 = {
-        let (mut n_inv, mut i) = (Self::MOD, 0);
-        while i < 5 {
-            n_inv = n_inv.wrapping_mul(2u32.wrapping_sub(Self::MOD.wrapping_mul(n_inv)));
-            i += 1;
-        }
-        n_inv
-    };
-    /// # $2^{64} \pmod N$
-    /// すなわち、$1$のモンゴメリ表現
-    const R: u32 = Self::MOD.wrapping_neg() % Self::MOD;
-    /// # $(2^{64})^2 \pmod N$
-    const R_POW2: u32 = ((Self::MOD as u64).wrapping_neg() % Self::MOD as u64) as u32;
-}
-
-#[snippet(name = "mod-int", doc_hidden)]
-#[derive(Copy, Clone, Eq, PartialEq, Default, Hash)]
-pub struct ModInt<M: Mod>(u32, PhantomData<fn() -> M>);
-
+pub use mod_int_impl::ModInt;
 #[snippet(name = "mod-int", doc_hidden)]
 mod mod_int_impl {
     use std::num::ParseIntError;
 
     use super::{
-        Add, AddAssign, Debug, Display, Div, DivAssign, Formatter, FromStr, Mod, ModInt, Mul,
-        MulAssign, Neg, One, PhantomData, Pow, Sub, SubAssign, Sum, Zero,
+        Add, AddAssign, Debug, Display, Div, DivAssign, Formatter, FromStr, Mul, MulAssign, Neg,
+        One, Pow, PrimitiveRoot, Sub, SubAssign, Sum, Zero,
     };
+    #[derive(Copy, Clone, Eq, PartialEq, Default, Hash)]
+    pub struct ModInt<const MOD: u32 = 998_244_353>(u32);
 
-    impl<M: Mod> Mod for ModInt<M> {
-        const MOD: u32 = M::MOD;
-    }
+    impl<const MOD: u32> ModInt<MOD> {
+        /// # 法$N$
+        pub const MOD: u32 = MOD;
+        /// # $NN^{-1}$ \equiv 1 \pmod{2^32}}$ となる$N^{-1}$
+        pub const MOD_INV: u32 = {
+            let (mut n_inv, mut i) = (Self::MOD, 0);
+            while i < 5 {
+                n_inv = n_inv.wrapping_mul(2u32.wrapping_sub(Self::MOD.wrapping_mul(n_inv)));
+                i += 1;
+            }
+            n_inv
+        };
+        /// # $2^{64} \pmod N$
+        /// すなわち、$1$のモンゴメリ表現
+        pub const R: u32 = Self::MOD.wrapping_neg() % Self::MOD;
+        /// # $(2^{64})^2 \pmod N$
+        pub const R_POW2: u32 = ((Self::MOD as u64).wrapping_neg() % Self::MOD as u64) as u32;
 
-    impl<M: Mod> ModInt<M> {
         #[inline]
         pub const fn new(mut n: u32) -> Self {
             if n >= Self::MOD {
                 n = n.rem_euclid(Self::MOD);
             }
             // # モンゴメリ表現への変換
-            Self(Self::mrmul(n, Self::R_POW2), PhantomData)
+            Self(Self::mrmul(n, Self::R_POW2))
         }
 
         pub const fn one() -> Self {
-            Self(M::R, PhantomData)
+            Self(Self::R)
         }
 
         pub const fn zero() -> Self {
-            Self(0, PhantomData)
+            Self(0)
         }
         pub const fn add(&self, rhs: Self) -> Self {
             let mut x = self.0 + rhs.0;
             if x >= Self::MOD {
                 x -= Self::MOD
             }
-            Self(x, PhantomData)
+            Self(x)
         }
         pub const fn sub(&self, rhs: Self) -> Self {
             let x = if self.0 >= rhs.0 {
@@ -76,11 +67,11 @@ mod mod_int_impl {
             } else {
                 self.0 + Self::MOD - rhs.0
             };
-            Self(x, PhantomData)
+            Self(x)
         }
 
         pub const fn mul(&self, rhs: Self) -> Self {
-            Self(Self::mrmul(self.0, rhs.0), PhantomData)
+            Self(Self::mrmul(self.0, rhs.0))
         }
         pub const fn div(&self, rhs: Self) -> Self {
             Self::mul(self, rhs.pow(Self::MOD as i64 - 2))
@@ -88,7 +79,7 @@ mod mod_int_impl {
 
         pub const fn pow(mut self, mut e: i64) -> Self {
             debug_assert!(e > 0);
-            let mut t = if e & 1 == 0 { M::R } else { self.0 };
+            let mut t = if e & 1 == 0 { Self::R } else { self.0 };
             e >>= 1;
             while e != 0 {
                 self.0 = Self::mrmul(self.0, self.0);
@@ -154,90 +145,90 @@ mod mod_int_impl {
     /// # 累乗
     /// ## 計算量
     /// $M$を法として $ O(\log M) $
-    impl<M: Mod> Pow for ModInt<M> {
+    impl<const M: u32> Pow for ModInt<M> {
         #[inline]
         fn pow(self, e: i64) -> Self {
             Self::pow(self, e)
         }
     }
-    impl<M: Mod, Rhs: Into<Self>> Add<Rhs> for ModInt<M> {
+    impl<Rhs: Into<Self>, const M: u32> Add<Rhs> for ModInt<M> {
         type Output = Self;
         #[inline]
         fn add(self, rhs: Rhs) -> Self {
             Self::add(&self, rhs.into())
         }
     }
-    impl<M: Mod, Rhs: Into<Self>> AddAssign<Rhs> for ModInt<M> {
+    impl<Rhs: Into<Self>, const M: u32> AddAssign<Rhs> for ModInt<M> {
         #[inline]
         fn add_assign(&mut self, rhs: Rhs) {
             self.0 = Self::add(self, rhs.into()).0
         }
     }
-    impl<M: Mod> Neg for ModInt<M> {
+    impl<const M: u32> Neg for ModInt<M> {
         type Output = Self;
         #[inline]
         fn neg(self) -> Self {
             Self::zero() - self
         }
     }
-    impl<M: Mod, Rhs: Into<Self>> Sub<Rhs> for ModInt<M> {
+    impl<Rhs: Into<Self>, const M: u32> Sub<Rhs> for ModInt<M> {
         type Output = Self;
         #[inline]
         fn sub(self, rhs: Rhs) -> Self {
             Self::sub(&self, rhs.into())
         }
     }
-    impl<M: Mod, Rhs: Into<Self>> SubAssign<Rhs> for ModInt<M> {
+    impl<Rhs: Into<Self>, const M: u32> SubAssign<Rhs> for ModInt<M> {
         #[inline]
         fn sub_assign(&mut self, rhs: Rhs) {
             self.0 = Self::sub(self, rhs.into()).0
         }
     }
-    impl<M: Mod, Rhs: Into<Self>> Mul<Rhs> for ModInt<M> {
+    impl<Rhs: Into<Self>, const M: u32> Mul<Rhs> for ModInt<M> {
         type Output = Self;
         #[inline]
         fn mul(self, rhs: Rhs) -> Self {
             Self::mul(&self, rhs.into())
         }
     }
-    impl<M: Mod, Rhs: Into<Self>> MulAssign<Rhs> for ModInt<M> {
+    impl<Rhs: Into<Self>, const M: u32> MulAssign<Rhs> for ModInt<M> {
         #[inline]
         fn mul_assign(&mut self, rhs: Rhs) {
             self.0 = Self::mul(self, rhs.into()).0
         }
     }
-    impl<M: Mod, Rhs: Into<Self>> Div<Rhs> for ModInt<M> {
+    impl<Rhs: Into<Self>, const M: u32> Div<Rhs> for ModInt<M> {
         type Output = Self;
         #[inline]
         fn div(self, rhs: Rhs) -> Self {
             Self::div(&self, rhs.into())
         }
     }
-    impl<M: Mod, Rhs: Into<Self>> DivAssign<Rhs> for ModInt<M> {
+    impl<Rhs: Into<Self>, const M: u32> DivAssign<Rhs> for ModInt<M> {
         #[inline]
         fn div_assign(&mut self, rhs: Rhs) {
             self.0 = Self::div(self, rhs.into()).0
         }
     }
-    impl<M: Mod> Display for ModInt<M> {
+    impl<const M: u32> Display for ModInt<M> {
         #[inline]
         fn fmt(&self, f: &mut Formatter) -> std::fmt::Result {
             write!(f, "{}", self.reduce())
         }
     }
-    impl<M: Mod> Debug for ModInt<M> {
+    impl<const M: u32> Debug for ModInt<M> {
         #[inline]
         fn fmt(&self, f: &mut Formatter) -> std::fmt::Result {
             write!(f, "{}", self.reduce())
         }
     }
-    impl<M: Mod> Sum for ModInt<M> {
+    impl<const M: u32> Sum for ModInt<M> {
         #[inline]
         fn sum<I: Iterator<Item = Self>>(iter: I) -> Self {
             iter.fold(Self::zero(), |x, a| x + a)
         }
     }
-    impl<M: Mod> FromStr for ModInt<M> {
+    impl<const M: u32> FromStr for ModInt<M> {
         type Err = ParseIntError;
         #[inline]
         fn from_str(s: &str) -> Result<Self, Self::Err> {
@@ -247,7 +238,7 @@ mod mod_int_impl {
     macro_rules! impl_integral {
         ($($ty:ty),*) => {
             $(
-                impl<M: Mod> From<$ty> for ModInt<M> {
+                impl<const M: u32> From<$ty> for ModInt<M> {
                     #[inline]
                     fn from(i: $ty) -> Self {
                         Self::new(i.rem_euclid(Self::MOD as $ty) as u32)
@@ -257,22 +248,66 @@ mod mod_int_impl {
         };
     }
     impl_integral!(i32, i64, i128, isize, u32, u64, u128, usize);
-    impl<M: Mod> From<ModInt<M>> for i64 {
+    impl<const M: u32> From<ModInt<M>> for i64 {
         #[inline]
         fn from(m: ModInt<M>) -> Self {
             m.reduce() as i64
         }
     }
-    impl<M: Mod> Zero for ModInt<M> {
+    impl<const M: u32> Zero for ModInt<M> {
         #[inline]
         fn zero() -> Self {
             Self::zero()
         }
     }
-    impl<M: Mod> One for ModInt<M> {
+    impl<const M: u32> One for ModInt<M> {
         #[inline]
         fn one() -> Self {
             Self::one()
+        }
+    }
+
+    /// # $\mod 167_772_161$
+    /// $167772161=2^{25}*5+1$
+    impl PrimitiveRoot for ModInt<167_772_161> {
+        const DIVIDE_LIMIT: usize = 25;
+        #[inline]
+        fn primitive_root() -> Self {
+            let exp = (Self::zero() - 1) / Self::new(2).pow(Self::DIVIDE_LIMIT as i64);
+            Self::pow(Self::new(3), exp.into())
+        }
+    }
+
+    /// # $\mod 469_762_049$
+    /// $469762049=2^{26}*7+1$
+    impl PrimitiveRoot for ModInt<469_762_049> {
+        const DIVIDE_LIMIT: usize = 26;
+        #[inline]
+        fn primitive_root() -> Self {
+            let exp = (Self::zero() - 1) / Self::new(2).pow(Self::DIVIDE_LIMIT as i64);
+            Self::pow(Self::new(3), exp.into())
+        }
+    }
+
+    /// # $\mod 998_244_353$
+    /// $1224736769=2^{23}*7*17$
+    impl PrimitiveRoot for ModInt<998_244_353> {
+        const DIVIDE_LIMIT: usize = 23;
+        #[inline]
+        fn primitive_root() -> Self {
+            let exp = (Self::zero() - 1) / Self::new(2).pow(Self::DIVIDE_LIMIT as i64);
+            Self::pow(Self::new(3), exp.into())
+        }
+    }
+
+    /// # $\mod 1_224_736_769$
+    /// $1224736769=2^{24}*73$
+    impl PrimitiveRoot for ModInt<1_224_736_769> {
+        const DIVIDE_LIMIT: usize = 24;
+        #[inline]
+        fn primitive_root() -> Self {
+            let exp = (Self::zero() - 1) / Self::new(2).pow(Self::DIVIDE_LIMIT as i64);
+            Self::pow(Self::new(3), exp.into())
         }
     }
 }
@@ -293,7 +328,8 @@ mod test {
     use super::*;
     use rand::distributions::{Distribution, Uniform};
 
-    const MOD: i64 = 1_000_000_007;
+    type Mi = ModInt<1_000_000_007>;
+    const MOD: i64 = Mi::MOD as i64;
 
     #[test]
     fn random_add_sub() {
@@ -426,5 +462,28 @@ mod test {
         assert_eq!(Ok(Mi::new(5)), Mi::from_str("5"));
         assert_eq!(Ok(Mi::new(1)), Mi::from_str("1000000008"));
         assert!(Mi::from_str("5a").is_err());
+    }
+
+    #[test]
+    fn const_test() {
+        type Mi = ModInt<998_244_353>;
+        assert_eq!(Mi::MOD.wrapping_mul(Mi::MOD_INV), 1);
+        assert_eq!(((1u64 << 32) % Mi::MOD as u64) as u32, Mi::R);
+        assert_eq!(
+            ((Mi::MOD as u64).wrapping_neg() % Mi::MOD as u64) as u32,
+            Mi::R_POW2
+        );
+    }
+
+    #[test]
+    fn primitive_root() {
+        use std::collections::HashSet;
+        let mut set = HashSet::new();
+        for i in 0..ModInt::<998_244_353>::DIVIDE_LIMIT {
+            let n = ModInt::<998_244_353>::primitive_root().pow((1 << i).into());
+            set.insert(n);
+            assert_eq!(n.pow(1 << (23 - i)), ModInt::<998_244_353>::one());
+        }
+        assert_eq!(set.len(), 23);
     }
 }

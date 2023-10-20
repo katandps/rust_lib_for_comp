@@ -1,7 +1,7 @@
 //! # OR畳み込み
 
 use super::ConvolutionType;
-use mod_int::{Mod, ModInt};
+use mod_int::ModInt;
 use prelude::*;
 
 #[snippet(name = "or-convolution", doc_hidden)]
@@ -10,7 +10,7 @@ pub struct OrConvolution;
 
 #[snippet(name = "or-convolution", doc_hidden)]
 impl ConvolutionType for OrConvolution {
-    fn fwht<M: Mod>(src: &mut [ModInt<M>], rev: bool) {
+    fn fwht<const M: u32>(src: &mut [ModInt<M>], rev: bool) {
         let n = src.len();
         let mut i = 1;
         while i < n {
@@ -33,7 +33,6 @@ impl ConvolutionType for OrConvolution {
 #[cfg(test)]
 mod test {
     use super::{super::convolution, ModInt, OrConvolution};
-    use mod_int::mod998244353::Mod998_244_353;
     use xor_shift::XorShift;
     #[test]
     fn rand() {
@@ -53,7 +52,7 @@ mod test {
                     expect[i | j] += a[i] * b[j];
                 }
             }
-            let result = convolution::<Mod998_244_353, OrConvolution>(a, b);
+            let result = convolution::<OrConvolution, 998_244_353>(a, b);
             assert_eq!(expect, result);
         }
     }

@@ -9,12 +9,12 @@ use std::convert::TryFrom;
 
 use io_util::*;
 use matrix::{Determinant, Matrix};
-use mod_int::mod998244353::Mi;
+use mod_int::ModInt;
 use string_util::*;
 
 pub fn solve<IO: ReaderTrait + WriterTrait>(mut io: IO) {
     let n = io.v::<usize>();
-    let a = io.matrix::<Mi>(n, n);
+    let a = io.matrix::<ModInt>(n, n);
     let matrix = Matrix::try_from(a).unwrap();
     io.out(matrix.determinant().unwrap().line());
     io.flush();

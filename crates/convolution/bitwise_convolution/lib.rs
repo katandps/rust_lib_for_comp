@@ -1,6 +1,6 @@
 //! # 高速アダマール変換 (Fast Walsh Hadamard Transform)
 
-use mod_int::{Mod, ModInt};
+use mod_int::ModInt;
 use prelude::*;
 
 macro_rules! max {($a:expr $(,)*) => {{$a}};($a:expr, $b:expr $(,)*) => {{if $a > $b {$a} else {$b}}};($a:expr, $($rest:expr),+ $(,)*) => {{let b = max!($($rest),+);if $a > b {$a} else {b}}};}
@@ -11,11 +11,11 @@ pub mod xor_convolution;
 
 #[snippet(name = "bitwise-convolution", doc_hidden)]
 pub trait ConvolutionType {
-    fn fwht<M: Mod>(poly: &mut [ModInt<M>], rev: bool);
+    fn fwht<const M: u32>(poly: &mut [ModInt<M>], rev: bool);
 }
 
 #[snippet(name = "bitwise-convolution", doc_hidden)]
-pub fn convolution<M: Mod, T: ConvolutionType>(
+pub fn convolution<T: ConvolutionType, const M: u32>(
     mut a: Vec<ModInt<M>>,
     mut b: Vec<ModInt<M>>,
 ) -> Vec<ModInt<M>> {

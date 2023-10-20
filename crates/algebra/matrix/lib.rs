@@ -271,36 +271,61 @@ mod matrix_impl {
 mod test {
     use super::matrix_impl::{ColumnVector, Determinant, RowVector};
     use super::*;
-    use mod_int::mod998244353::Mi;
+    use mod_int::ModInt;
     use std::convert::TryInto;
 
     #[test]
     fn test() {
-        let data = vec![vec![Mi::new(3), Mi::new(2)], vec![Mi::new(5), Mi::new(4)]];
-        let matrix: Matrix<Mi> = data.try_into().unwrap();
-        assert_eq!(matrix.determinant(), Some(Mi::new(2)));
+        let data = vec![
+            vec![ModInt::new(3), ModInt::new(2)],
+            vec![ModInt::new(5), ModInt::new(4)],
+        ];
+        let matrix: Matrix<ModInt> = data.try_into().unwrap();
+        assert_eq!(matrix.determinant(), Some(ModInt::new(2)));
 
         let data = vec![
-            vec![Mi::new(0), Mi::new(1), Mi::new(2), Mi::new(3)],
-            vec![Mi::new(4), Mi::new(5), Mi::new(6), Mi::new(7)],
-            vec![Mi::new(8), Mi::new(9), Mi::new(10), Mi::new(11)],
-            vec![Mi::new(12), Mi::new(13), Mi::new(14), Mi::new(15)],
+            vec![
+                ModInt::new(0),
+                ModInt::new(1),
+                ModInt::new(2),
+                ModInt::new(3),
+            ],
+            vec![
+                ModInt::new(4),
+                ModInt::new(5),
+                ModInt::new(6),
+                ModInt::new(7),
+            ],
+            vec![
+                ModInt::new(8),
+                ModInt::new(9),
+                ModInt::new(10),
+                ModInt::new(11),
+            ],
+            vec![
+                ModInt::new(12),
+                ModInt::new(13),
+                ModInt::new(14),
+                ModInt::new(15),
+            ],
         ];
-        let matrix: Matrix<Mi> = data.try_into().unwrap();
+        let matrix: Matrix<ModInt> = data.try_into().unwrap();
         let sub_matrix = matrix.sub_matrix(2, 3);
-        let expect_sub_matrix: Matrix<Mi> = vec![
-            vec![Mi::new(0), Mi::new(1), Mi::new(3)],
-            vec![Mi::new(4), Mi::new(5), Mi::new(7)],
-            vec![Mi::new(8), Mi::new(9), Mi::new(11)],
+        let expect_sub_matrix: Matrix<ModInt> = vec![
+            vec![ModInt::new(0), ModInt::new(1), ModInt::new(3)],
+            vec![ModInt::new(4), ModInt::new(5), ModInt::new(7)],
+            vec![ModInt::new(8), ModInt::new(9), ModInt::new(11)],
         ]
         .try_into()
         .unwrap();
         assert_eq!(sub_matrix, expect_sub_matrix);
-        assert_eq!(sub_matrix.determinant(), Some(Mi::new(0)));
+        assert_eq!(sub_matrix.determinant(), Some(ModInt::new(0)));
 
-        let lhs: Matrix<Mi> = Matrix::row_vector(&vec![Mi::new(1), Mi::new(2), Mi::new(3)]);
-        let rhs: Matrix<Mi> = Matrix::column_vector(&vec![Mi::new(4), Mi::new(5), Mi::new(6)]);
-        let expect: Matrix<Mi> = vec![vec![Mi::new(32)]].try_into().unwrap();
+        let lhs: Matrix<ModInt> =
+            Matrix::row_vector(&vec![ModInt::new(1), ModInt::new(2), ModInt::new(3)]);
+        let rhs: Matrix<ModInt> =
+            Matrix::column_vector(&vec![ModInt::new(4), ModInt::new(5), ModInt::new(6)]);
+        let expect: Matrix<ModInt> = vec![vec![ModInt::new(32)]].try_into().unwrap();
         assert_eq!(lhs * rhs, Some(expect));
     }
 }

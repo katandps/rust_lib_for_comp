@@ -2,24 +2,24 @@
 //! 逆元と階乗を$O(N)$で前計算する。
 //!
 //! 少し多めに前計算すること
-use mod_int::{Mod, ModInt};
+use mod_int::ModInt;
 use prelude::*;
 
 #[snippet(name = "const-mod-val-table", doc_hidden)]
 pub use mod_val_table_impl::ModValTable;
 #[snippet(name = "const-mod-val-table", doc_hidden)]
 pub mod mod_val_table_impl {
-    use super::{Mod, ModInt};
+    use super::ModInt;
     #[derive(Debug, Clone)]
-    pub struct ModValTable<M, const N: usize> {
+    pub struct ModValTable<const M: u32, const N: usize> {
         /// # inv$\[i] = i$の逆元
         // inv: [M; N],
         /// # fact$\[i] = i!$
-        pub fact: [M; N],
+        pub fact: [ModInt<M>; N],
         /// # fact_inv$\[i] = i!$の逆元
-        pub fact_inv: [M; N],
+        pub fact_inv: [ModInt<M>; N],
     }
-    impl<M: Mod, const N: usize> ModValTable<ModInt<M>, N> {
+    impl<const M: u32, const N: usize> ModValTable<M, N> {
         /// # 初期化
         /// あるnについてModValTableを初期化する
         pub const fn new() -> Self {
@@ -29,8 +29,10 @@ pub mod mod_val_table_impl {
             inv[0] = ModInt::zero();
             let mut i = 2;
             while i < N {
-                inv[i] = ModInt::zero()
-                    .sub(inv[M::MOD as usize % i].mul(ModInt::new(M::MOD / i as u32)));
+                inv[i] = ModInt::zero().sub(
+                    inv[ModInt::<M>::MOD as usize % i]
+                        .mul(ModInt::new(ModInt::<M>::MOD / i as u32)),
+                );
                 i += 1;
             }
             let mut i = 2;
@@ -49,9 +51,8 @@ pub mod mod_val_table_impl {
         /// # Factorial 階乗
         /// $ n! $
         /// ```
-        /// # use mod_int::Mi;
         /// # use const_mod_val_table::ModValTable;
-        /// let mut five = ModValTable::<Mi, 10>::new();
+        /// let mut five = ModValTable::<998_244_353, 10>::new();
         /// let res = vec![1, 1, 2, 6, 24, 120];
         /// for i in 0..=5 {
         ///     assert_eq!(res[i], five.factorial(i as i64).reduce());
@@ -65,9 +66,8 @@ pub mod mod_val_table_impl {
         /// # Permutation 順列
         /// $nPr = n! / (n - r)!$
         /// ```
-        /// # use mod_int::Mi;
         /// # use const_mod_val_table::ModValTable;
-        /// let mut five = ModValTable::<Mi, 10>::new();
+        /// let mut five = ModValTable::<998_244_353, 10>::new();
         /// assert_eq!(1, five.permutation(5, 0).reduce());
         /// assert_eq!(5, five.permutation(5, 1).reduce());
         /// assert_eq!(20, five.permutation(5, 2).reduce());
@@ -88,9 +88,8 @@ pub mod mod_val_table_impl {
         /// $nCr = n! / (n - r)! r! = nPr / r!$
         /// Binomial Coefficient 二項係数 とも呼ぶ
         /// ```
-        /// use mod_int::Mi;
         /// use const_mod_val_table::ModValTable;
-        /// let mut five = ModValTable::<Mi, 10>::new();
+        /// let mut five = ModValTable::<998_244_353, 10>::new();
         /// assert_eq!(1, five.combination(5, 0).reduce());
         /// assert_eq!(5, five.combination(5, 1).reduce());
         /// assert_eq!(10, five.combination(5, 2).reduce());
@@ -170,44 +169,43 @@ pub mod mod_val_table_impl {
 #[cfg(test)]
 mod tests {
     use super::ModValTable;
-    use mod_int::mod998244353::Mi;
     use mod_int::ModInt;
     #[test]
     fn test() {
-        let mvt: ModValTable<ModInt<_>, 100> = ModValTable::new();
-        assert_eq!(Mi::new(1), mvt.factorial(1));
-        assert_eq!(Mi::new(2), mvt.factorial(2));
-        assert_eq!(Mi::new(6), mvt.factorial(3));
-        assert_eq!(Mi::new(24), mvt.factorial(4));
-        assert_eq!(Mi::new(120), mvt.factorial(5));
+        let mvt: ModValTable<998_244_353, 100> = ModValTable::new();
+        assert_eq!(ModInt::new(1), mvt.factorial(1));
+        assert_eq!(ModInt::new(2), mvt.factorial(2));
+        assert_eq!(ModInt::new(6), mvt.factorial(3));
+        assert_eq!(ModInt::new(24), mvt.factorial(4));
+        assert_eq!(ModInt::new(120), mvt.factorial(5));
     }
 
     #[test]
     fn catalan_test() {
-        let mvt: ModValTable<ModInt<_>, 100> = ModValTable::new();
-        assert_eq!(Mi::new(1), mvt.catalan_number(0));
-        assert_eq!(Mi::new(1), mvt.catalan_number(1));
-        assert_eq!(Mi::new(2), mvt.catalan_number(2));
-        assert_eq!(Mi::new(5), mvt.catalan_number(3));
-        assert_eq!(Mi::new(14), mvt.catalan_number(4));
-        assert_eq!(Mi::new(42), mvt.catalan_number(5));
-        assert_eq!(Mi::new(132), mvt.catalan_number(6));
-        assert_eq!(Mi::new(429), mvt.catalan_number(7));
-        assert_eq!(Mi::new(1430), mvt.catalan_number(8));
-        assert_eq!(Mi::new(4862), mvt.catalan_number(9));
+        let mvt: ModValTable<998_244_353, 100> = ModValTable::new();
+        assert_eq!(ModInt::new(1), mvt.catalan_number(0));
+        assert_eq!(ModInt::new(1), mvt.catalan_number(1));
+        assert_eq!(ModInt::new(2), mvt.catalan_number(2));
+        assert_eq!(ModInt::new(5), mvt.catalan_number(3));
+        assert_eq!(ModInt::new(14), mvt.catalan_number(4));
+        assert_eq!(ModInt::new(42), mvt.catalan_number(5));
+        assert_eq!(ModInt::new(132), mvt.catalan_number(6));
+        assert_eq!(ModInt::new(429), mvt.catalan_number(7));
+        assert_eq!(ModInt::new(1430), mvt.catalan_number(8));
+        assert_eq!(ModInt::new(4862), mvt.catalan_number(9));
     }
 
     #[test]
     fn montmort_test() {
-        let mvt: ModValTable<ModInt<_>, 100> = ModValTable::new();
-        assert_eq!(Mi::new(0), mvt.montmort_number(1));
-        assert_eq!(Mi::new(1), mvt.montmort_number(2));
-        assert_eq!(Mi::new(2), mvt.montmort_number(3));
-        assert_eq!(Mi::new(9), mvt.montmort_number(4));
-        assert_eq!(Mi::new(44), mvt.montmort_number(5));
-        assert_eq!(Mi::new(265), mvt.montmort_number(6));
-        assert_eq!(Mi::new(1854), mvt.montmort_number(7));
-        assert_eq!(Mi::new(14833), mvt.montmort_number(8));
-        assert_eq!(Mi::new(133496), mvt.montmort_number(9));
+        let mvt: ModValTable<998_244_353, 100> = ModValTable::new();
+        assert_eq!(ModInt::new(0), mvt.montmort_number(1));
+        assert_eq!(ModInt::new(1), mvt.montmort_number(2));
+        assert_eq!(ModInt::new(2), mvt.montmort_number(3));
+        assert_eq!(ModInt::new(9), mvt.montmort_number(4));
+        assert_eq!(ModInt::new(44), mvt.montmort_number(5));
+        assert_eq!(ModInt::new(265), mvt.montmort_number(6));
+        assert_eq!(ModInt::new(1854), mvt.montmort_number(7));
+        assert_eq!(ModInt::new(14833), mvt.montmort_number(8));
+        assert_eq!(ModInt::new(133496), mvt.montmort_number(9));
     }
 }

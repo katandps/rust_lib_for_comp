@@ -7,15 +7,15 @@
 //! ## todo
 //! 0..=n以外の値を与えたときの機能
 use const_mod_val_table::ModValTable;
-use mod_int::{Mod, ModInt};
+use mod_int::ModInt;
 use prelude::*;
 
 /// # ラグランジュ補間
 /// $N$次の多項式関数 $f(x)$ について、$f(0)$, $f(1)$, ... $f(n)$ を満たす
 /// $f(t)$を求める
 #[snippet(name = "lagrange-polynomical", doc_hidden)]
-pub fn lagrange_polynomical<M: Mod, const N: usize>(
-    mvt: &ModValTable<ModInt<M>, N>,
+pub fn lagrange_polynomical<const N: usize, const M: u32>(
+    mvt: &ModValTable<M, N>,
     v: &[ModInt<M>],
     t: usize,
 ) -> ModInt<M> {

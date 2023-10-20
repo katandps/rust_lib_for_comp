@@ -1,7 +1,7 @@
 //! # XOR畳み込み
 //!
 use super::ConvolutionType;
-use mod_int::{Mod, ModInt};
+use mod_int::ModInt;
 use prelude::*;
 
 #[snippet(name = "xor-convolution", doc_hidden)]
@@ -11,7 +11,7 @@ pub struct XorConvolution;
 #[snippet(name = "xor-convolution", doc_hidden)]
 impl ConvolutionType for XorConvolution {
     #[allow(clippy::many_single_char_names)]
-    fn fwht<M: Mod>(src: &mut [ModInt<M>], rev: bool) {
+    fn fwht<const M: u32>(src: &mut [ModInt<M>], rev: bool) {
         let n = src.len();
         let mut i = 1;
         while i < n {
@@ -36,7 +36,6 @@ impl ConvolutionType for XorConvolution {
 #[cfg(test)]
 mod test {
     use super::{super::convolution, ModInt, XorConvolution};
-    use mod_int::mod998244353::Mod998_244_353;
     use xor_shift::XorShift;
 
     #[test]
@@ -57,7 +56,7 @@ mod test {
                     expect[i ^ j] += a[i] * b[j];
                 }
             }
-            let result = convolution::<Mod998_244_353, XorConvolution>(a, b);
+            let result = convolution::<XorConvolution, 998_244_353>(a, b);
             assert_eq!(expect, result);
         }
     }
