@@ -12,7 +12,7 @@ use prelude::*;
 pub use warshall_floyd_impl::WarshallFloyd;
 #[snippet(name = "warshall-floyd", doc_hidden)]
 mod warshall_floyd_impl {
-    use super::{chmin, min, Add, BoundedAbove, GraphTrait, Zero};
+    use super::{chmin, min, Add, BoundedAbove, Debug, GraphTrait, Zero};
     pub struct WarshallFloyd<W> {
         dist: Vec<Vec<W>>,
     }
@@ -31,7 +31,12 @@ mod warshall_floyd_impl {
             for i in 0..graph.size() {
                 for j in 0..graph.size() {
                     for k in 0..graph.size() {
-                        if dist[j][i] < W::max_value() && dist[i][k] < W::max_value() {
+                        if dist[j][i] < W::max_value()
+                            && dist[i][k] < W::max_value()
+                            && (dist[i][k] < W::zero()
+                                && dist[j][i] < W::zero()
+                                && W::max_value() + dist[j][i] + dist[i][k] >= W::zero())
+                        {
                             chmin!(dist[j][k], dist[j][i] + dist[i][k]);
                         }
                     }

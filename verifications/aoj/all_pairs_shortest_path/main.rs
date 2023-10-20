@@ -18,7 +18,7 @@ pub fn solve<IO: ReaderTrait + WriterTrait>(mut io: IO) {
     }
     let wf = WarshallFloyd::build(&graph);
     if wf.contains_negative_cycle() {
-        io.out("NEGATIVE CYCLE")
+        io.out("NEGATIVE CYCLE".line())
     } else {
         for i in 0..v {
             io.out(
@@ -75,7 +75,6 @@ fn test() {
         1 3 4
         2 3 1
         3 2 -7",
-        "NEGATIVE CYCLE
-        ",
+        "NEGATIVE CYCLE",
     ));
 }

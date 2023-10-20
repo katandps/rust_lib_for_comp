@@ -72,8 +72,8 @@ script = '''
 	rm temp
 '''
 
-[tasks.verify-resolve]
-description = "resolve verification by oj-resolve"
+[tasks.verify-resolve-all]
+description = "resolve verifications by oj-resolve"
 category = "Verification"
 script = '''
     competitive-verifier oj-resolve > ${VERIFY_DIR}/${VERIFY_FILE}
@@ -81,15 +81,37 @@ script = '''
 
 [tasks.verify-download]
 description = "download verification problems"
-dependencies = ["verify-resolve", "refresh-dropbox-token"]
+dependencies = ["refresh-dropbox-token"]
 category = "Verification"
 script = '''
 	competitive-verifier download --verify-json ${VERIFY_DIR}/${VERIFY_FILE}
 '''
 
+[tasks.verify-all]
+description = "verify all problems"
+dependencies = ["verify-resolve-all", "verify-download"]
+category = "Verification"
+script = '''
+    competitive-verifier verify --verify-json ${VERIFY_DIR}/${VERIFY_FILE} --output ${VERIFY_DIR}/${VERIFY_RESULT_FILE}
+'''
+
+[tasks.verify-list]
+description = "list problem to verify"
+category = "Verification"
+script = '''
+
+'''
+
+[tasks.verify-resolve]
+description = "resolve A verification by oj-resolve"
+category = "Verification"
+script = '''
+	competitive-verifier oj-resolve --include *${@}* > ${VERIFY_DIR}/${VERIFY_FILE}
+'''
+
 [tasks.verify]
 description = "verify problems"
-dependencies = ["verify-download"]
+dependencies = ["verify-resolve", "verify-download"]
 category = "Verification"
 script = '''
     competitive-verifier verify --verify-json ${VERIFY_DIR}/${VERIFY_FILE} --output ${VERIFY_DIR}/${VERIFY_RESULT_FILE}
@@ -100,5 +122,5 @@ description = "build verify docs by result"
 category = "Verification"
 script = '''
     competitive-verifier docs --verify-json ${VERIFY_DIR}/${VERIFY_FILE} ${VERIFY_DIR}/${VERIFY_RESULT_FILE}
-    cd .competitive-verifier/_jekyll && bundle add webrick &&bundle exec jekyll serve --incremental
+    cd .competitive-verifier/_jekyll && bundle add webrick && bundle exec jekyll serve --incremental
 '''
