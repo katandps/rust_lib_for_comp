@@ -149,6 +149,7 @@ members = [
     'verifications/aoj/matrix_multiplication',
     'verifications/aoj/maximum_flow',
     'verifications/aoj/minimum_cost_flow',
+    'verifications/aoj/minimum_spanning_tree',
     'verifications/aoj/parallel_orthogonal',
     'verifications/aoj/polygon_point_containment',
     'verifications/aoj/projection',

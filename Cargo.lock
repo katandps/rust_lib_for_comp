@@ -314,6 +314,17 @@ dependencies = [
 ]
 
 [[package]]
+name = "aoj_solver_minimum_spanning_tree"
+version = "0.1.0"
+dependencies = [
+ "adjacency_list",
+ "io_debug",
+ "io_util",
+ "kruskal",
+ "string_util",
+]
+
+[[package]]
 name = "aoj_solver_parallel_orthogonal"
 version = "0.1.0"
 dependencies = [
