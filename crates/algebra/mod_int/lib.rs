@@ -477,13 +477,32 @@ mod test {
 
     #[test]
     fn primitive_root() {
+        primitive_root_inner_test(
+            ModInt::<167_772_161>::DIVIDE_LIMIT,
+            ModInt::<167_772_161>::primitive_root(),
+        );
+        primitive_root_inner_test(
+            ModInt::<469_762_049>::DIVIDE_LIMIT,
+            ModInt::<469_762_049>::primitive_root(),
+        );
+        primitive_root_inner_test(
+            ModInt::<998_244_353>::DIVIDE_LIMIT,
+            ModInt::<998_244_353>::primitive_root(),
+        );
+        primitive_root_inner_test(
+            ModInt::<1_224_736_769>::DIVIDE_LIMIT,
+            ModInt::<1_224_736_769>::primitive_root(),
+        );
+    }
+
+    fn primitive_root_inner_test<const M: u32>(divide_limit: usize, primitive_root: ModInt<M>) {
         use std::collections::HashSet;
         let mut set = HashSet::new();
-        for i in 0..ModInt::<998_244_353>::DIVIDE_LIMIT {
-            let n = ModInt::<998_244_353>::primitive_root().pow((1 << i).into());
+        for i in 0..divide_limit {
+            let n = primitive_root.pow((1 << i).into());
             set.insert(n);
-            assert_eq!(n.pow(1 << (23 - i)), ModInt::<998_244_353>::one());
+            assert_eq!(n.pow(1 << (divide_limit - i)), ModInt::<M>::one());
         }
-        assert_eq!(set.len(), 23);
+        assert_eq!(set.len(), divide_limit);
     }
 }
