@@ -7,9 +7,7 @@ edition = "2018"
 prelude = { path = "../../prelude" }
 graph = { path = "../../graph" }
 algebra = { path = "../../algebra" }
-
-[dev-dependencies]
-adjacency_list = { path = "../../graph/adjacency_list" }
+min_max_macro = { path = "../../util/min_max_macro" }
 
 [lib]
 path = "lib.rs"

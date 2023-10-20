@@ -1,0 +1,17 @@
+[package]
+name = "aoj_solver_all_pairs_shortest_path"
+version = "0.1.0"
+edition = "2018"
+
+[dependencies]
+io_util = { path = "../../../crates/util/io_util" }
+io_debug = { path = "../../../crates/util/io_debug" }
+string_util = { path = "../../../crates/util/string_util" }
+
+graph = { path = "../../../crates/graph" }
+adjacency_list = { path = "../../../crates/graph/adjacency_list" }
+warshall_floyd = { path = "../../../crates/graph/warshall_floyd" }
+
+[[bin]]
+name = "aoj_solver_all_pairs_shortest_path"
+path = "main.rs"

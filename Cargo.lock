@@ -71,6 +71,18 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "b84bf0a05bbb2a83e5eb6fa36bb6e87baa08193c35ff52bbf6b38d8af2890e46"
 
 [[package]]
+name = "aoj_solver_all_pairs_shortest_path"
+version = "0.1.0"
+dependencies = [
+ "adjacency_list",
+ "graph",
+ "io_debug",
+ "io_util",
+ "string_util",
+ "warshall_floyd",
+]
+
+[[package]]
 name = "aoj_solver_area"
 version = "0.1.0"
 dependencies = [
@@ -2575,9 +2587,9 @@ dependencies = [
 name = "warshall_floyd"
 version = "0.1.0"
 dependencies = [
- "adjacency_list",
  "algebra",
  "graph",
+ "min_max_macro",
  "prelude",
 ]
 

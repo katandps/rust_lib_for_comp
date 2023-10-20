@@ -126,6 +126,7 @@ members = [
     'crates/util/solver',
     'crates/util/string_util',
     'crates/util/time_keeper',
+    'verifications/aoj/all_pairs_shortest_path',
     'verifications/aoj/area',
     'verifications/aoj/awkward_lights',
     'verifications/aoj/chopsticks',
