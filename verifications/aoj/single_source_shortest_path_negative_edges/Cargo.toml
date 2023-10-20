@@ -1,0 +1,16 @@
+[package]
+name = "aoj_solver_single_source_shortest_path_negative_edges"
+version = "0.1.0"
+edition = "2018"
+
+[dependencies]
+io_util = { path = "../../../crates/util/io_util" }
+io_debug = { path = "../../../crates/util/io_debug" }
+string_util = { path = "../../../crates/util/string_util" }
+
+adjacency_list = { path = "../../../crates/graph/adjacency_list" }
+bellman_ford = { path = "../../../crates/graph/bellman_ford" }
+
+[[bin]]
+name = "aoj_solver_single_source_shortest_path_negative_edges"
+path = "main.rs"

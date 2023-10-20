@@ -366,6 +366,17 @@ dependencies = [
 ]
 
 [[package]]
+name = "aoj_solver_single_source_shortest_path_negative_edges"
+version = "0.1.0"
+dependencies = [
+ "adjacency_list",
+ "bellman_ford",
+ "io_debug",
+ "io_util",
+ "string_util",
+]
+
+[[package]]
 name = "aoj_solver_tangent_to_a_circle"
 version = "0.1.0"
 dependencies = [

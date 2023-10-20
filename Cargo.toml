@@ -154,6 +154,7 @@ members = [
     'verifications/aoj/projection',
     'verifications/aoj/reflection',
     'verifications/aoj/single_source_shortest_path',
+    'verifications/aoj/single_source_shortest_path_negative_edges',
     'verifications/aoj/tangent_to_a_circle',
     'verifications/aoj/the_maximum_number_of_overlaps',
     'verifications/atcoder/abc141f',
