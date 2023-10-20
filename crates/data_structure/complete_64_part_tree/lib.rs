@@ -2,6 +2,9 @@
 //! $n<2^{18} = 262143$の範囲でsetのようなInterfaceを提供する 高速・省メモリ
 //!
 //! 集合に存在するかどうかをBitSetの入れ子のような形で表現する
+//!
+//! ## todo
+//! implement prev/next
 
 use prelude::*;
 
