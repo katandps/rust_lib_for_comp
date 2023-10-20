@@ -106,7 +106,7 @@ jobs:
       - uses: actions/cache@v3
         with:
           path: .competitive-verifier/cache
-          key: cv-${{ hashFiles('Cargo.toml') }}
+          key: cv-${{ hashFiles('Cargo.toml') }}-${{ matrix.index }}
           restore-keys: cv-
 
       - name: Get dropbox token
