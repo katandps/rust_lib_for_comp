@@ -103,6 +103,12 @@ jobs:
     steps:
       - uses: actions/checkout@v3
 
+      - uses: actions/cache@v3
+        with:
+          path: .competitive-verifier/cache
+          key: cv-${{ hashFiles('Cargo.toml') }}
+          restore-keys: cv-
+
       - name: Get dropbox token
         run: echo "DROPBOX_TOKEN=${{needs.setup.outputs.dropbox_token}}" >> $GITHUB_ENV
 
