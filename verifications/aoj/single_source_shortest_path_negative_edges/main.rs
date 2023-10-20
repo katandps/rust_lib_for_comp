@@ -17,17 +17,17 @@ pub fn solve<IO: ReaderTrait + WriterTrait>(mut io: IO) {
         graph.add_arc(s, t, d);
     }
     let d = bellman_ford(&graph, r);
-    for i in 0..v {
-        if d[i] == std::i64::MIN {
+    for di in &d {
+        if di == &std::i64::MIN {
             io.out("NEGATIVE CYCLE".line());
             return io.flush();
         }
     }
-    for i in 0..v {
-        if d[i] == i64::MAX {
+    for di in d {
+        if di == i64::MAX {
             io.out("INF".line());
         } else {
-            io.out(d[i].line())
+            io.out(di.line())
         }
     }
     io.flush();
