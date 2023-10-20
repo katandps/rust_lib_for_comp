@@ -4,13 +4,6 @@
 //! ## 計算量
 //! $O(N^{\frac{1}{4}})$
 //!
-//! ## dependency
-//! [最小公倍数](greatest_common_divisor)
-//! [ミラーラビン法](miller_rabin)
-//! [モンゴメリ乗算](montgomery_multiplication_64)
-//!
-//! ## verify
-//! [ポラードのロー素因数分解法](https://algo-method.com/submissions/683415)
 use algebra::*;
 use greatest_common_divisor::Gcd;
 use miller_rabin::MillerRabin;

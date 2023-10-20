@@ -4,12 +4,6 @@
 //! ## dependency
 //! [モンゴメリ乗算](montgomery_multiplication_64)
 //!
-//!
-//! ## verify
-//! [ALDS1_1_C](https://judge.u-aizu.ac.jp/onlinejudge/review.jsp?rid=6496157)
-//! [Q3. 素数判定 (強)](https://algo-method.com/submissions/611523)
-//! [ミラー・ラビン素数判定法のテスト](https://yukicoder.me/submissions/799899)
-
 use montgomery_multiplication_64::MontgomeryReduction;
 use prelude::*;
 

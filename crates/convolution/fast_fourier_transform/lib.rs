@@ -4,9 +4,6 @@
 //! ## todo
 //! - \[一般化]Garnerのアルゴリズムによる任意modでの畳み込みの実装
 //!
-//! ## verify
-//! [ACLPracticeContestF](https://atcoder.jp/contests/practice2/submissions/36009124)
-
 use algebra::*;
 use prelude::*;
 

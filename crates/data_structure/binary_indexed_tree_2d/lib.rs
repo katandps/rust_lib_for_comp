@@ -2,8 +2,6 @@
 //! # Fenwick Tree 2D
 //! アーベル群の二項演算を載せることができる二次元構造
 //!
-//! ## verify
-//! [Typical90_028](https://atcoder.jp/contests/typical90/submissions/26701638)
 
 use algebra::AbelianGroup;
 use prelude::*;
