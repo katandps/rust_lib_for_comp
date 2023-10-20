@@ -341,24 +341,56 @@ mod complete_64_part_tree_impl {
         fn insert(&mut self, x: u64) -> bool {
             assert!(x < 1 << 24);
             self.nodes[0].add(x >> WORD_LOG * 3);
-            self.nodes[1 + (x >> WORD_LOG * 2 & 63) as usize].add(x >> WORD_LOG * 2 & 63);
-            self.nodes[1 + WORD_SIZE + (x >> WORD_LOG & 63) as usize].add(x >> WORD_LOG & 63);
-            self.nodes[1 + WORD_SIZE + WORD_SIZE_2 + (x & 63) as usize].add(x & 63)
+            self.nodes[1 + (x >> WORD_LOG * 3) as usize].add(x >> WORD_LOG * 2 & 63);
+            self.nodes[1 + WORD_SIZE + (x >> WORD_LOG * 2) as usize].add(x >> WORD_LOG & 63);
+            self.nodes[1 + WORD_SIZE + WORD_SIZE_2 + (x >> WORD_LOG) as usize].add(x & 63)
         }
 
         fn contains(&self, x: u64) -> bool {
             assert!(x < 1 << 24);
-            self.nodes[1 + WORD_SIZE + WORD_SIZE_2 + (x & 63) as usize].contains(x & 63)
+            self.nodes[1 + WORD_SIZE + WORD_SIZE_2 + (x >> WORD_LOG) as usize].contains(x & 63)
         }
 
-        fn remove(&self, x: u64) -> bool {
+        fn remove(&mut self, x: u64) -> bool {
             assert!(x < 1 << 24);
-            unimplemented!()
+            let dim3_index = 1 + WORD_SIZE + WORD_SIZE_2 + (x >> WORD_LOG) as usize;
+            let del = self.nodes[dim3_index].remove(x & 63);
+            if del && self.nodes[dim3_index].is_empty() {
+                let dim2_index = 1 + WORD_SIZE + (x >> WORD_LOG * 2) as usize;
+                self.nodes[dim2_index].remove(x >> WORD_LOG & 63);
+                if self.nodes[dim2_index].is_empty() {
+                    let dim1_index = 1 + (x >> WORD_LOG * 3) as usize;
+                    self.nodes[dim1_index].remove(x >> WORD_LOG * 2 & 63);
+                    if self.nodes[dim1_index].is_empty() {
+                        self.nodes[0].remove(x >> WORD_LOG * 3);
+                    }
+                }
+            }
+            del
         }
 
         /// # 最大値を返す
         pub fn max(&self) -> Option<u64> {
-            unimplemented!()
+            self.nodes[0].max().and_then(|m1| {
+                self.nodes[1 + m1 as usize].max().and_then(|m2| {
+                    self.nodes[1 + WORD_SIZE + m1 as usize * WORD_SIZE + m2 as usize]
+                        .max()
+                        .and_then(|m3| {
+                            self.nodes[1
+                                + WORD_SIZE
+                                + WORD_SIZE_2
+                                + m1 as usize * WORD_SIZE_2
+                                + m2 as usize * WORD_SIZE
+                                + m3 as usize]
+                                .max()
+                                .map(|m4| {
+                                    m4 + (m3 << WORD_LOG)
+                                        + (m2 << WORD_LOG * 2)
+                                        + (m1 << WORD_LOG * 3)
+                                })
+                        })
+                })
+            })
         }
 
         /// # 最大値を消費して返す
@@ -372,7 +404,26 @@ mod complete_64_part_tree_impl {
 
         /// # 最小値を返す
         pub fn min(&self) -> Option<u64> {
-            unimplemented!()
+            self.nodes[0].min().and_then(|m1| {
+                self.nodes[1 + m1 as usize].min().and_then(|m2| {
+                    self.nodes[1 + WORD_SIZE + m1 as usize * WORD_SIZE + m2 as usize]
+                        .min()
+                        .and_then(|m3| {
+                            self.nodes[1
+                                + WORD_SIZE
+                                + WORD_SIZE_2
+                                + m1 as usize * WORD_SIZE_2
+                                + m2 as usize * WORD_SIZE
+                                + m3 as usize]
+                                .min()
+                                .map(|m4| {
+                                    m4 + (m3 << WORD_LOG)
+                                        + (m2 << WORD_LOG * 2)
+                                        + (m1 << WORD_LOG * 3)
+                                })
+                        })
+                })
+            })
         }
 
         /// # 最小値を消費して返す
@@ -444,6 +495,22 @@ mod test {
         assert_eq!(Some(2550), tree.max());
         assert!(tree.remove(2550));
         assert!(!tree.remove(40000));
+        assert_eq!(None, tree.max());
+    }
+
+    #[test]
+    fn test_dim4() {
+        let mut tree = Complete64PartTree::new(16000000);
+        assert!(tree.insert(4000000));
+        assert!(tree.contains(4000000));
+        assert!(tree.insert(255000));
+        assert!(tree.contains(255000));
+        assert_eq!(Some(4000000), tree.max());
+        assert_eq!(Some(255000), tree.min());
+        assert!(tree.remove(4000000));
+        assert_eq!(Some(255000), tree.max());
+        assert!(tree.remove(255000));
+        assert!(!tree.remove(4000000));
         assert_eq!(None, tree.max());
     }
 }
