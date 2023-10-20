@@ -22,9 +22,9 @@ mod complete_64_part_tree_impl {
     #[derive(Clone)]
     pub enum Complete64PartTree {
         Depth1(Depth1Tree),
-        Depth2(Depth2Tree),
-        Depth3(Depth3Tree),
-        Depth4(Depth4Tree),
+        Depth2(Box<Depth2Tree>),
+        Depth3(Box<Depth3Tree>),
+        Depth4(Box<Depth4Tree>),
     }
 
     impl Complete64PartTree {
@@ -33,18 +33,18 @@ mod complete_64_part_tree_impl {
                 Self::Depth1(Depth1Tree {
                     node: Node::default(),
                 })
-            } else if limit < 1u64 << WORD_LOG * 2 {
-                Self::Depth2(Depth2Tree {
+            } else if limit < 1u64 << (WORD_LOG * 2) {
+                Self::Depth2(Box::new(Depth2Tree {
                     nodes: [Node::default(); 1 + WORD_SIZE],
-                })
-            } else if limit < 1u64 << WORD_LOG * 3 {
-                Self::Depth3(Depth3Tree {
+                }))
+            } else if limit < 1u64 << (WORD_LOG * 3) {
+                Self::Depth3(Box::new(Depth3Tree {
                     nodes: [Node::default(); 1 + WORD_SIZE + WORD_SIZE_2],
-                })
+                }))
             } else {
-                Self::Depth4(Depth4Tree {
+                Self::Depth4(Box::new(Depth4Tree {
                     nodes: [Node::default(); 1 + WORD_SIZE + WORD_SIZE_2 + WORD_SIZE_3],
-                })
+                }))
             }
         }
         /// # treeに $x$ を追加する
@@ -234,7 +234,7 @@ mod complete_64_part_tree_impl {
         fn remove(&mut self, x: u64) -> bool {
             assert!(x < 1 << 12);
             let xi = x as usize;
-            let del = self.nodes[1 + (xi >> WORD_LOG)].remove(x & WORD_SIZE as u64 - 1);
+            let del = self.nodes[1 + (xi >> WORD_LOG)].remove(x & 63);
             if del && self.nodes[1 + (xi >> WORD_LOG)].is_empty() {
                 self.nodes[0].remove(x >> WORD_LOG);
             }
@@ -279,8 +279,8 @@ mod complete_64_part_tree_impl {
     impl Depth3Tree {
         fn insert(&mut self, x: u64) -> bool {
             assert!(x < 1 << 18);
-            self.nodes[0].add(x >> WORD_LOG * 2);
-            self.nodes[1 + (x >> WORD_LOG * 2) as usize].add(x >> WORD_LOG & 63);
+            self.nodes[0].add(x >> (WORD_LOG * 2));
+            self.nodes[1 + (x >> (WORD_LOG * 2)) as usize].add(x >> WORD_LOG & 63);
             self.nodes[1 + WORD_SIZE + (x >> WORD_LOG) as usize].add(x & 63)
         }
 
@@ -294,10 +294,10 @@ mod complete_64_part_tree_impl {
             let dim2_index = 1 + WORD_SIZE + (x >> WORD_LOG) as usize;
             let del = self.nodes[dim2_index].remove(x & 63);
             if del && self.nodes[dim2_index].is_empty() {
-                let dim1_index: usize = 1 + (x >> WORD_LOG * 2) as usize;
+                let dim1_index: usize = 1 + (x >> (WORD_LOG * 2)) as usize;
                 let del = self.nodes[dim1_index].remove(x >> WORD_LOG & 63);
                 if del && self.nodes[dim1_index].is_empty() {
-                    self.nodes[0].remove(x >> WORD_LOG * 2);
+                    self.nodes[0].remove(x >> (WORD_LOG * 2));
                 }
             }
             del
@@ -307,7 +307,7 @@ mod complete_64_part_tree_impl {
                 self.nodes[1 + m1 as usize].max().and_then(|m2| {
                     self.nodes[1 + WORD_SIZE + m1 as usize * WORD_SIZE + m2 as usize]
                         .max()
-                        .map(|m3| m3 + (m2 << WORD_LOG) + (m1 << WORD_LOG * 2))
+                        .map(|m3| m3 + (m2 << WORD_LOG) + (m1 << (WORD_LOG * 2)))
                 })
             })
         }
@@ -323,7 +323,7 @@ mod complete_64_part_tree_impl {
                 self.nodes[1 + m1 as usize].min().and_then(|m2| {
                     self.nodes[1 + WORD_SIZE + m1 as usize * WORD_SIZE + m2 as usize]
                         .min()
-                        .map(|m3| m3 + (m2 << WORD_LOG) + (m1 << WORD_LOG * 2))
+                        .map(|m3| m3 + (m2 << WORD_LOG) + (m1 << (WORD_LOG * 2)))
                 })
             })
         }
@@ -343,9 +343,9 @@ mod complete_64_part_tree_impl {
     impl Depth4Tree {
         fn insert(&mut self, x: u64) -> bool {
             assert!(x < 1 << 24);
-            self.nodes[0].add(x >> WORD_LOG * 3);
-            self.nodes[1 + (x >> WORD_LOG * 3) as usize].add(x >> WORD_LOG * 2 & 63);
-            self.nodes[1 + WORD_SIZE + (x >> WORD_LOG * 2) as usize].add(x >> WORD_LOG & 63);
+            self.nodes[0].add(x >> (WORD_LOG * 3));
+            self.nodes[1 + (x >> (WORD_LOG * 3)) as usize].add(x >> (WORD_LOG * 2) & 63);
+            self.nodes[1 + WORD_SIZE + (x >> (WORD_LOG * 2)) as usize].add(x >> WORD_LOG & 63);
             self.nodes[1 + WORD_SIZE + WORD_SIZE_2 + (x >> WORD_LOG) as usize].add(x & 63)
         }
 
@@ -359,13 +359,13 @@ mod complete_64_part_tree_impl {
             let dim3_index = 1 + WORD_SIZE + WORD_SIZE_2 + (x >> WORD_LOG) as usize;
             let del = self.nodes[dim3_index].remove(x & 63);
             if del && self.nodes[dim3_index].is_empty() {
-                let dim2_index = 1 + WORD_SIZE + (x >> WORD_LOG * 2) as usize;
+                let dim2_index = 1 + WORD_SIZE + (x >> (WORD_LOG * 2)) as usize;
                 self.nodes[dim2_index].remove(x >> WORD_LOG & 63);
                 if self.nodes[dim2_index].is_empty() {
-                    let dim1_index = 1 + (x >> WORD_LOG * 3) as usize;
-                    self.nodes[dim1_index].remove(x >> WORD_LOG * 2 & 63);
+                    let dim1_index = 1 + (x >> (WORD_LOG * 3)) as usize;
+                    self.nodes[dim1_index].remove(x >> (WORD_LOG * 2) & 63);
                     if self.nodes[dim1_index].is_empty() {
-                        self.nodes[0].remove(x >> WORD_LOG * 3);
+                        self.nodes[0].remove(x >> (WORD_LOG * 3));
                     }
                 }
             }
@@ -388,8 +388,8 @@ mod complete_64_part_tree_impl {
                                 .max()
                                 .map(|m4| {
                                     m4 + (m3 << WORD_LOG)
-                                        + (m2 << WORD_LOG * 2)
-                                        + (m1 << WORD_LOG * 3)
+                                        + (m2 << (WORD_LOG * 2))
+                                        + (m1 << (WORD_LOG * 3))
                                 })
                         })
                 })
@@ -421,8 +421,8 @@ mod complete_64_part_tree_impl {
                                 .min()
                                 .map(|m4| {
                                     m4 + (m3 << WORD_LOG)
-                                        + (m2 << WORD_LOG * 2)
-                                        + (m1 << WORD_LOG * 3)
+                                        + (m2 << (WORD_LOG * 2))
+                                        + (m1 << (WORD_LOG * 3))
                                 })
                         })
                 })
