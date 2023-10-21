@@ -98,10 +98,10 @@ script = '''
 
 [tasks.verify-list]
 description = "list problem to verify"
+install_crate = "cargo-workspaces"
 category = "Verification"
-script = '''
-
-'''
+command = "cargo"
+args = ["check", "--bin"]
 
 [tasks.verify-resolve]
 description = "resolve A verification by oj-resolve"
