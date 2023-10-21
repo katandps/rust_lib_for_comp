@@ -1470,6 +1470,16 @@ dependencies = [
 ]
 
 [[package]]
+name = "library_checker_solver_predecessor_problem_w_ary_tree"
+version = "0.1.0"
+dependencies = [
+ "complete_64_part_tree",
+ "io_debug",
+ "io_util",
+ "string_util",
+]
+
+[[package]]
 name = "library_checker_solver_primality_test"
 version = "0.1.0"
 dependencies = [

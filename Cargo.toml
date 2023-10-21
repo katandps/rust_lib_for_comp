@@ -181,6 +181,7 @@ members = [
     'verifications/library_checker/number_of_substrings',
     'verifications/library_checker/point_add_range_sum_bit',
     'verifications/library_checker/predecessor_problem_binary_trie',
+    'verifications/library_checker/predecessor_problem_w_ary_tree',
     'verifications/library_checker/range_affine_point_get',
     'verifications/library_checker/range_kth_smallest',
     'verifications/library_checker/rmq_cartesian_tree',
