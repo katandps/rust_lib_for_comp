@@ -140,27 +140,34 @@ mod complete_64_part_tree_impl {
     }
 
     impl WordAryTree for Depth1Tree {
+        #[inline]
         fn insert(&mut self, x: u64) -> bool {
             assert!(x < 64);
             self.node.add(x)
         }
+        #[inline]
         fn contains(&self, x: u64) -> bool {
             assert!(x < 64);
             self.node.contains(x)
         }
+        #[inline]
         fn remove(&mut self, x: u64) -> bool {
             assert!(x < 64);
             self.node.remove(x)
         }
+        #[inline]
         fn max(&self) -> Option<u64> {
             self.node.max()
         }
+        #[inline]
         fn min(&self) -> Option<u64> {
             self.node.min()
         }
+        #[inline]
         fn next(&self, x: u64) -> Option<u64> {
             self.node.next(x)
         }
+        #[inline]
         fn prev(&self, x: u64) -> Option<u64> {
             self.node.prev(x)
         }
@@ -180,15 +187,18 @@ mod complete_64_part_tree_impl {
         }
     }
     impl WordAryTree for Depth2Tree {
+        #[inline]
         fn insert(&mut self, x: u64) -> bool {
             assert!(x < 1 << 12);
             self.top.insert(x >> WORD_LOG);
             self.nodes[x as usize >> WORD_LOG].add(x & 63)
         }
+        #[inline]
         fn contains(&self, x: u64) -> bool {
             assert!(x < 1 << 12);
             self.nodes[x as usize >> WORD_LOG].contains(x & 63)
         }
+        #[inline]
         fn remove(&mut self, x: u64) -> bool {
             assert!(x < 1 << 12);
             let del = self.nodes[x as usize >> WORD_LOG].remove(x & 63);
@@ -197,11 +207,13 @@ mod complete_64_part_tree_impl {
             }
             del
         }
+        #[inline]
         fn max(&self) -> Option<u64> {
             self.top
                 .max()
                 .and_then(|m| self.nodes[m as usize].max().map(|m2| m2 + (m << WORD_LOG)))
         }
+        #[inline]
         fn pop_max(&mut self) -> Option<u64> {
             let max = self.max();
             if let Some(m) = max {
@@ -209,11 +221,13 @@ mod complete_64_part_tree_impl {
             }
             max
         }
+        #[inline]
         fn min(&self) -> Option<u64> {
             self.top
                 .min()
                 .and_then(|m| self.nodes[m as usize].min().map(|m2| m2 + (m << WORD_LOG)))
         }
+        #[inline]
         fn pop_min(&mut self) -> Option<u64> {
             let min = self.min();
             if let Some(m) = min {
@@ -221,6 +235,7 @@ mod complete_64_part_tree_impl {
             }
             min
         }
+        #[inline]
         fn next(&self, x: u64) -> Option<u64> {
             if let Some(a) = self.nodes[x as usize >> WORD_LOG].next(x & 63) {
                 Some((x >> WORD_LOG << WORD_LOG) + a)
@@ -230,6 +245,7 @@ mod complete_64_part_tree_impl {
                     .and_then(|m| self.nodes[m as usize].min().map(|m2| m2 + (m << WORD_LOG)))
             }
         }
+        #[inline]
         fn prev(&self, x: u64) -> Option<u64> {
             if let Some(a) = self.nodes[x as usize >> WORD_LOG].prev(x & 63) {
                 Some((x >> WORD_LOG << WORD_LOG) + a)
@@ -255,17 +271,20 @@ mod complete_64_part_tree_impl {
         }
     }
     impl WordAryTree for Depth3Tree {
+        #[inline]
         fn insert(&mut self, x: u64) -> bool {
             assert!(x < 1 << 18);
             self.top.insert(x >> WORD_LOG);
             self.nodes[x as usize >> WORD_LOG].add(x & 63)
         }
 
+        #[inline]
         fn contains(&self, x: u64) -> bool {
             assert!(x < 1 << 18);
             self.nodes[x as usize >> WORD_LOG].contains(x & 63)
         }
 
+        #[inline]
         fn remove(&mut self, x: u64) -> bool {
             assert!(x < 1 << 18);
             let del = self.nodes[x as usize >> WORD_LOG].remove(x & 63);
@@ -274,11 +293,13 @@ mod complete_64_part_tree_impl {
             }
             del
         }
+        #[inline]
         fn max(&self) -> Option<u64> {
             self.top
                 .max()
                 .and_then(|m| self.nodes[m as usize].max().map(|m2| m2 + (m << WORD_LOG)))
         }
+        #[inline]
         fn pop_max(&mut self) -> Option<u64> {
             let max = self.max();
             if let Some(m) = max {
@@ -286,11 +307,13 @@ mod complete_64_part_tree_impl {
             }
             max
         }
+        #[inline]
         fn min(&self) -> Option<u64> {
             self.top
                 .min()
                 .and_then(|m| self.nodes[m as usize].min().map(|m2| m2 + (m << WORD_LOG)))
         }
+        #[inline]
         fn pop_min(&mut self) -> Option<u64> {
             let min = self.min();
             if let Some(m) = min {
@@ -298,6 +321,7 @@ mod complete_64_part_tree_impl {
             }
             min
         }
+        #[inline]
         fn next(&self, x: u64) -> Option<u64> {
             if let Some(a) = self.nodes[x as usize >> WORD_LOG].next(x & 63) {
                 Some((x >> WORD_LOG << WORD_LOG) + a)
@@ -307,6 +331,7 @@ mod complete_64_part_tree_impl {
                     .and_then(|m| self.nodes[m as usize].min().map(|m2| m2 + (m << WORD_LOG)))
             }
         }
+        #[inline]
         fn prev(&self, x: u64) -> Option<u64> {
             if let Some(a) = self.nodes[x as usize >> WORD_LOG].prev(x & 63) {
                 Some((x >> WORD_LOG << WORD_LOG) + a)
@@ -332,17 +357,20 @@ mod complete_64_part_tree_impl {
         }
     }
     impl WordAryTree for Depth4Tree {
+        #[inline]
         fn insert(&mut self, x: u64) -> bool {
             assert!(x < 1 << 24);
             self.top.insert(x >> WORD_LOG);
             self.nodes[x as usize >> WORD_LOG].add(x & 63)
         }
 
+        #[inline]
         fn contains(&self, x: u64) -> bool {
             assert!(x < 1 << 24);
             self.nodes[x as usize >> WORD_LOG].contains(x & 63)
         }
 
+        #[inline]
         fn remove(&mut self, x: u64) -> bool {
             assert!(x < 1 << 24);
             let del = self.nodes[x as usize >> WORD_LOG].remove(x & 63);
@@ -352,6 +380,7 @@ mod complete_64_part_tree_impl {
             del
         }
         /// # 最大値を返す
+        #[inline]
         fn max(&self) -> Option<u64> {
             self.top
                 .max()
@@ -359,11 +388,13 @@ mod complete_64_part_tree_impl {
         }
 
         /// # 最小値を返す
+        #[inline]
         fn min(&self) -> Option<u64> {
             self.top
                 .min()
                 .and_then(|m| self.nodes[m as usize].min().map(|m2| m2 + (m << WORD_LOG)))
         }
+        #[inline]
         fn next(&self, x: u64) -> Option<u64> {
             if let Some(a) = self.nodes[x as usize >> WORD_LOG].next(x & 63) {
                 Some((x >> WORD_LOG << WORD_LOG) + a)
@@ -373,6 +404,7 @@ mod complete_64_part_tree_impl {
                     .and_then(|m| self.nodes[m as usize].min().map(|m2| m2 + (m << WORD_LOG)))
             }
         }
+        #[inline]
         fn prev(&self, x: u64) -> Option<u64> {
             if let Some(a) = self.nodes[x as usize >> WORD_LOG].prev(x & 63) {
                 Some((x >> WORD_LOG << WORD_LOG) + a)
