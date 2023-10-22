@@ -10,7 +10,7 @@ use string_util::*;
 
 pub fn solve<IO: ReaderTrait + WriterTrait>(mut io: IO) {
     let (_n, q) = io.v2::<usize, usize>();
-    let mut tree = Complete64PartTree::new(10000000);
+    let mut tree = Complete64PartTree::build(10000000);
     let t = io.digits();
     for (i, ti) in t.iter().enumerate() {
         if *ti == 1 {

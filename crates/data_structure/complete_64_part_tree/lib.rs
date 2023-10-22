@@ -53,15 +53,15 @@ mod complete_64_part_tree_impl {
     }
 
     impl Complete64PartTree {
-        pub fn new(limit: u64) -> Box<dyn WordAryTree> {
+        pub fn build(limit: u64) -> Box<dyn WordAryTree> {
             if limit < 1u64 << WORD_LOG {
-                return Box::new(Depth1Tree::new());
+                Box::new(Depth1Tree::new())
             } else if limit < 1u64 << (WORD_LOG * 2) {
-                return Box::new(Depth2Tree::new(limit));
+                Box::new(Depth2Tree::new(limit))
             } else if limit < 1u64 << (WORD_LOG * 3) {
-                return Box::new(Depth3Tree::new(limit));
+                Box::new(Depth3Tree::new(limit))
             } else {
-                return Box::new(Depth4Tree::new(limit));
+                Box::new(Depth4Tree::new(limit))
             }
         }
     }
@@ -69,8 +69,8 @@ mod complete_64_part_tree_impl {
     trait HasNodes {
         fn nodes(&self) -> &[Node];
         fn nodes_mut(&mut self) -> &mut [Node];
-        fn top(&self) -> Box<&dyn WordAryTree>;
-        fn top_mut(&mut self) -> Box<&mut dyn WordAryTree>;
+        fn top(&self) -> &dyn WordAryTree;
+        fn top_mut(&mut self) -> &mut dyn WordAryTree;
     }
 
     impl<T: HasNodes> WordAryTree for T {
@@ -298,8 +298,8 @@ mod complete_64_part_tree_impl {
                 impl HasNodes for $ty {
                     #[inline] fn nodes(&self) -> &[Node] { &self.nodes }
                     #[inline] fn nodes_mut(&mut self) -> &mut [Node] { &mut self.nodes }
-                    #[inline] fn top(&self) -> Box<&dyn WordAryTree> { Box::new(&self.top) }
-                    #[inline] fn top_mut(&mut self) -> Box<&mut dyn WordAryTree> { Box::new(&mut self.top) }
+                    #[inline] fn top(&self) -> &dyn WordAryTree { &self.top }
+                    #[inline] fn top_mut(&mut self) -> &mut dyn WordAryTree { &mut self.top }
                 }
             )*
         };
@@ -313,7 +313,7 @@ mod test {
 
     #[test]
     fn test_dim1() {
-        let mut tree = Complete64PartTree::new(63);
+        let mut tree = Complete64PartTree::build(63);
         assert!(tree.insert(5));
         assert_eq!(Some(5), tree.max());
         tree.remove(5);
@@ -340,7 +340,7 @@ mod test {
 
     #[test]
     fn test_dim2() {
-        let mut tree = Complete64PartTree::new(4095);
+        let mut tree = Complete64PartTree::build(4095);
         assert!(tree.insert(4000));
         assert!(tree.contains(4000));
         assert!(tree.insert(255));
@@ -362,7 +362,7 @@ mod test {
 
     #[test]
     fn test_dim3() {
-        let mut tree = Complete64PartTree::new(261000);
+        let mut tree = Complete64PartTree::build(261000);
         assert!(tree.insert(40000));
         assert!(tree.contains(40000));
         assert!(tree.insert(2550));
@@ -378,7 +378,7 @@ mod test {
 
     #[test]
     fn test_dim4() {
-        let mut tree = Complete64PartTree::new(16000000);
+        let mut tree = Complete64PartTree::build(16000000);
         assert!(tree.insert(4000000));
         assert!(tree.contains(4000000));
         assert!(tree.insert(255000));
