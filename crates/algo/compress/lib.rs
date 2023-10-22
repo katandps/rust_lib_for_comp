@@ -6,7 +6,7 @@ use prelude::*;
 pub fn compress<T: Ord>(source: &[T]) -> Vec<usize> {
     let n = source.len();
     let mut idx: Vec<usize> = (0..n).collect();
-    idx.sort_by_key(|&i| &source[i]);
+    idx.sort_unstable_by_key(|&i| &source[i]);
     let mut ret = vec![0; n];
     let mut cur = 0;
     for i in 0..n {
@@ -22,7 +22,7 @@ pub fn compress<T: Ord>(source: &[T]) -> Vec<usize> {
 pub fn compress_with_reverse<T: Ord + Clone>(source: &[T]) -> (Vec<usize>, Vec<T>) {
     let n = source.len();
     let mut idx: Vec<usize> = (0..n).collect();
-    idx.sort_by_key(|&i| &source[i]);
+    idx.sort_unstable_by_key(|&i| &source[i]);
     let mut ret = vec![0; n];
     let mut cur = 0;
     for i in 0..n {
