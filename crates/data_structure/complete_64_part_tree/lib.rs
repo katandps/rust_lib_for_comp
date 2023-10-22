@@ -9,7 +9,7 @@
 use prelude::*;
 
 #[snippet(name = "complete_64_part_tree", doc_hidden)]
-pub use complete_64_part_tree_impl::Complete64PartTree;
+pub use complete_64_part_tree_impl::{Complete64PartTree, WordAryTree};
 
 #[snippet(name = "complete_64_part_tree", doc_hidden)]
 mod complete_64_part_tree_impl {
@@ -20,114 +20,52 @@ mod complete_64_part_tree_impl {
     const WORD_LOG: usize = 6;
 
     #[derive(Clone)]
-    pub enum Complete64PartTree {
-        Depth1(Depth1Tree),
-        Depth2(Box<Depth2Tree>),
-        Depth3(Box<Depth3Tree>),
-        Depth4(Box<Depth4Tree>),
+    pub struct Complete64PartTree();
+
+    pub trait WordAryTree {
+        fn insert(&mut self, x: u64) -> bool;
+        /// # keyを消す
+        /// 存在していたときはtrue
+        fn remove(&mut self, x: u64) -> bool;
+        /// # 値の存在判定
+        fn contains(&self, x: u64) -> bool;
+        /// # 最大値を返す
+        fn max(&self) -> Option<u64>;
+        /// # 最大値を消費して返す
+        fn pop_max(&mut self) -> Option<u64> {
+            let max = self.max();
+            if let Some(m) = max {
+                self.remove(m);
+            }
+            max
+        }
+        /// # 最小値を返す
+        fn min(&self) -> Option<u64>;
+        /// # 最小値を消費して返す
+        fn pop_min(&mut self) -> Option<u64> {
+            let min = self.min();
+            if let Some(m) = min {
+                self.remove(m);
+            }
+            min
+        }
+        /// # xより大きい値があればその最小値を返す
+        fn next(&self, x: u64) -> Option<u64>;
+
+        /// # xより小さい値があればその最大値を返す
+        fn prev(&self, x: u64) -> Option<u64>;
     }
 
     impl Complete64PartTree {
-        pub fn new(limit: u64) -> Self {
+        pub fn new(limit: u64) -> Box<dyn WordAryTree> {
             if limit < 1u64 << WORD_LOG {
-                Self::Depth1(Depth1Tree::new())
+                return Box::new(Depth1Tree::new());
             } else if limit < 1u64 << (WORD_LOG * 2) {
-                Self::Depth2(Box::new(Depth2Tree::new()))
+                return Box::new(Depth2Tree::new());
             } else if limit < 1u64 << (WORD_LOG * 3) {
-                Self::Depth3(Box::new(Depth3Tree::new()))
+                return Box::new(Depth3Tree::new());
             } else {
-                Self::Depth4(Box::new(Depth4Tree::new()))
-            }
-        }
-        /// # treeに $x$ を追加する
-        /// すでに存在していた時はfalse
-        pub fn insert(&mut self, x: u64) -> bool {
-            match self {
-                Self::Depth1(tree) => tree.insert(x),
-                Self::Depth2(tree) => tree.insert(x),
-                Self::Depth3(tree) => tree.insert(x),
-                Self::Depth4(tree) => tree.insert(x),
-            }
-        }
-
-        /// # keyを消す
-        /// 存在していたときはtrue
-        pub fn remove(&mut self, x: u64) -> bool {
-            match self {
-                Self::Depth1(tree) => tree.remove(x),
-                Self::Depth2(tree) => tree.remove(x),
-                Self::Depth3(tree) => tree.remove(x),
-                Self::Depth4(tree) => tree.remove(x),
-            }
-        }
-
-        /// # 値の存在判定
-        pub fn contains(&self, x: u64) -> bool {
-            match self {
-                Self::Depth1(tree) => tree.contains(x),
-                Self::Depth2(tree) => tree.contains(x),
-                Self::Depth3(tree) => tree.contains(x),
-                Self::Depth4(tree) => tree.contains(x),
-            }
-        }
-
-        /// # 最大値を返す
-        pub fn max(&self) -> Option<u64> {
-            match self {
-                Self::Depth1(tree) => tree.max(),
-                Self::Depth2(tree) => tree.max(),
-                Self::Depth3(tree) => tree.max(),
-                Self::Depth4(tree) => tree.max(),
-            }
-        }
-
-        /// # 最大値を消費して返す
-        pub fn pop_max(&mut self) -> Option<u64> {
-            match self {
-                Self::Depth1(tree) => tree.pop_max(),
-                Self::Depth2(tree) => tree.pop_max(),
-                Self::Depth3(tree) => tree.pop_max(),
-                Self::Depth4(tree) => tree.pop_max(),
-            }
-        }
-
-        /// # 最小値を返す
-        pub fn min(&self) -> Option<u64> {
-            match self {
-                Self::Depth1(tree) => tree.min(),
-                Self::Depth2(tree) => tree.min(),
-                Self::Depth3(tree) => tree.min(),
-                Self::Depth4(tree) => tree.min(),
-            }
-        }
-
-        /// # 最小値を消費して返す
-        pub fn pop_min(&mut self) -> Option<u64> {
-            match self {
-                Self::Depth1(tree) => tree.pop_min(),
-                Self::Depth2(tree) => tree.pop_min(),
-                Self::Depth3(tree) => tree.pop_min(),
-                Self::Depth4(tree) => tree.pop_min(),
-            }
-        }
-
-        /// # xより大きい値があればその最小値を返す
-        pub fn next(&self, x: u64) -> Option<u64> {
-            match self {
-                Self::Depth1(tree) => tree.next(x),
-                Self::Depth2(tree) => tree.next(x),
-                Self::Depth3(tree) => tree.next(x),
-                Self::Depth4(tree) => tree.next(x),
-            }
-        }
-
-        /// # xより小さい値があればその最大値を返す
-        pub fn prev(&self, x: u64) -> Option<u64> {
-            match self {
-                Self::Depth1(tree) => tree.prev(x),
-                Self::Depth2(tree) => tree.prev(x),
-                Self::Depth3(tree) => tree.prev(x),
-                Self::Depth4(tree) => tree.prev(x),
+                return Box::new(Depth4Tree::new());
             }
         }
     }
@@ -193,13 +131,15 @@ mod complete_64_part_tree_impl {
     pub struct Depth1Tree {
         node: Node,
     }
-
     impl Depth1Tree {
         fn new() -> Self {
             Self {
                 node: Node::default(),
             }
         }
+    }
+
+    impl WordAryTree for Depth1Tree {
         fn insert(&mut self, x: u64) -> bool {
             assert!(x < 64);
             self.node.add(x)
@@ -215,22 +155,8 @@ mod complete_64_part_tree_impl {
         fn max(&self) -> Option<u64> {
             self.node.max()
         }
-        fn pop_max(&mut self) -> Option<u64> {
-            let max = self.max();
-            if let Some(m) = max {
-                self.remove(m);
-            }
-            max
-        }
         fn min(&self) -> Option<u64> {
             self.node.min()
-        }
-        fn pop_min(&mut self) -> Option<u64> {
-            let min = self.min();
-            if let Some(m) = min {
-                self.remove(m);
-            }
-            min
         }
         fn next(&self, x: u64) -> Option<u64> {
             self.node.next(x)
@@ -252,6 +178,8 @@ mod complete_64_part_tree_impl {
                 nodes: vec![Node::default(); WORD_SIZE],
             }
         }
+    }
+    impl WordAryTree for Depth2Tree {
         fn insert(&mut self, x: u64) -> bool {
             assert!(x < 1 << 12);
             self.top.insert(x >> WORD_LOG);
@@ -325,6 +253,8 @@ mod complete_64_part_tree_impl {
                 nodes: vec![Node::default(); WORD_SIZE_2],
             }
         }
+    }
+    impl WordAryTree for Depth3Tree {
         fn insert(&mut self, x: u64) -> bool {
             assert!(x < 1 << 18);
             self.top.insert(x >> WORD_LOG);
@@ -400,6 +330,8 @@ mod complete_64_part_tree_impl {
                 nodes: vec![Node::default(); WORD_SIZE_3],
             }
         }
+    }
+    impl WordAryTree for Depth4Tree {
         fn insert(&mut self, x: u64) -> bool {
             assert!(x < 1 << 24);
             self.top.insert(x >> WORD_LOG);
@@ -419,37 +351,18 @@ mod complete_64_part_tree_impl {
             }
             del
         }
-
         /// # 最大値を返す
-        pub fn max(&self) -> Option<u64> {
+        fn max(&self) -> Option<u64> {
             self.top
                 .max()
                 .and_then(|m| self.nodes[m as usize].max().map(|m2| m2 + (m << WORD_LOG)))
         }
 
-        /// # 最大値を消費して返す
-        pub fn pop_max(&mut self) -> Option<u64> {
-            let max = self.max();
-            if let Some(m) = max {
-                self.remove(m);
-            }
-            max
-        }
-
         /// # 最小値を返す
-        pub fn min(&self) -> Option<u64> {
+        fn min(&self) -> Option<u64> {
             self.top
                 .min()
                 .and_then(|m| self.nodes[m as usize].min().map(|m2| m2 + (m << WORD_LOG)))
-        }
-
-        /// # 最小値を消費して返す
-        pub fn pop_min(&mut self) -> Option<u64> {
-            let min = self.min();
-            if let Some(m) = min {
-                self.remove(m);
-            }
-            min
         }
         fn next(&self, x: u64) -> Option<u64> {
             if let Some(a) = self.nodes[x as usize >> WORD_LOG].next(x & 63) {
