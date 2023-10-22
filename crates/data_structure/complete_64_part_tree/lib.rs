@@ -3,8 +3,6 @@
 //!
 //! 集合に存在するかどうかをBitSetの入れ子のような形で表現する
 //!
-//! ## todo
-//! implement prev/next
 
 use prelude::*;
 
@@ -16,7 +14,6 @@ mod complete_64_part_tree_impl {
 
     const WORD_SIZE: usize = 64;
     const WORD_SIZE_2: usize = WORD_SIZE * WORD_SIZE;
-    const WORD_SIZE_3: usize = WORD_SIZE * WORD_SIZE * WORD_SIZE;
     const WORD_LOG: usize = 6;
 
     #[derive(Clone)]
@@ -51,7 +48,6 @@ mod complete_64_part_tree_impl {
         }
         /// # xより大きい値があればその最小値を返す
         fn next(&self, x: u64) -> Option<u64>;
-
         /// # xより小さい値があればその最大値を返す
         fn prev(&self, x: u64) -> Option<u64>;
     }
@@ -61,15 +57,97 @@ mod complete_64_part_tree_impl {
             if limit < 1u64 << WORD_LOG {
                 return Box::new(Depth1Tree::new());
             } else if limit < 1u64 << (WORD_LOG * 2) {
-                return Box::new(Depth2Tree::new());
+                return Box::new(Depth2Tree::new(limit));
             } else if limit < 1u64 << (WORD_LOG * 3) {
-                return Box::new(Depth3Tree::new());
+                return Box::new(Depth3Tree::new(limit));
             } else {
-                return Box::new(Depth4Tree::new());
+                return Box::new(Depth4Tree::new(limit));
             }
         }
     }
 
+    trait HasNodes {
+        fn nodes(&self) -> &[Node];
+        fn nodes_mut(&mut self) -> &mut [Node];
+        fn top(&self) -> Box<&dyn WordAryTree>;
+        fn top_mut(&mut self) -> Box<&mut dyn WordAryTree>;
+    }
+
+    impl<T: HasNodes> WordAryTree for T {
+        #[inline]
+        fn insert(&mut self, x: u64) -> bool {
+            self.top_mut().insert(x >> WORD_LOG);
+            self.nodes_mut()[(x >> WORD_LOG) as usize].add(x & 63)
+        }
+        #[inline]
+        fn contains(&self, x: u64) -> bool {
+            self.nodes()[(x >> WORD_LOG) as usize].contains(x & 63)
+        }
+        #[inline]
+        fn remove(&mut self, x: u64) -> bool {
+            let del = self.nodes_mut()[x as usize >> WORD_LOG].remove(x & 63);
+            if del && self.nodes()[x as usize >> WORD_LOG].is_empty() {
+                self.top_mut().remove(x >> WORD_LOG);
+            }
+            del
+        }
+        #[inline]
+        fn max(&self) -> Option<u64> {
+            self.top().max().and_then(|m| {
+                self.nodes()[m as usize]
+                    .max()
+                    .map(|m2| m2 + (m << WORD_LOG))
+            })
+        }
+        #[inline]
+        fn pop_max(&mut self) -> Option<u64> {
+            let max = self.max();
+            if let Some(m) = max {
+                self.remove(m);
+            }
+            max
+        }
+        #[inline]
+        fn min(&self) -> Option<u64> {
+            self.top().min().and_then(|m| {
+                self.nodes()[m as usize]
+                    .min()
+                    .map(|m2| m2 + (m << WORD_LOG))
+            })
+        }
+        #[inline]
+        fn pop_min(&mut self) -> Option<u64> {
+            let min = self.min();
+            if let Some(m) = min {
+                self.remove(m);
+            }
+            min
+        }
+        #[inline]
+        fn next(&self, x: u64) -> Option<u64> {
+            if let Some(a) = self.nodes()[x as usize >> WORD_LOG].next(x & 63) {
+                Some((x >> WORD_LOG << WORD_LOG) + a)
+            } else {
+                self.top().next(x >> WORD_LOG).and_then(|m| {
+                    self.nodes()[m as usize]
+                        .min()
+                        .map(|m2| m2 + (m << WORD_LOG))
+                })
+            }
+        }
+        #[inline]
+        fn prev(&self, x: u64) -> Option<u64> {
+            if let Some(a) = self.nodes()[x as usize >> WORD_LOG].prev(x & 63) {
+                Some((x >> WORD_LOG << WORD_LOG) + a)
+            } else {
+                self.top().prev(x >> WORD_LOG).and_then(|m| {
+                    self.nodes()[m as usize]
+                        .max()
+                        .map(|m2| m2 + (m << WORD_LOG))
+                })
+            }
+        }
+    }
     #[derive(Clone, Copy, Default)]
     struct Node(u64);
 
@@ -179,80 +257,10 @@ mod complete_64_part_tree_impl {
     }
 
     impl Depth2Tree {
-        fn new() -> Self {
+        fn new(limit: u64) -> Self {
             Self {
                 top: Depth1Tree::new(),
-                nodes: vec![Node::default(); WORD_SIZE],
-            }
-        }
-    }
-    impl WordAryTree for Depth2Tree {
-        #[inline]
-        fn insert(&mut self, x: u64) -> bool {
-            assert!(x < 1 << 12);
-            self.top.insert(x >> WORD_LOG);
-            self.nodes[x as usize >> WORD_LOG].add(x & 63)
-        }
-        #[inline]
-        fn contains(&self, x: u64) -> bool {
-            assert!(x < 1 << 12);
-            self.nodes[x as usize >> WORD_LOG].contains(x & 63)
-        }
-        #[inline]
-        fn remove(&mut self, x: u64) -> bool {
-            assert!(x < 1 << 12);
-            let del = self.nodes[x as usize >> WORD_LOG].remove(x & 63);
-            if del && self.nodes[x as usize >> WORD_LOG].is_empty() {
-                self.top.remove(x >> WORD_LOG);
-            }
-            del
-        }
-        #[inline]
-        fn max(&self) -> Option<u64> {
-            self.top
-                .max()
-                .and_then(|m| self.nodes[m as usize].max().map(|m2| m2 + (m << WORD_LOG)))
-        }
-        #[inline]
-        fn pop_max(&mut self) -> Option<u64> {
-            let max = self.max();
-            if let Some(m) = max {
-                self.remove(m);
-            }
-            max
-        }
-        #[inline]
-        fn min(&self) -> Option<u64> {
-            self.top
-                .min()
-                .and_then(|m| self.nodes[m as usize].min().map(|m2| m2 + (m << WORD_LOG)))
-        }
-        #[inline]
-        fn pop_min(&mut self) -> Option<u64> {
-            let min = self.min();
-            if let Some(m) = min {
-                self.remove(m);
-            }
-            min
-        }
-        #[inline]
-        fn next(&self, x: u64) -> Option<u64> {
-            if let Some(a) = self.nodes[x as usize >> WORD_LOG].next(x & 63) {
-                Some((x >> WORD_LOG << WORD_LOG) + a)
-            } else {
-                self.top
-                    .next(x >> WORD_LOG)
-                    .and_then(|m| self.nodes[m as usize].min().map(|m2| m2 + (m << WORD_LOG)))
-            }
-        }
-        #[inline]
-        fn prev(&self, x: u64) -> Option<u64> {
-            if let Some(a) = self.nodes[x as usize >> WORD_LOG].prev(x & 63) {
-                Some((x >> WORD_LOG << WORD_LOG) + a)
-            } else {
-                self.top
-                    .prev(x >> WORD_LOG)
-                    .and_then(|m| self.nodes[m as usize].max().map(|m2| m2 + (m << WORD_LOG)))
+                nodes: vec![Node::default(); limit as usize >> (WORD_LOG - 1)],
             }
         }
     }
@@ -263,82 +271,10 @@ mod complete_64_part_tree_impl {
     }
 
     impl Depth3Tree {
-        fn new() -> Self {
+        fn new(limit: u64) -> Self {
             Self {
-                top: Depth2Tree::new(),
+                top: Depth2Tree::new(limit >> (WORD_LOG - 1)),
                 nodes: vec![Node::default(); WORD_SIZE_2],
-            }
-        }
-    }
-    impl WordAryTree for Depth3Tree {
-        #[inline]
-        fn insert(&mut self, x: u64) -> bool {
-            assert!(x < 1 << 18);
-            self.top.insert(x >> WORD_LOG);
-            self.nodes[x as usize >> WORD_LOG].add(x & 63)
-        }
-
-        #[inline]
-        fn contains(&self, x: u64) -> bool {
-            assert!(x < 1 << 18);
-            self.nodes[x as usize >> WORD_LOG].contains(x & 63)
-        }
-
-        #[inline]
-        fn remove(&mut self, x: u64) -> bool {
-            assert!(x < 1 << 18);
-            let del = self.nodes[x as usize >> WORD_LOG].remove(x & 63);
-            if del && self.nodes[x as usize >> WORD_LOG].is_empty() {
-                self.top.remove(x >> WORD_LOG);
-            }
-            del
-        }
-        #[inline]
-        fn max(&self) -> Option<u64> {
-            self.top
-                .max()
-                .and_then(|m| self.nodes[m as usize].max().map(|m2| m2 + (m << WORD_LOG)))
-        }
-        #[inline]
-        fn pop_max(&mut self) -> Option<u64> {
-            let max = self.max();
-            if let Some(m) = max {
-                self.remove(m);
-            }
-            max
-        }
-        #[inline]
-        fn min(&self) -> Option<u64> {
-            self.top
-                .min()
-                .and_then(|m| self.nodes[m as usize].min().map(|m2| m2 + (m << WORD_LOG)))
-        }
-        #[inline]
-        fn pop_min(&mut self) -> Option<u64> {
-            let min = self.min();
-            if let Some(m) = min {
-                self.remove(m);
-            }
-            min
-        }
-        #[inline]
-        fn next(&self, x: u64) -> Option<u64> {
-            if let Some(a) = self.nodes[x as usize >> WORD_LOG].next(x & 63) {
-                Some((x >> WORD_LOG << WORD_LOG) + a)
-            } else {
-                self.top
-                    .next(x >> WORD_LOG)
-                    .and_then(|m| self.nodes[m as usize].min().map(|m2| m2 + (m << WORD_LOG)))
-            }
-        }
-        #[inline]
-        fn prev(&self, x: u64) -> Option<u64> {
-            if let Some(a) = self.nodes[x as usize >> WORD_LOG].prev(x & 63) {
-                Some((x >> WORD_LOG << WORD_LOG) + a)
-            } else {
-                self.top
-                    .prev(x >> WORD_LOG)
-                    .and_then(|m| self.nodes[m as usize].max().map(|m2| m2 + (m << WORD_LOG)))
             }
         }
     }
@@ -347,74 +283,28 @@ mod complete_64_part_tree_impl {
         top: Depth3Tree,
         nodes: Vec<Node>,
     }
-
     impl Depth4Tree {
-        fn new() -> Self {
+        fn new(limit: u64) -> Self {
             Self {
-                top: Depth3Tree::new(),
-                nodes: vec![Node::default(); WORD_SIZE_3],
+                top: Depth3Tree::new(limit >> (WORD_LOG - 1)),
+                nodes: vec![Node::default(); limit as usize >> (WORD_LOG - 1)],
             }
         }
     }
-    impl WordAryTree for Depth4Tree {
-        #[inline]
-        fn insert(&mut self, x: u64) -> bool {
-            assert!(x < 1 << 24);
-            self.top.insert(x >> WORD_LOG);
-            self.nodes[x as usize >> WORD_LOG].add(x & 63)
-        }
 
-        #[inline]
-        fn contains(&self, x: u64) -> bool {
-            assert!(x < 1 << 24);
-            self.nodes[x as usize >> WORD_LOG].contains(x & 63)
-        }
-
-        #[inline]
-        fn remove(&mut self, x: u64) -> bool {
-            assert!(x < 1 << 24);
-            let del = self.nodes[x as usize >> WORD_LOG].remove(x & 63);
-            if del && self.nodes[x as usize >> WORD_LOG].is_empty() {
-                self.top.remove(x >> WORD_LOG);
-            }
-            del
-        }
-        /// # 最大値を返す
-        #[inline]
-        fn max(&self) -> Option<u64> {
-            self.top
-                .max()
-                .and_then(|m| self.nodes[m as usize].max().map(|m2| m2 + (m << WORD_LOG)))
-        }
-
-        /// # 最小値を返す
-        #[inline]
-        fn min(&self) -> Option<u64> {
-            self.top
-                .min()
-                .and_then(|m| self.nodes[m as usize].min().map(|m2| m2 + (m << WORD_LOG)))
-        }
-        #[inline]
-        fn next(&self, x: u64) -> Option<u64> {
-            if let Some(a) = self.nodes[x as usize >> WORD_LOG].next(x & 63) {
-                Some((x >> WORD_LOG << WORD_LOG) + a)
-            } else {
-                self.top
-                    .next(x >> WORD_LOG)
-                    .and_then(|m| self.nodes[m as usize].min().map(|m2| m2 + (m << WORD_LOG)))
-            }
-        }
-        #[inline]
-        fn prev(&self, x: u64) -> Option<u64> {
-            if let Some(a) = self.nodes[x as usize >> WORD_LOG].prev(x & 63) {
-                Some((x >> WORD_LOG << WORD_LOG) + a)
-            } else {
-                self.top
-                    .prev(x >> WORD_LOG)
-                    .and_then(|m| self.nodes[m as usize].max().map(|m2| m2 + (m << WORD_LOG)))
-            }
-        }
+    macro_rules! impl_has_nodes {
+        ($($ty:ty),*) => {
+            $(
+                impl HasNodes for $ty {
+                    #[inline] fn nodes(&self) -> &[Node] { &self.nodes }
+                    #[inline] fn nodes_mut(&mut self) -> &mut [Node] { &mut self.nodes }
+                    #[inline] fn top(&self) -> Box<&dyn WordAryTree> { Box::new(&self.top) }
+                    #[inline] fn top_mut(&mut self) -> Box<&mut dyn WordAryTree> { Box::new(&mut self.top) }
+                }
+            )*
+        };
     }
+    impl_has_nodes!(Depth2Tree, Depth3Tree, Depth4Tree);
 }
 
 #[cfg(test)]
