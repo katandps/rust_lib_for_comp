@@ -1384,6 +1384,17 @@ dependencies = [
 ]
 
 [[package]]
+name = "library_checker_solver_double_ended_prority_queue_w_ary_tree"
+version = "0.1.0"
+dependencies = [
+ "complete_64_part_tree",
+ "compress",
+ "io_debug",
+ "io_util",
+ "string_util",
+]
+
+[[package]]
 name = "library_checker_solver_enumerate_palindromes"
 version = "0.1.0"
 dependencies = [

@@ -20,6 +20,7 @@ mod complete_64_part_tree_impl {
     pub struct Complete64PartTree();
 
     pub trait WordAryTree {
+        fn is_empty(&self) -> bool;
         fn insert(&mut self, x: u64) -> bool;
         /// # keyを消す
         /// 存在していたときはtrue
@@ -74,6 +75,10 @@ mod complete_64_part_tree_impl {
     }
 
     impl<T: HasNodes> WordAryTree for T {
+        #[inline]
+        fn is_empty(&self) -> bool {
+            self.top().is_empty()
+        }
         #[inline]
         fn insert(&mut self, x: u64) -> bool {
             self.top_mut().insert(x >> WORD_LOG);
@@ -218,6 +223,10 @@ mod complete_64_part_tree_impl {
     }
 
     impl WordAryTree for Depth1Tree {
+        #[inline]
+        fn is_empty(&self) -> bool {
+            self.node.is_empty()
+        }
         #[inline]
         fn insert(&mut self, x: u64) -> bool {
             assert!(x < 64);
