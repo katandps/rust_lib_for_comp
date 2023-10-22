@@ -52,7 +52,6 @@ pub fn solve<IO: ReaderTrait + WriterTrait>(mut io: IO) {
             }
             io.out(rev[p as usize].line());
         } else {
-            dbg!(comp[i]);
             if cnt[comp[i]] == 0 {
                 tree.insert(comp[i] as u64);
             }
