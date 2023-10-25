@@ -6,7 +6,7 @@ fn main() {
     solve(io_util::IO::default());
 }
 use io_util::*;
-use matrix::{Determinant, Matrix};
+use matrix::Matrix;
 use mod_int::ModInt;
 use string_util::*;
 
