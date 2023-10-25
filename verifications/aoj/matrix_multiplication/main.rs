@@ -13,8 +13,8 @@ pub fn solve<IO: ReaderTrait + WriterTrait>(mut io: IO) {
     let (n, m, l) = io.v3::<usize, usize, usize>();
     let a = io.matrix::<i64>(n, m);
     let b = io.matrix::<i64>(m, l);
-    let a = Matrix::try_from(a).unwrap();
-    let b = Matrix::try_from(b).unwrap();
+    let a = Matrix::build(a).unwrap();
+    let b = Matrix::build(b).unwrap();
     let c = (a * b).unwrap();
     io.out(c.line());
     io.flush()

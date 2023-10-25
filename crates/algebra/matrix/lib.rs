@@ -9,7 +9,7 @@ pub use matrix_impl::{ColumnVector, Determinant, Matrix, RowVector};
 #[snippet(name = "matrix", doc_hidden)]
 mod matrix_impl {
     use super::{
-        Add, AddAssign, Debug, Display, Div, Formatter, Mul, MulAssign, Neg, One, Pow, Sub,
+        max, Add, AddAssign, Debug, Display, Div, Formatter, Mul, MulAssign, Neg, One, Pow, Sub,
         SubAssign, Zero,
     };
 
@@ -21,37 +21,157 @@ mod matrix_impl {
     }
     /// # 参照で構成された行列
     /// 内容は不変
+    #[derive(Clone, Copy)]
     pub struct PointerMatrix<'a, T> {
         src: &'a [Vec<T>],
+        y_offset: usize,
+        x_offset: usize,
         height: usize,
         width: usize,
     }
 
     impl<'a, T> PointerMatrix<'a, T> {
         pub fn new(src: &'a [Vec<T>], height: usize, width: usize) -> Self {
-            Self { src, height, width }
-        }
-    }
-
-    impl<T> std::convert::TryFrom<Vec<Vec<T>>> for Matrix<T> {
-        type Error = &'static str;
-        fn try_from(buf: Vec<Vec<T>>) -> std::result::Result<Self, Self::Error> {
-            if (1..buf.len()).any(|i| buf[0].len() != buf[i].len()) {
-                Err("size is invalid")
-            } else {
-                let (height, width) = (buf.len(), buf[0].len());
-                Ok(Self {
-                    src: buf,
-                    height,
-                    width,
-                })
+            Self {
+                src,
+                y_offset: 0,
+                x_offset: 0,
+                height,
+                width,
             }
         }
     }
 
+    impl<'a, T: PartialEq> PartialEq for PointerMatrix<'a, T> {
+        fn eq(&self, other: &Self) -> bool {
+            if self.width != other.width || self.height != other.height {
+                return false;
+            }
+            for y in 0..self.height {
+                for x in 0..self.width {
+                    if self.src[y + self.y_offset][x + self.x_offset]
+                        != other.src[y + other.y_offset][x + other.x_offset]
+                    {
+                        return false;
+                    }
+                }
+            }
+            true
+        }
+    }
+
     impl<T> Matrix<T> {
+        pub fn build(src: Vec<Vec<T>>) -> Option<Matrix<T>> {
+            if (1..src.len()).any(|i| src[0].len() != src[i].len()) {
+                None
+            } else {
+                let (height, width) = (src.len(), src[0].len());
+                Some(Self { src, height, width })
+            }
+        }
+
+        #[inline]
         pub fn pointer(&self) -> PointerMatrix<'_, T> {
             PointerMatrix::new(&self.src, self.height, self.width)
+        }
+    }
+
+    impl<'a, T: Clone + Copy + Zero> PointerMatrix<'a, T> {
+        #[inline]
+        pub fn get(&self, y: usize, x: usize) -> T {
+            if self.height <= y || self.width <= x {
+                return T::zero();
+            }
+            *self
+                .src
+                .get(y + self.y_offset)
+                .and_then(|v| v.get(x + self.x_offset))
+                .unwrap_or(&T::zero())
+        }
+        /// # 列方向分割
+        /// 行列を0..xとx..widthに分ける
+        pub fn column_divide(&self, x: usize) -> (Self, Self) {
+            let left = Self {
+                src: self.src,
+                height: self.height,
+                y_offset: self.y_offset,
+                width: x,
+                x_offset: self.x_offset,
+            };
+            let right = Self {
+                src: self.src,
+                height: self.height,
+                y_offset: self.y_offset,
+                width: self.width - x,
+                x_offset: self.x_offset + x,
+            };
+            (left, right)
+        }
+        /// # 行方向分割
+        /// 行列を0..yとy..heightに分ける
+        pub fn row_divide(&self, y: usize) -> (Self, Self) {
+            let upper = Self {
+                src: self.src,
+                height: y,
+                y_offset: self.y_offset,
+                width: self.width,
+                x_offset: self.x_offset,
+            };
+            let lower = Self {
+                src: self.src,
+                height: self.height - y,
+                y_offset: self.y_offset + y,
+                width: self.width,
+                x_offset: self.x_offset,
+            };
+            (upper, lower)
+        }
+        /// # 列方向に結合
+        pub fn combine_row(&self, lower: &Self) -> Matrix<T> {
+            assert_eq!(self.width, lower.width);
+            let mut v = Vec::with_capacity(self.height + lower.height);
+            for y in 0..self.height {
+                let mut l = Vec::with_capacity(self.width);
+                for x in 0..self.width {
+                    l.push(self.get(y, x));
+                }
+                v.push(l);
+            }
+            for y in 0..lower.height {
+                let mut l = Vec::with_capacity(lower.width);
+                for x in 0..lower.width {
+                    l.push(lower.get(y, x));
+                }
+                v.push(l);
+            }
+            Matrix::build(v).unwrap()
+        }
+        /// # 行方向に結合
+        pub fn combine_column(&self, right: &Self) -> Matrix<T> {
+            assert_eq!(self.height, right.height);
+            let mut v = Vec::with_capacity(self.height);
+            for y in 0..self.height {
+                let mut l = Vec::with_capacity(self.width + right.width);
+                for x in 0..self.width {
+                    l.push(self.get(y, x));
+                }
+                for x in 0..right.width {
+                    l.push(right.get(y, x));
+                }
+                v.push(l);
+            }
+            Matrix::build(v).unwrap()
+        }
+        pub fn extend(&self, height: usize, width: usize) -> Matrix<T> {
+            let mut v = Vec::with_capacity(self.height);
+            for y in 0..height {
+                let mut l = Vec::with_capacity(width);
+                for x in 0..width {
+                    l.push(self.get(y, x));
+                }
+                v.push(l)
+            }
+            Matrix::build(v).unwrap()
         }
     }
 
@@ -157,13 +277,23 @@ mod matrix_impl {
         }
     }
 
-    impl<T: Clone + Zero + One + Mul<Output = T> + Add<Output = T>> Pow for Matrix<T> {
+    impl<
+            T: Clone
+                + Copy
+                + Zero
+                + One
+                + Mul<Output = T>
+                + Add<Output = T>
+                + Sub<Output = T>
+                + ToString,
+        > Pow for Matrix<T>
+    {
         fn pow(mut self, mut e: i64) -> Self {
             assert_eq!(self.height, self.width);
             let mut result = Self::identity_matrix(self.height);
             while e > 0 {
                 if e & 1 == 1 {
-                    result = (result * self.pointer()).unwrap();
+                    result = (result.pointer() * self.pointer()).unwrap();
                 }
                 e >>= 1;
                 self = (self.pointer() * self.pointer()).unwrap();
@@ -188,6 +318,34 @@ mod matrix_impl {
                 height: self.height - 1,
                 width: self.width - 1,
             }
+        }
+    }
+
+    impl<T: Add<Output = T> + Clone + Copy + Zero> Add<PointerMatrix<'_, T>> for PointerMatrix<'_, T> {
+        type Output = Matrix<T>;
+        fn add(self, rhs: PointerMatrix<T>) -> Self::Output {
+            let mut v =
+                vec![vec![T::zero(); max(self.width, rhs.width)]; max(self.height, rhs.height)];
+            for y in 0..max(self.height, rhs.height) {
+                for x in 0..max(self.width, rhs.width) {
+                    v[y][x] = self.get(y, x) + rhs.get(y, x);
+                }
+            }
+            Matrix::build(v).unwrap()
+        }
+    }
+
+    impl<T: Sub<Output = T> + Clone + Copy + Zero> Sub<PointerMatrix<'_, T>> for PointerMatrix<'_, T> {
+        type Output = Matrix<T>;
+        fn sub(self, rhs: PointerMatrix<'_, T>) -> Self::Output {
+            let mut v =
+                vec![vec![T::zero(); max(self.width, rhs.width)]; max(self.height, rhs.height)];
+            for y in 0..self.height {
+                for x in 0..self.width {
+                    v[y][x] = self.get(y, x) - rhs.get(y, x);
+                }
+            }
+            Matrix::build(v).unwrap()
         }
     }
 
@@ -246,12 +404,16 @@ mod matrix_impl {
         }
     }
 
-    impl<'a, T: Mul<Output = T> + Add<Output = T> + Zero + Clone> PointerMatrix<'a, T> {
+    impl<
+            'a,
+            T: Mul<Output = T> + Add<Output = T> + Sub<Output = T> + Zero + Clone + ToString + Copy,
+        > PointerMatrix<'a, T>
+    {
         /// # 愚直積
         ///
         /// ## 計算量
         /// $O(N^3)$
-        fn naive_mul(self, rhs: Self) -> Option<Matrix<T>> {
+        fn naive_mul(&self, rhs: &Self) -> Option<Matrix<T>> {
             let (self_row, self_col, rhs_row, rhs_col) =
                 (self.height, self.width, rhs.height, rhs.width);
             if self_col != rhs_row {
@@ -261,7 +423,7 @@ mod matrix_impl {
             ret.src.iter_mut().enumerate().for_each(|(i, bufi)| {
                 bufi.iter_mut().enumerate().for_each(|(j, bufij)| {
                     *bufij = (0..self_col)
-                        .map(|k| self.src[i][k].clone() * rhs.src[k][j].clone())
+                        .map(|k| self.get(i, k) * rhs.get(k, j))
                         .fold(T::zero(), |x, a| x.add(a));
                 });
             });
@@ -272,37 +434,105 @@ mod matrix_impl {
         ///
         /// ## see
         /// https://en.wikipedia.org/wiki/Strassen_algorithm
-        #[allow(unused)]
-        fn strassen_mul(self, rhs: Self) -> Option<Matrix<T>> {
-            let (self_row, self_col, rhs_row, rhs_col) =
-                (self.height, self.width, rhs.height, rhs.width);
-            if self_row != self_col || rhs_row != rhs_col {
-                return self.naive_mul(rhs);
-            }
-            if self_col != rhs_row {
+        fn strassen_mul(&self, rhs: &Self) -> Option<Matrix<T>> {
+            if self.width != rhs.height {
                 return None;
             }
-            unimplemented!()
+            if self.height != self.width || rhs.height != rhs.width || self.height < 128 {
+                return self.naive_mul(rhs);
+            }
+            let n = self.height;
+            if n & 1 == 0 {
+                let half = n / 2;
+                let (a1, a2) = self.row_divide(half);
+                let (a11, a12) = a1.column_divide(half);
+                let (a21, a22) = a2.column_divide(half);
+                let (b1, b2) = rhs.row_divide(half);
+                let (b11, b12) = b1.column_divide(half);
+                let (b21, b22) = b2.column_divide(half);
+                let p1 = ((a11 + a22) * (b11 + b22)).unwrap();
+                let p2 = ((a21 + a22) * b11).unwrap();
+                let p3 = (a11 * (b12 - b22).pointer()).unwrap();
+                let p4 = (a22 * (b21 - b11).pointer()).unwrap();
+                let p5 = ((a11 + a12).pointer() * b22).unwrap();
+                let p6 = ((a21 - a11) * (b11 + b12)).unwrap();
+                let p7 = ((a12 - a22) * (b21 + b22)).unwrap();
+                let c11 = ((p1.pointer() + p4.pointer()).pointer() - p5.pointer()).pointer()
+                    + p7.pointer();
+                let c12 = p3.pointer() + p5.pointer();
+                let c21 = p2.pointer() + p4.pointer();
+                let c22 = ((p1.pointer() + p3.pointer()).pointer() - p2.pointer()).pointer()
+                    + p6.pointer();
+                let c1 = c11.pointer().combine_column(&c12.pointer());
+                let c2 = c21.pointer().combine_column(&c22.pointer());
+                Some(c1.pointer().combine_row(&c2.pointer()))
+            } else {
+                let half = (n + 1) / 2;
+                let (a1, a2) = self.row_divide(half);
+                let (a11, a12) = a1.column_divide(half);
+                let (a21, a22) = a2.column_divide(half);
+                let (b1, b2) = rhs.row_divide(half);
+                let (b11, b12) = b1.column_divide(half);
+                let (b21, b22) = b2.column_divide(half);
+                // dbg!(a11, a12, a21, a22, b11, b12, b21, b22);
+                // dbg!(a11 + a22, b11 + b22);
+                let p1 = ((a11 + a22) * (b11 + b22)).unwrap();
+                let p2 = ((a21 + a22) * b11).unwrap();
+                let p3 = (a11 * (b12 - b22).pointer()).unwrap();
+                let a22e = a22.extend(half, half);
+                let p4 = (a22e.pointer() * (b21 - b11).pointer()).unwrap();
+                let b22e = b22.extend(half, half);
+                let p5 = ((a11 + a12).pointer() * b22e.pointer()).unwrap();
+                let p6 = ((a21 - a11) * (b11 + b12)).unwrap();
+                let p7 = ((a12 - a22) * (b21 + b22)).unwrap();
+                // dbg!(&p1, &p2, &p3, &p4, &p5, &p6, &p7);
+                let c11 = ((p1.pointer() + p4.pointer()).pointer() - p5.pointer()).pointer()
+                    + p7.pointer();
+                let c12 = p3.pointer() + p5.pointer();
+                let c21 = p2.pointer() + p4.pointer();
+                let c22 = ((p1.pointer() + p3.pointer()).pointer() - p2.pointer()).pointer()
+                    + p6.pointer();
+                let c1 = c11.pointer().combine_column(&c12.pointer());
+                let c2 = c21.pointer().combine_column(&c22.pointer());
+                Some(c1.pointer().combine_row(&c2.pointer()))
+            }
         }
     }
 
-    impl<T: Mul<Output = T> + Add<Output = T> + Zero + Clone> Mul<PointerMatrix<'_, T>>
-        for PointerMatrix<'_, T>
+    impl<
+            T: Mul<Output = T> + Add<Output = T> + Sub<Output = T> + Zero + Clone + Copy + ToString,
+        > Mul<PointerMatrix<'_, T>> for PointerMatrix<'_, T>
     {
         type Output = Option<Matrix<T>>;
         fn mul(self, rhs: PointerMatrix<'_, T>) -> Self::Output {
-            self.naive_mul(rhs)
+            self.strassen_mul(&rhs)
         }
     }
 
-    impl<T: Mul<Output = T> + Add<Output = T> + Zero + Clone> Mul<PointerMatrix<'_, T>> for Matrix<T> {
+    impl<
+            T: Mul<Output = T> + Add<Output = T> + Sub<Output = T> + Zero + Clone + Copy + ToString,
+        > Mul<&PointerMatrix<'_, T>> for &PointerMatrix<'_, T>
+    {
+        type Output = Option<Matrix<T>>;
+        fn mul(self, rhs: &PointerMatrix<'_, T>) -> Self::Output {
+            self.strassen_mul(rhs)
+        }
+    }
+
+    impl<
+            T: Mul<Output = T> + Add<Output = T> + Sub<Output = T> + Zero + Clone + Copy + ToString,
+        > Mul<PointerMatrix<'_, T>> for Matrix<T>
+    {
         type Output = Option<Matrix<T>>;
         fn mul(self, rhs: PointerMatrix<'_, T>) -> Self::Output {
             self.pointer() * rhs
         }
     }
 
-    impl<T: Mul<Output = T> + Add<Output = T> + Zero + Clone> Mul<Matrix<T>> for Matrix<T> {
+    impl<
+            T: Mul<Output = T> + Add<Output = T> + Sub<Output = T> + Zero + Clone + Copy + ToString,
+        > Mul<Matrix<T>> for Matrix<T>
+    {
         type Output = Option<Matrix<T>>;
         fn mul(self, rhs: Self) -> Self::Output {
             self.pointer() * rhs.pointer()
@@ -332,6 +562,32 @@ mod matrix_impl {
             )
         }
     }
+
+    impl<'a, T: ToString> Debug for PointerMatrix<'a, T> {
+        fn fmt(&self, f: &mut Formatter<'_>) -> std::fmt::Result {
+            write!(
+                f,
+                "height:{} width:{}\ny_offset:{} x_offset:{}\n{}",
+                self.height,
+                self.width,
+                self.y_offset,
+                self.x_offset,
+                self.src
+                    .iter()
+                    .skip(self.y_offset)
+                    .take(self.height)
+                    .map(|row| row
+                        .iter()
+                        .skip(self.x_offset)
+                        .take(self.width)
+                        .map(|mi| mi.to_string())
+                        .collect::<Vec<_>>()
+                        .join(" "))
+                    .collect::<Vec<_>>()
+                    .join("\n")
+            )
+        }
+    }
 }
 
 #[cfg(test)]
@@ -339,7 +595,6 @@ mod test {
     use super::matrix_impl::{ColumnVector, Determinant, RowVector};
     use super::*;
     use mod_int::ModInt;
-    use std::convert::TryInto;
 
     #[test]
     fn test() {
@@ -347,7 +602,7 @@ mod test {
             vec![ModInt::new(3), ModInt::new(2)],
             vec![ModInt::new(5), ModInt::new(4)],
         ];
-        let matrix: Matrix<ModInt> = data.try_into().unwrap();
+        let matrix: Matrix<ModInt> = Matrix::build(data).unwrap();
         assert_eq!(matrix.determinant(), Some(ModInt::new(2)));
 
         let data = vec![
@@ -376,14 +631,13 @@ mod test {
                 ModInt::new(15),
             ],
         ];
-        let matrix: Matrix<ModInt> = data.try_into().unwrap();
+        let matrix: Matrix<ModInt> = Matrix::build(data).unwrap();
         let sub_matrix = matrix.sub_matrix(2, 3);
-        let expect_sub_matrix: Matrix<ModInt> = vec![
+        let expect_sub_matrix: Matrix<ModInt> = Matrix::build(vec![
             vec![ModInt::new(0), ModInt::new(1), ModInt::new(3)],
             vec![ModInt::new(4), ModInt::new(5), ModInt::new(7)],
             vec![ModInt::new(8), ModInt::new(9), ModInt::new(11)],
-        ]
-        .try_into()
+        ])
         .unwrap();
         assert_eq!(sub_matrix, expect_sub_matrix);
         assert_eq!(sub_matrix.determinant(), Some(ModInt::new(0)));
@@ -392,7 +646,65 @@ mod test {
             Matrix::row_vector(&vec![ModInt::new(1), ModInt::new(2), ModInt::new(3)]);
         let rhs: Matrix<ModInt> =
             Matrix::column_vector(&vec![ModInt::new(4), ModInt::new(5), ModInt::new(6)]);
-        let expect: Matrix<ModInt> = vec![vec![ModInt::new(32)]].try_into().unwrap();
+        let expect: Matrix<ModInt> = Matrix::build(vec![vec![ModInt::new(32)]]).unwrap();
         assert_eq!(lhs * rhs, Some(expect));
+    }
+
+    #[test]
+    fn test_column_divide() {
+        let m = Matrix::build(vec![
+            vec![0, 1, 2, 3],
+            vec![4, 5, 6, 7],
+            vec![8, 9, 10, 11],
+            vec![12, 13, 14, 15],
+        ])
+        .unwrap();
+        let (left, right) = m.pointer().column_divide(3);
+        let expect_left_matrix = Matrix::build(vec![
+            vec![0, 1, 2],
+            vec![4, 5, 6],
+            vec![8, 9, 10],
+            vec![12, 13, 14],
+        ])
+        .unwrap();
+        let expect_right_matrix =
+            Matrix::build(vec![vec![3], vec![7], vec![11], vec![15]]).unwrap();
+        assert_eq!(expect_left_matrix.pointer(), left);
+        assert_eq!(expect_right_matrix.pointer(), right);
+        let ex = left.extend(4, 4);
+        let expect_extend_matrix = Matrix::build(vec![
+            vec![0, 1, 2, 0],
+            vec![4, 5, 6, 0],
+            vec![8, 9, 10, 0],
+            vec![12, 13, 14, 0],
+        ])
+        .unwrap();
+        assert_eq!(expect_extend_matrix, ex);
+    }
+
+    #[test]
+    fn test_row_divide() {
+        let m = Matrix::build(vec![
+            vec![0, 1, 2, 3],
+            vec![4, 5, 6, 7],
+            vec![8, 9, 10, 11],
+            vec![12, 13, 14, 15],
+        ])
+        .unwrap();
+        let (upper, lower) = m.pointer().row_divide(3);
+        let expect_upper_matrix =
+            Matrix::build(vec![vec![0, 1, 2, 3], vec![4, 5, 6, 7], vec![8, 9, 10, 11]]).unwrap();
+        let expect_lower_matrix = Matrix::build(vec![vec![12, 13, 14, 15]]).unwrap();
+        assert_eq!(expect_upper_matrix.pointer(), upper);
+        assert_eq!(expect_lower_matrix.pointer(), lower);
+        let ex = upper.extend(4, 4);
+        let expect_extend_matrix = Matrix::build(vec![
+            vec![0, 1, 2, 3],
+            vec![4, 5, 6, 7],
+            vec![8, 9, 10, 11],
+            vec![0, 0, 0, 0],
+        ])
+        .unwrap();
+        assert_eq!(expect_extend_matrix, ex);
     }
 }
