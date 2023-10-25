@@ -116,9 +116,9 @@ mod io_debug_impl {
     }
 }
 
-#[snippet(name = "io-debug", doc_hidden)]
+#[snippet(name = "custom-assert", doc_hidden)]
 pub use custom_assertion_impl::ClosureAssertion;
-#[snippet(name = "io-debug")]
+#[snippet(name = "custom-assert")]
 mod custom_assertion_impl {
     use super::{Assertion, ReaderFromStr, ReaderTrait, WriterTrait};
     pub struct ClosureAssertion {

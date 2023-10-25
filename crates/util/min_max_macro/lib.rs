@@ -3,6 +3,7 @@
 use prelude::snippet;
 
 #[snippet(name = "min_max", doc_hidden)]
+#[rustfmt::skip]
 mod min_max_macro_impl {
     #[macro_export]
     macro_rules! min {
