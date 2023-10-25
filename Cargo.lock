@@ -908,6 +908,7 @@ version = "0.1.0"
 dependencies = [
  "algebra",
  "graph",
+ "min_max_macro",
  "prelude",
 ]
 
@@ -1675,6 +1676,17 @@ dependencies = [
  "io_util",
  "string_util",
  "suffix_array",
+]
+
+[[package]]
+name = "library_checker_solver_tree_diameter"
+version = "0.1.0"
+dependencies = [
+ "adjacency_list",
+ "dijkstra",
+ "io_debug",
+ "io_util",
+ "string_util",
 ]
 
 [[package]]
