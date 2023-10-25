@@ -321,31 +321,31 @@ mod matrix_impl {
         }
     }
 
+    /// # 行列同士の加算
+    /// 出力の行列のサイズは大きいほうに合わせられる
     impl<T: Add<Output = T> + Clone + Copy + Zero> Add<PointerMatrix<'_, T>> for PointerMatrix<'_, T> {
         type Output = Matrix<T>;
         fn add(self, rhs: PointerMatrix<T>) -> Self::Output {
-            let mut v =
-                vec![vec![T::zero(); max(self.width, rhs.width)]; max(self.height, rhs.height)];
-            for y in 0..max(self.height, rhs.height) {
-                for x in 0..max(self.width, rhs.width) {
-                    v[y][x] = self.get(y, x) + rhs.get(y, x);
-                }
-            }
-            Matrix::build(v).unwrap()
+            let (width, height) = (max(self.width, rhs.width), max(self.height, rhs.height));
+            Matrix::build(
+                (0..height)
+                    .map(|y| (0..width).map(|x| self.get(y, x) + rhs.get(y, x)).collect())
+                    .collect(),
+            )
+            .unwrap()
         }
     }
 
     impl<T: Sub<Output = T> + Clone + Copy + Zero> Sub<PointerMatrix<'_, T>> for PointerMatrix<'_, T> {
         type Output = Matrix<T>;
         fn sub(self, rhs: PointerMatrix<'_, T>) -> Self::Output {
-            let mut v =
-                vec![vec![T::zero(); max(self.width, rhs.width)]; max(self.height, rhs.height)];
-            for y in 0..self.height {
-                for x in 0..self.width {
-                    v[y][x] = self.get(y, x) - rhs.get(y, x);
-                }
-            }
-            Matrix::build(v).unwrap()
+            let (width, height) = (max(self.width, rhs.width), max(self.height, rhs.height));
+            Matrix::build(
+                (0..height)
+                    .map(|y| (0..width).map(|x| self.get(y, x) - rhs.get(y, x)).collect())
+                    .collect(),
+            )
+            .unwrap()
         }
     }
 
