@@ -775,14 +775,6 @@ dependencies = [
 ]
 
 [[package]]
-name = "complex_number"
-version = "0.1.0"
-dependencies = [
- "algebra",
- "prelude",
-]
-
-[[package]]
 name = "compress"
 version = "0.1.0"
 dependencies = [

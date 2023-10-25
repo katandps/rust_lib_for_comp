@@ -35,11 +35,17 @@ mod plane_float_impl {
     }
 
     impl Vector {
+        #[inline]
         pub fn new<X: Into<FValue>, Y: Into<FValue>>(x: X, y: Y) -> Vector {
             Vector {
                 x: x.into(),
                 y: y.into(),
             }
+        }
+        /// 極形式で指定して作る
+        #[inline]
+        pub fn polar(rho: f64, theta: f64) -> Self {
+            Self::new(rho * theta.cos(), rho * theta.sin())
         }
 
         /// # 偏角を求める($0.0 <= rad <= 2\pi$)
