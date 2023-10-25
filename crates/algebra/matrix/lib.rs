@@ -5,7 +5,7 @@ use algebra::*;
 use prelude::*;
 
 #[snippet(name = "matrix", doc_hidden)]
-pub use matrix_impl::{ColumnVector, Determinant, IdentityMatrix, Matrix, RowVector, ZeroMatrix};
+pub use matrix_impl::{ColumnVector, Determinant, Matrix, RowVector};
 #[snippet(name = "matrix", doc_hidden)]
 mod matrix_impl {
     use super::{
@@ -14,49 +14,63 @@ mod matrix_impl {
     };
 
     #[derive(Clone, Eq, PartialEq)]
-    pub struct Matrix<T>(Vec<Vec<T>>);
+    pub struct Matrix<T> {
+        src: Vec<Vec<T>>,
+        height: usize,
+        width: usize,
+    }
+    /// # 参照で構成された行列
+    /// 内容は不変
+    pub struct PointerMatrix<'a, T> {
+        src: &'a [Vec<T>],
+        height: usize,
+        width: usize,
+    }
+
+    impl<'a, T> PointerMatrix<'a, T> {
+        pub fn new(src: &'a [Vec<T>], height: usize, width: usize) -> Self {
+            Self { src, height, width }
+        }
+    }
+
     impl<T> std::convert::TryFrom<Vec<Vec<T>>> for Matrix<T> {
         type Error = &'static str;
         fn try_from(buf: Vec<Vec<T>>) -> std::result::Result<Self, Self::Error> {
             if (1..buf.len()).any(|i| buf[0].len() != buf[i].len()) {
                 Err("size is invalid")
             } else {
-                Ok(Self(buf))
+                let (height, width) = (buf.len(), buf[0].len());
+                Ok(Self {
+                    src: buf,
+                    height,
+                    width,
+                })
             }
         }
     }
 
     impl<T> Matrix<T> {
-        /// # 行列のサイズ
-        /// (rows, columns)
-        pub fn size(&self) -> (usize, usize) {
-            if self.0.is_empty() {
-                (0, 0)
-            } else {
-                (self.0.len(), self.0[0].len())
+        pub fn pointer(&self) -> PointerMatrix<'_, T> {
+            PointerMatrix::new(&self.src, self.height, self.width)
+        }
+    }
+
+    impl<T: Zero + Clone> Matrix<T> {
+        /// # 零行列
+        pub fn zero_matrix(cols: usize, rows: usize) -> Matrix<T> {
+            Matrix {
+                src: vec![vec![T::zero(); cols]; rows],
+                height: rows,
+                width: cols,
             }
         }
     }
 
-    /// # 零行列
-    pub trait ZeroMatrix {
-        fn zero_matrix(cols: usize, rows: usize) -> Self;
-    }
-    impl<T: Clone + Zero> ZeroMatrix for Matrix<T> {
-        fn zero_matrix(cols: usize, rows: usize) -> Self {
-            Self(vec![vec![T::zero(); cols]; rows])
-        }
-    }
-
-    /// # 単位行列
-    /// N行N列の単位行列を生成する
-    pub trait IdentityMatrix {
-        fn identity_matrix(n: usize) -> Self;
-    }
-    impl<T: Clone + Zero + One> IdentityMatrix for Matrix<T> {
-        fn identity_matrix(n: usize) -> Self {
+    impl<T: Zero + One + Clone> Matrix<T> {
+        /// # 単位行列
+        pub fn identity_matrix(n: usize) -> Self {
             let mut ret = Self::zero_matrix(n, n);
-            (0..n).for_each(|i| ret.0[i][i] = T::one());
+            (0..n).for_each(|i| ret.src[i][i] = T::one());
             ret
         }
     }
@@ -68,7 +82,11 @@ mod matrix_impl {
     impl<T: Clone> RowVector<T> for Matrix<T> {
         /// vをもとに行行列を生成する
         fn row_vector(v: &[T]) -> Self {
-            Self(vec![v.to_vec()])
+            Matrix {
+                src: vec![v.to_vec()],
+                height: 1,
+                width: v.len(),
+            }
         }
     }
     /// # 列行列
@@ -77,7 +95,11 @@ mod matrix_impl {
     }
     impl<T: Clone> ColumnVector<T> for Matrix<T> {
         fn column_vector(v: &[T]) -> Self {
-            Self(v.iter().map(|cell| vec![cell.clone()]).collect())
+            Matrix {
+                src: v.iter().map(|cell| vec![cell.clone()]).collect(),
+                height: v.len(),
+                width: 1,
+            }
         }
     }
 
@@ -100,18 +122,17 @@ mod matrix_impl {
         > Determinant<T> for Matrix<T>
     {
         fn determinant(&self) -> Option<T> {
-            let (rows, cols) = self.size();
-            if rows != cols {
+            if self.height != self.width {
                 return None;
             }
-            if rows == 0 {
+            if self.height == 0 {
                 return Some(T::zero());
             }
 
             let mut res = T::one();
-            let mut buf = self.0.clone();
-            for i in 0..rows {
-                match (i..rows).find(|&ni| buf[ni][i] != T::zero()) {
+            let mut buf = self.src.clone();
+            for i in 0..self.height {
+                match (i..self.height).find(|&ni| buf[ni][i] != T::zero()) {
                     Some(ni) => {
                         if i != ni {
                             buf.swap(i, ni);
@@ -122,10 +143,10 @@ mod matrix_impl {
                 }
                 res *= buf[i][i].clone();
                 let diag = T::one() / buf[i][i].clone();
-                (i..rows).for_each(|j| buf[i][j] *= diag.clone());
-                for ni in (0..rows).filter(|&ni| ni != i) {
+                (i..self.height).for_each(|j| buf[i][j] *= diag.clone());
+                for ni in (0..self.height).filter(|&ni| ni != i) {
                     let c = buf[ni][i].clone();
-                    for j in i..rows {
+                    for j in i..self.height {
                         let d = c.clone() * buf[i][j].clone();
                         buf[ni][j] -= d;
                     }
@@ -138,15 +159,14 @@ mod matrix_impl {
 
     impl<T: Clone + Zero + One + Mul<Output = T> + Add<Output = T>> Pow for Matrix<T> {
         fn pow(mut self, mut e: i64) -> Self {
-            let (n, m) = self.size();
-            assert_eq!(n, m);
-            let mut result = Self::identity_matrix(n);
+            assert_eq!(self.height, self.width);
+            let mut result = Self::identity_matrix(self.height);
             while e > 0 {
                 if e & 1 == 1 {
-                    result = (result * self.clone()).unwrap();
+                    result = (result * self.pointer()).unwrap();
                 }
                 e >>= 1;
-                self = (self.clone() * self).unwrap();
+                self = (self.pointer() * self.pointer()).unwrap();
             }
             result
         }
@@ -156,25 +176,28 @@ mod matrix_impl {
         /// y行目、x列目を除いた 余因子行列を計算する
         /// x, y は 0-indexed
         pub fn sub_matrix(&self, x: usize, y: usize) -> Self {
-            let (rows, cols) = self.size();
-            let mut buf = vec![vec![T::default(); cols - 1]; rows - 1];
-            for yi in (0..rows).filter(|&yi| yi != y) {
-                for xi in (0..cols).filter(|&xi| xi != x) {
+            let mut buf = vec![vec![T::default(); self.width - 1]; self.height - 1];
+            for yi in (0..self.width).filter(|&yi| yi != y) {
+                for xi in (0..self.height).filter(|&xi| xi != x) {
                     buf[yi - if yi < y { 0 } else { 1 }][xi - if xi < x { 0 } else { 1 }] =
-                        self.0[yi][xi].clone();
+                        self.src[yi][xi].clone();
                 }
             }
-            Matrix(buf)
+            Matrix {
+                src: buf,
+                height: self.height - 1,
+                width: self.width - 1,
+            }
         }
     }
 
     impl<T: AddAssign + Clone> Add<Matrix<T>> for Matrix<T> {
         type Output = Self;
         fn add(mut self, rhs: Self) -> Self {
-            assert_eq!(self.size(), rhs.size());
-            for i in 0..self.0.len() {
-                for j in 0..self.0[0].len() {
-                    self.0[i][j] += rhs.0[i][j].clone()
+            assert_eq!(self.height, rhs.width);
+            for y in 0..self.height {
+                for x in 0..self.width {
+                    self.src[y][x] += rhs.src[y][x].clone()
                 }
             }
             self
@@ -182,7 +205,7 @@ mod matrix_impl {
     }
     impl<T: AddAssign + Clone> AddAssign<T> for Matrix<T> {
         fn add_assign(&mut self, rhs: T) {
-            self.0
+            self.src
                 .iter_mut()
                 .for_each(|row| row.iter_mut().for_each(|cell| *cell += rhs.clone()))
         }
@@ -191,9 +214,9 @@ mod matrix_impl {
     impl<T: Neg<Output = T> + Clone> Neg for Matrix<T> {
         type Output = Self;
         fn neg(mut self) -> Self {
-            for r in 0..self.size().0 {
-                for c in 0..self.size().1 {
-                    self.0[r][c] = -self.0[r][c].clone()
+            for r in 0..self.height {
+                for c in 0..self.width {
+                    self.src[r][c] = -self.src[r][c].clone()
                 }
             }
             self
@@ -203,14 +226,14 @@ mod matrix_impl {
     impl<T: Neg<Output = T> + AddAssign + Clone> Sub<Matrix<T>> for Matrix<T> {
         type Output = Self;
         fn sub(self, rhs: Self) -> Self {
-            assert_eq!(self.size(), rhs.size());
+            assert_eq!(self.height, rhs.width);
             self + (-rhs)
         }
     }
 
     impl<T: MulAssign<i64>> MulAssign<i64> for Matrix<T> {
         fn mul_assign(&mut self, rhs: i64) {
-            self.0
+            self.src
                 .iter_mut()
                 .for_each(|row| row.iter_mut().for_each(|cell| *cell *= rhs))
         }
@@ -223,22 +246,66 @@ mod matrix_impl {
         }
     }
 
-    impl<T: Mul<Output = T> + Add<Output = T> + Zero + Clone> Mul<Matrix<T>> for Matrix<T> {
-        type Output = Option<Self>;
-        fn mul(self, rhs: Self) -> Option<Self> {
-            let ((self_row, self_col), (rhs_row, rhs_col)) = (self.size(), rhs.size());
+    impl<'a, T: Mul<Output = T> + Add<Output = T> + Zero + Clone> PointerMatrix<'a, T> {
+        /// # 愚直積
+        ///
+        /// ## 計算量
+        /// $O(N^3)$
+        fn naive_mul(self, rhs: Self) -> Option<Matrix<T>> {
+            let (self_row, self_col, rhs_row, rhs_col) =
+                (self.height, self.width, rhs.height, rhs.width);
             if self_col != rhs_row {
                 return None;
             }
-            let mut ret = Self::zero_matrix(rhs_col, self_row);
-            ret.0.iter_mut().enumerate().for_each(|(i, bufi)| {
+            let mut ret = Matrix::zero_matrix(rhs_col, self_row);
+            ret.src.iter_mut().enumerate().for_each(|(i, bufi)| {
                 bufi.iter_mut().enumerate().for_each(|(j, bufij)| {
                     *bufij = (0..self_col)
-                        .map(|k| self.0[i][k].clone() * rhs.0[k][j].clone())
+                        .map(|k| self.src[i][k].clone() * rhs.src[k][j].clone())
                         .fold(T::zero(), |x, a| x.add(a));
                 });
             });
             Some(ret)
+        }
+
+        /// # シュトラッセンのアルゴリズム
+        ///
+        /// ## see
+        /// https://en.wikipedia.org/wiki/Strassen_algorithm
+        #[allow(unused)]
+        fn strassen_mul(self, rhs: Self) -> Option<Matrix<T>> {
+            let (self_row, self_col, rhs_row, rhs_col) =
+                (self.height, self.width, rhs.height, rhs.width);
+            if self_row != self_col || rhs_row != rhs_col {
+                return self.naive_mul(rhs);
+            }
+            if self_col != rhs_row {
+                return None;
+            }
+            unimplemented!()
+        }
+    }
+
+    impl<T: Mul<Output = T> + Add<Output = T> + Zero + Clone> Mul<PointerMatrix<'_, T>>
+        for PointerMatrix<'_, T>
+    {
+        type Output = Option<Matrix<T>>;
+        fn mul(self, rhs: PointerMatrix<'_, T>) -> Self::Output {
+            self.naive_mul(rhs)
+        }
+    }
+
+    impl<T: Mul<Output = T> + Add<Output = T> + Zero + Clone> Mul<PointerMatrix<'_, T>> for Matrix<T> {
+        type Output = Option<Matrix<T>>;
+        fn mul(self, rhs: PointerMatrix<'_, T>) -> Self::Output {
+            self.pointer() * rhs
+        }
+    }
+
+    impl<T: Mul<Output = T> + Add<Output = T> + Zero + Clone> Mul<Matrix<T>> for Matrix<T> {
+        type Output = Option<Matrix<T>>;
+        fn mul(self, rhs: Self) -> Self::Output {
+            self.pointer() * rhs.pointer()
         }
     }
 
@@ -253,7 +320,7 @@ mod matrix_impl {
             write!(
                 f,
                 "{}",
-                self.0
+                self.src
                     .iter()
                     .map(|row| row
                         .iter()
