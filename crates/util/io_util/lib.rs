@@ -155,7 +155,7 @@ mod io_impl {
                 let mut l = String::new();
                 reader.read_line(&mut l).unwrap();
                 self.buf
-                    .append(&mut l.split_whitespace().map(ToString::to_string).collect());
+                    .append(&mut l.split_ascii_whitespace().map(ToString::to_string).collect());
             }
             self.buf.pop_front()
         }
