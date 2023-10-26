@@ -11,6 +11,8 @@ pub use dynamic_li_chao_tree_impl::DynamicLiChaoTree;
 
 #[snippet(name = "dynamic-li-chao-tree", doc_hidden)]
 mod dynamic_li_chao_tree_impl {
+    use std::hint::unreachable_unchecked;
+
     use super::{chmin, min, swap, Debug, Ordering, ToBounds, VecDeque};
 
     const LEFT_LIMIT: i64 = -1_000_000_010;
@@ -100,7 +102,7 @@ mod dynamic_li_chao_tree_impl {
                     }
                 }
                 // 上の分岐で傾きが同じものはすでに除かれるので、ここには来ない
-                Ordering::Equal => unreachable!(),
+                Ordering::Equal => unsafe { unreachable_unchecked() },
             }
         }
 
