@@ -206,10 +206,6 @@ mod dynamic_li_chao_tree_impl {
         r: i64,
         // 子のノード番号
         children: [usize; 2],
-        // // 左の子のノード番号
-        // l_child: Option<usize>,
-        // // 右の子のノード番号
-        // r_child: Option<usize>,
     }
 
     impl Default for Node {
@@ -218,8 +214,7 @@ mod dynamic_li_chao_tree_impl {
                 l: LEFT_LIMIT,
                 r: RIGHT_LIMIT,
                 line: Line::default(),
-                children: [!0; 2], // l_child: None,
-                                   // r_child: None,
+                children: [!0; 2],
             }
         }
     }
