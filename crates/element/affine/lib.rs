@@ -22,6 +22,11 @@ mod affine_impl {
             Affine { a, b }
         }
     }
+    impl<T: Clone + Mul<Output = T> + Add<Output = T>> Affine<T> {
+        pub fn apply(&self, x: T) -> T {
+            self.a.clone() * x + self.b.clone()
+        }
+    }
 
     impl<T: Zero + One> Default for Affine<T> {
         fn default() -> Self {
@@ -35,6 +40,15 @@ mod affine_impl {
         fn one() -> Self {
             Affine {
                 a: T::one(),
+                b: T::zero(),
+            }
+        }
+    }
+
+    impl<T: Zero> Zero for Affine<T> {
+        fn zero() -> Self {
+            Affine {
+                a: T::zero(),
                 b: T::zero(),
             }
         }
@@ -68,7 +82,7 @@ mod affine_impl {
     {
         type V = T;
         fn apply(&self, f: &Self::M, value: &Self::V) -> Self::V {
-            value.clone() * f.a.clone() + f.b.clone()
+            f.apply(value.clone())
         }
     }
 }

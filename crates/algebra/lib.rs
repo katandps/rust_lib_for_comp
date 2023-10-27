@@ -23,6 +23,9 @@ mod algebra_traits {
         type M: Clone + PartialEq + Debug;
         /// マグマを構成する演算$op$
         fn op(x: &Self::M, y: &Self::M) -> Self::M;
+        fn op_rev(x: &Self::M, y: &Self::M) -> Self::M {
+            Self::op(y, x)
+        }
     }
 
     /// # 結合則

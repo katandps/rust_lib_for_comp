@@ -202,8 +202,8 @@ members = [
     'verifications/library_checker/tree_diameter',
     'verifications/library_checker/unionfind',
     'verifications/library_checker/vertex_add_path_sum',
-    'verifications/library_checker/vertex_add_path_sum2',
     'verifications/library_checker/vertex_add_subtree_sum',
+    'verifications/library_checker/vertex_set_path_composite',
     'verifications/library_checker/z_algorithm',
     'verifications/yukicoder/bernoulli_bernoulli',
 ]

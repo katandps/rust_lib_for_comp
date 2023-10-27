@@ -1123,7 +1123,6 @@ dependencies = [
  "addition",
  "adjacency_list",
  "algebra",
- "binary_indexed_tree",
  "graph",
  "io_util",
  "prelude",
@@ -1707,23 +1706,9 @@ version = "0.1.0"
 dependencies = [
  "addition",
  "adjacency_list",
- "binary_indexed_tree",
  "heavy_light_decomposition",
  "io_debug",
  "io_util",
- "string_util",
-]
-
-[[package]]
-name = "library_checker_vertex_add_path_sum2"
-version = "0.1.0"
-dependencies = [
- "addition",
- "adjacency_list",
- "heavy_light_decomposition",
- "io_debug",
- "io_util",
- "segment_tree",
  "string_util",
 ]
 
@@ -1737,6 +1722,19 @@ dependencies = [
  "heavy_light_decomposition",
  "io_debug",
  "io_util",
+ "string_util",
+]
+
+[[package]]
+name = "library_checker_vertex_set_path_composite"
+version = "0.1.0"
+dependencies = [
+ "adjacency_list",
+ "affine",
+ "heavy_light_decomposition",
+ "io_debug",
+ "io_util",
+ "segment_tree",
  "string_util",
 ]
 

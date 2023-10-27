@@ -7,15 +7,18 @@ use algebra::*;
 use graph::GraphTrait;
 use prelude::*;
 use range_traits::*;
+use segment_tree::SegmentTree;
 
 #[snippet(name = "heavy-light-decomposition", doc_hidden)]
 pub use heavy_light_decomposition_impl::HLDecomposition;
 #[snippet(name = "heavy-light-decomposition", doc_hidden)]
 mod heavy_light_decomposition_impl {
-    use super::{swap, GraphTrait, Magma, PointUpdate, Range, RangeProduct, ToBounds};
+    use super::{
+        swap, GraphTrait, Monoid, PointUpdate, Range, RangeProduct, SegmentTree, ToBounds,
+    };
 
     #[derive(Clone, Debug)]
-    pub struct HLDecomposition<D> {
+    pub struct HLDecomposition<M: Monoid> {
         /// 木の頂点数
         n: usize,
         /// 木の根
@@ -37,16 +40,16 @@ mod heavy_light_decomposition_impl {
         depth: Vec<usize>,
         /// 辺コストを頂点に移しているか
         edge: bool,
-        upward: D,
+        /// 累積データ構造
+        upward: SegmentTree<M>,
+        downward: SegmentTree<M>,
     }
 
-    impl<D> HLDecomposition<D> {
+    impl<M: Monoid> HLDecomposition<M> {
         /// # 頂点に重さが設定されている木を初期化する
-        pub fn build_with_weighted_nodes<G, W>(g: &G, root: usize, weights: &[W]) -> Self
+        pub fn build_with_weighted_nodes<G>(g: &G, root: usize, weights: &[M::M]) -> Self
         where
             G: GraphTrait,
-            D: From<Vec<W>>,
-            W: Clone,
         {
             let mut this = Self {
                 n: g.size(),
@@ -59,7 +62,8 @@ mod heavy_light_decomposition_impl {
                 parent: vec![root; g.size()],
                 depth: vec![0; g.size()],
                 edge: false,
-                upward: D::from(Vec::new()),
+                upward: SegmentTree::from(Vec::new()),
+                downward: SegmentTree::from(Vec::new()),
             };
             let max_childs = this.dfs_size(g);
             this.dfs_hld(g, max_childs);
@@ -68,15 +72,15 @@ mod heavy_light_decomposition_impl {
                 .iter()
                 .map(|i| weights[*i].clone())
                 .collect::<Vec<_>>();
-            this.upward = D::from(src);
+            this.upward = SegmentTree::from(src.clone());
+            this.downward = SegmentTree::from(src);
             this
         }
 
         /// # 辺に重さが設定されている木を初期化する
-        pub fn build_with_weighted_edges<G, W>(g: &G, root: usize) -> Self
+        pub fn build_with_weighted_edges<G>(g: &G, root: usize) -> Self
         where
-            G: GraphTrait<Weight = W>,
-            D: From<Vec<W>>,
+            G: GraphTrait<Weight = M::M>,
         {
             let mut this = Self {
                 n: g.size(),
@@ -89,7 +93,8 @@ mod heavy_light_decomposition_impl {
                 parent: vec![root; g.size()],
                 depth: vec![0; g.size()],
                 edge: true,
-                upward: D::from(Vec::new()),
+                upward: SegmentTree::from(Vec::new()),
+                downward: SegmentTree::from(Vec::new()),
             };
             let max_childs = this.dfs_size(g);
             this.dfs_hld(g, max_childs);
@@ -97,10 +102,7 @@ mod heavy_light_decomposition_impl {
         }
 
         /// # 辺に設定された重みをweightに変更する
-        pub fn update_edge<W: Clone>(&mut self, u: usize, v: usize, weight: W)
-        where
-            D: PointUpdate<W>,
-        {
+        pub fn update_edge(&mut self, u: usize, v: usize, weight: M::M) {
             assert!(self.edge);
             for r in self.path_to_ranges(u, v) {
                 let (l, r) = r.lr();
@@ -111,18 +113,12 @@ mod heavy_light_decomposition_impl {
         }
 
         /// # 頂点に設定された重みをweightに変更する
-        pub fn update_at<W: Clone>(&mut self, p: usize, weight: W)
-        where
-            D: PointUpdate<W>,
-        {
+        pub fn update_at(&mut self, p: usize, weight: M::M) {
             self.upward.update_at(self.in_time[p], weight);
         }
 
         /// # Pathの値の総和
-        pub fn prod_path(&self, u: usize, v: usize) -> <D::Magma as Magma>::M
-        where
-            D: RangeProduct<usize>,
-        {
+        pub fn prod_path(&self, u: usize, v: usize) -> M::M {
             let vec = self
                 .path_to_ranges(u, v)
                 .into_iter()
@@ -131,16 +127,13 @@ mod heavy_light_decomposition_impl {
             assert!(!vec.is_empty());
             let mut ret = vec[0].clone();
             for item in vec.iter().skip(1) {
-                ret = D::Magma::op(&ret, item)
+                ret = M::op(&ret, item)
             }
             ret
         }
 
         /// # rを根とする部分木の値の総和
-        pub fn prod_subtree(&self, r: usize) -> <D::Magma as Magma>::M
-        where
-            D: RangeProduct<usize>,
-        {
+        pub fn prod_subtree(&self, r: usize) -> M::M {
             self.upward.product(self.subtree_to_range(r))
         }
 
@@ -236,6 +229,7 @@ mod heavy_light_decomposition_impl {
         }
 
         /// # 頂点uから頂点vへのパスを区間の集合に変換する
+        /// (上り、 下り)
         pub fn path_to_ranges(&self, mut u: usize, mut v: usize) -> Vec<Range<usize>> {
             let mut ret = Vec::new();
             while self.head[u] != self.head[v] {
@@ -266,8 +260,6 @@ mod test {
     use super::*;
     use addition::Addition;
     use adjacency_list::Graph;
-    use binary_indexed_tree::BinaryIndexedTree;
-    use segment_tree::SegmentTree;
     use sequence::Sequence;
 
     #[test]
@@ -283,9 +275,7 @@ mod test {
         graph.add_edge(2, 3, 1);
         graph.add_edge(2, 4, 1);
 
-        let hld = HLDecomposition::<BinaryIndexedTree<Addition<i64>>>::build_with_weighted_edges(
-            &graph, 0,
-        );
+        let hld = HLDecomposition::<Addition<i64>>::build_with_weighted_edges(&graph, 0);
 
         {
             assert_eq!(0, hld.la(0, 0));
@@ -340,9 +330,7 @@ mod test {
         graph.add_edge(4, 6, 1);
         graph.add_edge(5, 6, 1);
 
-        let hld = HLDecomposition::<BinaryIndexedTree<Addition<i64>>>::build_with_weighted_edges(
-            &graph, 0,
-        );
+        let hld = HLDecomposition::<Addition<i64>>::build_with_weighted_edges(&graph, 0);
 
         dbg!(hld.path_to_ranges(0, 5));
         dbg!(hld.path_to_ranges(1, 3));
@@ -365,12 +353,11 @@ mod test {
         graph.add_edge(2, 3, ());
         graph.add_edge(2, 4, ());
 
-        let hld =
-            HLDecomposition::<SegmentTree<Addition<Sequence<i32>>>>::build_with_weighted_nodes(
-                &graph,
-                0,
-                &(0..5).map(|i| vec![i]).map(Sequence).collect::<Vec<_>>()[..],
-            );
+        let hld = HLDecomposition::<Addition<Sequence<i32>>>::build_with_weighted_nodes(
+            &graph,
+            0,
+            &(0..5).map(|i| vec![i]).map(Sequence).collect::<Vec<_>>()[..],
+        );
         dbg!(hld.prod_path(0, 1));
         dbg!(hld.prod_path(1, 2));
         dbg!(hld.prod_path(4, 2));
@@ -387,12 +374,11 @@ mod test {
         graph.add_edge(1, 2, ());
         graph.add_edge(2, 3, ());
         graph.add_edge(1, 4, ());
-        let hld =
-            HLDecomposition::<SegmentTree<Addition<Sequence<i32>>>>::build_with_weighted_nodes(
-                &graph,
-                0,
-                &(0..5).map(|i| vec![i]).map(Sequence).collect::<Vec<_>>()[..],
-            );
+        let hld = HLDecomposition::<Addition<Sequence<i32>>>::build_with_weighted_nodes(
+            &graph,
+            0,
+            &(0..5).map(|i| vec![i]).map(Sequence).collect::<Vec<_>>()[..],
+        );
         dbg!(hld.prod_path(0, 3));
         dbg!(hld.prod_path(2, 4));
         dbg!(hld.prod_path(1, 3));

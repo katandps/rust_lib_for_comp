@@ -7,7 +7,6 @@ fn main() {
 }
 use addition::Addition;
 use adjacency_list::Graph;
-use binary_indexed_tree::BinaryIndexedTree;
 use heavy_light_decomposition::HLDecomposition;
 use io_util::*;
 use string_util::*;
@@ -19,9 +18,7 @@ pub fn solve<IO: ReaderTrait + WriterTrait>(mut io: IO) {
     for (u, v) in io.vec2::<usize, usize>(n - 1) {
         graph.add_edge(u, v, ());
     }
-    let mut hld = HLDecomposition::<BinaryIndexedTree<Addition<i64>>>::build_with_weighted_nodes(
-        &graph, 0, &a,
-    );
+    let mut hld = HLDecomposition::<Addition<i64>>::build_with_weighted_nodes(&graph, 0, &a);
     for _ in 0..q {
         if 0 == io.v() {
             let (p, x) = io.v2::<usize, i64>();

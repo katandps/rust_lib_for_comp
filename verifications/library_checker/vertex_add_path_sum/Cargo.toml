@@ -11,7 +11,6 @@ string_util = { path = "../../../crates/util/string_util" }
 addition = { path = "../../../crates/algebra/binary_operation/addition" }
 adjacency_list = { path = "../../../crates/graph/adjacency_list" }
 heavy_light_decomposition = { path = "../../../crates/graph/tree/heavy_light_decomposition" }
-binary_indexed_tree = { path = "../../../crates/data_structure/binary_indexed_tree" }
 
 [[bin]]
 name = "library_checker_vertex_add_path_sum"

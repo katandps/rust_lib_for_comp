@@ -1,5 +1,5 @@
 [package]
-name = "library_checker_vertex_add_path_sum2"
+name = "library_checker_vertex_set_path_composite"
 version = "0.1.0"
 edition = "2018"
 
@@ -8,12 +8,11 @@ io_util = { path = "../../../crates/util/io_util" }
 io_debug = { path = "../../../crates/util/io_debug" }
 string_util = { path = "../../../crates/util/string_util" }
 
-addition = { path = "../../../crates/algebra/binary_operation/addition" }
 adjacency_list = { path = "../../../crates/graph/adjacency_list" }
 heavy_light_decomposition = { path = "../../../crates/graph/tree/heavy_light_decomposition" }
 segment_tree = { path = "../../../crates/data_structure/segment_tree" }
-
+affine = { path = "../../../crates/element/affine" }
 
 [[bin]]
-name = "library_checker_vertex_add_path_sum2"
+name = "library_checker_vertex_set_path_composite"
 path = "main.rs"
