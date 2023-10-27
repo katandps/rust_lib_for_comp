@@ -361,7 +361,7 @@ mod test {
         graph.add_edge(1, 6, ());
         graph.add_edge(3, 7, ());
 
-        let hld = HLDecomposition::<Addition<Sequence<usize>>>::build(
+        let mut hld = HLDecomposition::<Addition<Sequence<usize>>>::build(
             &graph,
             0,
             &(0..n).map(|i| Sequence::new(i)).collect::<Vec<_>>()[..],
@@ -385,6 +385,13 @@ mod test {
         assert_eq!(Sequence(vec![5, 4, 2, 3, 7]), hld.prod_path(5, 7));
         assert_eq!(Sequence(vec![7, 3, 2, 4, 5]), hld.prod_path(7, 5));
 
+        hld.update_at(0, Sequence::new(100));
+        assert_eq!(Sequence(vec![7, 3, 2, 100, 1, 6]), hld.prod_path(7, 6));
+        assert_eq!(Sequence(vec![6, 1, 100, 2, 3, 7]), hld.prod_path(6, 7));
+
+        hld.update_at(7, Sequence::new(700));
+        assert_eq!(Sequence(vec![700, 3, 2, 100, 1, 6]), hld.prod_path(7, 6));
+        assert_eq!(Sequence(vec![6, 1, 100, 2, 3, 700]), hld.prod_path(6, 7));
         //
         // 0 - 1 - 2 - 3
         //     |
