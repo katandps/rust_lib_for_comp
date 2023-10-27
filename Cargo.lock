@@ -1472,6 +1472,19 @@ dependencies = [
 ]
 
 [[package]]
+name = "library_checker_solver_point_set_range_composite"
+version = "0.1.0"
+dependencies = [
+ "affine",
+ "io_debug",
+ "io_util",
+ "mod_int",
+ "range_traits",
+ "segment_tree",
+ "string_util",
+]
+
+[[package]]
 name = "library_checker_solver_predecessor_problem_binary_trie"
 version = "0.1.0"
 dependencies = [
