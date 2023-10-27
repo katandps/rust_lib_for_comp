@@ -13,12 +13,10 @@ use segment_tree::SegmentTree;
 pub use heavy_light_decomposition_impl::HLDecomposition;
 #[snippet(name = "heavy-light-decomposition", doc_hidden)]
 mod heavy_light_decomposition_impl {
-    use super::{
-        swap, GraphTrait, Monoid, PointUpdate, Range, RangeProduct, SegmentTree, ToBounds,
-    };
+    use super::{swap, GraphTrait, Monoid, PointUpdate, Range, RangeProduct, SegmentTree};
 
     #[derive(Clone, Debug)]
-    pub struct HLDecomposition<M: Monoid> {
+    pub struct HLDecomposition<M: Monoid, const WEIGHTED_EDGE: bool = false> {
         /// 木の頂点数
         n: usize,
         /// 木の根
@@ -38,19 +36,14 @@ mod heavy_light_decomposition_impl {
         parent: Vec<usize>,
         /// 根から頂点までの距離
         depth: Vec<usize>,
-        /// 辺コストを頂点に移しているか
-        edge: bool,
         /// 累積データ構造
         upward: SegmentTree<M>,
-        downward: SegmentTree<M>,
+        downward: SegmentTree<M, true>,
     }
 
-    impl<M: Monoid> HLDecomposition<M> {
+    impl<M: Monoid, const WEIGHTED_EDGE: bool> HLDecomposition<M, WEIGHTED_EDGE> {
         /// # 頂点に重さが設定されている木を初期化する
-        pub fn build_with_weighted_nodes<G>(g: &G, root: usize, weights: &[M::M]) -> Self
-        where
-            G: GraphTrait,
-        {
+        pub fn build<G: GraphTrait>(g: &G, root: usize, weights: &[M::M]) -> Self {
             let mut this = Self {
                 n: g.size(),
                 root,
@@ -61,19 +54,22 @@ mod heavy_light_decomposition_impl {
                 head: vec![0; g.size()],
                 parent: vec![root; g.size()],
                 depth: vec![0; g.size()],
-                edge: false,
                 upward: SegmentTree::from(Vec::new()),
                 downward: SegmentTree::from(Vec::new()),
             };
             let max_childs = this.dfs_size(g);
             this.dfs_hld(g, max_childs);
-            let src = this
-                .rev
-                .iter()
-                .map(|i| weights[*i].clone())
-                .collect::<Vec<_>>();
-            this.upward = SegmentTree::from(src.clone());
-            this.downward = SegmentTree::from(src);
+            if !WEIGHTED_EDGE {
+                let src = this
+                    .rev
+                    .iter()
+                    .map(|i| weights[*i].clone())
+                    .collect::<Vec<_>>();
+                this.upward = SegmentTree::from(src.clone());
+                this.downward = SegmentTree::from(src);
+            } else {
+                // todo 辺に重みがある場合
+            }
             this
         }
 
@@ -92,7 +88,6 @@ mod heavy_light_decomposition_impl {
                 head: vec![0; g.size()],
                 parent: vec![root; g.size()],
                 depth: vec![0; g.size()],
-                edge: true,
                 upward: SegmentTree::from(Vec::new()),
                 downward: SegmentTree::from(Vec::new()),
             };
@@ -103,33 +98,63 @@ mod heavy_light_decomposition_impl {
 
         /// # 辺に設定された重みをweightに変更する
         pub fn update_edge(&mut self, u: usize, v: usize, weight: M::M) {
-            assert!(self.edge);
-            for r in self.path_to_ranges(u, v) {
-                let (l, r) = r.lr();
-                if r > l {
-                    self.upward.update_at(l, weight.clone());
-                }
-            }
+            assert!(WEIGHTED_EDGE);
+            let p = std::cmp::min(u, v);
+
+            self.update_at(p, weight);
+            unimplemented!();
         }
 
         /// # 頂点に設定された重みをweightに変更する
         pub fn update_at(&mut self, p: usize, weight: M::M) {
-            self.upward.update_at(self.in_time[p], weight);
+            self.upward.update_at(self.in_time[p], weight.clone());
+            self.downward.update_at(self.in_time[p], weight);
         }
 
         /// # Pathの値の総和
-        pub fn prod_path(&self, u: usize, v: usize) -> M::M {
-            let vec = self
-                .path_to_ranges(u, v)
-                .into_iter()
-                .map(|r| self.upward.product(r))
-                .collect::<Vec<_>>();
-            assert!(!vec.is_empty());
-            let mut ret = vec[0].clone();
-            for item in vec.iter().skip(1) {
-                ret = M::op(&ret, item)
+        pub fn prod_path(&self, mut u: usize, mut v: usize) -> M::M {
+            let mut swapping = false;
+            // front:u側 back:v側
+            let (mut front, mut back) = (M::unit(), M::unit());
+            while self.head[u] != self.head[v] {
+                if self.in_time[self.head[u]] > self.in_time[self.head[v]] {
+                    swap(&mut u, &mut v);
+                    // swap(&mut front, &mut back);
+                    swapping ^= true;
+                }
+                // v側を一つ上の列にシフトする
+                if swapping {
+                    back = M::op(
+                        &back,
+                        &self
+                            .downward
+                            .product(self.in_time[self.head[v]]..self.in_time[v] + 1),
+                    );
+                } else {
+                    front = M::op(
+                        &front,
+                        &self
+                            .upward
+                            .product(self.in_time[self.head[v]]..self.in_time[v] + 1),
+                    );
+                }
+                v = self.parent[self.head[v]];
             }
-            ret
+            if self.in_time[u] > self.in_time[v] {
+                swap(&mut u, &mut v);
+                swapping ^= true;
+            }
+
+            let (l, r) = (
+                self.in_time[u] + usize::from(WEIGHTED_EDGE),
+                self.in_time[v] + 1,
+            );
+            match (swapping, l < r) {
+                (false, true) => M::op(&back, &M::op(&self.upward.product(l..r), &front)),
+                (false, false) => M::op(&back, &front),
+                (true, true) => M::op(&back, &M::op(&self.downward.product(l..r), &front)),
+                (true, false) => M::op(&back, &front),
+            }
         }
 
         /// # rを根とする部分木の値の総和
@@ -228,26 +253,6 @@ mod heavy_light_decomposition_impl {
             self.depth[u] + self.depth[v] - 2 * self.depth[self.lca(u, v)]
         }
 
-        /// # 頂点uから頂点vへのパスを区間の集合に変換する
-        /// (上り、 下り)
-        pub fn path_to_ranges(&self, mut u: usize, mut v: usize) -> Vec<Range<usize>> {
-            let mut ret = Vec::new();
-            while self.head[u] != self.head[v] {
-                if self.in_time[self.head[u]] > self.in_time[self.head[v]] {
-                    swap(&mut u, &mut v);
-                }
-                ret.push(self.in_time[self.head[v]]..self.in_time[v] + 1);
-                v = self.parent[self.head[v]];
-            }
-            if self.in_time[u] > self.in_time[v] {
-                swap(&mut u, &mut v)
-            }
-            if self.in_time[u] + usize::from(self.edge) < self.in_time[v] + 1 {
-                ret.push(self.in_time[u] + usize::from(self.edge)..self.in_time[v] + 1);
-            }
-            ret
-        }
-
         /// # vを根とする部分木を区間に変換する
         pub fn subtree_to_range(&self, v: usize) -> Range<usize> {
             self.in_time[v]..self.out_time[v]
@@ -275,7 +280,7 @@ mod test {
         graph.add_edge(2, 3, 1);
         graph.add_edge(2, 4, 1);
 
-        let hld = HLDecomposition::<Addition<i64>>::build_with_weighted_edges(&graph, 0);
+        let hld = HLDecomposition::<Addition<i64>, true>::build(&graph, 0, &Vec::new());
 
         {
             assert_eq!(0, hld.la(0, 0));
@@ -323,21 +328,18 @@ mod test {
         // 1   3
         //
         let mut graph = Graph::new(7);
-        graph.add_edge(0, 1, 1);
-        graph.add_edge(0, 2, 1);
-        graph.add_edge(2, 3, 1);
-        graph.add_edge(2, 4, 1);
-        graph.add_edge(4, 6, 1);
-        graph.add_edge(5, 6, 1);
+        graph.add_edge(0, 1, ());
+        graph.add_edge(0, 2, ());
+        graph.add_edge(2, 3, ());
+        graph.add_edge(2, 4, ());
+        graph.add_edge(4, 6, ());
+        graph.add_edge(5, 6, ());
 
-        let hld = HLDecomposition::<Addition<i64>>::build_with_weighted_edges(&graph, 0);
-
-        dbg!(hld.path_to_ranges(0, 5));
-        dbg!(hld.path_to_ranges(1, 3));
-
-        for i in 0..7 {
-            dbg!(hld.subtree_to_range(i));
-        }
+        let hld = HLDecomposition::<Addition<i64>>::build(&graph, 0, &vec![1, 2, 4, 8, 16, 32, 64]);
+        assert_eq!(
+            vec![127, 2, 124, 8, 112, 32, 96],
+            (0..7).map(|i| hld.prod_subtree(i)).collect::<Vec<_>>()
+        );
     }
 
     #[test]
@@ -353,16 +355,22 @@ mod test {
         graph.add_edge(2, 3, ());
         graph.add_edge(2, 4, ());
 
-        let hld = HLDecomposition::<Addition<Sequence<i32>>>::build_with_weighted_nodes(
+        let hld = HLDecomposition::<Addition<Sequence<i32>>>::build(
             &graph,
             0,
-            &(0..5).map(|i| vec![i]).map(Sequence).collect::<Vec<_>>()[..],
+            &(0..5).map(|i| Sequence::new(i)).collect::<Vec<_>>()[..],
         );
-        dbg!(hld.prod_path(0, 1));
-        dbg!(hld.prod_path(1, 2));
-        dbg!(hld.prod_path(4, 2));
-        dbg!(hld.prod_path(1, 3));
-        dbg!(hld.prod_path(4, 1));
+        assert_eq!(Sequence(vec![4, 2, 0, 1]), hld.prod_path(4, 1));
+        assert_eq!(Sequence(vec![1, 0, 2, 4]), hld.prod_path(1, 4));
+
+        assert_eq!(Sequence(vec![0]), hld.prod_path(0, 0));
+        assert_eq!(Sequence(vec![0, 1]), hld.prod_path(0, 1));
+        assert_eq!(Sequence(vec![0, 2]), hld.prod_path(0, 2));
+        assert_eq!(Sequence(vec![0, 2, 3]), hld.prod_path(0, 3));
+        assert_eq!(Sequence(vec![1, 0, 2]), hld.prod_path(1, 2));
+        assert_eq!(Sequence(vec![2, 4]), hld.prod_path(2, 4));
+        assert_eq!(Sequence(vec![4, 2]), hld.prod_path(4, 2));
+        assert_eq!(Sequence(vec![1, 0, 2, 3]), hld.prod_path(1, 3));
 
         //
         // 0 - 1 - 2 - 3
@@ -374,14 +382,14 @@ mod test {
         graph.add_edge(1, 2, ());
         graph.add_edge(2, 3, ());
         graph.add_edge(1, 4, ());
-        let hld = HLDecomposition::<Addition<Sequence<i32>>>::build_with_weighted_nodes(
+        let hld = HLDecomposition::<Addition<Sequence<i32>>>::build(
             &graph,
             0,
             &(0..5).map(|i| vec![i]).map(Sequence).collect::<Vec<_>>()[..],
         );
-        dbg!(hld.prod_path(0, 3));
-        dbg!(hld.prod_path(2, 4));
-        dbg!(hld.prod_path(1, 3));
-        dbg!(hld.prod_path(3, 2));
+        assert_eq!(Sequence(vec![0, 1, 2, 3]), hld.prod_path(0, 3));
+        assert_eq!(Sequence(vec![2, 1, 4]), hld.prod_path(2, 4));
+        assert_eq!(Sequence(vec![1, 2, 3]), hld.prod_path(1, 3));
+        assert_eq!(Sequence(vec![2]), hld.prod_path(2, 2));
     }
 }

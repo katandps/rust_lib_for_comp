@@ -9,12 +9,13 @@ use adjacency_list::Graph;
 use affine::{Affine, Composition};
 use heavy_light_decomposition::HLDecomposition;
 use io_util::*;
+use mod_int::ModInt;
 use string_util::*;
 
 pub fn solve<IO: ReaderTrait + WriterTrait>(mut io: IO) {
     let (n, q) = io.v2::<usize, usize>();
-    let af: Vec<Affine<i64>> = io
-        .vec2::<i64, i64>(n)
+    let af = io
+        .vec2::<ModInt, ModInt>(n)
         .into_iter()
         .map(|(a, b)| Affine::new(a, b))
         .collect::<Vec<_>>();
@@ -22,13 +23,13 @@ pub fn solve<IO: ReaderTrait + WriterTrait>(mut io: IO) {
     for (u, v) in io.vec2::<usize, usize>(n - 1) {
         graph.add_edge(u, v, ());
     }
-    let mut hld = HLDecomposition::<Composition<i64>>::build_with_weighted_nodes(&graph, 0, &af);
+    let mut hld = HLDecomposition::<Composition<ModInt<998_244_353>>>::build(&graph, 0, &af);
     for _ in 0..q {
         if 0 == io.v() {
-            let (p, c, d) = io.v3::<usize, i64, i64>();
+            let (p, c, d) = io.v3::<usize, ModInt, ModInt>();
             hld.update_at(p, Affine::new(c, d));
         } else {
-            let (u, v, x) = io.v3::<usize, usize, i64>();
+            let (u, v, x) = io.v3::<usize, usize, ModInt>();
             let af = hld.prod_path(u, v);
             io.out(af.apply(x).line());
         }
