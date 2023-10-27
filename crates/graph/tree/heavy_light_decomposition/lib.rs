@@ -345,20 +345,26 @@ mod test {
     #[test]
     fn test_path() {
         //
-        // 0 - 2 - 4
+        // 0 - 2 - 4 - 5
         // |   |
         // 1   3
+        // |   |
+        // 6   7
         //
-        let mut graph = Graph::new(5);
+        let n = 8;
+        let mut graph = Graph::new(n);
         graph.add_edge(0, 1, ());
         graph.add_edge(0, 2, ());
         graph.add_edge(2, 3, ());
         graph.add_edge(2, 4, ());
+        graph.add_edge(4, 5, ());
+        graph.add_edge(1, 6, ());
+        graph.add_edge(3, 7, ());
 
-        let hld = HLDecomposition::<Addition<Sequence<i32>>>::build(
+        let hld = HLDecomposition::<Addition<Sequence<usize>>>::build(
             &graph,
             0,
-            &(0..5).map(|i| Sequence::new(i)).collect::<Vec<_>>()[..],
+            &(0..n).map(|i| Sequence::new(i)).collect::<Vec<_>>()[..],
         );
         assert_eq!(Sequence(vec![4, 2, 0, 1]), hld.prod_path(4, 1));
         assert_eq!(Sequence(vec![1, 0, 2, 4]), hld.prod_path(1, 4));
@@ -371,6 +377,13 @@ mod test {
         assert_eq!(Sequence(vec![2, 4]), hld.prod_path(2, 4));
         assert_eq!(Sequence(vec![4, 2]), hld.prod_path(4, 2));
         assert_eq!(Sequence(vec![1, 0, 2, 3]), hld.prod_path(1, 3));
+
+        assert_eq!(Sequence(vec![6, 1, 0, 2, 4, 5]), hld.prod_path(6, 5));
+        assert_eq!(Sequence(vec![5, 4, 2, 0, 1, 6]), hld.prod_path(5, 6));
+        assert_eq!(Sequence(vec![6, 1, 0, 2, 3, 7]), hld.prod_path(6, 7));
+        assert_eq!(Sequence(vec![7, 3, 2, 0, 1, 6]), hld.prod_path(7, 6));
+        assert_eq!(Sequence(vec![5, 4, 2, 3, 7]), hld.prod_path(5, 7));
+        assert_eq!(Sequence(vec![7, 3, 2, 4, 5]), hld.prod_path(7, 5));
 
         //
         // 0 - 1 - 2 - 3

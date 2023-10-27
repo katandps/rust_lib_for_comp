@@ -16,7 +16,7 @@ pub fn solve<IO: ReaderTrait + WriterTrait>(mut io: IO) {
     let a = io.vec::<i64>(n);
     let p = io.vec::<usize>(n - 1);
     let graph = Graph::tree_root_0(&p);
-    let mut hld = HLDecomposition::<Addition<i64>>::build_with_weighted_nodes(&graph, 0, &a);
+    let mut hld = HLDecomposition::<Addition<i64>>::build(&graph, 0, &a);
     for _ in 0..q {
         if 0 == io.v() {
             let (u, x) = io.v2::<usize, i64>();
