@@ -21,6 +21,7 @@ mod heavy_light_decomposition_impl {
         n: usize,
         /// 木の根
         root: usize,
+        /// その頂点を根とする部分木の頂点数
         size: Vec<usize>,
         /// 行きがけ順で頂点に到達した時間
         in_time: Vec<usize>,
@@ -49,7 +50,7 @@ mod heavy_light_decomposition_impl {
                 root,
                 size: vec![1; g.size()],
                 in_time: vec![0; g.size()],
-                rev: vec![0; g.size() * 2],
+                rev: vec![0; g.size()],
                 out_time: vec![0; g.size()],
                 head: vec![0; g.size()],
                 parent: vec![root; g.size()],
@@ -82,8 +83,8 @@ mod heavy_light_decomposition_impl {
                 n: g.size(),
                 root,
                 size: vec![1; g.size()],
-                in_time: vec![0; g.size()],
-                rev: vec![0; g.size() * 2],
+                in_time: vec![!0; g.size()],
+                rev: vec![0; g.size()],
                 out_time: vec![0; g.size()],
                 head: vec![0; g.size()],
                 parent: vec![root; g.size()],
@@ -113,14 +114,12 @@ mod heavy_light_decomposition_impl {
 
         /// # Pathの値の総和
         pub fn prod_path(&self, mut u: usize, mut v: usize) -> M::M {
-            // dbg!(u, v);
             let mut swapping = false;
             // front:u側 back:v側
             let (mut front, mut back) = (M::unit(), M::unit());
             while self.head[u] != self.head[v] {
                 if self.in_time[self.head[u]] > self.in_time[self.head[v]] {
                     swap(&mut u, &mut v);
-                    // swap(&mut front, &mut back);
                     swapping ^= true;
                 }
                 // v側を一つ上の列にシフトする
@@ -131,16 +130,6 @@ mod heavy_light_decomposition_impl {
                             .downward
                             .product(self.in_time[self.head[v]]..=self.in_time[v]),
                     );
-                    // dbg!(
-                    //     v,
-                    //     self.head[v],
-                    //     self.in_time[v],
-                    //     self.in_time[self.head[v]],
-                    //     &self
-                    //         .downward
-                    //         .product(self.in_time[self.head[v]]..=self.in_time[v]),
-                    //     &self.downward[self.head[v]]
-                    // );
                 } else {
                     front = M::op(
                         &self
@@ -148,16 +137,6 @@ mod heavy_light_decomposition_impl {
                             .product(self.in_time[self.head[v]]..=self.in_time[v]),
                         &front,
                     );
-                    // dbg!(
-                    //     v,
-                    //     self.head[v],
-                    //     self.in_time[v],
-                    //     self.in_time[self.head[v]],
-                    //     &self
-                    //         .upward
-                    //         .product(self.in_time[self.head[v]]..=self.in_time[v]),
-                    //     &self.upward[self.head[v]]
-                    // );
                 }
                 v = self.parent[self.head[v]];
             }
@@ -170,14 +149,6 @@ mod heavy_light_decomposition_impl {
                 self.in_time[u] + usize::from(WEIGHTED_EDGE),
                 self.in_time[v],
             );
-            // dbg!(
-            //     u,
-            //     v,
-            //     &front,
-            //     &back,
-            //     &self.upward.product(l..=r),
-            //     &self.downward.product(l..=r)
-            // );
             if swapping {
                 M::op(&back, &M::op(&self.downward.product(l..=r), &front))
             } else {
@@ -192,9 +163,9 @@ mod heavy_light_decomposition_impl {
 
         /// 部分木のサイズを求めつつ、直接の子のうち、部分木のサイズが最も大きいもののリストを返す
         /// srcの子で部分木のサイズが一番大きいものがgraph[src][0]に来るようにする
-        fn dfs_size<G: GraphTrait>(&mut self, g: &G) -> Vec<Option<usize>> {
+        fn dfs_size<G: GraphTrait>(&mut self, g: &G) -> Vec<usize> {
             let mut dfs = vec![self.root];
-            let mut max_childs = vec![None; g.size()];
+            let mut max_childs = vec![!0; g.size()];
             while let Some(src) = dfs.pop() {
                 if src < self.n {
                     dfs.push(!src);
@@ -207,7 +178,7 @@ mod heavy_light_decomposition_impl {
                         dfs.push(dst);
                     }
                 } else {
-                    let (mut max_child, mut max_child_size) = (None, 0);
+                    let (mut max_child, mut max_child_size) = (!0, 0);
                     for (dst, _w) in g.edges(!src) {
                         if dst == self.parent[!src] {
                             continue;
@@ -215,7 +186,7 @@ mod heavy_light_decomposition_impl {
                         self.size[!src] += self.size[dst];
                         if max_child_size < self.size[dst] {
                             max_child_size = self.size[dst];
-                            max_child = Some(dst);
+                            max_child = dst;
                         }
                     }
                     max_childs[!src] = max_child;
@@ -224,7 +195,7 @@ mod heavy_light_decomposition_impl {
             max_childs
         }
 
-        fn dfs_hld<G: GraphTrait>(&mut self, g: &G, max_childs: Vec<Option<usize>>) {
+        fn dfs_hld<G: GraphTrait>(&mut self, g: &G, max_childs: Vec<usize>) {
             let mut times = 0;
             let mut dfs = vec![self.root];
             while let Some(src) = dfs.pop() {
@@ -235,15 +206,16 @@ mod heavy_light_decomposition_impl {
                     dfs.push(!src);
                     // 0番目を先に探索したい -> 最後にやる
                     for (dst, _w) in g.edges(src) {
-                        if dst == self.parent[src] || max_childs[src] == Some(dst) {
+                        if dst == self.parent[src] || max_childs[src] == dst {
                             continue;
                         }
                         self.head[dst] = dst;
                         dfs.push(dst);
                     }
-                    if let Some(dst) = max_childs[src] {
-                        self.head[dst] = self.head[src];
-                        dfs.push(dst);
+
+                    if max_childs[src] < self.n {
+                        self.head[max_childs[src]] = self.head[src];
+                        dfs.push(max_childs[src]);
                     }
                 } else {
                     self.out_time[!src] = times;
