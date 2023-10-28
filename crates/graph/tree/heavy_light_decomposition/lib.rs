@@ -2,7 +2,7 @@
 //! 値が変化する木上のパスクエリ/部分木クエリの計算量を改善する
 //!
 //! ## todo
-//! 非可換なモノイドについてもパスクエリが実行できるようにする
+//! rootが0でないときにバグあり
 use algebra::*;
 use graph::GraphTrait;
 use prelude::*;
@@ -113,6 +113,7 @@ mod heavy_light_decomposition_impl {
 
         /// # Pathの値の総和
         pub fn prod_path(&self, mut u: usize, mut v: usize) -> M::M {
+            // dbg!(u, v);
             let mut swapping = false;
             // front:u側 back:v側
             let (mut front, mut back) = (M::unit(), M::unit());
@@ -128,15 +129,35 @@ mod heavy_light_decomposition_impl {
                         &back,
                         &self
                             .downward
-                            .product(self.in_time[self.head[v]]..self.in_time[v] + 1),
+                            .product(self.in_time[self.head[v]]..=self.in_time[v]),
                     );
+                    // dbg!(
+                    //     v,
+                    //     self.head[v],
+                    //     self.in_time[v],
+                    //     self.in_time[self.head[v]],
+                    //     &self
+                    //         .downward
+                    //         .product(self.in_time[self.head[v]]..=self.in_time[v]),
+                    //     &self.downward[self.head[v]]
+                    // );
                 } else {
                     front = M::op(
-                        &front,
                         &self
                             .upward
-                            .product(self.in_time[self.head[v]]..self.in_time[v] + 1),
+                            .product(self.in_time[self.head[v]]..=self.in_time[v]),
+                        &front,
                     );
+                    // dbg!(
+                    //     v,
+                    //     self.head[v],
+                    //     self.in_time[v],
+                    //     self.in_time[self.head[v]],
+                    //     &self
+                    //         .upward
+                    //         .product(self.in_time[self.head[v]]..=self.in_time[v]),
+                    //     &self.upward[self.head[v]]
+                    // );
                 }
                 v = self.parent[self.head[v]];
             }
@@ -147,13 +168,20 @@ mod heavy_light_decomposition_impl {
 
             let (l, r) = (
                 self.in_time[u] + usize::from(WEIGHTED_EDGE),
-                self.in_time[v] + 1,
+                self.in_time[v],
             );
-            match (swapping, l < r) {
-                (false, true) => M::op(&back, &M::op(&self.upward.product(l..r), &front)),
-                (false, false) => M::op(&back, &front),
-                (true, true) => M::op(&back, &M::op(&self.downward.product(l..r), &front)),
-                (true, false) => M::op(&back, &front),
+            // dbg!(
+            //     u,
+            //     v,
+            //     &front,
+            //     &back,
+            //     &self.upward.product(l..=r),
+            //     &self.downward.product(l..=r)
+            // );
+            if swapping {
+                M::op(&back, &M::op(&self.downward.product(l..=r), &front))
+            } else {
+                M::op(&back, &M::op(&self.upward.product(l..=r), &front))
             }
         }
 
@@ -266,6 +294,61 @@ mod test {
     use addition::Addition;
     use adjacency_list::Graph;
     use sequence::Sequence;
+    use xor_shift::XorShift;
+
+    #[test]
+    fn random_sequence_test() {
+        let mut random = XorShift::default();
+        for _ in 0..100 {
+            let n = 100;
+            let mut graph = Graph::new(n);
+            for i in 1..n {
+                let p = random.rand(i as u64);
+                graph.add_edge(p as usize, i, ());
+            }
+            let v = (0..n).map(Sequence::new).collect::<Vec<_>>();
+            let root = 0; //random.rand(n as u64) as usize;
+            let hld = HLDecomposition::<Addition<Sequence<usize>>>::build(&graph, root, &v);
+            for l in 0..100 {
+                for r in 0..100 {
+                    let mut result = Vec::new();
+                    dfs(&graph, l, r, &mut Vec::new(), &mut result);
+                    assert_eq!(
+                        Sequence(result),
+                        hld.prod_path(l, r),
+                        "{} {}\n{:?}\n{:?}",
+                        l,
+                        r,
+                        &graph,
+                        hld
+                    );
+                }
+            }
+        }
+    }
+
+    fn dfs(
+        graph: &Graph<()>,
+        src: usize,
+        goal: usize,
+        buf: &mut Vec<usize>,
+        result: &mut Vec<usize>,
+    ) {
+        buf.push(src);
+        if goal == src {
+            *result = buf.clone();
+            buf.pop();
+            return;
+        }
+
+        for (dst, _) in graph.edges(src) {
+            if buf.len() > 1 && buf[buf.len() - 2] == dst {
+                continue;
+            }
+            dfs(graph, dst, goal, buf, result);
+        }
+        buf.pop();
+    }
 
     #[test]
     fn test() {
@@ -392,6 +475,11 @@ mod test {
         hld.update_at(7, Sequence::new(700));
         assert_eq!(Sequence(vec![700, 3, 2, 100, 1, 6]), hld.prod_path(7, 6));
         assert_eq!(Sequence(vec![6, 1, 100, 2, 3, 700]), hld.prod_path(6, 7));
+
+        hld.update_at(2, Sequence::new(200));
+        assert_eq!(Sequence(vec![700, 3, 200, 100, 1, 6]), hld.prod_path(7, 6));
+        assert_eq!(Sequence(vec![6, 1, 100, 200, 3, 700]), hld.prod_path(6, 7));
+
         //
         // 0 - 1 - 2 - 3
         //     |

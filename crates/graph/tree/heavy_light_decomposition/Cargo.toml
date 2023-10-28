@@ -12,11 +12,9 @@ segment_tree = { path = "../../../data_structure/segment_tree" }
 
 [dev-dependencies]
 adjacency_list = { path = "../../adjacency_list" }
-string_util = { path = "../../../util/string_util" }
-io_util = { path = "../../../util/io_util" }
 addition = { path = "../../../algebra/binary_operation/addition" }
 sequence = { path = "../../../element/sequence" }
-
+xor_shift = { path = "../../../algo/xor_shift" }
 
 [lib]
 path = "lib.rs"

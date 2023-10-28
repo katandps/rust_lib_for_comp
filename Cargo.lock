@@ -1124,12 +1124,11 @@ dependencies = [
  "adjacency_list",
  "algebra",
  "graph",
- "io_util",
  "prelude",
  "range_traits",
  "segment_tree",
  "sequence",
- "string_util",
+ "xor_shift",
 ]
 
 [[package]]
