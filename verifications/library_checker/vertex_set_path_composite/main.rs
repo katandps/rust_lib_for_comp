@@ -39,9 +39,12 @@ pub fn solve<IO: ReaderTrait + WriterTrait>(mut io: IO) {
 
 #[test]
 fn test() {
-    solve(io_debug::IODebug::static_assert("1 1
+    solve(io_debug::IODebug::static_assert(
+        "1 1
     100000 100000
-    1 0 0 100000", ""));
+    1 0 0 100000",
+        "17656470",
+    ));
     solve(io_debug::IODebug::static_assert(
         "5 5
         1 2
