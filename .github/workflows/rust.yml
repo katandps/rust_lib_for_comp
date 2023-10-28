@@ -220,6 +220,21 @@ jobs:
         uses: taiki-e/install-action@cargo-llvm-cov
       - name: Generate code coverage
         run: cargo +nightly llvm-cov --doctests --lcov --output-path lcov.info
+      - name: Upload result artifact
+        uses: actions/upload-artifact@v3
+        with:
+          name: coverage
+          path: lcov.info
+          retention-days: 1
+
+  upload-coverage:
+    runs-on: ubuntu-latest
+    needs: [test]
+    steps:
+      - name: Download result artifact
+        uses: actions/download-artifact@v3
+        with:
+          name: coverage
 
       - name: Upload coverage to Codecov
         uses: codecov/codecov-action@v3
