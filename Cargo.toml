@@ -53,6 +53,7 @@ members = [
     'crates/data_structure/implicit_treap',
     'crates/data_structure/lazy_segment_tree',
     'crates/data_structure/partially_persistent_union_find',
+    'crates/data_structure/persistent_stack',
     'crates/data_structure/priority_sum',
     'crates/data_structure/segment_tree',
     'crates/data_structure/sparse_table',
