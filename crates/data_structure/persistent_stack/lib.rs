@@ -74,12 +74,12 @@ mod persistent_stack_impl {
             ret
         }
 
-        fn size(&self, node_id: usize) -> usize {
+        pub fn len(&self, node_id: usize) -> usize {
             self.nodes.get(node_id).map_or(0, |node| match node {
                 Simple(node) => node.size,
                 Empty => 0,
-                Reverse(reversed) => self.size(*reversed),
-                Combined(front, back) => self.size(*front) + self.size(*back),
+                Reverse(reversed) => self.len(*reversed),
+                Combined(front, back) => self.len(*front) + self.len(*back),
             })
         }
 
@@ -103,7 +103,7 @@ mod persistent_stack_impl {
             self.nodes.push(Simple(SimpleNode {
                 value,
                 prev: node_id,
-                size: self.size(node_id),
+                size: self.len(node_id) + 1,
             }));
             self.nodes.len() - 1
         }
