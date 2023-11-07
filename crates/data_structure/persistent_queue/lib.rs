@@ -14,7 +14,9 @@
 use persistent_stack::PersistentStack;
 use prelude::*;
 
+#[snippet(name = "persistent-queue", doc_hidden)]
 pub use persistent_queue_impl::PersistentQueue;
+#[snippet(name = "persistent-queue", doc_hidden)]
 mod persistent_queue_impl {
     use super::{Debug, PersistentStack};
 

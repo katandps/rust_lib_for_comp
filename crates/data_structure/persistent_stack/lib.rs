@@ -14,7 +14,9 @@
 //!
 use prelude::*;
 
+#[snippet(name = "persistent-stack", doc_hidden)]
 pub use persistent_stack_impl::PersistentStack;
+#[snippet(name = "persistent-stack", doc_hidden)]
 mod persistent_stack_impl {
     use super::Debug;
     #[derive(Clone, Debug)]
