@@ -19,99 +19,158 @@ mod persistent_stack_impl {
     use super::Debug;
     #[derive(Clone, Debug)]
     pub struct PersistentStack<T> {
-        /// index:=nodeのid
-        nodes: Vec<Node<T>>,
         /// index:=stackのid
-        timeline: Vec<usize>,
+        nodes: Vec<Node<T>>,
     }
 
     #[derive(Clone, Debug)]
-    struct Node<T> {
+    enum Node<T> {
+        Simple(SimpleNode<T>),
+        Empty,
+        Reverse(usize),
+        Combined(usize, usize),
+    }
+
+    #[derive(Clone, Debug)]
+    struct SimpleNode<T> {
         value: T,
         size: usize,
         /// このノードの前に結合されたstackのid
         prev: usize,
-        // このノードの後ろに結合されたstackのid
-        combined: usize,
     }
 
     impl<T> Default for PersistentStack<T> {
         fn default() -> Self {
             Self {
-                nodes: Vec::new(),
-                timeline: vec![!0],
+                nodes: vec![Node::Empty],
             }
         }
     }
+    use Node::{Combined, Empty, Reverse, Simple};
 
     impl<T: Clone + Debug> PersistentStack<T> {
         /// 時刻$t$のstackが空かどうかを返す
         pub fn is_empty(&self, t: usize) -> bool {
-            t >= self.timeline.len()
-                || self.timeline[t] == !0
-                || self.nodes[self.timeline[t]].size == 0
+            match self.nodes.get(t) {
+                Some(Node::Empty) => true,
+                Some(_) => false,
+                _ => true,
+            }
+        }
+
+        // reverseなノードを開く
+        fn normalize(&mut self, node_id: usize) -> usize {
+            let Some(Reverse(reversed)) = self.nodes.get(node_id).cloned() else {
+                return node_id;
+            };
+            let (mut front, mut ret) = (reversed, 0);
+            while let Some((v, t)) = self.pop(front) {
+                ret = self.push(v, ret);
+                front = t;
+            }
+            ret
+        }
+
+        fn size(&self, node_id: usize) -> usize {
+            self.nodes.get(node_id).map_or(0, |node| match node {
+                Simple(node) => node.size,
+                Empty => 0,
+                Reverse(reversed) => self.size(*reversed),
+                Combined(front, back) => self.size(*front) + self.size(*back),
+            })
         }
 
         /// 時刻$t$の最後尾を返す
-        pub fn top(&self, mut t: usize) -> T {
-            while self.nodes[self.timeline[t]].combined != !0 {
-                t = self.nodes[self.timeline[t]].combined
-            }
-            self.nodes[self.timeline[t]].value.clone()
+        pub fn top(&mut self, node_id: usize) -> Option<T> {
+            self.nodes
+                .get(node_id)
+                .cloned()
+                .and_then(|node| match node {
+                    Empty => None,
+                    Reverse(reversed) => {
+                        let normalized = self.normalize(reversed);
+                        self.top(normalized)
+                    }
+                    Simple(node) => Some(node.value),
+                    Combined(_, back) => self.top(back),
+                })
         }
-
         /// 時刻$t$の最後尾にvalueを追加する 追加したときの時刻を返す
-        pub fn push(&mut self, value: T, t: usize) -> usize {
-            let prev = self.timeline[t];
-            self.nodes.push(Node {
+        pub fn push(&mut self, value: T, node_id: usize) -> usize {
+            self.nodes.push(Simple(SimpleNode {
                 value,
-                prev: t,
-                size: if prev == !0 { 0 } else { self.nodes[prev].size } + 1,
-                combined: !0,
-            });
-            self.timeline.push(self.nodes.len() - 1);
-            self.timeline.len() - 1
+                prev: node_id,
+                size: self.size(node_id),
+            }));
+            self.nodes.len() - 1
         }
 
         /// 時刻$t$の最後尾の値を削除し、その値と削除したときの時刻を返す
-        pub fn pop(&mut self, stack_id: usize) -> (T, usize) {
-            let node_id = self.timeline[stack_id];
-            let combined = self.nodes[node_id].combined;
-            if self.is_empty(combined) {
-                let node = &self.nodes[node_id];
-                (node.value.clone(), node.prev)
-            } else {
-                let (v, back_t) = self.pop(combined);
-                (v, self.combine(stack_id, back_t))
-            }
+        pub fn pop(&mut self, node_id: usize) -> Option<(T, usize)> {
+            self.nodes
+                .get(node_id)
+                .cloned()
+                .and_then(|node| match node {
+                    Simple(node) => Some((node.value.clone(), node.prev)),
+                    Empty => None,
+                    Reverse(_) => {
+                        let normalized = self.normalize(node_id);
+                        self.pop(normalized)
+                    }
+                    Combined(front, back) => {
+                        if let Some((v, back)) = self.pop(back) {
+                            Some((v, self.combine(front, back)))
+                        } else {
+                            self.pop(front)
+                        }
+                    }
+                })
         }
         /// 二つのstackを結合し、結合後の時刻を返す
-        pub fn combine(&mut self, front_t: usize, back_t: usize) -> usize {
-            let mut node = self.nodes[self.timeline[front_t]].clone();
-            if node.combined != !0 {
-                node.size -= self.nodes[self.timeline[node.combined]].size;
-            }
-            if self.is_empty(back_t) {
-                node.combined = !0;
+        pub fn combine(&mut self, front_node_id: usize, back_node_id: usize) -> usize {
+            if self.is_empty(front_node_id) {
+                back_node_id
+            } else if self.is_empty(back_node_id) {
+                front_node_id
             } else {
-                node.combined = back_t;
-                node.size = node.size + self.nodes[self.timeline[back_t]].size;
+                self.nodes.push(Node::Combined(front_node_id, back_node_id));
+                self.nodes.len() - 1
             }
-            self.nodes.push(node);
-            self.timeline.push(self.nodes.len() - 1);
-            self.timeline.len() - 1
         }
 
         /// 時刻tのstackの内容からvecを生成して返す
         pub fn out_vec(&mut self, mut t: usize) -> Vec<T> {
             let mut ret = Vec::new();
-            while !self.is_empty(t) {
-                let (v, t_) = self.pop(t);
+            while let Some((v, t_)) = self.pop(t) {
                 ret.push(v);
                 t = t_;
             }
             ret.reverse();
             ret
+        }
+
+        /// 時刻tのstackのreverseを生成する
+        pub fn reverse(&mut self, node_id: usize) -> usize {
+            self.nodes
+                .get(node_id)
+                .cloned()
+                .map(|node| match node {
+                    Empty => node_id,
+                    Reverse(reversed) => reversed,
+                    Simple(_) => {
+                        let reversed = Reverse(node_id);
+                        self.nodes.push(reversed);
+                        self.nodes.len() - 1
+                    }
+                    Combined(front, back) => {
+                        let reverse_front = self.reverse(front);
+                        let reverse_back = self.reverse(back);
+                        let combined = Combined(reverse_back, reverse_front);
+                        self.nodes.push(combined);
+                        self.nodes.len() - 1
+                    }
+                })
+                .unwrap()
         }
     }
 }
@@ -121,21 +180,22 @@ fn test() {
     let mut stack = PersistentStack::default();
     let t = stack.push(1, 0);
     assert_eq!(t, 1);
-    assert_eq!(1, stack.top(1));
+    assert_eq!(Some(1), stack.top(1));
     let t = stack.push(10, 1);
     assert_eq!(t, 2);
-    assert_eq!(10, stack.top(2));
+    assert_eq!(Some(10), stack.top(2));
     let t = stack.push(100, 1);
     assert_eq!(t, 3);
-    assert_eq!(100, stack.top(3));
-    let (v, t) = stack.pop(3);
+    assert_eq!(Some(100), stack.top(3));
+    let (v, t) = stack.pop(3).unwrap();
     assert_eq!(v, 100);
     assert_eq!(t, 1);
-    assert_eq!(1, stack.top(1));
-    let (v, t) = stack.pop(1);
+    assert_eq!(Some(1), stack.top(1));
+    let (v, t) = stack.pop(1).unwrap();
     assert_eq!(1, v);
     assert_eq!(t, 0);
     assert!(stack.is_empty(0));
+    assert_eq!(None, stack.top(0));
 }
 
 #[test]
@@ -159,15 +219,19 @@ fn test_combine() {
 }
 
 #[test]
-#[should_panic]
-fn panic_if_pop_from_empty_stack() {
-    let mut stack = PersistentStack::<i32>::default();
-    stack.pop(0);
-}
-
-#[test]
-#[should_panic]
-fn panic_if_top_from_empty_stack() {
-    let stack = PersistentStack::<i32>::default();
-    stack.top(0);
+fn test_reverse() {
+    let mut stack = PersistentStack::default();
+    let t1 = stack.push(1, 0);
+    let t2 = stack.push(2, t1);
+    let t3 = stack.push(3, 0);
+    let t4 = stack.push(4, t3);
+    let t2r = stack.reverse(t2);
+    assert_eq!(stack.out_vec(t2), vec![1, 2]);
+    assert_eq!(stack.out_vec(t2r), vec![2, 1]);
+    let t4r = stack.reverse(t4);
+    assert_eq!(stack.out_vec(t4r), vec![4, 3]);
+    let t5 = stack.combine(t2, t4);
+    let t5r = stack.reverse(t5);
+    assert_eq!(stack.out_vec(t5), vec![1, 2, 3, 4]);
+    assert_eq!(stack.out_vec(t5r), vec![4, 3, 2, 1]);
 }
