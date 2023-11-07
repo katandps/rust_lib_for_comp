@@ -1,0 +1,12 @@
+[package]
+name = "persistent_queue"
+version = "0.1.0"
+edition = "2018"
+
+[dependencies]
+prelude = { path = "../../prelude" }
+algebra = { path = "../../algebra" }
+persistent_stack = { path = "../persistent_stack" }
+
+[lib]
+path = "lib.rs"

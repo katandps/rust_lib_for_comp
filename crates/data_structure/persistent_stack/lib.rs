@@ -68,6 +68,7 @@ mod persistent_stack_impl {
                 ret = self.push(v, ret);
                 front = t;
             }
+            self.nodes[node_id] = self.nodes[ret].clone();
             ret
         }
 
@@ -233,5 +234,6 @@ fn test_reverse() {
     let t5 = stack.combine(t2, t4);
     let t5r = stack.reverse(t5);
     assert_eq!(stack.out_vec(t5), vec![1, 2, 3, 4]);
+    assert_eq!(stack.out_vec(t5r), vec![4, 3, 2, 1]);
     assert_eq!(stack.out_vec(t5r), vec![4, 3, 2, 1]);
 }

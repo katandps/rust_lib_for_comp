@@ -1459,6 +1459,16 @@ dependencies = [
 ]
 
 [[package]]
+name = "library_checker_solver_persistent_queue"
+version = "0.1.0"
+dependencies = [
+ "io_debug",
+ "io_util",
+ "persistent_queue",
+ "string_util",
+]
+
+[[package]]
 name = "library_checker_solver_point_add_range_sum"
 version = "0.1.0"
 dependencies = [
@@ -1975,6 +1985,15 @@ dependencies = [
 name = "partially_persistent_union_find"
 version = "0.1.0"
 dependencies = [
+ "prelude",
+]
+
+[[package]]
+name = "persistent_queue"
+version = "0.1.0"
+dependencies = [
+ "algebra",
+ "persistent_stack",
  "prelude",
 ]
 
