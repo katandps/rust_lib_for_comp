@@ -428,7 +428,7 @@ mod matrix_impl {
             if self.width != rhs.height {
                 return None;
             }
-            if self.height != self.width || rhs.height != rhs.width || self.height < 128 {
+            if self.height != self.width || rhs.height != rhs.width || self.height < 64 {
                 return self.naive_mul(rhs);
             }
             let n = self.height;
@@ -442,17 +442,15 @@ mod matrix_impl {
                 let (b21, b22) = b2.column_divide(half);
                 let p1 = ((a11 + a22) * (b11 + b22)).unwrap();
                 let p2 = ((a21 + a22) * b11).unwrap();
-                let p3 = (a11 * (b12 - b22).pointer()).unwrap();
-                let p4 = (a22 * (b21 - b11).pointer()).unwrap();
-                let p5 = ((a11 + a12).pointer() * b22).unwrap();
+                let p3 = (a11 * (b12 - b22)).unwrap();
+                let p4 = (a22 * (b21 - b11)).unwrap();
+                let p5 = ((a11 + a12) * b22).unwrap();
                 let p6 = ((a21 - a11) * (b11 + b12)).unwrap();
                 let p7 = ((a12 - a22) * (b21 + b22)).unwrap();
-                let c11 = ((p1.pointer() + p4.pointer()).pointer() - p5.pointer()).pointer()
-                    + p7.pointer();
-                let c12 = p3.pointer() + p5.pointer();
-                let c21 = p2.pointer() + p4.pointer();
-                let c22 = ((p1.pointer() + p3.pointer()).pointer() - p2.pointer()).pointer()
-                    + p6.pointer();
+                let c11 = p1.clone() + p4.clone() - p5.clone() + p7;
+                let c12 = p3.clone() + p5;
+                let c21 = p2.clone() + p4;
+                let c22 = p1 + p3 - p2 + p6;
                 let c1 = c11.pointer().combine_column(&c12.pointer());
                 let c2 = c21.pointer().combine_column(&c22.pointer());
                 Some(c1.pointer().combine_row(&c2.pointer()))
@@ -464,18 +462,15 @@ mod matrix_impl {
                 let (b1, b2) = rhs.row_divide(half);
                 let (b11, b12) = b1.column_divide(half);
                 let (b21, b22) = b2.column_divide(half);
-                // dbg!(a11, a12, a21, a22, b11, b12, b21, b22);
-                // dbg!(a11 + a22, b11 + b22);
                 let p1 = ((a11 + a22) * (b11 + b22)).unwrap();
                 let p2 = ((a21 + a22) * b11).unwrap();
-                let p3 = (a11 * (b12 - b22).pointer()).unwrap();
+                let p3 = (a11 * (b12 - b22)).unwrap();
                 let a22e = a22.extend(half, half);
                 let p4 = (a22e * (b21 - b11)).unwrap();
                 let b22e = b22.extend(half, half);
                 let p5 = ((a11 + a12) * b22e).unwrap();
                 let p6 = ((a21 - a11) * (b11 + b12)).unwrap();
                 let p7 = ((a12 - a22) * (b21 + b22)).unwrap();
-                // dbg!(&p1, &p2, &p3, &p4, &p5, &p6, &p7);
                 let c11 = p1.clone() + p4.clone() - p5.clone() + p7;
                 let c12 = p3.clone() + p5;
                 let c21 = p2.clone() + p4;
@@ -505,6 +500,13 @@ mod matrix_impl {
         type Output = Option<Matrix<T>>;
         fn mul(self, rhs: PointerMatrix<'_, T>) -> Self::Output {
             self.pointer() * rhs
+        }
+    }
+
+    impl<T: MatrixItem> Mul<Matrix<T>> for PointerMatrix<'_, T> {
+        type Output = Option<Matrix<T>>;
+        fn mul(self, rhs: Matrix<T>) -> Self::Output {
+            self * rhs.pointer()
         }
     }
 
