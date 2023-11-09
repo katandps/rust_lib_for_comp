@@ -64,7 +64,7 @@ impl MontgomeryReduction {
     /// # 加法 $\pmod n$
     /// $add(a, b) \equiv a + b \pmod n$
     #[inline]
-    pub fn add(&self, a: u64, b: u64) -> u64 {
+    pub const fn add(&self, a: u64, b: u64) -> u64 {
         debug_assert!(a < self.n);
         debug_assert!(b < self.n);
         let (t, fa) = a.overflowing_add(b);
@@ -78,7 +78,7 @@ impl MontgomeryReduction {
     /// # 減法 $\pmod n$
     /// $sub(a,b) \equiv a - b \pmod n$
     #[inline]
-    pub fn sub(&self, a: u64, b: u64) -> u64 {
+    pub const fn sub(&self, a: u64, b: u64) -> u64 {
         debug_assert!(a < self.n);
         debug_assert!(b < self.n);
         let (t, f) = a.overflowing_sub(b);
@@ -92,7 +92,7 @@ impl MontgomeryReduction {
     /// # $A$のモンゴメリ表現への変換
     /// return $a * R \mod N$
     #[inline]
-    pub fn generate(&self, a: u64) -> u64 {
+    pub const fn generate(&self, a: u64) -> u64 {
         debug_assert!(a < self.n);
         self.mrmul(a, self.r_pow2)
     }
@@ -100,8 +100,8 @@ impl MontgomeryReduction {
     /// # モンゴメリ表現 $AR$ から $A$の復元
     /// return $a \frac R \mod N$
     #[inline]
-    pub fn reduce(&self, ar: u64) -> u64 {
-        debug_assert!(ar < self.n, "{} {}", self.n, ar);
+    pub const fn reduce(&self, ar: u64) -> u64 {
+        debug_assert!(ar < self.n);
         let (t, f) = (((((ar.wrapping_mul(self.n_inv)) as u128) * (self.n as u128)) >> 64) as u64)
             .overflowing_neg();
         if f {
@@ -113,7 +113,7 @@ impl MontgomeryReduction {
 
     /// # $mul(ar, br) == (a * b) * r \mod N$
     #[inline]
-    pub fn mrmul(&self, ar: u64, br: u64) -> u64 {
+    pub const fn mrmul(&self, ar: u64, br: u64) -> u64 {
         debug_assert!(ar < self.n);
         debug_assert!(br < self.n);
         let t: u128 = (ar as u128) * (br as u128);
@@ -129,13 +129,13 @@ impl MontgomeryReduction {
 
     /// # $mul_prim(a, b) == (a * b) \mod N$
     #[inline]
-    pub fn mul_prim(&self, a: u64, b: u64) -> u64 {
+    pub const fn mul_prim(&self, a: u64, b: u64) -> u64 {
         self.reduce(self.mrmul(self.generate(a), self.generate(b)))
     }
 
     /// # $pow(a, b) == a^b * r \mod N$
     #[inline]
-    pub fn pow(&self, a: u64, mut b: u64) -> u64 {
+    pub const fn pow(&self, a: u64, mut b: u64) -> u64 {
         debug_assert!(a < self.n);
         let mut ar = self.generate(a);
         let mut t = if b & 1 == 0 { self.r } else { ar };
