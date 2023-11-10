@@ -14,7 +14,7 @@ use sparse_table::SparseTable;
 #[snippet(name = "lowest-common-ancestor", doc_hidden)]
 pub struct LowestCommonAncestor {
     tour: EulerTour,
-    depth: SparseTable<Minimization<IntWithIndex<usize>>>,
+    depth: SparseTable<Minimization<IntWithIndex<u32, u32>>>,
 }
 
 #[snippet(name = "lowest-common-ancestor", doc_hidden)]
@@ -26,9 +26,9 @@ impl LowestCommonAncestor {
     /// $O(N\log N)$
     pub fn new<G: GraphTrait>(g: &G, root: usize) -> Self {
         let tour = EulerTour::new(g, root);
-        let depth = SparseTable::<Minimization<IntWithIndex<usize>>>::from(
+        let depth = SparseTable::<Minimization<IntWithIndex<u32, u32>>>::from(
             &(0..tour.tour.len())
-                .map(|i| IntWithIndex::from((i, tour.depth[tour.tour[i]])))
+                .map(|i| IntWithIndex::from((i as u32, tour.depth[tour.tour[i]] as u32)))
                 .collect::<Vec<_>>()[..],
         );
         Self { tour, depth }
@@ -47,7 +47,7 @@ impl LowestCommonAncestor {
         if l > r {
             swap(&mut l, &mut r)
         }
-        self.tour.tour[self.depth.product(l..r).index]
+        self.tour.tour[self.depth.product(l..r).index as usize]
     }
 
     /// # $u \to v$のパスを求める

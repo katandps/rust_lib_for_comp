@@ -5,19 +5,19 @@ use prelude::*;
 
 #[snippet(name = "int-with-index", doc_hidden)]
 #[derive(Clone, Copy, Debug, Eq, PartialEq)]
-pub struct IntWithIndex<I: Integral> {
-    pub value: I,
-    pub index: usize,
+pub struct IntWithIndex<V: Integral, I: Integral> {
+    pub value: V,
+    pub index: I,
 }
 #[snippet(name = "int-with-index", doc_hidden)]
-impl<I: Integral> PartialOrd for IntWithIndex<I> {
+impl<V: Integral, I: Integral> PartialOrd for IntWithIndex<V, I> {
     fn partial_cmp(&self, rhs: &Self) -> Option<Ordering> {
         Some(self.cmp(rhs))
     }
 }
 
 #[snippet(name = "int-with-index", doc_hidden)]
-impl<I: Integral> Ord for IntWithIndex<I> {
+impl<V: Integral, I: Integral> Ord for IntWithIndex<V, I> {
     fn cmp(&self, rhs: &Self) -> Ordering {
         use Ordering::*;
         match self.value.cmp(&rhs.value) {
@@ -29,8 +29,8 @@ impl<I: Integral> Ord for IntWithIndex<I> {
 }
 
 #[snippet(name = "int-with-index", doc_hidden)]
-impl<I: Integral> From<(usize, I)> for IntWithIndex<I> {
-    fn from((index, value): (usize, I)) -> Self {
+impl<V: Integral, I: Integral> From<(I, V)> for IntWithIndex<V, I> {
+    fn from((index, value): (I, V)) -> Self {
         IntWithIndex { value, index }
     }
 }
