@@ -14,9 +14,12 @@ mod binary_trie_impl {
     type TrieValue = u64;
     type Bit = i32;
 
+    type NodeId = u32;
+    const EMPTY_NODE: NodeId = !0;
+
     #[derive(Clone)]
     pub struct BinaryTrie {
-        pub root: usize,
+        pub root: NodeId,
         pub xor_val: u64,
         pub bit_len: Bit,
         pub nodes: Vec<TrieNode>,
@@ -37,11 +40,19 @@ mod binary_trie_impl {
             }
         }
 
+        fn node(&self, id: u32) -> &TrieNode {
+            &self.nodes[id as usize]
+        }
+
+        fn node_mut(&mut self, id: u32) -> &mut TrieNode {
+            &mut self.nodes[id as usize]
+        }
+
         /// 今までにinsertした個数を取得する
         /// ## 計算量
         /// $O(1)$
         pub fn len(&self) -> usize {
-            self.nodes[self.root].count
+            self.nodes[self.root as usize].count
         }
 
         pub fn is_empty(&self) -> bool {
@@ -55,15 +66,16 @@ mod binary_trie_impl {
             let mut target = self.root;
             let mut bit = self.bit_len;
             while bit >= 0 {
-                self.nodes[target].count += 1;
-                if self.nodes[target].children[v as usize >> bit & 1] == !0 {
+                self.node_mut(target).count += 1;
+                if self.node(target).children[v as usize >> bit & 1] == !0 {
                     self.nodes.push(TrieNode::default());
-                    self.nodes[target].children[v as usize >> bit & 1] = self.nodes.len() - 1;
+                    self.node_mut(target).children[v as usize >> bit & 1] =
+                        self.nodes.len() as NodeId - 1;
                 }
-                target = self.nodes[target].children[v as usize >> bit & 1];
+                target = self.node(target).children[v as usize >> bit & 1];
                 bit -= 1;
             }
-            self.nodes[target].count += 1;
+            self.node_mut(target).count += 1;
         }
 
         /// vを一つ削除する
@@ -72,33 +84,33 @@ mod binary_trie_impl {
         pub fn erase(&mut self, v: TrieValue) {
             let (mut target, mut bit) = (self.root, self.bit_len);
             while bit >= 0 {
-                if self.nodes[target].count == 0 {
+                if self.node(target).count == 0 {
                     panic!("remove unexist node");
                 }
-                self.nodes[target].count -= 1;
-                if self.nodes[target].children[v as usize >> bit & 1] == !0 {
+                self.node_mut(target).count -= 1;
+                if self.node(target).children[v as usize >> bit & 1] == !0 {
                     panic!("remove unexist node");
                 }
-                target = self.nodes[target].children[v as usize >> bit & 1];
+                target = self.node(target).children[v as usize >> bit & 1];
 
                 bit -= 1;
             }
-            self.nodes[target].count -= 1;
+            self.node_mut(target).count -= 1;
         }
 
         /// # vが含まれるか
         pub fn contains(&self, v: TrieValue) -> bool {
             let (mut target, mut bit) = (self.root, self.bit_len);
             while bit >= 0 {
-                if self.nodes[target].children[v as usize >> bit & 1] == !0 {
+                if self.node(target).children[v as usize >> bit & 1] == !0 {
                     return false;
                 } else {
-                    target = self.nodes[target].children[v as usize >> bit & 1]
+                    target = self.node(target).children[v as usize >> bit & 1]
                 }
 
                 bit -= 1;
             }
-            self.nodes[target].count > 0
+            self.node(target).count > 0
         }
 
         /// xor_valとXORをとったときに最小値となるような値を取得する
@@ -110,10 +122,10 @@ mod binary_trie_impl {
             }
             let (mut target, mut bit, mut ret) = (self.root, self.bit_len, self.xor_val);
             while bit >= 0 {
-                let mut child = self.nodes[target].children[ret as usize >> bit & 1];
-                if child == !0 || self.nodes[child].count == 0 {
+                let mut child = self.node(target).children[ret as usize >> bit & 1];
+                if child == !0 || self.node(child).count == 0 {
                     ret ^= 1 << bit;
-                    child = self.nodes[target].children[ret as usize >> bit & 1];
+                    child = self.node(target).children[ret as usize >> bit & 1];
                 }
                 target = child;
                 bit -= 1;
@@ -132,10 +144,10 @@ mod binary_trie_impl {
             let mut bit = self.bit_len;
             let mut ret = self.rev_xor_val();
             while bit >= 0 {
-                let mut child = self.nodes[target].children[ret as usize >> bit & 1];
-                if child == !0 || self.nodes[child].count == 0 {
+                let mut child = self.node(target).children[ret as usize >> bit & 1];
+                if child == !0 || self.node(child).count == 0 {
                     ret ^= 1 << bit;
-                    child = self.nodes[target].children[ret as usize >> bit & 1]
+                    child = self.node(target).children[ret as usize >> bit & 1]
                 }
                 target = child;
                 bit -= 1;
@@ -150,16 +162,16 @@ mod binary_trie_impl {
         pub fn nth(&self, k: usize) -> Option<TrieValue> {
             let (mut target, mut bit, mut cnt, mut ret, k) = (self.root, self.bit_len, 0, 0, k + 1);
             while bit >= 0 {
-                if self.nodes[target].children[0] == !0 {
+                if self.node(target).children[0] == !0 {
                     ret += 1 << bit;
-                    target = self.nodes[target].children[1];
-                } else if cnt + self.nodes[self.nodes[target].children[0]].count < k {
+                    target = self.node(target).children[1];
+                } else if cnt + self.node(self.node(target).children[0]).count < k {
                     // k番目がon側にある
-                    cnt += self.nodes[self.nodes[target].children[0]].count;
+                    cnt += self.node(self.node(target).children[0]).count;
                     ret += 1 << bit;
-                    target = self.nodes[target].children[1];
+                    target = self.node(target).children[1];
                 } else {
-                    target = self.nodes[target].children[0];
+                    target = self.node(target).children[0];
                 }
 
                 if target == !0 {
@@ -185,10 +197,10 @@ mod binary_trie_impl {
                     break;
                 }
                 if v >> bit & 1 == 1 {
-                    ret += self.count(self.nodes[target].children[0]);
-                    target = self.nodes[target].children[1];
+                    ret += self.count(self.node(target).children[0]);
+                    target = self.node(target).children[1];
                 } else {
-                    target = self.nodes[target].children[0];
+                    target = self.node(target).children[0];
                 }
                 bit -= 1;
             }
@@ -223,11 +235,11 @@ mod binary_trie_impl {
             }
         }
 
-        fn count(&self, node: usize) -> usize {
+        fn count(&self, node: NodeId) -> usize {
             if node == !0 {
                 0
             } else {
-                self.nodes[node].count
+                self.node(node).count
             }
         }
 
@@ -259,14 +271,14 @@ mod binary_trie_impl {
     #[derive(Clone, Debug)]
     pub struct TrieNode {
         count: usize,
-        children: [usize; 2],
+        children: [NodeId; 2],
     }
 
     impl Default for TrieNode {
         fn default() -> Self {
             TrieNode {
                 count: 0,
-                children: [!0, !0],
+                children: [EMPTY_NODE, EMPTY_NODE],
             }
         }
     }
