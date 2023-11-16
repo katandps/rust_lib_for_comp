@@ -431,6 +431,19 @@ dependencies = [
 ]
 
 [[package]]
+name = "atcoder_solver_abc174f"
+version = "0.1.0"
+dependencies = [
+ "addition",
+ "binary_indexed_tree",
+ "io_debug",
+ "io_util",
+ "prelude",
+ "range_traits",
+ "string_util",
+]
+
+[[package]]
 name = "atcoder_solver_abc226f"
 version = "0.1.0"
 dependencies = [
@@ -2512,16 +2525,6 @@ name = "sqrt"
 version = "0.1.0"
 dependencies = [
  "prelude",
-]
-
-[[package]]
-name = "static_range_set_query"
-version = "0.1.0"
-dependencies = [
- "addition",
- "binary_indexed_tree",
- "prelude",
- "range_traits",
 ]
 
 [[package]]
