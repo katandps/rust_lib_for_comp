@@ -4,7 +4,7 @@
 fn main() {
     solve(io_util::IO::default());
 }
-use const_mod_val_table::ModValTable;
+use const_mod_factorial::Factorial;
 use io_util::*;
 use lagrange_interpolation::lagrange_polynomical;
 use mod_int::ModInt;
@@ -18,7 +18,7 @@ pub fn solve<IO: ReaderTrait + WriterTrait>(mut io: IO) {
         v.push(cur);
         cur += ModInt::from(i + 1).pow(k as i64);
     }
-    let mvt: ModValTable<1_000_000_007, 10010> = ModValTable::new();
+    let mvt: Factorial<1_000_000_007, 10010> = Factorial::new();
     let ans = lagrange_polynomical(&mvt, &v, n);
     io.out(ans.line());
     io.flush();

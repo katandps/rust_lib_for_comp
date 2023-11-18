@@ -8,7 +8,7 @@ algebra = { path = "../../algebra" }
 mod_int = { path = "../../algebra/mod_int" }
 prelude = { path = "../../prelude" }
 
-const_mod_val_table = { path = "../const_mod_val_table" }
+const_mod_factorial = { path = "../mod_int/const_mod_factorial" }
 
 [lib]
 path = "lib.rs"

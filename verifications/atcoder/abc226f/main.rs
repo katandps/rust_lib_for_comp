@@ -5,7 +5,7 @@ fn main() {
     solve(io_util::IO::default());
 }
 use algebra::Magma;
-use const_mod_val_table::ModValTable;
+use const_mod_factorial::Factorial;
 use greatest_common_divisor::Gcd;
 use io_util::*;
 use mod_int::ModInt;
@@ -15,7 +15,7 @@ use string_util::*;
 pub fn solve<IO: ReaderTrait + WriterTrait>(mut io: IO) {
     let (n, k) = io.v2::<usize, usize>();
     let mut ans = ModInt::<998_244_353>::zero();
-    let mvt: ModValTable<998_244_353, 10010> = ModValTable::new();
+    let mvt: Factorial<998_244_353, 10010> = Factorial::new();
     for p in SplitOfNumber::from(n) {
         let mut score = ModInt::from(
             p.iter()

@@ -10,7 +10,7 @@ string_util = { path = "../../../crates/util/string_util" }
 
 algebra = { path = "../../../crates/algebra" }
 mod_int = { path = "../../../crates/algebra/mod_int" }
-const_mod_val_table = { path = "../../../crates/algebra/const_mod_val_table" }
+const_mod_factorial = { path = "../../../crates/algebra/mod_int/const_mod_factorial" }
 split_of_natural_number = { path = "../../../crates/enumerator/split_of_natural_number" }
 greatest_common_divisor = { path = "../../../crates/algebra/binary_operation/greatest_common_divisor" }
 

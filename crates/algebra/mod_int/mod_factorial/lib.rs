@@ -5,13 +5,13 @@ use algebra::*;
 use mod_int::ModInt;
 use prelude::*;
 
-#[snippet(name = "mod-val-table", doc_hidden)]
-pub use mod_val_table_impl::ModValTable;
-#[snippet(name = "mod-val-table", doc_hidden)]
-pub mod mod_val_table_impl {
+#[snippet(name = "mod-factorial", doc_hidden)]
+pub use mod_factorial_impl::Factorial;
+#[snippet(name = "mod-factorial", doc_hidden)]
+pub mod mod_factorial_impl {
     use super::{ModInt, One, Zero};
     #[derive(Debug, Clone)]
-    pub struct ModValTable<M> {
+    pub struct Factorial<M> {
         /// # inv$\[i] = i$の逆元
         inv: Vec<M>,
         /// # fact$\[i] = i!$
@@ -21,7 +21,7 @@ pub mod mod_val_table_impl {
         /// 初期化済みのindex
         limit: usize,
     }
-    impl<M: Zero + One> Default for ModValTable<M> {
+    impl<M: Zero + One> Default for Factorial<M> {
         fn default() -> Self {
             let inv = vec![M::zero(), M::one()];
             let fact = vec![M::one(), M::one()];
@@ -35,7 +35,7 @@ pub mod mod_val_table_impl {
             }
         }
     }
-    impl<const M: u32> ModValTable<ModInt<M>> {
+    impl<const M: u32> Factorial<ModInt<M>> {
         /// # 初期化
         /// あるnについてModValTableを初期化する
         pub fn new(n: usize) -> Self {
@@ -195,7 +195,7 @@ pub mod mod_val_table_impl {
 
 #[test]
 fn catalan_test() {
-    let mut mvt: ModValTable<ModInt<998_244_353>> = ModValTable::default();
+    let mut mvt: Factorial<ModInt<998_244_353>> = Factorial::default();
     assert_eq!(ModInt::new(1), mvt.catalan_number(0));
     assert_eq!(ModInt::new(1), mvt.catalan_number(1));
     assert_eq!(ModInt::new(2), mvt.catalan_number(2));
@@ -210,7 +210,7 @@ fn catalan_test() {
 
 #[test]
 fn montmort_test() {
-    let mut mvt: ModValTable<ModInt<998_244_353>> = ModValTable::default();
+    let mut mvt: Factorial<ModInt<998_244_353>> = Factorial::default();
     assert_eq!(ModInt::new(0), mvt.montmort_number(1));
     assert_eq!(ModInt::new(1), mvt.montmort_number(2));
     assert_eq!(ModInt::new(2), mvt.montmort_number(3));

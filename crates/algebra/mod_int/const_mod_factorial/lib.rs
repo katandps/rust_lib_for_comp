@@ -5,13 +5,13 @@
 use mod_int::ModInt;
 use prelude::*;
 
-#[snippet(name = "const-mod-val-table", doc_hidden)]
-pub use mod_val_table_impl::ModValTable;
-#[snippet(name = "const-mod-val-table", doc_hidden)]
+#[snippet(name = "const-mod-factorial", doc_hidden)]
+pub use mod_val_table_impl::Factorial;
+#[snippet(name = "const-mod-factorial", doc_hidden)]
 pub mod mod_val_table_impl {
     use super::ModInt;
     #[derive(Debug, Clone)]
-    pub struct ModValTable<const M: u32, const N: usize> {
+    pub struct Factorial<const M: u32, const N: usize> {
         /// # inv$\[i] = i$の逆元
         // inv: [M; N],
         /// # fact$\[i] = i!$
@@ -19,7 +19,7 @@ pub mod mod_val_table_impl {
         /// # fact_inv$\[i] = i!$の逆元
         pub fact_inv: [ModInt<M>; N],
     }
-    impl<const M: u32, const N: usize> ModValTable<M, N> {
+    impl<const M: u32, const N: usize> Factorial<M, N> {
         /// # 初期化
         /// あるnについてModValTableを初期化する
         pub const fn new() -> Self {
@@ -51,7 +51,7 @@ pub mod mod_val_table_impl {
         /// # Factorial 階乗
         /// $ n! $
         /// ```
-        /// # use const_mod_val_table::ModValTable;
+        /// # use const_mod_factorial::ModValTable;
         /// let mut five = ModValTable::<998_244_353, 10>::new();
         /// let res = vec![1, 1, 2, 6, 24, 120];
         /// for i in 0..=5 {
@@ -66,7 +66,7 @@ pub mod mod_val_table_impl {
         /// # Permutation 順列
         /// $nPr = n! / (n - r)!$
         /// ```
-        /// # use const_mod_val_table::ModValTable;
+        /// # use const_mod_factorial::ModValTable;
         /// let mut five = ModValTable::<998_244_353, 10>::new();
         /// assert_eq!(1, five.permutation(5, 0).reduce());
         /// assert_eq!(5, five.permutation(5, 1).reduce());
@@ -88,7 +88,7 @@ pub mod mod_val_table_impl {
         /// $nCr = n! / (n - r)! r! = nPr / r!$
         /// Binomial Coefficient 二項係数 とも呼ぶ
         /// ```
-        /// use const_mod_val_table::ModValTable;
+        /// use const_mod_factorial::ModValTable;
         /// let mut five = ModValTable::<998_244_353, 10>::new();
         /// assert_eq!(1, five.combination(5, 0).reduce());
         /// assert_eq!(5, five.combination(5, 1).reduce());
@@ -168,11 +168,11 @@ pub mod mod_val_table_impl {
 
 #[cfg(test)]
 mod tests {
-    use super::ModValTable;
+    use super::Factorial;
     use mod_int::ModInt;
     #[test]
     fn test() {
-        let mvt: ModValTable<998_244_353, 100> = ModValTable::new();
+        let mvt: Factorial<998_244_353, 100> = Factorial::new();
         assert_eq!(ModInt::new(1), mvt.factorial(1));
         assert_eq!(ModInt::new(2), mvt.factorial(2));
         assert_eq!(ModInt::new(6), mvt.factorial(3));
@@ -182,7 +182,7 @@ mod tests {
 
     #[test]
     fn catalan_test() {
-        let mvt: ModValTable<998_244_353, 100> = ModValTable::new();
+        let mvt: Factorial<998_244_353, 100> = Factorial::new();
         assert_eq!(ModInt::new(1), mvt.catalan_number(0));
         assert_eq!(ModInt::new(1), mvt.catalan_number(1));
         assert_eq!(ModInt::new(2), mvt.catalan_number(2));
@@ -197,7 +197,7 @@ mod tests {
 
     #[test]
     fn montmort_test() {
-        let mvt: ModValTable<998_244_353, 100> = ModValTable::new();
+        let mvt: Factorial<998_244_353, 100> = Factorial::new();
         assert_eq!(ModInt::new(0), mvt.montmort_number(1));
         assert_eq!(ModInt::new(1), mvt.montmort_number(2));
         assert_eq!(ModInt::new(2), mvt.montmort_number(3));

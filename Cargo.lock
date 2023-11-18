@@ -448,7 +448,7 @@ name = "atcoder_solver_abc226f"
 version = "0.1.0"
 dependencies = [
  "algebra",
- "const_mod_val_table",
+ "const_mod_factorial",
  "greatest_common_divisor",
  "io_debug",
  "io_util",
@@ -795,7 +795,7 @@ dependencies = [
 ]
 
 [[package]]
-name = "const_mod_val_table"
+name = "const_mod_factorial"
 version = "0.1.0"
 dependencies = [
  "mod_int",
@@ -997,6 +997,15 @@ name = "either"
 version = "1.9.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "a26ae43d7bcc3b814de94796a5e736d4029efb0ee900c12e2d54c993ad1a1e07"
+
+[[package]]
+name = "embedded_mod_factorial"
+version = "0.1.0"
+dependencies = [
+ "mod_int",
+ "prelude",
+ "string_util",
+]
 
 [[package]]
 name = "errno"
@@ -1268,7 +1277,7 @@ name = "lagrange_interpolation"
 version = "0.1.0"
 dependencies = [
  "algebra",
- "const_mod_val_table",
+ "const_mod_factorial",
  "mod_int",
  "prelude",
 ]
@@ -1405,6 +1414,17 @@ dependencies = [
  "io_debug",
  "io_util",
  "manachar",
+ "string_util",
+]
+
+[[package]]
+name = "library_checker_solver_factorial"
+version = "0.1.0"
+dependencies = [
+ "embedded_mod_factorial",
+ "io_debug",
+ "io_util",
+ "mod_int",
  "string_util",
 ]
 
@@ -1898,6 +1918,15 @@ dependencies = [
 ]
 
 [[package]]
+name = "mod_factorial"
+version = "0.1.0"
+dependencies = [
+ "algebra",
+ "mod_int",
+ "prelude",
+]
+
+[[package]]
 name = "mod_int"
 version = "0.1.0"
 dependencies = [
@@ -1912,15 +1941,6 @@ name = "mod_pow"
 version = "0.1.0"
 dependencies = [
  "algebra",
- "prelude",
-]
-
-[[package]]
-name = "mod_val_table"
-version = "0.1.0"
-dependencies = [
- "algebra",
- "mod_int",
  "prelude",
 ]
 
@@ -2898,7 +2918,7 @@ dependencies = [
 name = "yukicoder_bernoulli_bernoulli"
 version = "0.1.0"
 dependencies = [
- "const_mod_val_table",
+ "const_mod_factorial",
  "io_debug",
  "io_util",
  "lagrange_interpolation",

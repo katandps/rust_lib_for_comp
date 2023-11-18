@@ -6,7 +6,7 @@
 //!
 //! ## todo
 //! 0..=n以外の値を与えたときの機能
-use const_mod_val_table::ModValTable;
+use const_mod_factorial::Factorial;
 use mod_int::ModInt;
 use prelude::*;
 
@@ -15,7 +15,7 @@ use prelude::*;
 /// $f(t)$を求める
 #[snippet(name = "lagrange-polynomical", doc_hidden)]
 pub fn lagrange_polynomical<const N: usize, const M: u32>(
-    mvt: &ModValTable<M, N>,
+    mvt: &Factorial<M, N>,
     v: &[ModInt<M>],
     t: usize,
 ) -> ModInt<M> {

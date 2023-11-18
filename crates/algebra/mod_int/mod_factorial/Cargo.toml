@@ -1,0 +1,12 @@
+[package]
+name = "mod_factorial"
+version = "0.1.0"
+edition = "2018"
+
+[dependencies]
+algebra = { path = "../../" }
+mod_int = { path = "../" }
+prelude = { path = "../../../prelude" }
+
+[lib]
+path = "lib.rs"
