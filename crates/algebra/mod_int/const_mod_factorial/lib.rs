@@ -51,8 +51,8 @@ pub mod mod_val_table_impl {
         /// # Factorial 階乗
         /// $ n! $
         /// ```
-        /// # use const_mod_factorial::ModValTable;
-        /// let mut five = ModValTable::<998_244_353, 10>::new();
+        /// # use const_mod_factorial::Factorial;
+        /// let mut five = Factorial::<998_244_353, 10>::new();
         /// let res = vec![1, 1, 2, 6, 24, 120];
         /// for i in 0..=5 {
         ///     assert_eq!(res[i], five.factorial(i as i64).reduce());
@@ -66,8 +66,8 @@ pub mod mod_val_table_impl {
         /// # Permutation 順列
         /// $nPr = n! / (n - r)!$
         /// ```
-        /// # use const_mod_factorial::ModValTable;
-        /// let mut five = ModValTable::<998_244_353, 10>::new();
+        /// # use const_mod_factorial::Factorial;
+        /// let mut five = Factorial::<998_244_353, 10>::new();
         /// assert_eq!(1, five.permutation(5, 0).reduce());
         /// assert_eq!(5, five.permutation(5, 1).reduce());
         /// assert_eq!(20, five.permutation(5, 2).reduce());
@@ -88,8 +88,8 @@ pub mod mod_val_table_impl {
         /// $nCr = n! / (n - r)! r! = nPr / r!$
         /// Binomial Coefficient 二項係数 とも呼ぶ
         /// ```
-        /// use const_mod_factorial::ModValTable;
-        /// let mut five = ModValTable::<998_244_353, 10>::new();
+        /// use const_mod_factorial::Factorial;
+        /// let mut five = Factorial::<998_244_353, 10>::new();
         /// assert_eq!(1, five.combination(5, 0).reduce());
         /// assert_eq!(5, five.combination(5, 1).reduce());
         /// assert_eq!(10, five.combination(5, 2).reduce());

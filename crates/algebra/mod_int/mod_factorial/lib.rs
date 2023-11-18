@@ -80,8 +80,8 @@ pub mod mod_factorial_impl {
         /// $ n! $
         /// ```
         /// # use mod_int::Mi;
-        /// # use mod_val_table::ModValTable;
-        /// let mut five = ModValTable::<Mi>::new(5);
+        /// # use mod_factorial::Factorial;
+        /// let mut five = Factorial::<Mi>::new(5);
         /// let res = vec![1, 1, 2, 6, 24, 120];
         /// for i in 0..=5 {
         ///     assert_eq!(res[i], five.factorial(i as i64).reduce());
@@ -97,8 +97,8 @@ pub mod mod_factorial_impl {
         /// $nPr = n! / (n - r)!$
         /// ```
         /// # use mod_int::Mi;
-        /// # use mod_val_table::ModValTable;
-        /// let mut five = ModValTable::<Mi>::new(5);
+        /// # use mod_factorial::Factorial;
+        /// let mut five = Factorial::<Mi>::new(5);
         /// assert_eq!(1, five.permutation(5, 0).reduce());
         /// assert_eq!(5, five.permutation(5, 1).reduce());
         /// assert_eq!(20, five.permutation(5, 2).reduce());
@@ -121,8 +121,8 @@ pub mod mod_factorial_impl {
         /// Binomial Coefficient 二項係数 とも呼ぶ
         /// ```
         /// use mod_int::Mi;
-        /// use mod_val_table::ModValTable;
-        /// let mut five = ModValTable::<Mi>::new(5);
+        /// use mod_factorial::Factorial;
+        /// let mut five = Factorial::<Mi>::new(5);
         /// assert_eq!(1, five.combination(5, 0).reduce());
         /// assert_eq!(5, five.combination(5, 1).reduce());
         /// assert_eq!(10, five.combination(5, 2).reduce());
