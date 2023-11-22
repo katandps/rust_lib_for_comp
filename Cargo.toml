@@ -11,6 +11,7 @@ members = [
     'crates/algebra/binary_operation/overwrite_operation',
     'crates/algebra/chinese_remainder_theorem',
     'crates/algebra/dynamic_mod_int',
+    'crates/algebra/formal_power_series',
     'crates/algebra/lagrange_interpolation',
     'crates/algebra/lucas_theorem',
     'crates/algebra/matrix',

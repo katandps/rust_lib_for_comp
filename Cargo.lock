@@ -1084,6 +1084,15 @@ dependencies = [
 ]
 
 [[package]]
+name = "formal_power_series"
+version = "0.1.0"
+dependencies = [
+ "algebra",
+ "mod_int",
+ "prelude",
+]
+
+[[package]]
 name = "fuchsia-cprng"
 version = "0.1.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
