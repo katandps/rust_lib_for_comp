@@ -6,7 +6,7 @@ fn main() {
     solve(io_util::IO::default());
 }
 use complete_64_part_tree::Complete64PartTree;
-use compress::compress_with_reverse;
+use compress::Compress;
 use io_util::*;
 use string_util::*;
 
@@ -26,7 +26,7 @@ pub fn solve<IO: ReaderTrait + WriterTrait>(mut io: IO) {
             queries.push(std::i64::MIN + 2);
         }
     }
-    let (comp, rev) = compress_with_reverse(&s);
+    let (comp, rev) = s[..].compress_with_reverse();
     let mut tree = Complete64PartTree::build(comp.len() as u64);
     let mut cnt = vec![0; comp.len()];
     for &si in comp.iter().take(n) {
@@ -43,14 +43,14 @@ pub fn solve<IO: ReaderTrait + WriterTrait>(mut io: IO) {
             if cnt[p as usize] == 0 {
                 tree.remove(p);
             }
-            io.out(rev[p as usize].line());
+            io.out(s[rev[p as usize]].line());
         } else if q == std::i64::MIN + 2 {
             let p = tree.max().unwrap();
             cnt[p as usize] -= 1;
             if cnt[p as usize] == 0 {
                 tree.remove(p);
             }
-            io.out(rev[p as usize].line());
+            io.out(s[rev[p as usize]].line());
         } else {
             if cnt[comp[i]] == 0 {
                 tree.insert(comp[i] as u64);

@@ -3,36 +3,48 @@ use prelude::*;
 use suffix_array::SuffixArray;
 
 #[snippet(name = "longest-common-prefix-array", doc_hidden)]
-pub struct LCPArray {
-    pub lcp: Vec<usize>,
-}
-
+pub use longest_common_prefix_array_impl::LCPArray;
 #[snippet(name = "longest-common-prefix-array", doc_hidden)]
-impl LCPArray {
-    pub fn build(sa: &SuffixArray) -> Self {
-        let n = sa.source.len();
-        assert!(n > 0);
+mod longest_common_prefix_array_impl {
+    use super::{Index, SuffixArray};
 
-        let mut rank = vec![0; n];
-        sa.sa.iter().enumerate().for_each(|(i, sai)| rank[*sai] = i);
+    #[derive(Clone, Debug)]
+    pub struct LCPArray {
+        pub lcp: Vec<usize>,
+    }
+    impl LCPArray {
+        pub fn build(sa: &SuffixArray) -> Self {
+            let n = sa.source.len();
+            assert!(n > 0);
 
-        let mut lcp = vec![0; n];
-        let mut h = 0usize;
-        for i in 0..n {
-            h = h.saturating_sub(1);
-            if rank[i] == 0 {
-                continue;
-            }
-            let j = sa.sa[rank[i] - 1];
-            while j + h < n && i + h < n {
-                if sa.source[j + h] != sa.source[i + h] {
-                    break;
+            let mut rank = vec![0; n];
+            sa.sa.iter().enumerate().for_each(|(i, sai)| rank[*sai] = i);
+
+            let mut lcp = vec![0; n];
+            let mut h = 0usize;
+            for i in 0..n {
+                h = h.saturating_sub(1);
+                if rank[i] == 0 {
+                    continue;
                 }
-                h += 1;
+                let j = sa.sa[rank[i] - 1];
+                while j + h < n && i + h < n {
+                    if sa.source[j + h] != sa.source[i + h] {
+                        break;
+                    }
+                    h += 1;
+                }
+                lcp[rank[i]] = h;
             }
-            lcp[rank[i]] = h;
+            LCPArray { lcp }
         }
-        LCPArray { lcp }
+    }
+
+    impl Index<usize> for LCPArray {
+        type Output = usize;
+        fn index(&self, i: usize) -> &usize {
+            &self.lcp[i]
+        }
     }
 }
 

@@ -1458,6 +1458,19 @@ dependencies = [
 ]
 
 [[package]]
+name = "library_checker_solver_longest_common_substring"
+version = "0.1.0"
+dependencies = [
+ "io_debug",
+ "io_util",
+ "longest_common_prefix_array",
+ "min_max_macro",
+ "prelude",
+ "string_util",
+ "suffix_array",
+]
+
+[[package]]
 name = "library_checker_solver_lowest_common_ancestor"
 version = "0.1.0"
 dependencies = [

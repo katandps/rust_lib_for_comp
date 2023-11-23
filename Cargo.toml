@@ -180,6 +180,7 @@ members = [
     'verifications/library_checker/factorial',
     'verifications/library_checker/factorize',
     'verifications/library_checker/line_add_get_min',
+    'verifications/library_checker/longest_common_substring',
     'verifications/library_checker/lowest_common_ancestor',
     'verifications/library_checker/many_aplusb_128bit',
     'verifications/library_checker/matrix_product',

@@ -91,10 +91,14 @@ mod io_debug_impl {
     }
     impl Assertion for StaticAssertion {
         fn assert(&mut self, output: &mut ReaderFromStr, _: &mut ReaderFromStr) {
+            let (mut actual , mut expect) = (Vec::new(),Vec::new());
             while let Some(a) = output.next() {
-                assert_eq!(Some(a), self.expect.next())
+                actual.push(a);
             }
-            assert_eq!(None, self.expect.next())
+            while let Some(a) = self.expect.next() {
+                expect.push(a);
+            }
+            assert_eq!(expect,actual);
         }
     }
     pub struct FValueAssertion {

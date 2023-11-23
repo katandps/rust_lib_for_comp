@@ -1,0 +1,18 @@
+[package]
+name = "library_checker_solver_longest_common_substring"
+version = "0.1.0"
+edition = "2018"
+
+[dependencies]
+io_util = { path = "../../../crates/util/io_util" }
+io_debug = { path = "../../../crates/util/io_debug" }
+string_util = { path = "../../../crates/util/string_util" }
+prelude = { path = "../../../crates/prelude" }
+min_max_macro = { path = "../../../crates/util/min_max_macro" }
+
+suffix_array = { path = "../../../crates/string/suffix_array" }
+longest_common_prefix_array = { path = "../../../crates/string/longest_common_prefix_array" }
+
+[[bin]]
+name = "library_checker_solver_longest_common_substring"
+path = "main.rs"
