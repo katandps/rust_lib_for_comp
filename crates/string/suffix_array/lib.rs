@@ -10,41 +10,53 @@ mod suffix_array_impl {
     use super::{BTreeMap, Compress, Index};
 
     #[derive(Debug, Clone)]
-    pub struct SuffixArray {
+    pub struct SuffixArray<T> {
         pub sa: Vec<usize>,
-        pub source: Vec<usize>,
+        pub src: Vec<T>,
     }
-    impl SuffixArray {
+    impl<T: Clone + Ord> SuffixArray<T> {
         /// ## create by SA-IS. O(N)
         /// 番兵として $0$ を挿入する
-        pub fn build<T: Clone + Ord>(source: &[T]) -> Self {
-            let mut source: Vec<_> = source.compress(1);
-            source.push(0);
-            let mut sais = Sais::new(source.len());
-            let sa = sais.suffix_array(&source);
-            Self { sa, source }
+        pub fn build(src: &[T]) -> Self {
+            let mut sais = Sais::new(src.len() + 1);
+            let mut p = src.compress(1);
+            p.push(0);
+            let sa = sais.suffix_array(&p);
+            Self {
+                sa,
+                src: src.to_vec(),
+            }
         }
 
         /// targetがsourceに含まれるとき、そのindexの一つを返す
-        pub fn search(&self, target: &[usize]) -> Option<usize> {
+        ///
+        /// ## 計算量
+        /// targetの長さをNとして、$M\logN$
+        pub fn search(&self, target: &[T]) -> Option<usize> {
             let mut l = 0;
             let mut r = self.sa.len();
             while r - l > 1 {
                 let mid = (l + r) / 2;
-                if &self.source[self.sa[mid]..][..target.len()] <= target {
-                    l = mid;
+                let sl = &self.src[self.sa[mid]..];
+                if sl.len() <= target.len() {
+                    *if sl <= target { &mut l } else { &mut r } = mid;
                 } else {
-                    r = mid;
+                    *if &sl[..target.len()] <= target {
+                        &mut l
+                    } else {
+                        &mut r
+                    } = mid;
                 }
             }
-            if &self.source[self.sa[l]..][..target.len()] == target {
+            let sl = &self.src[self.sa[l]..];
+            if sl.len() >= target.len() && &sl[..target.len()] == target {
                 Some(self.sa[l])
             } else {
                 None
             }
         }
     }
-    impl Index<usize> for SuffixArray {
+    impl<T> Index<usize> for SuffixArray<T> {
         type Output = usize;
         fn index(&self, i: usize) -> &usize {
             &self.sa[i]
@@ -262,13 +274,13 @@ mod test {
 
     #[test]
     fn search_test() {
-        let s: Vec<_> = "mmiissiissiippii".chars().collect();
+        let s = "mmiissiissiippii".as_bytes();
         let sa = SuffixArray::build(&s);
         assert!(sa.search(&Vec::new()).is_some());
-        assert!(sa.search(&vec![1]).is_some());
-        assert_eq!(Some(0), sa.search(&sa.source[..]));
-        assert_eq!(Some(3), sa.search(&sa.source[3..]));
-        assert_eq!(Some(12), sa.search(&sa.source[12..]));
+        assert!(sa.search(&"i".as_bytes()).is_some());
+        assert_eq!(Some(0), sa.search("mmiissii".as_bytes()));
+        assert_eq!(Some(3), sa.search("issii".as_bytes()));
+        assert_eq!(Some(12), sa.search(&sa.src[12..]));
         assert_eq!(None, sa.search(&vec![4, 4, 1, 1, 1,]));
         assert_eq!(None, sa.search(&vec![5]));
         assert_eq!(None, sa.search(&vec![1, 1, 4, 4, 1, 1, 3, 3, 3,]));

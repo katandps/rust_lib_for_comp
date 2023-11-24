@@ -13,14 +13,14 @@ mod longest_common_prefix_array_impl {
         pub lcp: Vec<usize>,
     }
     impl LCPArray {
-        pub fn build(sa: &SuffixArray) -> Self {
-            let n = sa.source.len();
+        pub fn build<T: PartialEq>(sa: &SuffixArray<T>) -> Self {
+            let n = sa.src.len();
             assert!(n > 0);
 
-            let mut rank = vec![0; n];
+            let mut rank = vec![0; n + 1];
             sa.sa.iter().enumerate().for_each(|(i, sai)| rank[*sai] = i);
 
-            let mut lcp = vec![0; n];
+            let mut lcp = vec![0; n + 1];
             let mut h = 0usize;
             for i in 0..n {
                 h = h.saturating_sub(1);
@@ -29,7 +29,7 @@ mod longest_common_prefix_array_impl {
                 }
                 let j = sa.sa[rank[i] - 1];
                 while j + h < n && i + h < n {
-                    if sa.source[j + h] != sa.source[i + h] {
+                    if sa.src[j + h] != sa.src[i + h] {
                         break;
                     }
                     h += 1;
