@@ -71,13 +71,6 @@ script = '''
 		python3 -c "import sys, json; data=json.load(sys.stdin); print(data['access_token'], end='')" > dropbox_token
 '''
 
-[tasks.verify-resolve-all]
-description = "resolve verifications by oj-resolve"
-category = "Verification"
-script = '''
-    competitive-verifier oj-resolve > ${VERIFY_DIR}/${VERIFY_FILE}
-'''
-
 [tasks.verify-download]
 description = "download verification problems"
 dependencies = ["refresh-dropbox-token"]
@@ -85,14 +78,6 @@ category = "Verification"
 script = '''
 	export DROPBOX_TOKEN=$(cat dropbox_token)
 	competitive-verifier download --verify-json ${VERIFY_DIR}/${VERIFY_FILE}
-'''
-
-[tasks.verify-all]
-description = "verify all problems"
-dependencies = ["verify-resolve-all", "verify-download"]
-category = "Verification"
-script = '''
-    competitive-verifier verify --verify-json ${VERIFY_DIR}/${VERIFY_FILE} --output ${VERIFY_DIR}/${VERIFY_RESULT_FILE}
 '''
 
 [tasks.verify-list]
