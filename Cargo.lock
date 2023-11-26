@@ -1972,6 +1972,7 @@ version = "0.1.0"
 dependencies = [
  "algebra",
  "fxhasher",
+ "io_util",
  "prelude",
  "rand 0.8.5",
 ]

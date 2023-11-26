@@ -8,7 +8,7 @@ use prelude::*;
 #[rustfmt::skip]
 pub use io_debug_impl::{Assertion, FValueAssertion, IODebug, NoAssertion, StaticAssertion};
 #[snippet(name = "io-debug", doc_hidden)]
-#[rustfmt::skip]
+// #[rustfmt::skip]
 mod io_debug_impl {
     use super::{stdout, BufWriter, Display, ReaderFromStr, ReaderTrait, Write, WriterTrait};
 
@@ -38,7 +38,7 @@ mod io_debug_impl {
     }
 
     impl<F> ReaderTrait for IODebug<F> {
-        fn next(&mut self) -> Option<String> {
+        fn next(&mut self) -> Option<Vec<u8>> {
             self.reader.next()
         }
     }
@@ -91,14 +91,14 @@ mod io_debug_impl {
     }
     impl Assertion for StaticAssertion {
         fn assert(&mut self, output: &mut ReaderFromStr, _: &mut ReaderFromStr) {
-            let (mut actual , mut expect) = (Vec::new(),Vec::new());
+            let (mut actual, mut expect) = (Vec::new(), Vec::new());
             while let Some(a) = output.next() {
                 actual.push(a);
             }
             while let Some(a) = self.expect.next() {
                 expect.push(a);
             }
-            assert_eq!(expect,actual);
+            assert_eq!(expect, actual);
         }
     }
     pub struct FValueAssertion {
@@ -109,8 +109,10 @@ mod io_debug_impl {
             use super::FValue;
             use std::str::FromStr;
             while let Some(a) = output.next() {
+                let a = unsafe { String::from_utf8_unchecked(a) };
                 if let Some(b) = self.expect.next() {
-                    assert_eq!(FValue::from_str(&a), FValue::from_str(&b));
+                    let b = unsafe { String::from_utf8_unchecked(b) };
+                    assert_eq!(FValue::from_str(a.as_str()), FValue::from_str(b.as_str()));
                 } else {
                     panic!("expect exit but actual {}", a);
                 }
@@ -147,7 +149,7 @@ fn test() {
     io.out(13.bits(5));
     io.flush();
     for &expect in &["123456", "1", "2", "3", "4", "5", "10110"] {
-        assert_eq!(Some(expect.to_string()), io.test_reader.next());
+        assert_eq!(Some(expect.as_bytes().to_vec()), io.test_reader.next());
     }
     assert!(io.next().is_none());
 }

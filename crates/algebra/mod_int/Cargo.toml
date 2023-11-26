@@ -7,6 +7,7 @@ edition = "2018"
 prelude = { path = "../../prelude" }
 algebra = { path = "../../algebra" }
 fxhasher = { path = "../../algo/fxhasher" }
+io_util = { path = "../../util/io_util" }
 
 [dev-dependencies]
 rand = "0.8.5"

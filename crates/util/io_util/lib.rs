@@ -18,11 +18,61 @@ use prelude::*;
 
 #[snippet("io-util")]
 #[rustfmt::skip]
-pub use io_impl::{ReaderFromStdin, ReaderFromStr, ReaderTrait, WriterToStdout, WriterTrait, IO};
+pub use io_impl::{
+    Parse, ReaderFromStdin, ReaderFromStr, ReaderTrait, WriterToStdout, WriterTrait, IO,
+};
 #[snippet(name = "io-util", doc_hidden)]
 #[rustfmt::skip]
 mod io_impl {
-    use super::{stdin, stdout, BufRead, BufWriter, Display, FromStr as FS, VecDeque, Write};
+    use std::io::Read;
+
+    use super::{stdin, stdout, BufWriter, Display, VecDeque, Write};
+
+    pub trait Parse {
+        fn parse(src: &[u8]) -> Self;
+    }
+
+    impl Parse for String {
+        fn parse(src: &[u8]) -> Self {
+            unsafe { String::from_utf8_unchecked(src.to_vec()) }
+        }
+    }
+    impl Parse for char {
+        fn parse(src: &[u8]) -> Self {
+            src[0] as char
+        }
+    }
+    macro_rules! impl_integral {
+        ($($ty:ty),*) => {
+            $(
+                impl Parse for $ty {
+                    fn parse(src: &[u8]) -> Self {
+                        let mut ret: $ty = 0;
+                        if src[0] == b'-' {
+                            for &si in src.iter().skip(1) {
+                                ret *= 10;
+                                ret += si as $ty - b'0' as $ty;
+                            }
+                            ret = 0 - ret;
+                        } else {
+                            for &si in src {
+                                ret *= 10;
+                                ret += si as $ty - b'0' as $ty;
+                            }
+                        }
+                        ret
+                    }
+                }
+            )*
+        };
+    }
+    impl_integral!(i8, i16, i32, i64, i128, u8, u16, u32, u64, u128, isize, usize);
+    impl Parse for f64 {
+        fn parse(src: &[u8]) -> Self {
+            let s = String::parse(src);
+            s.parse::<f64>().expect("Failed to parse f64")
+        }
+    }
 
     #[derive(Clone, Debug, Default)]
     pub struct IO {
@@ -31,41 +81,46 @@ mod io_impl {
     }
 
     pub trait ReaderTrait {
-        fn next(&mut self) -> Option<String>;
-        fn v<T: FS>(&mut self) -> T {
+        fn next(&mut self) -> Option<Vec<u8>>;
+        fn v<T: Parse>(&mut self) -> T {
             let s = self.next().expect("Insufficient input.");
-            s.parse().ok().expect("Failed to parse.")
+            T::parse(&s)
         }
-        fn v2<T1: FS, T2: FS>(&mut self) -> (T1, T2) {
+        fn v2<T1: Parse, T2: Parse>(&mut self) -> (T1, T2) {
             (self.v(), self.v())
         }
-        fn v3<T1: FS, T2: FS, T3: FS>(&mut self) -> (T1, T2, T3) {
+        fn v3<T1: Parse, T2: Parse, T3: Parse>(&mut self) -> (T1, T2, T3) {
             (self.v(), self.v(), self.v())
         }
-        fn v4<T1: FS, T2: FS, T3: FS, T4: FS>(&mut self) -> (T1, T2, T3, T4) {
+        fn v4<T1: Parse, T2: Parse, T3: Parse, T4: Parse>(&mut self) -> (T1, T2, T3, T4) {
             (self.v(), self.v(), self.v(), self.v())
         }
-        fn v5<T1: FS, T2: FS, T3: FS, T4: FS, T5: FS>(&mut self) -> (T1, T2, T3, T4, T5) {
+        fn v5<T1: Parse, T2: Parse, T3: Parse, T4: Parse, T5: Parse>(
+            &mut self,
+        ) -> (T1, T2, T3, T4, T5) {
             (self.v(), self.v(), self.v(), self.v(), self.v())
         }
-        fn vec<T: FS>(&mut self, length: usize) -> Vec<T> {
+        fn vec<T: Parse>(&mut self, length: usize) -> Vec<T> {
             (0..length).map(|_| self.v()).collect()
         }
-        fn vec2<T1: FS, T2: FS>(&mut self, length: usize) -> Vec<(T1, T2)> {
+        fn vec2<T1: Parse, T2: Parse>(&mut self, length: usize) -> Vec<(T1, T2)> {
             (0..length).map(|_| self.v2()).collect()
         }
-        fn vec3<T1: FS, T2: FS, T3: FS>(&mut self, length: usize) -> Vec<(T1, T2, T3)> {
+        fn vec3<T1: Parse, T2: Parse, T3: Parse>(&mut self, length: usize) -> Vec<(T1, T2, T3)> {
             (0..length).map(|_| self.v3()).collect()
         }
-        fn vec4<T1: FS, T2: FS, T3: FS, T4: FS>(&mut self, length: usize) -> Vec<(T1, T2, T3, T4)> {
+        fn vec4<T1: Parse, T2: Parse, T3: Parse, T4: Parse>(
+            &mut self,
+            length: usize,
+        ) -> Vec<(T1, T2, T3, T4)> {
             (0..length).map(|_| self.v4()).collect()
         }
         fn chars(&mut self) -> Vec<char> {
             self.v::<String>().chars().collect()
         }
         fn split(&mut self, zero: u8) -> Vec<usize> {
-            self.v::<String>()
-                .chars()
+            self.chars()
+                .into_iter()
                 .map(|c| (c as u8 - zero) as usize)
                 .collect()
         }
@@ -98,17 +153,17 @@ mod io_impl {
         }
 
         /// 空白区切りで $h*w$ 個の要素を行列として取得する
-        fn matrix<T: FS>(&mut self, h: usize, w: usize) -> Vec<Vec<T>> {
+        fn matrix<T: Parse>(&mut self, h: usize, w: usize) -> Vec<Vec<T>> {
             (0..h).map(|_| self.vec(w)).collect()
         }
     }
 
     pub struct ReaderFromStr {
-        buf: VecDeque<String>,
+        buf: VecDeque<Vec<u8>>,
     }
 
     impl ReaderTrait for ReaderFromStr {
-        fn next(&mut self) -> Option<String> {
+        fn next(&mut self) -> Option<Vec<u8>> {
             self.buf.pop_front()
         }
     }
@@ -118,15 +173,14 @@ mod io_impl {
             Self {
                 buf: src
                     .split_whitespace()
-                    .map(ToString::to_string)
-                    .collect::<Vec<String>>()
-                    .into(),
+                    .map(|s| s.as_bytes().to_vec())
+                    .collect::<VecDeque<_>>(),
             }
         }
 
         pub fn push(&mut self, src: &str) {
-            for s in src.split_whitespace().map(ToString::to_string) {
-                self.buf.push_back(s);
+            for s in src.split_whitespace() {
+                self.buf.push_back(s.as_bytes().to_vec());
             }
         }
 
@@ -144,18 +198,22 @@ mod io_impl {
 
     #[derive(Clone, Debug, Default)]
     pub struct ReaderFromStdin {
-        buf: VecDeque<String>,
+        buf: VecDeque<Vec<u8>>,
     }
 
     impl ReaderTrait for ReaderFromStdin {
-        fn next(&mut self) -> Option<String> {
+        fn next(&mut self) -> Option<Vec<u8>> {
             while self.buf.is_empty() {
                 let stdin = stdin();
                 let mut reader = stdin.lock();
-                let mut l = String::new();
-                reader.read_line(&mut l).unwrap();
-                self.buf
-                    .append(&mut l.split_ascii_whitespace().map(ToString::to_string).collect());
+                let mut l = Vec::new();
+                reader.read_to_end(&mut l).unwrap();
+                self.buf.append(
+                    &mut l
+                        .split(|byte| byte.is_ascii_whitespace())
+                        .flat_map(|s| if s.is_empty() { None } else { Some(s.to_vec()) })
+                        .collect::<VecDeque<_>>(),
+                );
             }
             self.buf.pop_front()
         }
@@ -189,7 +247,7 @@ mod io_impl {
     }
 
     impl ReaderTrait for IO {
-        fn next(&mut self) -> Option<String> {
+        fn next(&mut self) -> Option<Vec<u8>> {
             self.reader.next()
         }
     }
@@ -215,8 +273,8 @@ mod tests {
             assert_eq!(8u32, reader.v::<u32>());
         }
         {
-            let mut reader = ReaderFromStr::new("9");
-            assert_eq!(9i32, reader.v::<i32>());
+            let mut reader = ReaderFromStr::new("123");
+            assert_eq!(123i32, reader.v::<i32>());
         }
     }
 

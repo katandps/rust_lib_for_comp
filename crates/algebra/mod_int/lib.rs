@@ -3,6 +3,7 @@
 //! $2^{32}$を$R$とするモンゴメリ乗算を使用して実装
 use algebra::*;
 use fxhasher::HashMap;
+use io_util::Parse;
 use prelude::*;
 
 pub type Mi = ModInt<998_244_353>;
@@ -11,11 +12,9 @@ pub type Mi = ModInt<998_244_353>;
 pub use mod_int_impl::ModInt;
 #[snippet(name = "mod-int", doc_hidden)]
 mod mod_int_impl {
-    use std::num::ParseIntError;
-
     use super::{
-        Add, AddAssign, Debug, Display, Div, DivAssign, Formatter, FromStr, Mul, MulAssign, Neg,
-        One, Pow, PrimitiveRoot, Sub, SubAssign, Sum, Zero,
+        Add, AddAssign, Debug, Display, Div, DivAssign, Formatter, Mul, MulAssign, Neg, One, Parse,
+        Pow, PrimitiveRoot, Sub, SubAssign, Sum, Zero,
     };
     #[derive(Copy, Clone, Eq, PartialEq, Default, Hash)]
     pub struct ModInt<const MOD: u32 = 998_244_353>(u32);
@@ -228,11 +227,9 @@ mod mod_int_impl {
             iter.fold(Self::zero(), |x, a| x + a)
         }
     }
-    impl<const M: u32> FromStr for ModInt<M> {
-        type Err = ParseIntError;
-        #[inline]
-        fn from_str(s: &str) -> Result<Self, Self::Err> {
-            Ok(Self::new(s.parse::<u32>()?))
+    impl<const M: u32> Parse for ModInt<M> {
+        fn parse(src: &[u8]) -> Self {
+            Self::new(u32::parse(src))
         }
     }
     macro_rules! impl_integral {
@@ -459,9 +456,14 @@ mod test {
 
     #[test]
     fn from_str() {
-        assert_eq!(Ok(Mi::new(5)), Mi::from_str("5"));
-        assert_eq!(Ok(Mi::new(1)), Mi::from_str("1000000008"));
-        assert!(Mi::from_str("5a").is_err());
+        assert_eq!(Mi::new(5), Mi::parse("5".as_bytes()));
+        assert_eq!(Mi::new(1), Mi::parse("1000000008".as_bytes()));
+    }
+
+    #[test]
+    #[should_panic]
+    fn from_str_failed() {
+        Mi::parse("5a".as_bytes());
     }
 
     #[test]
