@@ -1643,6 +1643,18 @@ dependencies = [
 ]
 
 [[package]]
+name = "library_checker_solver_rmq_dynamic_segment_tree"
+version = "0.1.0"
+dependencies = [
+ "dynamic_segment_tree",
+ "io_debug",
+ "io_util",
+ "minimization",
+ "range_traits",
+ "string_util",
+]
+
+[[package]]
 name = "library_checker_solver_rmq_lazy_segment_tree"
 version = "0.1.0"
 dependencies = [
