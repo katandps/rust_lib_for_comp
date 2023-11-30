@@ -38,7 +38,6 @@ mod matrix_impl {
         + Add<Output = Self>
         + Sub<Output = Self>
         + Mul<Output = Self>
-        + Div<Output = Self>
         + Neg<Output = Self>
         + Display
         + Zero
@@ -53,7 +52,6 @@ mod matrix_impl {
                 + Add<Output = Self>
                 + Sub<Output = Self>
                 + Mul<Output = Self>
-                + Div<Output = Self>
                 + Neg<Output = Self>
                 + Display
                 + Zero
@@ -238,7 +236,9 @@ mod matrix_impl {
                 width: 1,
             }
         }
+    }
 
+    impl<T: MatrixItem + Div<Output = T>> Matrix<T> {
         /// # 行列式
         /// 平方行列でない場合はNoneを返す
         /// 計算量は $O(size^3)$

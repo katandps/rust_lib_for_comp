@@ -13,14 +13,11 @@ mod dynamic_mod_int_impl {
     use std::sync::OnceLock;
 
     use super::{
-        Add, AddAssign, Debug, Display, Div, DivAssign, Formatter, FromStr, Mul, MulAssign, Neg,
-        One, Pow, Sub, SubAssign, Sum, Zero,
+        Add, AddAssign, Debug, Display, Formatter, FromStr, Mul, MulAssign, Neg, One, Pow, Sub,
+        SubAssign, Sum, Zero,
     };
 
     static MOD: OnceLock<u32> = OnceLock::new();
-    static MOD_INV: OnceLock<u32> = OnceLock::new();
-    static R: OnceLock<u32> = OnceLock::new();
-    static R_POW2: OnceLock<u32> = OnceLock::new();
 
     #[derive(Copy, Clone, Eq, PartialEq, Default, Hash)]
     pub struct ModInt(u32);
@@ -31,38 +28,9 @@ mod dynamic_mod_int_impl {
             *MOD.get().expect("uninitialized mod int")
         }
         #[inline]
-        fn get_mod_inv() -> u32 {
-            *MOD_INV.get().expect("uninitialized mod int")
-        }
-        #[inline]
-        fn get_r() -> u32 {
-            *R.get().expect("uninitialized mod int")
-        }
-        #[inline]
-        fn get_r_pow2() -> u32 {
-            *R_POW2.get().expect("uninitialized mod int")
-        }
-        #[inline]
         pub fn set_mod(m: u32) {
             if let Err(e) = MOD.set(m) {
                 dbg!("mod is already initialized", e);
-            }
-            let m = Self::get_mod();
-            if let Err(e) = MOD_INV.set({
-                let (mut n_inv, mut i) = (m, 0);
-                while i < 5 {
-                    n_inv = n_inv.wrapping_mul(2u32.wrapping_sub(m.wrapping_mul(n_inv)));
-                    i += 1;
-                }
-                n_inv
-            }) {
-                dbg!("mod_inv is already initialized", e);
-            }
-            if let Err(e) = R.set(m.wrapping_neg() % m) {
-                dbg!("r is already initialized", e);
-            }
-            if let Err(e) = R_POW2.set(((m as u64).wrapping_neg() % m as u64) as u32) {
-                dbg!("r_pow2 is already initialized", e);
             }
         }
 
@@ -71,12 +39,15 @@ mod dynamic_mod_int_impl {
             if n >= Self::get_mod() {
                 n = n.rem_euclid(Self::get_mod());
             }
-            // # モンゴメリ表現への変換
-            Self(Self::mrmul(n, Self::get_r_pow2()))
+            Self(n)
         }
 
         pub fn one() -> Self {
-            Self(Self::get_r())
+            if Self::get_mod() == 1 {
+                Self::zero()
+            } else {
+                Self(1)
+            }
         }
 
         pub fn zero() -> Self {
@@ -99,75 +70,25 @@ mod dynamic_mod_int_impl {
         }
 
         pub fn mul(&self, rhs: Self) -> Self {
-            Self(Self::mrmul(self.0, rhs.0))
-        }
-        pub fn div(&self, rhs: Self) -> Self {
-            Self::mul(self, rhs.pow(Self::get_mod() as i64 - 2))
+            Self::from(self.0 as i64 * rhs.0 as i64 % Self::get_mod() as i64)
         }
 
         pub fn pow(mut self, mut e: i64) -> Self {
             debug_assert!(e > 0);
-            let mut t = if e & 1 == 0 { Self::get_r() } else { self.0 };
+            let mut t = Self::one();
             e >>= 1;
             while e != 0 {
-                self.0 = Self::mrmul(self.0, self.0);
+                self *= self;
                 if e & 1 != 0 {
-                    t = Self::mrmul(t, self.0);
+                    t *= self;
                 }
                 e >>= 1;
             }
-            self.0 = t;
+            self = t;
             self
         }
-
-        /// # 組み合わせnCr
-        /// 前計算なし
-        /// ## 計算量
-        /// $M$を法として $O(r + \log M)$
-        pub fn comb(n: i64, mut r: i64) -> Self {
-            assert!(0 <= r && r <= n);
-            if r > n - r {
-                r = n - r;
-            }
-            let (mut ret, mut rev) = (Self::one(), Self::one());
-            let mut i = 0;
-            while i < r {
-                ret = Self::mul(&ret, Self::new((n - i) as u32));
-                rev = Self::mul(&rev, Self::new((r - i) as u32));
-                i += 1;
-            }
-            Self::div(&ret, rev)
-        }
-
-        /// # モンゴメリ表現同士の積
-        /// # $mul(ar, br) == (a * b) * r \mod N$
-        #[inline]
-        pub fn mrmul(ar: u32, br: u32) -> u32 {
-            let t: u64 = (ar as u64) * (br as u64);
-            let (t, f) = ((t >> 32) as u32).overflowing_sub(
-                ((((t as u32).wrapping_mul(Self::get_mod_inv()) as u128) * Self::get_mod() as u128)
-                    >> 32) as u32,
-            );
-            if f {
-                t.wrapping_add(Self::get_mod())
-            } else {
-                t
-            }
-        }
-
-        /// # モンゴメリ表現 $AR$ から $A$の復元
-        /// return $a \frac R \mod N$
-        #[inline]
-        pub fn reduce(self) -> u32 {
-            let (t, f) = (((((self.0.wrapping_mul(Self::get_mod_inv())) as u128)
-                * (Self::get_mod() as u128))
-                >> 32) as u32)
-                .overflowing_neg();
-            if f {
-                t.wrapping_add(Self::get_mod())
-            } else {
-                t
-            }
+        pub fn reduce(&self) -> u32 {
+            self.0
         }
     }
 
@@ -226,29 +147,16 @@ mod dynamic_mod_int_impl {
             self.0 = Self::mul(self, rhs.into()).0
         }
     }
-    impl<Rhs: Into<Self>> Div<Rhs> for ModInt {
-        type Output = Self;
-        #[inline]
-        fn div(self, rhs: Rhs) -> Self {
-            Self::div(&self, rhs.into())
-        }
-    }
-    impl<Rhs: Into<Self>> DivAssign<Rhs> for ModInt {
-        #[inline]
-        fn div_assign(&mut self, rhs: Rhs) {
-            self.0 = Self::div(self, rhs.into()).0
-        }
-    }
     impl Display for ModInt {
         #[inline]
         fn fmt(&self, f: &mut Formatter) -> std::fmt::Result {
-            write!(f, "{}", self.reduce())
+            write!(f, "{}", self.0)
         }
     }
     impl Debug for ModInt {
         #[inline]
         fn fmt(&self, f: &mut Formatter) -> std::fmt::Result {
-            write!(f, "{}", self.reduce())
+            write!(f, "{}", self.0)
         }
     }
     impl Sum for ModInt {
@@ -280,7 +188,7 @@ mod dynamic_mod_int_impl {
     impl From<ModInt> for i64 {
         #[inline]
         fn from(m: ModInt) -> Self {
-            m.reduce() as i64
+            m.0 as i64
         }
     }
     impl Zero for ModInt {
@@ -373,17 +281,6 @@ mod test {
     }
 
     #[test]
-    fn div_test() {
-        ModInt::set_mod(MOD as u32);
-        for i in 1..100000 {
-            let mut a = ModInt::one();
-            a /= i;
-            a *= i;
-            assert_eq!(a.reduce(), 1);
-        }
-    }
-
-    #[test]
     fn neg_test() {
         ModInt::set_mod(MOD as u32);
         for i in 1..=100000 {
@@ -395,8 +292,8 @@ mod test {
     #[test]
     fn edge_cases() {
         ModInt::set_mod(MOD as u32);
-        assert_eq!(1, (ModInt::from(MOD + 1)).reduce());
-        assert_eq!(291172004, (ModInt::from(std::i64::MAX) + 1).reduce(),);
+        assert_eq!(1, ModInt::from(MOD + 1).reduce());
+        assert_eq!(291172004, (ModInt::from(std::i64::MAX) + 1).reduce());
         assert_eq!(
             ModInt::new(1_000_000_000) * std::i64::MAX,
             ModInt::new(961796000)
@@ -408,10 +305,6 @@ mod test {
         assert_eq!(
             ModInt::new(1_000_000_000) - std::i64::MAX,
             ModInt::new(708827997)
-        );
-        assert_eq!(
-            (ModInt::new(1_000_000_000) / std::i64::MAX * std::i64::MAX).reduce(),
-            1_000_000_000
         );
 
         let mut a = ModInt::new(1_000_000_000);
@@ -425,21 +318,6 @@ mod test {
         let mut a = ModInt::new(1_000_000_000);
         a -= std::i64::MAX;
         assert_eq!(a.reduce(), 708827997);
-
-        let mut a = ModInt::new(1_000_000_000);
-        a /= std::i64::MAX;
-        assert_eq!((a * std::i64::MAX).reduce(), 1_000_000_000);
-    }
-
-    #[test]
-    fn comb() {
-        ModInt::set_mod(MOD as u32);
-        assert_eq!(ModInt::new(10), ModInt::comb(5, 2));
-        assert_eq!(ModInt::new(10), ModInt::comb(5, 3));
-        assert_eq!(
-            ModInt::new(1) * 1000000007 * 1000000008 * 1000000009 / 6,
-            ModInt::comb(MOD + 2, 3)
-        );
     }
 
     #[test]
