@@ -54,7 +54,6 @@ mod manachar_impl {
     }
 }
 
-#[snippet(name = "manachar", doc_hidden)]
 #[cfg(test)]
 mod test {
     use super::*;
