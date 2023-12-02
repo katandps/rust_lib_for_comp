@@ -13,7 +13,7 @@ use string_util::*;
 pub fn solve<IO: ReaderTrait + WriterTrait>(mut io: IO) {
     let (n, q) = io.v2::<usize, usize>();
     let a = io.vec::<i64>(n);
-    let mut segtree = DynamicSegmentTree::<Minimization<i64>>::default();
+    let mut segtree = DynamicSegmentTree::<Minimization<i64>>::new(500010);
     for (i, &ai) in a.iter().enumerate() {
         segtree.set(i as i64, ai);
     }

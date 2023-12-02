@@ -15,13 +15,28 @@ use range_traits::*;
 pub use dynamic_segment_tree_impl::DynamicSegmentTree;
 #[snippet(name = "dynamic-segment-tree", doc_hidden)]
 mod dynamic_segment_tree_impl {
-    use super::{swap, Debug, Monoid, RangeProduct, ToBounds};
+    use super::{Debug, Formatter, Monoid, RangeProduct, ToBounds};
     type IndexType = i64;
-    type Bit = i32;
 
-    #[derive(Clone, Default)]
+    type NodeId = u32;
+    const EMPTY_NODE: NodeId = !0;
+    /// 最大幅を $2^{BIT_LEN}$ とする
+    const BIT_LEN: i8 = 62;
+    #[derive(Clone)]
     pub struct DynamicSegmentTree<M: Monoid> {
-        root: OptionalNode<M>,
+        nodes: Vec<Node<M>>,
+        bit_len: i8,
+        root: usize,
+    }
+
+    impl<M: Monoid> Default for DynamicSegmentTree<M> {
+        fn default() -> Self {
+            Self {
+                nodes: vec![Node::default()],
+                bit_len: BIT_LEN,
+                root: 0,
+            }
+        }
     }
 
     /// # 区間の総積
@@ -31,129 +46,147 @@ mod dynamic_segment_tree_impl {
         type Magma = M;
         fn product<R: ToBounds<IndexType>>(&self, range: R) -> M::M {
             let (l, r) = range.lr();
-            self.root.prod(l, r, 0, Self::MAX)
+            // stack[(node, nodeのlower_bound, nodeのupper_bound)]
+            let mut stack = vec![(self.root as NodeId, 0, 1 << self.bit_len)];
+            let mut ret = M::unit();
+            while let Some((node_id, lb, ub)) = stack.pop() {
+                let Some(node) = self.node(node_id) else {
+                    continue;
+                };
+                // todo 非可換クエリに対応する
+                if l <= lb && ub <= r {
+                    ret = M::op(&ret, &node.value);
+                } else if lb < r && l < ub {
+                    stack.push((node.children[0], lb, (lb + ub) >> 1));
+                    stack.push((node.children[1], (lb + ub) >> 1, ub));
+                }
+            }
+            ret
         }
     }
 
     impl<M: Monoid> DynamicSegmentTree<M> {
-        /// 最大幅を $2^{BIT_LEN}$ とする
-        const BIT_LEN: i32 = 62;
-        const MAX: IndexType = 1 << Self::BIT_LEN;
+        pub fn new(max: i64) -> Self {
+            let bit_len = ((max as u64).next_power_of_two()).ilog2() as i8;
+            Self {
+                nodes: vec![Node::default()],
+                bit_len,
+                root: 0,
+            }
+        }
+        fn node(&self, id: NodeId) -> Option<&Node<M>> {
+            self.nodes.get(id as usize)
+        }
+        fn node_mut(&mut self, id: NodeId) -> Option<&mut Node<M>> {
+            self.nodes.get_mut(id as usize)
+        }
+
         /// # 値iをvalueに更新する
         /// ## 計算量
         /// $O( \log N)$
         pub fn set(&mut self, i: IndexType, value: M::M) {
-            self.root.set(i, Self::BIT_LEN - 1, value);
+            self.apply(i, |_| value.clone())
         }
         /// # 値iに関数fを適用する
         pub fn apply<F: Fn(M::M) -> M::M>(&mut self, i: IndexType, f: F) {
-            self.root.apply(i, Self::BIT_LEN - 1, f)
+            let mut stack = Vec::new();
+            stack.push((self.root as NodeId, self.bit_len));
+            while let Some((v, b)) = stack.pop() {
+                if v < !v {
+                    stack.push((!v, b));
+                    if b > 0 {
+                        let child = i as usize >> (b - 1) & 1;
+                        let child_is_empty = if let Some(node) = self.node(v) {
+                            node.children[child] == EMPTY_NODE
+                        } else {
+                            false
+                        };
+                        if child_is_empty {
+                            let id = self.nodes.len() as NodeId;
+                            if let Some(node) = self.node_mut(v) {
+                                node.children[child] = id;
+                            }
+                            self.nodes.push(Node::default());
+                        }
+                        if let Some(node) = self.node(v) {
+                            stack.push((node.children[child], b - 1))
+                        }
+                    } else {
+                        if let Some(node) = self.node_mut(v) {
+                            node.value = f(node.value.clone());
+                        } else {
+                            unreachable!()
+                        }
+                    }
+                } else {
+                    let v = !v;
+                    let value = if let Some(node) = self.node(v) {
+                        match (self.node(node.children[0]), self.node(node.children[1])) {
+                            (Some(l), Some(r)) => M::op(&l.value, &r.value),
+                            (Some(l), None) => l.value.clone(),
+                            (_, Some(r)) => r.value.clone(),
+                            (_, _) => node.value.clone(),
+                        }
+                    } else {
+                        M::unit()
+                    };
+                    if let Some(node) = self.node_mut(v) {
+                        node.value = value
+                    }
+                }
+            }
         }
         /// # 値iを取得する
         /// ## 計算量
         /// $O( \log N)$
         pub fn get(&self, i: IndexType) -> M::M {
-            self.root.get(i, Self::BIT_LEN - 1)
+            let mut current = self.root as NodeId;
+            let mut b = self.bit_len;
+            while b > 0 {
+                current = match self.node(current) {
+                    Some(node) => node.children[i as usize >> (b - 1) & 1],
+                    None => return M::unit(),
+                };
+                b -= 1;
+            }
+            self.node(current).unwrap_or(&Node::default()).value.clone()
         }
     }
-    #[derive(Clone, Debug, Default)]
-    pub struct OptionalNode<M: Monoid>(Option<Node<M>>);
-
-    impl<M: Monoid> OptionalNode<M> {
-        fn new(value: M::M) -> Self {
-            Self(Some(Node {
-                value,
-                children: vec![Self(None), Self(None)],
-            }))
-        }
-        fn set(&mut self, idx: IndexType, bit: i32, value: M::M) {
-            match self.0.as_mut() {
-                Some(node) if bit < 0 => node.value = value,
-                Some(node) => {
-                    node.child_mut(idx, bit).set(idx, bit - 1, value);
-                    node.value = M::op(
-                        &node.left().prod(0, 1 << 62, 0, 1 << bit),
-                        &node.right().prod(0, 1 << 62, 0, 1 << bit),
-                    )
-                }
-                None if bit < 0 => swap(self, &mut Self::new(value)),
-                None => {
-                    swap(self, &mut Self::new(value.clone()));
-                    self.set(idx, bit, value);
+    impl<M: Monoid> Debug for DynamicSegmentTree<M> {
+        fn fmt(&self, f: &mut Formatter) -> std::fmt::Result {
+            let mut q = vec![(self.root as u32, 0, 1 << self.bit_len)];
+            let mut result = Vec::new();
+            while let Some((node_id, lb, ub)) = q.pop() {
+                if let Some(node) = self.node(node_id) {
+                    result.push((lb, ub, node.value.clone()));
+                    q.push((node.children[0], lb, (lb + ub) >> 1));
+                    q.push((node.children[1], (lb + ub) >> 1, ub));
                 }
             }
-        }
-        fn apply<F: Fn(M::M) -> M::M>(&mut self, idx: IndexType, bit: i32, f: F) {
-            match self.0.as_mut() {
-                Some(node) if bit < 0 => node.value = f(node.value.clone()),
-                Some(node) => {
-                    node.child_mut(idx, bit).apply(idx, bit - 1, f);
-                    node.value = M::op(
-                        &node.left().prod(0, 1 << 62, 0, 1 << bit),
-                        &node.right().prod(0, 1 << 62, 0, 1 << bit),
-                    )
-                }
-                None if bit < 0 => swap(self, &mut Self::new(f(M::unit()))),
-                None => {
-                    swap(self, &mut Self::new(M::unit()));
-                    self.apply(idx, bit, f);
-                }
-            }
-        }
-        fn get(&self, idx: IndexType, bit: i32) -> M::M {
-            match &self.0 {
-                Some(node) if bit < 0 => node.value.clone(),
-                Some(node) => node.child(idx, bit).get(idx, bit - 1),
-                None => M::unit(),
-            }
-        }
-        fn prod(&self, l: IndexType, r: IndexType, lb: IndexType, ub: IndexType) -> M::M {
-            match &self.0 {
-                Some(node) if l <= lb && ub <= r => node.value.clone(),
-                Some(node) if lb < r && l < ub => M::op(
-                    &node.left().prod(l, r, lb, (lb + ub) >> 1),
-                    &node.right().prod(l, r, (lb + ub) >> 1, ub),
-                ),
-                _ => M::unit(),
-            }
+            result.sort_by_key(|(lb, ub, _value)| (*lb, *ub));
+            write!(
+                f,
+                "{}",
+                result
+                    .into_iter()
+                    .fold("".to_string(), |a, (lb, ub, value)| format!(
+                        "{}\n{}..{}: {:?}",
+                        a, lb, ub, value
+                    ))
+            )
         }
     }
-
-    #[derive(Clone, Debug, Default)]
+    #[derive(Clone, Debug)]
     struct Node<M: Monoid> {
         value: M::M,
-        children: Vec<OptionalNode<M>>,
+        children: [NodeId; 2],
     }
-    impl<M: Monoid> Node<M> {
-        #[inline]
-        fn child_mut(&mut self, idx: IndexType, bit: Bit) -> &mut OptionalNode<M> {
-            match () {
-                () if idx >> bit & 1 == 0 => self.left_mut(),
-                _ => self.right_mut(),
+    impl<M: Monoid> Default for Node<M> {
+        fn default() -> Self {
+            Node {
+                value: M::unit(),
+                children: [EMPTY_NODE, EMPTY_NODE],
             }
-        }
-        #[inline]
-        fn child(&self, idx: IndexType, bit: Bit) -> &OptionalNode<M> {
-            match () {
-                () if idx >> bit & 1 == 0 => self.left(),
-                _ => self.right(),
-            }
-        }
-        #[inline]
-        fn left(&self) -> &OptionalNode<M> {
-            unsafe { self.children.get_unchecked(0) }
-        }
-        #[inline]
-        fn left_mut(&mut self) -> &mut OptionalNode<M> {
-            unsafe { self.children.get_unchecked_mut(0) }
-        }
-        #[inline]
-        fn right(&self) -> &OptionalNode<M> {
-            unsafe { self.children.get_unchecked(1) }
-        }
-        #[inline]
-        fn right_mut(&mut self) -> &mut OptionalNode<M> {
-            unsafe { self.children.get_unchecked_mut(1) }
         }
     }
 }
@@ -165,12 +198,11 @@ mod test {
 
     #[test]
     fn test() {
-        let mut segtree = DynamicSegmentTree::<Addition<i64>>::default();
+        let mut segtree = DynamicSegmentTree::<Addition<i64>>::new(10);
 
-        const I1: i64 = 50000000;
-        const I2: i64 = 80000000000000;
+        const I1: i64 = 5;
+        const I2: i64 = 8;
         segtree.set(I1, 8);
-
         assert_eq!(8, segtree.get(I1));
         segtree.apply(I2, |x| x + 2);
         segtree.apply(I2, |x| x + 8);
