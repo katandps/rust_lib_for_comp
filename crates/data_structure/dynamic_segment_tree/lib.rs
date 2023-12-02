@@ -111,12 +111,10 @@ mod dynamic_segment_tree_impl {
                         if let Some(node) = self.node(v) {
                             stack.push((node.children[child], b - 1))
                         }
+                    } else if let Some(node) = self.node_mut(v) {
+                        node.value = f(node.value.clone());
                     } else {
-                        if let Some(node) = self.node_mut(v) {
-                            node.value = f(node.value.clone());
-                        } else {
-                            unreachable!()
-                        }
+                        unreachable!()
                     }
                 } else {
                     let v = !v;
