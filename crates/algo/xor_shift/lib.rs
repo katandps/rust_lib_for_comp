@@ -13,11 +13,12 @@ mod xor_shift_impl {
     use std::time::SystemTime;
 
     use super::{ToBounds, XorShift};
+
+    const DEFAULT_SEED: u64 = 0xf0fb588ca2196dac;
     impl Default for XorShift {
         #[inline]
         fn default() -> Self {
-            let seed = 0xf0fb588ca2196dac;
-            Self { seed }
+            Self { seed: DEFAULT_SEED }
         }
     }
 
@@ -34,14 +35,18 @@ mod xor_shift_impl {
 
     impl XorShift {
         pub fn from_time() -> Self {
-            match SystemTime::now().elapsed() {
+            let mut ret = match SystemTime::now().duration_since(SystemTime::UNIX_EPOCH) {
                 Ok(elapsed) => Self {
                     seed: elapsed.as_millis() as u64,
                 },
                 Err(e) => {
                     panic!("{}", e);
                 }
+            };
+            for _ in 0..40 {
+                ret.next();
             }
+            ret
         }
 
         /// # シードを指定して初期化

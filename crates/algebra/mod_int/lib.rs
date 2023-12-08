@@ -78,7 +78,10 @@ mod mod_int_impl {
         }
 
         pub const fn pow(mut self, mut e: i64) -> Self {
-            debug_assert!(e > 0);
+            debug_assert!(e >= 0);
+            if e == 0 {
+                return Self::one();
+            }
             let mut t = if e & 1 == 0 { Self::R } else { self.0 };
             e >>= 1;
             while e != 0 {
@@ -131,7 +134,7 @@ mod mod_int_impl {
         /// return $a \frac R \mod N$
         #[inline]
         pub const fn reduce(self) -> u32 {
-            let (t, f) = (((((self.0.wrapping_mul(Self::MOD_INV)) as u128) * (Self::MOD as u128))
+            let (t, f) = (((((self.0.wrapping_mul(Self::MOD_INV)) as u64) * (Self::MOD as u64))
                 >> 32) as u32)
                 .overflowing_neg();
             if f {

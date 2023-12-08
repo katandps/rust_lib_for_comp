@@ -3,108 +3,149 @@
 //!
 //! ## verify
 //! [047 - Monochromatic Diagonal](https://atcoder.jp/contests/typical90/submissions/31161891)
-use montgomery_multiplication_64::MontgomeryReduction;
+use algebra::Zero;
+use mod_int_64bit::ModInt64;
 use prelude::*;
 use xor_shift::XorShift;
 
 #[snippet(name = "rolling-hash", doc_hidden)]
-pub use rolling_hash_impl::{Hashed, RollingHash};
+pub use rolling_hash_impl::RollingHash;
 #[snippet(name = "rolling-hash", doc_hidden)]
 mod rolling_hash_impl {
+    use super::{Add, Debug, ModInt64, Sub, XorShift, Zero};
+    use std::sync::OnceLock;
 
-    use super::{MontgomeryReduction, XorShift};
-
-    #[derive(Debug, Clone, Copy, PartialEq, Eq)]
-    pub struct Hashed {
-        hash: u64,
-        len: usize,
-    }
+    #[derive(Clone, Copy, PartialEq, Eq, Default)]
     pub struct RollingHash {
-        /// $b^i$のモンゴメリ表現
-        power: Vec<u64>,
-        /// [0, i)のHash
-        hash: Vec<u64>,
+        pub hash: Hash,
+        pub len: usize,
+    }
+    type Hash = ModInt64<{ (1 << 61) - 1 }>;
+    static BASE: OnceLock<Hash> = OnceLock::new();
+    static LENGTH: usize = 1000100;
+    static BASE_POW: OnceLock<Vec<Hash>> = OnceLock::new();
+
+    const CHAR_MAX: u64 = 256; // 文字の最大値
+    #[inline]
+    fn get_base() -> Hash {
+        BASE.get_or_init(|| Hash::from(10000));
+        *BASE.get_or_init(|| {
+            Hash::from(XorShift::from_time().rand(Hash::MOD - CHAR_MAX - 1) + CHAR_MAX)
+        })
+    }
+
+    #[inline]
+    fn get_pow(e: usize) -> Hash {
+        BASE_POW.get_or_init(|| {
+            let mut v = Vec::with_capacity(LENGTH + 1);
+            let base = get_base();
+            v.push(ModInt64::one());
+            for i in 0..LENGTH {
+                v.push(v[i] * base)
+            }
+            v
+        })[e]
     }
 
     impl RollingHash {
-        const MOD: u64 = (1 << 61) - 1;
-        const MONTGOMERY: MontgomeryReduction = MontgomeryReduction::new(Self::MOD);
-        const CHAR_MIN: u64 = 256;
-        /// # 部分文字列[l, r)のHashを取得
-        ///
-        ///
-        /// ## 計算量
-        /// $O(1)$
-        pub fn hash(&self, l: usize, r: usize) -> Hashed {
-            assert!(l <= r);
-            Hashed {
-                hash: Self::MONTGOMERY.sub(
-                    self.hash[r],
-                    Self::MONTGOMERY.mrmul(self.power[r - l], self.hash[l]),
-                ),
-                len: r - l,
+        pub fn new(value: i64) -> Self {
+            RollingHash {
+                hash: ModInt64::from(value),
+                len: 1,
             }
-        }
-
-        /// # ハッシュの結合
-        ///
-        /// ## 計算量
-        /// $O(1)$
-        pub fn concat(&self, h1: Hashed, h2: Hashed) -> Hashed {
-            Hashed {
-                hash: Self::MONTGOMERY
-                    .add(Self::MONTGOMERY.mrmul(self.power[h2.len], h1.hash), h2.hash),
-                len: h1.len + h2.len,
-            }
-        }
-
-        /// # 部分文字列[l1, r1), [l2, r2)の最大共通接頭辞の長さを求める
-        /// 二分探索で求める
-        ///
-        /// ## 計算量
-        /// 短いほうの文字列の長さを$m$として、$O(\log m)$
-        pub fn lcp(&self, l1: usize, r1: usize, l2: usize, r2: usize) -> usize {
-            let (mut low, mut high) = (0, std::cmp::min(r1 - l1, r2 - l2) + 1);
-            while high - low > 1 {
-                let mid = (high + low) / 2;
-                if self.hash(l1, l1 + mid) == self.hash(l2, l2 + mid) {
-                    low = mid;
-                } else {
-                    high = mid;
-                }
-            }
-            low
         }
     }
 
-    impl From<&[char]> for RollingHash {
-        fn from(src: &[char]) -> Self {
-            let b = Self::MONTGOMERY.generate(
-                XorShift::from_time().rand(Self::MOD - Self::CHAR_MIN - 1) + Self::CHAR_MIN,
-            );
-            let mut power = vec![Self::MONTGOMERY.generate(1)];
-            let mut hash = vec![Self::MONTGOMERY.generate(0)];
-            for i in 0..src.len() {
-                power.push(Self::MONTGOMERY.mrmul(power[i], b));
-                hash.push(Self::MONTGOMERY.add(Self::MONTGOMERY.mrmul(hash[i], b), src[i] as u64));
+    impl From<char> for RollingHash {
+        fn from(value: char) -> Self {
+            RollingHash {
+                hash: ModInt64::from(value as u32),
+                len: 1,
             }
-            Self { power, hash }
+        }
+    }
+
+    /// # 加算
+    ///
+    /// "ab" + "cd" = "abcd"
+    impl Add<Self> for RollingHash {
+        type Output = Self;
+        // "ab" + "cd" = "abcd"
+        fn add(self, rhs: Self) -> Self {
+            Self {
+                hash: self.hash + rhs.hash * get_pow(self.len),
+                len: self.len + rhs.len,
+            }
+        }
+    }
+    /// # 減算
+    ///
+    /// "abcd" - "ab" = "cd"
+    ///
+    /// 結果に対応する文字列が存在するとは限らない
+    impl Sub<Self> for RollingHash {
+        type Output = Self;
+        // "abcd" - "ab" = "cd"
+        fn sub(self, rhs: Self) -> Self::Output {
+            debug_assert!(self.len >= rhs.len);
+            Self {
+                hash: (self.hash - rhs.hash) / get_pow(rhs.len),
+                len: self.len - rhs.len,
+            }
+        }
+    }
+
+    impl Zero for RollingHash {
+        fn zero() -> Self {
+            Self {
+                hash: Hash::zero(),
+                len: 0,
+            }
+        }
+    }
+
+    impl Debug for RollingHash {
+        fn fmt(&self, f: &mut prelude::Formatter<'_>) -> std::fmt::Result {
+            write!(f, "hash:{}, len:{}", self.hash, self.len)
         }
     }
 }
 
 #[test]
 fn test() {
-    let text = (0..300000)
-        .map(|i| (i % 256) as u8 as char)
+    const CYCLE: usize = 256;
+    let hash = (0usize..3000)
+        .map(|i| RollingHash::new((i % CYCLE) as i64))
         .collect::<Vec<_>>();
-    let rh = RollingHash::from(&text[..]);
-    for i in 0..100000 {
+    let mut sum = vec![RollingHash::default()];
+    for i in 0..hash.len() {
+        sum.push(sum[i] + hash[i]);
+    }
+    for i in 0..1000 {
         for j in i + 1.. {
-            if rh.hash(i, i + 10000) == rh.hash(j, j + 10000) {
-                assert_eq!((j - i) % 256, 0);
+            if sum[i + 100] - sum[i] == sum[j + 100] - sum[j] {
+                assert_eq!((j - i) % CYCLE, 0);
                 break;
+            } else {
+                assert_ne!((j - i) % CYCLE, 0, "{} {}", i, j)
             }
         }
     }
+}
+
+#[test]
+fn add_sub_test() {
+    let hash1 = RollingHash::new(1);
+    let hash2 = RollingHash::new(2);
+    let hash3 = RollingHash::new(3);
+    let hash4 = RollingHash::new(4);
+    assert_eq!(
+        hash1 + hash2 + hash3 + hash4,
+        hash1 + (hash2 + hash3) + hash4
+    );
+    assert_eq!(
+        hash1 + hash2 + hash3 + hash4,
+        (hash1 + hash2) + (hash3 + hash4)
+    );
+    assert_eq!(hash2 + hash3 + hash4, hash1 + hash2 + hash3 + hash4 - hash1);
 }

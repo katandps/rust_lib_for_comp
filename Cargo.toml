@@ -20,6 +20,7 @@ members = [
     'crates/algebra/mod_int/const_mod_factorial',
     'crates/algebra/mod_int/embedded_mod_factorial',
     'crates/algebra/mod_int/mod_factorial',
+    'crates/algebra/mod_int/mod_int_64bit',
     'crates/algebra/mod_pow',
     'crates/algebra/montgomery_multiplication_64',
     'crates/algebra/pollard_rho',

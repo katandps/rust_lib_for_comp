@@ -1989,6 +1989,15 @@ dependencies = [
 ]
 
 [[package]]
+name = "mod_int_64bit"
+version = "0.1.0"
+dependencies = [
+ "algebra",
+ "prelude",
+ "rand 0.8.5",
+]
+
+[[package]]
 name = "mod_pow"
 version = "0.1.0"
 dependencies = [
@@ -2440,7 +2449,8 @@ dependencies = [
 name = "rolling_hash"
 version = "0.1.0"
 dependencies = [
- "montgomery_multiplication_64",
+ "algebra",
+ "mod_int_64bit",
  "prelude",
  "xor_shift",
 ]

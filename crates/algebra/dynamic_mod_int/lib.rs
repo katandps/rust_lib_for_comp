@@ -74,7 +74,10 @@ mod dynamic_mod_int_impl {
         }
 
         pub fn pow(mut self, mut e: i64) -> Self {
-            debug_assert!(e > 0);
+            debug_assert!(e >= 0);
+            if e == 0 {
+                return Self::one();
+            }
             let mut t = Self::one();
             e >>= 1;
             while e != 0 {
