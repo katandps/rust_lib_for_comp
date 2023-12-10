@@ -6,7 +6,7 @@
 use prelude::*;
 
 #[snippet(name = "union-find-tree", doc_hidden)]
-#[derive(Clone)]
+#[derive(Clone, Default)]
 pub struct UnionFind {
     parent: Vec<usize>,
     rank: Vec<usize>,
@@ -23,6 +23,14 @@ impl UnionFind {
         let rank = vec![0; n + 1];
         let size = vec![1; n + 1];
         Self { parent, rank, size }
+    }
+
+    pub fn resize(&mut self, n: usize) {
+        while self.parent.len() < n {
+            self.parent.push(self.parent.len());
+            self.rank.push(0);
+            self.size.push(1);
+        }
     }
 
     pub fn root(&mut self, x: usize) -> usize {

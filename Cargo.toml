@@ -52,6 +52,7 @@ members = [
     'crates/data_structure/dual_segment_tree',
     'crates/data_structure/dynamic_li_chao_tree',
     'crates/data_structure/dynamic_segment_tree',
+    'crates/data_structure/dynamic_union_find',
     'crates/data_structure/extend_map',
     'crates/data_structure/implicit_treap',
     'crates/data_structure/lazy_segment_tree',
