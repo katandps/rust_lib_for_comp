@@ -3,7 +3,7 @@ use prelude::*;
 
 #[snippet(name = "string-util", doc_hidden)]
 #[rustfmt::skip]
-pub use string_util_impl::{AddLineTrait, BitsTrait, JoinTrait};
+pub use string_util_impl::{AddLineTrait, BitsTrait, JoinTrait, YesTrait};
 #[snippet(name = "string-util", doc_hidden)]
 #[rustfmt::skip]
 mod string_util_impl {
