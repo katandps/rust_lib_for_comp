@@ -47,4 +47,20 @@ mod string_util_impl {
             buf + "\n"
         }
     }
+
+    pub trait YesTrait {
+        fn yes(self) -> String;
+        fn no(self) -> String;
+    }
+
+    impl YesTrait for bool {
+        #[inline]
+        fn yes(self) -> String {
+            if self {"Yes"} else {"No"}.to_string()
+        }
+        #[inline]
+        fn no(self) -> String {
+            if self {"No"} else {"Yes"}.to_string()
+        }
+    }
 }
