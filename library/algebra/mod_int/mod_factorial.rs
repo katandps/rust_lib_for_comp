@@ -77,16 +77,6 @@ pub mod mod_factorial_impl {
 
         /// # Factorial 階乗
         /// $ n! $
-        /// ```
-        /// # use mod_int::Mi;
-        /// # use mod_factorial::Factorial;
-        /// let mut five = Factorial::<Mi>::new(5);
-        /// let res = vec![1, 1, 2, 6, 24, 120];
-        /// for i in 0..=5 {
-        ///     assert_eq!(res[i], five.factorial(i as i64).reduce());
-        /// }
-        /// ```
-
         pub fn factorial(&mut self, n: i64) -> ModInt<M> {
             self.init(n as usize);
             self.fact[n as usize]
@@ -94,18 +84,6 @@ pub mod mod_factorial_impl {
 
         /// # Permutation 順列
         /// $nPr = n! / (n - r)!$
-        /// ```
-        /// # use mod_int::Mi;
-        /// # use mod_factorial::Factorial;
-        /// let mut five = Factorial::<Mi>::new(5);
-        /// assert_eq!(1, five.permutation(5, 0).reduce());
-        /// assert_eq!(5, five.permutation(5, 1).reduce());
-        /// assert_eq!(20, five.permutation(5, 2).reduce());
-        /// assert_eq!(60, five.permutation(5, 3).reduce());
-        /// assert_eq!(120, five.permutation(5, 4).reduce());
-        /// assert_eq!(120, five.permutation(5, 5).reduce());
-        /// assert_eq!(0, five.permutation(5, 6).reduce());
-        /// ```
         pub fn permutation(&mut self, n: i64, r: i64) -> ModInt<M> {
             if n < r {
                 ModInt::zero()
@@ -118,18 +96,6 @@ pub mod mod_factorial_impl {
         /// # Combination 組合せ
         /// $nCr = n! / (n - r)! r! = nPr / r!$
         /// Binomial Coefficient 二項係数 とも呼ぶ
-        /// ```
-        /// use mod_int::Mi;
-        /// use mod_factorial::Factorial;
-        /// let mut five = Factorial::<Mi>::new(5);
-        /// assert_eq!(1, five.combination(5, 0).reduce());
-        /// assert_eq!(5, five.combination(5, 1).reduce());
-        /// assert_eq!(10, five.combination(5, 2).reduce());
-        /// assert_eq!(10, five.combination(5, 3).reduce());
-        /// assert_eq!(5, five.combination(5, 4).reduce());
-        /// assert_eq!(1, five.combination(5, 5).reduce());
-        /// assert_eq!(0, five.combination(5, 6).reduce());
-        /// ```
         pub fn combination(&mut self, n: i64, r: i64) -> ModInt<M> {
             if n < r {
                 ModInt::zero()
@@ -219,4 +185,37 @@ fn montmort_test() {
     assert_eq!(ModInt::new(1854), mvt.montmort_number(7));
     assert_eq!(ModInt::new(14833), mvt.montmort_number(8));
     assert_eq!(ModInt::new(133496), mvt.montmort_number(9));
+}
+
+#[test]
+fn permutation_test() {
+    let mut five = Factorial::<ModInt>::new(5);
+    assert_eq!(1, five.permutation(5, 0).reduce());
+    assert_eq!(5, five.permutation(5, 1).reduce());
+    assert_eq!(20, five.permutation(5, 2).reduce());
+    assert_eq!(60, five.permutation(5, 3).reduce());
+    assert_eq!(120, five.permutation(5, 4).reduce());
+    assert_eq!(120, five.permutation(5, 5).reduce());
+    assert_eq!(0, five.permutation(5, 6).reduce());
+}
+
+#[test]
+fn factorial_test() {
+    let mut five = Factorial::<ModInt>::new(5);
+    let res = vec![1, 1, 2, 6, 24, 120];
+    for i in 0..=5 {
+        assert_eq!(res[i], five.factorial(i as i64).reduce());
+    }
+}
+
+#[test]
+fn combination_test() {
+    let mut five = Factorial::<ModInt>::new(5);
+    assert_eq!(1, five.combination(5, 0).reduce());
+    assert_eq!(5, five.combination(5, 1).reduce());
+    assert_eq!(10, five.combination(5, 2).reduce());
+    assert_eq!(10, five.combination(5, 3).reduce());
+    assert_eq!(5, five.combination(5, 4).reduce());
+    assert_eq!(1, five.combination(5, 5).reduce());
+    assert_eq!(0, five.combination(5, 6).reduce());
 }

@@ -4,16 +4,15 @@
 //! ## dependency
 //! [モンゴメリ乗算](montgomery_multiplication_64)
 //!
-use montgomery_multiplication_64::MontgomeryReduction;
-use prelude::*;
+use crate::algebra::montgomery_multiplication_64::MontgomeryReduction;
 
-#[codesnip::entry("miller-rabin", doc_hidden)]
+#[codesnip::entry("miller-rabin", include("montgomery-multiplication"))]
 pub trait MillerRabin {
     /// 素数判定
     fn is_prime(&self) -> bool;
 }
 
-#[codesnip::entry("miller-rabin", doc_hidden)]
+#[codesnip::entry("miller-rabin", include("montgomery-multiplication"))]
 impl MillerRabin for u64 {
     fn is_prime(&self) -> bool {
         if *self < 2 || *self & 1 == 0 {

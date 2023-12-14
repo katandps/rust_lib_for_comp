@@ -4,18 +4,20 @@
 //! ## 計算量
 //! $O(N^{\frac{1}{4}})$
 //!
-use algebra::*;
-use greatest_common_divisor::Gcd;
+use crate::algebra::binary_operation::greatest_common_divisor::Gcd;
+use crate::algebra::*;
 use miller_rabin::MillerRabin;
 use montgomery_multiplication_64::MontgomeryReduction;
-use prelude::*;
 
-#[codesnip::entry("pollard-rho", doc_hidden)]
+#[codesnip::entry("pollard-rho")]
 pub trait PollardRho {
     fn prime_factorize(&self) -> Vec<u64>;
 }
 
-#[codesnip::entry("pollard-rho", doc_hidden)]
+#[codesnip::entry(
+    "pollard-rho",
+    include("algebra, gcd, miller-rabin, montgomery-multiplication-64")
+)]
 #[allow(clippy::many_single_char_names)]
 impl PollardRho for u64 {
     fn prime_factorize(&self) -> Vec<u64> {
@@ -96,7 +98,7 @@ impl PollardRho for u64 {
 }
 #[test]
 fn test() {
-    assert_eq!(1.prime_factorize(), Vec::new());
+    assert_eq!(1.prime_factorize(), Vec::<u64>::new());
     assert_eq!(2023.prime_factorize(), vec![7, 17, 17]);
     assert_eq!(
         9999999999999.prime_factorize(),

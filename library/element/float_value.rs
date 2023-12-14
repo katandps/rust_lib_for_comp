@@ -1,10 +1,10 @@
 //! # カスタム浮動小数点数
 //! EPSの設定を自分でやる
-use prelude::*;
+use crate::prelude::*;
 
-#[codesnip::entry("float_value", doc_hidden)]
+#[codesnip::entry("float-value")]
 pub use float_value_impl::{FValue, EPS};
-#[codesnip::entry("float_value", doc_hidden)]
+#[codesnip::entry("float-value", include("prelude"))]
 mod float_value_impl {
     use super::FromStr;
 

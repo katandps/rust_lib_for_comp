@@ -1,12 +1,12 @@
 //! # 文字列から入力/標準出力+読み込みに出力のセット
 
-use float_value::FValue;
-use io_util::*;
-use prelude::*;
+use crate::element::float_value::FValue;
+use crate::prelude::*;
+use crate::util::io_util::*;
 
-#[codesnip::entry("io-debug", doc_hidden)]
+#[codesnip::entry("io-debug")]
 pub use io_debug_impl::{Assertion, FValueAssertion, IODebug, NoAssertion, StaticAssertion};
-#[codesnip::entry("io-debug", doc_hidden)]
+#[codesnip::entry("io-debug", include("prelude", "float-value", "io-util"))]
 mod io_debug_impl {
     use super::{stdout, BufWriter, Display, ReaderFromStr, ReaderTrait, Write, WriterTrait};
 
@@ -118,9 +118,9 @@ mod io_debug_impl {
     }
 }
 
-#[codesnip::entry("custom-assert", doc_hidden)]
-pub use custom_assertion_impl::ClosureAssertion;
 #[codesnip::entry("custom-assert")]
+pub use custom_assertion_impl::ClosureAssertion;
+#[codesnip::entry("custom-assert", include("io-util", "io-debug"))]
 mod custom_assertion_impl {
     use super::{Assertion, ReaderFromStr, ReaderTrait, WriterTrait};
     pub struct ClosureAssertion {
@@ -137,12 +137,12 @@ mod custom_assertion_impl {
 
 #[test]
 fn test() {
-    use string_util::*;
+    use crate::util::string_util::*;
     let mut io = IODebug::new("", false, NoAssertion);
     io.out(123);
-    io.out(456.line());
-    io.out(&[1, 2, 3, 4, 5].join(" ").line());
-    io.out(13.bits(5));
+    io.out(456i32.line());
+    io.out(&[1i8, 2, 3, 4, 5].join(" ").line());
+    io.out(13u32.bits(5));
     io.flush();
     for &expect in &["123456", "1", "2", "3", "4", "5", "10110"] {
         assert_eq!(Some(expect.to_string()), io.test_reader.next());
@@ -153,9 +153,9 @@ fn test() {
 #[test]
 fn interactive_test() {
     let mut io = IODebug::new("100", false, ClosureAssertion { buf: 100 });
-    assert_eq!(100, io.v());
+    assert_eq!(100, io.v::<i64>());
     io.out(1000);
     io.flush();
     assert_eq!(io.buf, "");
-    assert_eq!(1100, io.v());
+    assert_eq!(1100, io.v::<i64>());
 }

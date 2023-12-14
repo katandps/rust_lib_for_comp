@@ -1,9 +1,9 @@
-use algebra::Integral;
-use prelude::*;
+use crate::algebra::Integral;
+use crate::prelude::*;
 
-#[codesnip::entry("string-util", doc_hidden)]
+#[codesnip::entry("string-util")]
 pub use string_util_impl::{AddLineTrait, BitsTrait, JoinTrait, YesTrait};
-#[codesnip::entry("string-util", doc_hidden)]
+#[codesnip::entry("string-util", include("algebra", "prelude"))]
 mod string_util_impl {
     use super::{Display, Integral};
     pub trait AddLineTrait {

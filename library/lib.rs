@@ -1,6 +1,9 @@
 //! # Libraries
 pub mod algebra;
 pub mod algo;
+pub mod element;
+pub mod min_max_macro;
 pub mod prelude;
 pub mod range_traits;
-pub mod test;
+pub mod template;
+pub mod util;

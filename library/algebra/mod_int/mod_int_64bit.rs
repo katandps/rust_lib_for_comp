@@ -4,9 +4,9 @@
 //! 64bit長のModIntが必要なときに
 use crate::algebra::*;
 
-#[codesnip::entry("mod-int-2^61-1", include("algebra", "prelude"))]
+#[codesnip::entry("mod-int-64", include("algebra", "prelude"))]
 pub use mod_int_impl::ModInt64;
-#[codesnip::entry("mod-int-2^61-1", include("algebra", "prelude"))]
+#[codesnip::entry("mod-int-64", include("algebra", "prelude"))]
 mod mod_int_impl {
     use std::num::ParseIntError;
 

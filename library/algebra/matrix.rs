@@ -1,12 +1,10 @@
 //! # 行列
-//!
-//!
-use algebra::*;
-use prelude::*;
+use crate::algebra::*;
+use crate::prelude::*;
 
-#[codesnip::entry("matrix", doc_hidden)]
+#[codesnip::entry("matrix", include("algebra", "prelude"))]
 pub use matrix_impl::Matrix;
-#[codesnip::entry("matrix", doc_hidden)]
+#[codesnip::entry("matrix", include("algebra", "prelude"))]
 mod matrix_impl {
     use super::{
         Add, AddAssign, Debug, Display, Div, Formatter, Mul, MulAssign, Neg, One, Pow, Sub, Zero,

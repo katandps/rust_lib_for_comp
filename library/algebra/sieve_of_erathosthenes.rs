@@ -5,15 +5,13 @@
 //! 前計算
 //! $O(N\log \log N)$
 
-use prelude::*;
-
-#[codesnip::entry("sieve-of-eratosthenes", doc_hidden)]
+#[codesnip::entry("sieve-of-eratosthenes")]
 pub struct SieveOfEratosthenes {
     m: usize,
     // i番目を割り切る最小の素因数
     table: Vec<usize>,
 }
-#[codesnip::entry("sieve-of-eratosthenes", doc_hidden)]
+#[codesnip::entry("sieve-of-eratosthenes")]
 impl SieveOfEratosthenes {
     /// # 前計算
     ///

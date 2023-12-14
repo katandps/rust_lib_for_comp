@@ -4,21 +4,12 @@
 //! ## 使い方
 //! Readを引数に取り、StringのIteratorを得る
 //!
-//! ```
-//! # use io_util::*;
-//! let mut reader = ReaderFromStr::new("-123 456.7 12345 hogehoge 123 456  789 012   345 678");
-//! assert_eq!(-123, reader.v());
-//! assert_eq!(456.7, reader.v());
-//! assert_eq!(12345, reader.v());
-//! assert_eq!("hogehoge".to_string(), reader.v::<String>());
-//! assert_eq!(vec![123, 456, 789, 12, 345, 678], reader.vec(6));
-//! ```
 
-use prelude::*;
+use crate::prelude::*;
 
-#[snippet("io-util")]
+#[codesnip::entry("io-util")]
 pub use io_impl::{ReaderFromStdin, ReaderFromStr, ReaderTrait, WriterToStdout, WriterTrait, IO};
-#[codesnip::entry("io-util", doc_hidden)]
+#[codesnip::entry("io-util", include("prelude"))]
 mod io_impl {
     use super::{stdin, stdout, BufRead, BufWriter, Display, FromStr as FS, VecDeque, Write};
 
@@ -209,6 +200,16 @@ mod io_impl {
 #[cfg(test)]
 mod tests {
     use super::*;
+
+    #[test]
+    fn test() {
+        let mut reader = ReaderFromStr::new("-123 456.7 12345 hogehoge 123 456  789 012   345 678");
+        assert_eq!(-123, reader.v::<i16>());
+        assert_eq!(456.7, reader.v::<f64>());
+        assert_eq!(12345, reader.v::<i32>());
+        assert_eq!("hogehoge".to_string(), reader.v::<String>());
+        assert_eq!(vec![123, 456, 789, 12, 345, 678], reader.vec::<i64>(6));
+    }
 
     #[test]
     fn edge_cases() {

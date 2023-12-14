@@ -3,10 +3,16 @@ pub mod chinese_remainder_theorem;
 pub mod dynamic_mod_int;
 pub mod formal_power_series;
 pub mod lagrange_interpolation;
+pub mod lucas_theorem;
+pub mod matrix;
+pub mod miller_rabin;
 pub mod mod_int;
 pub mod mod_inv;
 pub mod mod_pow;
 pub mod montgomery_multiplication_64;
+pub mod pollard_rho;
+pub mod sieve_of_erathosthenes;
+pub mod xor_basis;
 
 use crate::prelude::*;
 

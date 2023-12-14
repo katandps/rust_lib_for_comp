@@ -4,22 +4,28 @@
 //! io_util
 //! prelude
 
-use io_debug::*;
-use io_util::*;
-use prelude::*;
-use string_util::*;
+use crate::prelude::*;
+use crate::util::io_debug::*;
+use crate::util::io_util::*;
+use crate::util::string_util::*;
 
-#[snippet("template")]
-#[snippet(include = "io-util")]
-#[snippet(include = "io-debug")]
-#[snippet(include = "dbg-macro")]
-#[snippet(include = "prelude")]
-#[snippet(include = "algebra")]
-#[snippet(include = "min_max")]
-#[snippet(include = "range-traits")]
-#[snippet(include = "faster-hashmap")]
-#[snippet(include = "string-util")]
-#[snippet(include = "float_value")]
+#[codesnip::entry(
+    "template",
+    include(
+        "io-util",
+        "io-debug",
+        "dbg-macro",
+        "prelude",
+        "algebra",
+        "chmin",
+        "chmax",
+        "range-traits",
+        "faster-hashmap",
+        "string-util",
+        "float-value",
+        "solver"
+    )
+)]
 pub fn main() {
     std::thread::Builder::new()
         .name("extend stack size".into())
@@ -34,21 +40,21 @@ pub fn main() {
         .unwrap()
 }
 
-#[snippet("solver")]
+#[codesnip::entry("solver", include("io-util", "string-util"))]
 pub fn solve<IO: ReaderTrait + WriterTrait>(io: &mut IO) {
     let n = io.v::<usize>();
     io.out(n.line());
 }
 
-#[snippet("tester", doc_hidden)]
+#[codesnip::entry("tester", include("solver", "io-debug"))]
 #[test]
 fn test_1() {
     test_helper("1", "1");
 }
 /// # テスト実行用ヘルパー
-#[snippet("tester", doc_hidden)]
+#[codesnip::entry("tester", include("solver", "io-debug"))]
 #[allow(dead_code)]
-fn test_helper(input: &'static str, expect: &'static str) {
+pub fn test_helper(input: &'static str, expect: &'static str) {
     std::thread::Builder::new()
         .name("extend stack size".into())
         .stack_size(128 * 1024 * 1024)

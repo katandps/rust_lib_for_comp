@@ -1,8 +1,7 @@
 //! 最大最小を求めるマクロ
-#![allow(unused_macros)]
-use prelude::snippet;
 
-#[codesnip::entry("min_max", doc_hidden)]
+#[codesnip::entry("min")]
+#[allow(unused_macros)]
 #[macro_export]
 macro_rules! min {
     ($a:expr $(,)*) => {{$a}};
@@ -20,7 +19,8 @@ macro_rules! min {
         }
     };
 }
-#[codesnip::entry("min_max", doc_hidden)]
+#[codesnip::entry("chmin", include("min"))]
+#[allow(unused_macros)]
 #[macro_export]
 macro_rules! chmin {
     ($base:expr, $($cmps:expr),+ $(,)*) => {
@@ -35,7 +35,8 @@ macro_rules! chmin {
         }
     };
 }
-#[codesnip::entry("min_max", doc_hidden)]
+#[codesnip::entry("max")]
+#[allow(unused_macros)]
 #[macro_export]
 macro_rules! max {
     ($a:expr $(,)*) => {{$a}};
@@ -53,7 +54,8 @@ macro_rules! max {
         }
     };
 }
-#[codesnip::entry("min_max", doc_hidden)]
+#[codesnip::entry("chmax", include("max"))]
+#[allow(unused_macros)]
 #[macro_export]
 macro_rules! chmax {
     ($base:expr, $($cmps:expr),+ $(,)*) => {
@@ -67,6 +69,9 @@ macro_rules! chmax {
             }}
     };
 }
+
+#[allow(unused_imports)]
+pub(crate) use {chmax, chmin, max, min};
 
 #[cfg(test)]
 #[test]
