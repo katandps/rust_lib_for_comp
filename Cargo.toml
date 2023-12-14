@@ -1,5 +1,5 @@
 [workspace]
-members = ['library', 'verifications/*']
+members = ['library', 'verifications/*', 'benches/*']
 exclude = [
     'verifications/aoj',
     'verifications/atcoder',

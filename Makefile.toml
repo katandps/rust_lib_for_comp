@@ -54,11 +54,12 @@ cargo snippet -t vscode crates > ${SNIPPETS_DIR}/${SNIPPETS_FILE}.${SNIPPETS_SUF
 dependencies = ["format", "lint", "check", "coverage", "verify", "snippet"]
 
 [tasks.rustdoc]
-env = { RUSTDOCFLAGS = "--html-in-header katex.html" }
+env = { RUSTDOCFLAGS = "--html-in-header katex.html -Z unstable-options --generate-link-to-definition" }
 description = "Generate rustdoc with KATEX"
 command = "cargo"
+toolchain = "nightly"
 category = "Documentation"
-args = ["doc", "--no-deps"]
+args = ["doc", "--no-deps", "-Zunstable-options", "-Zrustdoc-scrape-examples"]
 
 [tasks.refresh-dropbox-token]
 description = "Refresh local dropbox token"

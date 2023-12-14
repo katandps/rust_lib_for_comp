@@ -3,8 +3,6 @@
 use crate::algebra::*;
 use crate::prelude::*;
 
-pub mod naive_impl;
-
 #[codesnip::entry("gcd-operation", include("algebra"))]
 pub use gcd_impl::Gcd;
 #[codesnip::entry("gcd-operation", include("algebra"))]
@@ -19,10 +17,33 @@ mod gcd_impl {
     #[derive(Clone, Debug, Default)]
     pub struct Gcd<S>(PhantomData<fn() -> S>);
 
-    pub trait GcdNeedTrait: Clone + Copy + Debug + PartialOrd + Zero + BitOr<Output = Self>
-        + ShrAssign + Shl<Output = Self> + SubAssign + TrailingZeros{}
-    impl<S: Clone + Copy + Debug + PartialOrd + Zero + BitOr<Output = S>
-        + ShrAssign + Shl<Output = S> + SubAssign + TrailingZeros> GcdNeedTrait for S{}
+    pub trait GcdNeedTrait:
+        Clone
+        + Copy
+        + Debug
+        + PartialOrd
+        + Zero
+        + BitOr<Output = Self>
+        + ShrAssign
+        + Shl<Output = Self>
+        + SubAssign
+        + TrailingZeros
+    {
+    }
+    impl<
+            S: Clone
+                + Copy
+                + Debug
+                + PartialOrd
+                + Zero
+                + BitOr<Output = S>
+                + ShrAssign
+                + Shl<Output = S>
+                + SubAssign
+                + TrailingZeros,
+        > GcdNeedTrait for S
+    {
+    }
 
     impl<S: GcdNeedTrait> Magma for Gcd<S> {
         type M = S;

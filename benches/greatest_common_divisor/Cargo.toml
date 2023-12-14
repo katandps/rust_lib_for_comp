@@ -4,14 +4,15 @@ version = "0.1.0"
 edition = "2018"
 
 [dependencies]
-prelude = { path = "../../../prelude" }
-algebra = { path = "../../" }
+competitive = { path = "../../library" }
 
 [dev-dependencies]
 criterion = "0.5.1"
-xor_shift = { path = "../../../algo/xor_shift" }
 
 [[bench]]
 name = "binary-gcd"
 path = "./bench_binary_gcd.rs"
 harness = false
+
+[lib]
+path = "lib.rs"
