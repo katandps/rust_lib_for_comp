@@ -3,8 +3,8 @@
 //!
 //! ## 使い方
 //!```
-//! # use greatest_common_divisor::*;
-//! # use algebra::*;
+//! # use crate::binary_operation::greatest_common_divisor::*;
+//! # use crate::algebra::*;
 //! assert_eq!(1, Gcd::op(&3, &5));
 //! assert_eq!(2, Gcd::op(&4, &6));
 //! assert_eq!(3, Gcd::op(&3, &9));
@@ -20,14 +20,14 @@
 //! ## dependency
 //! prelude
 //! algebra
-use algebra::*;
-use prelude::*;
+use crate::algebra::*;
+use crate::prelude::*;
 
 pub mod naive_impl;
 
-#[snippet(name = "gcd-operation", doc_hidden)]
+#[codesnip::entry("gcd-operation")]
 pub use gcd_impl::Gcd;
-#[snippet(name = "gcd-operation", doc_hidden)]
+#[codesnip::entry("gcd-operation")]
 mod gcd_impl {
     use std::ops::{BitOr, Shl, ShrAssign, SubAssign};
 

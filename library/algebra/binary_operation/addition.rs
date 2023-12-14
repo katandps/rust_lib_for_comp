@@ -1,13 +1,13 @@
 //! # 加算 $a \circ b \to sum(a, b)$
 //!
 
-use algebra::*;
-use prelude::*;
+use crate::algebra::*;
+use crate::prelude::*;
 
-#[snippet(name = "addition", doc_hidden)]
+#[codesnip::entry("addition", doc_hidden)]
 #[derive(Clone, Debug, Default)]
 pub struct Addition<S>(PhantomData<fn() -> S>);
-#[snippet(name = "addition", doc_hidden)]
+#[codesnip::entry("addition", doc_hidden)]
 mod addition_impl {
     use super::{
         Add, Addition, Associative, Commutative, Debug, Invertible, Magma, Neg, Unital, Zero,

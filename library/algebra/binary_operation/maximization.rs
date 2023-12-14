@@ -1,12 +1,12 @@
 //! # 最大化 $a \circ b \to max(a, b)$
 //! $a < b$ のとき b
-use algebra::*;
-use prelude::*;
+use crate::algebra::*;
+use crate::prelude::*;
 
-#[snippet(name = "maximization", doc_hidden)]
+#[codesnip::entry("maximization")]
 #[derive(Clone, Debug, Default)]
 pub struct Maximization<S>(PhantomData<fn() -> S>);
-#[snippet(name = "maximization", doc_hidden)]
+#[codesnip::entry("maximization")]
 mod maximization_impl {
     use super::{
         Associative, BoundedBelow, Commutative, Debug, Idempotent, Magma, Maximization, Unital,

@@ -1,7 +1,7 @@
 //! # GCD
 //! ナイーブなユークリッドの互除法によるGCDの計算
-use algebra::*;
-use prelude::*;
+use crate::algebra::*;
+use crate::prelude::*;
 
 #[derive(Clone, Debug, Default)]
 pub struct Gcd<S>(PhantomData<fn() -> S>);

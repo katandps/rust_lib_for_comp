@@ -1,15 +1,22 @@
-use prelude::*;
+pub mod binary_operation;
+pub mod chinese_remainder_theorem;
+pub mod dynamic_mod_int;
+pub mod formal_power_series;
+pub mod lagrange_interpolation;
+pub mod mod_int;
+pub mod mod_inv;
+pub mod mod_pow;
+pub mod montgomery_multiplication_64;
 
-#[snippet(name = "algebra", doc_hidden)]
-#[rustfmt::skip]
+use crate::prelude::*;
+
+#[codesnip::entry("algebra", include("prelude"))]
 pub use algebra_traits::{
     AbelianGroup, Associative, Band, BoundedAbove, BoundedBelow, Commutative, CommutativeMonoid,
     Group, Idempotent, Integral, Invertible, LeastSignificantBit, Magma, MapMonoid, Monoid,
     MonoidOperation, One, Pow, PrimitiveRoot, SemiGroup, TrailingZeros, Unital, Zero,
 };
-
-#[snippet(name = "algebra", doc_hidden)]
-#[rustfmt::skip]
+#[codesnip::entry("algebra", include("prelude"))]
 mod algebra_traits {
     use super::{
         Add, AddAssign, BitAnd, BitAndAssign, BitOr, BitOrAssign, BitXor, BitXorAssign, Debug,

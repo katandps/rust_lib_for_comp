@@ -1,10 +1,10 @@
 //! # BitXor $a \circ b \to xor(a, b)$
-use algebra::*;
-use prelude::*;
+use crate::algebra::*;
+use crate::prelude::*;
 
-#[snippet(name = "bit-xor-operation", doc_hidden)]
+#[codesnip::entry("bit-xor-operation", doc_hidden)]
 pub use bit_xor_operation_impl::BitXorOperation;
-#[snippet(name = "bit-xor-operation", doc_hidden)]
+#[codesnip::entry("bit-xor-operation", doc_hidden)]
 mod bit_xor_operation_impl {
     use super::{
         Associative, BitXor, Commutative, Debug, Default, Magma, PhantomData, Unital, Zero,

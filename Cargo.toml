@@ -1,18 +1,6 @@
 [workspace]
-members = ['crates/*', 'verifications/*']
+members = ['library', 'verifications/*']
 exclude = [
-    'crates/algebra/binary_operation',
-    'crates/algo',
-    'crates/convolution',
-    'crates/data_structure',
-    'crates/dynamic_programming',
-    'crates/element',
-    'crates/enumerator',
-    'crates/flow',
-    'crates/geometry',
-    'crates/string',
-    'crates/typical_problems',
-    'crates/util',
     'verifications/aoj',
     'verifications/atcoder',
     'verifications/library_checker',

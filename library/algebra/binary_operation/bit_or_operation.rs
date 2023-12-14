@@ -1,10 +1,10 @@
 //! # BitOr $a \circ b \to or(a, b)$
-use algebra::*;
-use prelude::*;
+use crate::algebra::*;
+use crate::prelude::*;
 
-#[snippet(name = "bit-or-operation", doc_hidden)]
+#[codesnip::entry("bit-or-operation", doc_hidden)]
 pub use bit_or_opration_impl::BitOrOperation;
-#[snippet(name = "bit-or-operation", doc_hidden)]
+#[codesnip::entry("bit-or-operation", doc_hidden)]
 mod bit_or_opration_impl {
     use super::{
         Associative, BitOr, Commutative, Debug, Default, Idempotent, Magma, PhantomData, Unital,
