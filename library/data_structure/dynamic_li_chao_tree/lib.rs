@@ -6,10 +6,10 @@ use min_max_macro::{chmin, min};
 use prelude::*;
 use range_traits::ToBounds;
 
-#[snippet(name = "dynamic-li-chao-tree", doc_hidden)]
+#[codesnip::entry("dynamic-li-chao-tree", doc_hidden)]
 pub use dynamic_li_chao_tree_impl::DynamicLiChaoTree;
 
-#[snippet(name = "dynamic-li-chao-tree", doc_hidden)]
+#[codesnip::entry("dynamic-li-chao-tree", doc_hidden)]
 mod dynamic_li_chao_tree_impl {
     use std::hint::unreachable_unchecked;
 

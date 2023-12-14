@@ -1,6 +1,6 @@
 use prelude::*;
 
-#[snippet(name = "graph", doc_hidden)]
+#[codesnip::entry("graph", doc_hidden)]
 pub trait GraphTrait {
     type Weight;
     fn size(&self) -> usize;

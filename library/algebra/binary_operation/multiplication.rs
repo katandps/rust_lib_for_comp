@@ -1,10 +1,9 @@
 //! # 乗算 $a \circ b \to prod(a, b)$
 use crate::algebra::*;
-use crate::prelude::*;
 
-#[codesnip::entry("multiplication", doc_hidden)]
+#[codesnip::entry("multiplication", include("algebra"))]
 pub use multiplication_impl::Multiplication;
-#[codesnip::entry("multiplication", doc_hidden)]
+#[codesnip::entry("multiplication", include("algebra"))]
 mod multiplication_impl {
     use super::{
         Associative, Commutative, Debug, Default, Div, Invertible, Magma, Mul, One, PhantomData,

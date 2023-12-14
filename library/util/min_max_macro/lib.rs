@@ -2,8 +2,7 @@
 #![allow(unused_macros)]
 use prelude::snippet;
 
-#[snippet(name = "min_max", doc_hidden)]
-#[rustfmt::skip]
+#[codesnip::entry("min_max", doc_hidden)]
 #[macro_export]
 macro_rules! min {
     ($a:expr $(,)*) => {{$a}};
@@ -21,8 +20,7 @@ macro_rules! min {
         }
     };
 }
-#[snippet(name = "min_max", doc_hidden)]
-#[rustfmt::skip]
+#[codesnip::entry("min_max", doc_hidden)]
 #[macro_export]
 macro_rules! chmin {
     ($base:expr, $($cmps:expr),+ $(,)*) => {
@@ -37,8 +35,7 @@ macro_rules! chmin {
         }
     };
 }
-#[snippet(name = "min_max", doc_hidden)]
-#[rustfmt::skip]
+#[codesnip::entry("min_max", doc_hidden)]
 #[macro_export]
 macro_rules! max {
     ($a:expr $(,)*) => {{$a}};
@@ -56,8 +53,7 @@ macro_rules! max {
         }
     };
 }
-#[snippet(name = "min_max", doc_hidden)]
-#[rustfmt::skip]
+#[codesnip::entry("min_max", doc_hidden)]
 #[macro_export]
 macro_rules! chmax {
     ($base:expr, $($cmps:expr),+ $(,)*) => {

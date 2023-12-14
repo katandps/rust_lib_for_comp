@@ -8,7 +8,7 @@
 
 use prelude::*;
 
-#[snippet(name = "bit-combination", doc_hidden)]
+#[codesnip::entry("bit-combination", doc_hidden)]
 pub fn bit_combination(n: usize, k: usize) -> impl Iterator<Item = u64> {
     assert!(n < 64);
     assert!(k <= n);

@@ -23,13 +23,13 @@ use graph::GraphTrait;
 use prelude::*;
 use union_find::UnionFind;
 
-#[snippet(name = "kruskal", doc_hidden)]
+#[codesnip::entry("kruskal", doc_hidden)]
 pub struct Kruskal<W> {
     tree: Vec<(usize, usize, W)>,
     sum: W,
 }
 
-#[snippet(name = "kruskal", doc_hidden)]
+#[codesnip::entry("kruskal", doc_hidden)]
 impl<W, G> From<&G> for Kruskal<W>
 where
     W: Zero + PartialOrd + Copy + AddAssign,
@@ -63,7 +63,7 @@ where
     }
 }
 
-#[snippet(name = "kruskal", doc_hidden)]
+#[codesnip::entry("kruskal", doc_hidden)]
 /// # 最小全域木を返す
 /// Vec<(Src, Dst, Weight)> を返す
 impl<W> Kruskal<W> {
@@ -72,7 +72,7 @@ impl<W> Kruskal<W> {
     }
 }
 
-#[snippet(name = "kruskal", doc_hidden)]
+#[codesnip::entry("kruskal", doc_hidden)]
 impl<W: Copy> Kruskal<W> {
     pub fn sum(&self) -> W {
         self.sum

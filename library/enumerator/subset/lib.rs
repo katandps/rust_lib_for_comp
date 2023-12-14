@@ -5,7 +5,7 @@
 
 use prelude::*;
 
-#[snippet(name = "subset", doc_hidden)]
+#[codesnip::entry("subset", doc_hidden)]
 pub fn subset(n: usize) {
     // i: 集合
     for i in 1..1 << n {

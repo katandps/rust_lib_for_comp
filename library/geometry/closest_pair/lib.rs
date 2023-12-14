@@ -4,9 +4,9 @@ use min_max_macro::{chmin, min};
 use plane_float::Vector;
 use prelude::*;
 
-#[snippet(name = "closest-pair", doc_hidden)]
+#[codesnip::entry("closest-pair", doc_hidden)]
 pub struct ClosestPair;
-#[snippet(name = "closest-pair", doc_hidden)]
+#[codesnip::entry("closest-pair", doc_hidden)]
 impl ClosestPair {
     const INF: f64 = 1e30;
     pub fn closest_pair(mut points: Vec<Vector>) -> (FValue, Option<(Vector, Vector)>) {

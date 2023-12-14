@@ -11,7 +11,7 @@
 //!
 use prelude::*;
 
-#[snippet(name = "union-of-ranges", doc_hidden)]
+#[codesnip::entry("union-of-ranges", doc_hidden)]
 pub fn unite<R: RangeBounds<i64>>(set: &[R]) -> Vec<Range<i64>> {
     let mut b: Vec<_> = set
         .iter()

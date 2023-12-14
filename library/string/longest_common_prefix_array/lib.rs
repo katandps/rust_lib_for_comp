@@ -2,9 +2,9 @@
 use prelude::*;
 use suffix_array::SuffixArray;
 
-#[snippet(name = "longest-common-prefix-array", doc_hidden)]
+#[codesnip::entry("longest-common-prefix-array", doc_hidden)]
 pub use longest_common_prefix_array_impl::LCPArray;
-#[snippet(name = "longest-common-prefix-array", doc_hidden)]
+#[codesnip::entry("longest-common-prefix-array", doc_hidden)]
 mod longest_common_prefix_array_impl {
     use super::{Index, SuffixArray};
 

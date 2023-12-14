@@ -8,9 +8,9 @@ use mod_int_64bit::ModInt64;
 use prelude::*;
 use xor_shift::XorShift;
 
-#[snippet(name = "rolling-hash", doc_hidden)]
+#[codesnip::entry("rolling-hash", doc_hidden)]
 pub use rolling_hash_impl::RollingHash;
-#[snippet(name = "rolling-hash", doc_hidden)]
+#[codesnip::entry("rolling-hash", doc_hidden)]
 mod rolling_hash_impl {
     use super::{Add, Debug, ModInt64, Sub, XorShift, Zero};
     use std::sync::OnceLock;

@@ -3,23 +3,23 @@
 
 use prelude::*;
 
-#[snippet(name = "flow_vertices", doc_hidden)]
+#[codesnip::entry("flow_vertices", doc_hidden)]
 #[derive(Clone, Copy, Debug)]
 pub enum VertexType {
     S,
     T,
 }
-#[snippet(name = "flow_vertices", doc_hidden)]
+#[codesnip::entry("flow_vertices", doc_hidden)]
 impl VertexType {
     const PATTERNS: usize = 2;
 }
-#[snippet(name = "flow_vertices", doc_hidden)]
+#[codesnip::entry("flow_vertices", doc_hidden)]
 #[derive(Clone, Debug)]
 pub struct FlowVertices {
     count: usize,
     data: Vec<Vec<usize>>,
 }
-#[snippet(name = "flow_vertices", doc_hidden)]
+#[codesnip::entry("flow_vertices", doc_hidden)]
 impl Default for FlowVertices {
     fn default() -> Self {
         FlowVertices {
@@ -29,7 +29,7 @@ impl Default for FlowVertices {
     }
 }
 
-#[snippet(name = "flow_vertices", doc_hidden)]
+#[codesnip::entry("flow_vertices", doc_hidden)]
 impl FlowVertices {
     pub fn get(&mut self, t: VertexType, v: usize) -> usize {
         let u = t as usize;

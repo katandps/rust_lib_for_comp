@@ -1,9 +1,9 @@
 //! # 数列の合計と、そのprefix sumの最大値
 use prelude::*;
 
-#[snippet(name = "sum_and_prefix_max", doc_hidden)]
+#[codesnip::entry("sum_and_prefix_max", doc_hidden)]
 pub use sum_and_prefix_max_impl::SumAndMax;
-#[snippet(name = "sum_and_prefix_max", doc_hidden)]
+#[codesnip::entry("sum_and_prefix_max", doc_hidden)]
 mod sum_and_prefix_max_impl {
     use super::{Add, Debug};
     #[derive(Clone, Copy)]

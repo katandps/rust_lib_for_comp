@@ -4,11 +4,11 @@ use super::ConvolutionType;
 use mod_int::ModInt;
 use prelude::*;
 
-#[snippet(name = "xor-convolution", doc_hidden)]
+#[codesnip::entry("xor-convolution", doc_hidden)]
 #[snippet(include = "bitwise-convolution")]
 pub struct XorConvolution;
 
-#[snippet(name = "xor-convolution", doc_hidden)]
+#[codesnip::entry("xor-convolution", doc_hidden)]
 impl ConvolutionType for XorConvolution {
     #[allow(clippy::many_single_char_names)]
     fn fwht<const M: u32>(src: &mut [ModInt<M>], rev: bool) {

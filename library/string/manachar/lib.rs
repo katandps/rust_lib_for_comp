@@ -3,10 +3,10 @@
 //! ## 計算量
 //! $O(N)$
 
-#[snippet(name = "manachar", doc_hidden)]
+#[codesnip::entry("manachar", doc_hidden)]
 pub use manachar_impl::Manachar;
 use prelude::*;
-#[snippet(name = "manachar", doc_hidden)]
+#[codesnip::entry("manachar", doc_hidden)]
 mod manachar_impl {
     use super::Debug;
     pub struct Manachar;

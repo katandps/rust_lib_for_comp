@@ -2,10 +2,9 @@
 //! EPSの設定を自分でやる
 use prelude::*;
 
-#[snippet(name = "float_value", doc_hidden)]
+#[codesnip::entry("float_value", doc_hidden)]
 pub use float_value_impl::{FValue, EPS};
-#[snippet(name = "float_value", doc_hidden)]
-#[rustfmt::skip]
+#[codesnip::entry("float_value", doc_hidden)]
 mod float_value_impl {
     use super::FromStr;
 

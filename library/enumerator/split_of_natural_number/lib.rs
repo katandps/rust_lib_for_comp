@@ -5,9 +5,9 @@
 //! - `From<&[usize]>`: 入力したスライスの合計の分割を途中から得る
 
 use prelude::*;
-#[snippet(name = "split-of-natural-number", doc_hidden)]
+#[codesnip::entry("split-of-natural-number", doc_hidden)]
 pub use split_of_natural_number_impl::SplitOfNumber;
-#[snippet(name = "split-of-natural-number", doc_hidden)]
+#[codesnip::entry("split-of-natural-number", doc_hidden)]
 mod split_of_natural_number_impl {
     #[derive(Clone, Debug)]
     pub struct SplitOfNumber(Option<Vec<usize>>);

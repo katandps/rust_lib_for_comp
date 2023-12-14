@@ -4,9 +4,9 @@ use algebra::*;
 use prelude::*;
 use range_traits::*;
 
-#[snippet(name = "dual-segment-tree", doc_hidden)]
+#[codesnip::entry("dual-segment-tree", doc_hidden)]
 pub use dual_segment_tree_impl::DualSegmentTree;
-#[snippet(name = "dual-segment-tree", doc_hidden)]
+#[codesnip::entry("dual-segment-tree", doc_hidden)]
 mod dual_segment_tree_impl {
     use super::{MonoidOperation, RangeUpdate, ToBounds};
 

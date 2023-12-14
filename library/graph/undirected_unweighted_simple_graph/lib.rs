@@ -5,9 +5,9 @@ use graph::GraphTrait;
 use prelude::*;
 use string_util::{AddLineTrait, JoinTrait};
 
-#[snippet(name = "unweighted-graph", doc_hidden)]
+#[codesnip::entry("unweighted-graph", doc_hidden)]
 pub use undirected_unweighted_simple_graph_impl::UndirectedUnweightedSimpleGraph;
-#[snippet(name = "unweighted-graph", doc_hidden)]
+#[codesnip::entry("unweighted-graph", doc_hidden)]
 mod undirected_unweighted_simple_graph_impl {
     use super::{swap, AddLineTrait, BitSet, Debug, Formatter, GraphTrait, JoinTrait};
     #[derive(Clone)]

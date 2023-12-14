@@ -7,7 +7,7 @@
 use algebra::*;
 use prelude::*;
 
-#[snippet(name = "fast-fourier-transform", doc_hidden)]
+#[codesnip::entry("fast-fourier-transform", doc_hidden)]
 pub struct FFT<T> {
     root: Vec<T>,
     root_inv: Vec<T>,
@@ -17,7 +17,7 @@ pub struct FFT<T> {
     rate3_inv: Vec<T>,
 }
 
-#[snippet(name = "fast-fourier-transform", doc_hidden)]
+#[codesnip::entry("fast-fourier-transform", doc_hidden)]
 mod fast_fourier_transform_impl {
     use super::{Add, Div, DivAssign, Mul, MulAssign, Neg, One, PrimitiveRoot, Sub, Zero, FFT};
 

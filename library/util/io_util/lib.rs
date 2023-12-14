@@ -17,10 +17,8 @@
 use prelude::*;
 
 #[snippet("io-util")]
-#[rustfmt::skip]
 pub use io_impl::{ReaderFromStdin, ReaderFromStr, ReaderTrait, WriterToStdout, WriterTrait, IO};
-#[snippet(name = "io-util", doc_hidden)]
-#[rustfmt::skip]
+#[codesnip::entry("io-util", doc_hidden)]
 mod io_impl {
     use super::{stdin, stdout, BufRead, BufWriter, Display, FromStr as FS, VecDeque, Write};
 
@@ -154,8 +152,12 @@ mod io_impl {
                 let mut reader = stdin.lock();
                 let mut l = String::new();
                 reader.read_line(&mut l).unwrap();
-                self.buf
-                    .append(&mut l.split_ascii_whitespace().map(ToString::to_string).collect());
+                self.buf.append(
+                    &mut l
+                        .split_ascii_whitespace()
+                        .map(ToString::to_string)
+                        .collect(),
+                );
             }
             self.buf.pop_front()
         }

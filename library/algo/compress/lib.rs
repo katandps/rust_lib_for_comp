@@ -2,9 +2,9 @@
 
 use prelude::*;
 
-#[snippet(name = "compress", doc_hidden)]
+#[codesnip::entry("compress", doc_hidden)]
 pub use compress_impl::Compress;
-#[snippet(name = "compress", doc_hidden)]
+#[codesnip::entry("compress", doc_hidden)]
 mod compress_impl {
     pub trait Compress {
         /// # 座圧

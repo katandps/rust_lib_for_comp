@@ -9,10 +9,10 @@
 
 use prelude::*;
 
-#[snippet(name = "highly_composite_number", doc_hidden)]
+#[codesnip::entry("highly_composite_number", doc_hidden)]
 pub struct HighlyCompositeNumber;
 
-#[snippet(name = "highly_composite_number", doc_hidden)]
+#[codesnip::entry("highly_composite_number", doc_hidden)]
 impl HighlyCompositeNumber {
     /// 上限値
     const LIM: usize = 1_000_000_000_000_000_000;

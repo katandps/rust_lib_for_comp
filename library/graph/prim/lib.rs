@@ -25,7 +25,7 @@ use algebra::Zero;
 use graph::GraphTrait;
 use prelude::*;
 
-#[snippet(name = "prim", doc_hidden)]
+#[codesnip::entry("prim", doc_hidden)]
 pub struct Prim<W> {
     /// # 最小全域木(のうちの一つ) Vec<(Src, Dst, Weight)>
     pub tree: Vec<(usize, usize, W)>,
@@ -33,7 +33,7 @@ pub struct Prim<W> {
     pub sum: W,
 }
 
-#[snippet(name = "prim", doc_hidden)]
+#[codesnip::entry("prim", doc_hidden)]
 impl<W, G> From<&G> for Prim<W>
 where
     W: Zero + Ord + Copy + AddAssign,

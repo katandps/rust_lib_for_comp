@@ -2,7 +2,7 @@
 use graph::GraphTrait;
 use prelude::*;
 
-#[snippet(name = "grid-graph", doc_hidden)]
+#[codesnip::entry("grid-graph", doc_hidden)]
 #[derive(Debug)]
 pub struct Grid<W> {
     pub h: usize,
@@ -11,7 +11,7 @@ pub struct Grid<W> {
     pub map: Vec<W>,
 }
 
-#[snippet(name = "grid-graph", doc_hidden)]
+#[codesnip::entry("grid-graph", doc_hidden)]
 impl<W: Clone> GraphTrait for Grid<W> {
     type Weight = ();
 
@@ -54,7 +54,7 @@ impl<W: Clone> GraphTrait for Grid<W> {
     }
 }
 
-#[snippet(name = "grid-graph", doc_hidden)]
+#[codesnip::entry("grid-graph", doc_hidden)]
 impl<W: Clone> Grid<W> {
     pub fn new(h: usize, w: usize, input: Vec<Vec<W>>) -> Grid<W> {
         let mut map = Vec::new();

@@ -4,7 +4,7 @@
 use graph::GraphTrait;
 use prelude::*;
 
-#[snippet(name = "directed-acyclic-graph", doc_hidden)]
+#[codesnip::entry("directed-acyclic-graph", doc_hidden)]
 pub trait Dag {
     /// # トポロジカルソート
     /// DAGをトポロジカルソートし、結果の頂点列を返す
@@ -26,7 +26,7 @@ pub trait Dag {
     fn reachability(&self, queries: &[(usize, usize)]) -> Vec<bool>;
 }
 
-#[snippet(name = "directed-acyclic-graph", doc_hidden)]
+#[codesnip::entry("directed-acyclic-graph", doc_hidden)]
 impl<G: GraphTrait> Dag for G {
     fn topological_sort(&self) -> Vec<usize> {
         let mut deg = self.indegree();

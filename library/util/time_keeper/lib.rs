@@ -1,7 +1,7 @@
 //! # 時間計測
 use prelude::*;
 
-#[snippet(name = "time-keeper")]
+#[codesnip::entry("time-keeper")]
 pub fn get_time() -> f64 {
     static mut STIME: Option<f64> = None;
     let t = std::time::SystemTime::now()

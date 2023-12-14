@@ -5,7 +5,7 @@
 
 use prelude::*;
 
-#[snippet(name = "union-find-tree", doc_hidden)]
+#[codesnip::entry("union-find-tree", doc_hidden)]
 #[derive(Clone, Default)]
 pub struct UnionFind {
     parent: Vec<usize>,
@@ -13,7 +13,7 @@ pub struct UnionFind {
     size: Vec<usize>,
 }
 
-#[snippet(name = "union-find-tree", doc_hidden)]
+#[codesnip::entry("union-find-tree", doc_hidden)]
 impl UnionFind {
     /// # 初期化
     /// 1-indexedで$n$まで初期化される

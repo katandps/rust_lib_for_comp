@@ -7,9 +7,9 @@
 use prelude::*;
 use xor_shift::XorShift;
 
-#[snippet(name = "treap", doc_hidden)]
+#[codesnip::entry("treap", doc_hidden)]
 pub use treap_impl::{Treap, TreapSet};
-#[snippet(name = "treap", doc_hidden)]
+#[codesnip::entry("treap", doc_hidden)]
 mod treap_impl {
 
     use super::{swap, Debug, Display, Formatter, FromIterator, Ordering, XorShift};

@@ -9,7 +9,7 @@
 //! [ABC150F](https://atcoder.jp/contests/abc150/submissions/34853947)
 use prelude::*;
 
-#[snippet(name = "knuth-morris-pratt", doc_hidden)]
+#[codesnip::entry("knuth-morris-pratt", doc_hidden)]
 pub fn tagged_border<T: PartialEq>(src: &[T]) -> Vec<i64> {
     let n = src.len();
     let (mut ret, mut j) = (vec![0; n + 1], -1);
@@ -24,7 +24,7 @@ pub fn tagged_border<T: PartialEq>(src: &[T]) -> Vec<i64> {
     ret
 }
 
-#[snippet(name = "knuth-morris-pratt", doc_hidden)]
+#[codesnip::entry("knuth-morris-pratt", doc_hidden)]
 pub fn search<T: PartialEq>(src: &[T], word: &[T]) -> Vec<i64> {
     let table = tagged_border(word);
     let (mut m, mut i, n, mut ret) = (0, 0, src.len() as i64, Vec::new());

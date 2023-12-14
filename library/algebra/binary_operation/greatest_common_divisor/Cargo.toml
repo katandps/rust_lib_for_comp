@@ -11,9 +11,6 @@ algebra = { path = "../../" }
 criterion = "0.5.1"
 xor_shift = { path = "../../../algo/xor_shift" }
 
-[lib]
-path = "lib.rs"
-
 [[bench]]
 name = "binary-gcd"
 path = "./bench_binary_gcd.rs"

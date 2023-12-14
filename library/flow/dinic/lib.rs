@@ -11,7 +11,7 @@ use algebra::*;
 use graph::GraphTrait;
 use prelude::*;
 
-#[snippet(name = "dinic", doc_hidden)]
+#[codesnip::entry("dinic", doc_hidden)]
 #[derive(Clone, Debug)]
 pub struct Dinic<C: Clone + Debug> {
     /// グラフ
@@ -22,7 +22,7 @@ pub struct Dinic<C: Clone + Debug> {
     rev: Vec<usize>,
 }
 
-#[snippet(name = "dinic", doc_hidden)]
+#[codesnip::entry("dinic", doc_hidden)]
 impl<C: Copy + Debug + Zero + Ord + BoundedAbove + AddAssign + SubAssign> Dinic<C> {
     pub fn new(v: usize) -> Self {
         Dinic {
@@ -99,7 +99,7 @@ impl<C: Copy + Debug + Zero + Ord + BoundedAbove + AddAssign + SubAssign> Dinic<
     }
 }
 
-#[snippet(name = "dinic", doc_hidden)]
+#[codesnip::entry("dinic", doc_hidden)]
 impl<C: Copy + Display + Debug + Add<Output = C>> Dinic<C> {
     pub fn result(&self) {
         for i in 0..self.graph.size() {

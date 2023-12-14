@@ -7,7 +7,7 @@
 use prelude::*;
 
 pub use self::next_permutation_impl::{next_permutation_from_i, next_permutation_from_slice};
-#[snippet(name = "next-permutation", doc_hidden)]
+#[codesnip::entry("next-permutation", doc_hidden)]
 mod next_permutation_impl {
     /// [0, size)の順列を辞書順に得るIteratorとなる
     /// ```

@@ -5,11 +5,11 @@ use super::ConvolutionType;
 use mod_int::ModInt;
 use prelude::*;
 
-#[snippet(name = "and-convolution", doc_hidden)]
+#[codesnip::entry("and-convolution", doc_hidden)]
 #[snippet(include = "bitwise-convolution")]
 pub struct AndConvolution;
 
-#[snippet(name = "and-convolution", doc_hidden)]
+#[codesnip::entry("and-convolution", doc_hidden)]
 impl ConvolutionType for AndConvolution {
     fn fwht<const M: u32>(src: &mut [ModInt<M>], rev: bool) {
         let mut i = 1;

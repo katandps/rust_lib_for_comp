@@ -3,9 +3,9 @@
 use compress::Compress;
 use prelude::*;
 
-#[snippet(name = "suffix-array", doc_hidden)]
+#[codesnip::entry("suffix-array", doc_hidden)]
 pub use suffix_array_impl::SuffixArray;
-#[snippet(name = "suffix-array", doc_hidden)]
+#[codesnip::entry("suffix-array", doc_hidden)]
 mod suffix_array_impl {
     use super::{BTreeMap, Compress, Index};
 

@@ -5,9 +5,9 @@ use algebra::*;
 use prelude::*;
 use range_traits::*;
 
-#[snippet(name = "segment-tree", doc_hidden)]
+#[codesnip::entry("segment-tree", doc_hidden)]
 pub use segment_tree_impl::SegmentTree;
-#[snippet(name = "segment-tree", doc_hidden)]
+#[codesnip::entry("segment-tree", doc_hidden)]
 mod segment_tree_impl {
     use super::{Index, Monoid, PointUpdate, RangeProduct, ToBounds};
 

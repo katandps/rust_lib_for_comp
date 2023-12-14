@@ -7,9 +7,9 @@ use fxhasher::HashMap;
 use prelude::*;
 use union_find::UnionFind;
 
-#[snippet(name = "dynamic-union-find-tree", doc_hidden)]
+#[codesnip::entry("dynamic-union-find-tree", doc_hidden)]
 pub use dynamic_union_find_impl::DynamicUnionFind;
-#[snippet(name = "dynamic-union-find-tree", doc_hidden)]
+#[codesnip::entry("dynamic-union-find-tree", doc_hidden)]
 mod dynamic_union_find_impl {
     use super::{Hash, HashMap, UnionFind};
     #[derive(Clone, Default)]

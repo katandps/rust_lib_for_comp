@@ -9,9 +9,9 @@ use prelude::*;
 use range_traits::*;
 use segment_tree::SegmentTree;
 
-#[snippet(name = "heavy-light-decomposition", doc_hidden)]
+#[codesnip::entry("heavy-light-decomposition", doc_hidden)]
 pub use heavy_light_decomposition_impl::HLDecomposition;
-#[snippet(name = "heavy-light-decomposition", doc_hidden)]
+#[codesnip::entry("heavy-light-decomposition", doc_hidden)]
 mod heavy_light_decomposition_impl {
     use super::{swap, GraphTrait, Monoid, PointUpdate, Range, RangeProduct, SegmentTree};
 

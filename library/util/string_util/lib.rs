@@ -1,11 +1,9 @@
 use algebra::Integral;
 use prelude::*;
 
-#[snippet(name = "string-util", doc_hidden)]
-#[rustfmt::skip]
+#[codesnip::entry("string-util", doc_hidden)]
 pub use string_util_impl::{AddLineTrait, BitsTrait, JoinTrait, YesTrait};
-#[snippet(name = "string-util", doc_hidden)]
-#[rustfmt::skip]
+#[codesnip::entry("string-util", doc_hidden)]
 mod string_util_impl {
     use super::{Display, Integral};
     pub trait AddLineTrait {
@@ -56,11 +54,11 @@ mod string_util_impl {
     impl YesTrait for bool {
         #[inline]
         fn yes(self) -> String {
-            if self {"Yes"} else {"No"}.to_string()
+            if self { "Yes" } else { "No" }.to_string()
         }
         #[inline]
         fn no(self) -> String {
-            if self {"No"} else {"Yes"}.to_string()
+            if self { "No" } else { "Yes" }.to_string()
         }
     }
 }

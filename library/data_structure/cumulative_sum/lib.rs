@@ -9,9 +9,9 @@ use algebra::*;
 use prelude::*;
 use range_traits::*;
 
-#[snippet(name = "cumulative-sum", doc_hidden)]
+#[codesnip::entry("cumulative-sum", doc_hidden)]
 pub use cumulative_sum_impl::CumulativeSum;
-#[snippet(name = "cumulative-sum", doc_hidden)]
+#[codesnip::entry("cumulative-sum", doc_hidden)]
 mod cumulative_sum_impl {
     use super::{AbelianGroup, Add, FromIterator, Magma, Monoid, RangeProduct, ToBounds};
     pub struct CumulativeSum<A: Magma> {

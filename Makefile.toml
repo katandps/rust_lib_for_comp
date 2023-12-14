@@ -109,3 +109,23 @@ script = '''
     competitive-verifier docs --verify-json ${VERIFY_DIR}/${VERIFY_FILE} ${VERIFY_DIR}/${VERIFY_RESULT_FILE}
     cd .competitive-verifier/_jekyll && bundle add webrick && bundle exec jekyll serve --incremental
 '''
+
+[tasks.codesnip-cache]
+script = '''
+    cargo codesnip --target=library/lib.rs --cfg=nightly cache target/codesnip/codesnip-cache.bin
+'''
+
+[tasks.codesnip-verify]
+script = '''
+	cargo codesnip --target=library/lib.rs --cfg=nightly verify
+'''
+
+[tasks.codesnip-list]
+script = '''
+	cargo codesnip --target=library/lib.rs --cfg=nightly list
+'''
+
+[tasks.codesnip-bundle]
+script = '''
+	cargo codesnip --target=library/lib.rs --cfg=nightly bundle ${@}
+'''

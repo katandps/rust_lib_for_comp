@@ -23,7 +23,7 @@
 
 use prelude::*;
 
-#[snippet(name = "lucas-theorem", doc_hidden)]
+#[codesnip::entry("lucas-theorem", doc_hidden)]
 pub fn lucas_theorem(mut n: i64, mut r: i64, p: i64) -> i64 {
     fn combination(n: i64, k: i64) -> i64 {
         if min(k, n - k) == 0 {

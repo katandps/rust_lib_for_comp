@@ -4,11 +4,11 @@ use super::ConvolutionType;
 use mod_int::ModInt;
 use prelude::*;
 
-#[snippet(name = "or-convolution", doc_hidden)]
+#[codesnip::entry("or-convolution", doc_hidden)]
 #[snippet(include = "bitwise-convolution")]
 pub struct OrConvolution;
 
-#[snippet(name = "or-convolution", doc_hidden)]
+#[codesnip::entry("or-convolution", doc_hidden)]
 impl ConvolutionType for OrConvolution {
     fn fwht<const M: u32>(src: &mut [ModInt<M>], rev: bool) {
         let n = src.len();

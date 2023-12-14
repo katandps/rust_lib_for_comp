@@ -6,9 +6,9 @@
 use algebra::Zero;
 use prelude::*;
 
-#[snippet(name = "section", doc_hidden)]
+#[codesnip::entry("section", doc_hidden)]
 pub use section_impl::Section;
-#[snippet(name = "section", doc_hidden)]
+#[codesnip::entry("section", doc_hidden)]
 mod section_impl {
     use super::{Add, Debug, Display, Formatter, Mul, Zero};
 

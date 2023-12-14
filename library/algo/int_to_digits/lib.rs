@@ -9,7 +9,7 @@
 //! ```
 use prelude::*;
 
-#[snippet(name = "int-to-digits", doc_hidden)]
+#[codesnip::entry("int-to-digits", doc_hidden)]
 pub fn int_to_digits(mut n: usize) -> Vec<usize> {
     let mut ret = Vec::new();
     if n == 0 {

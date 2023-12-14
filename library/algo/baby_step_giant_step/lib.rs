@@ -15,7 +15,7 @@ use fxhasher::HashMap;
 use prelude::*;
 use sqrt::sqrt;
 
-#[snippet(name = "baby-step-giant-step", doc_hidden)]
+#[codesnip::entry("baby-step-giant-step", doc_hidden)]
 pub fn baby_step_giant_step<T, F, FINV>(
     mut x: T,
     y: T,

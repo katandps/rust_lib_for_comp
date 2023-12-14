@@ -10,12 +10,12 @@ use miller_rabin::MillerRabin;
 use montgomery_multiplication_64::MontgomeryReduction;
 use prelude::*;
 
-#[snippet(name = "pollard-rho", doc_hidden)]
+#[codesnip::entry("pollard-rho", doc_hidden)]
 pub trait PollardRho {
     fn prime_factorize(&self) -> Vec<u64>;
 }
 
-#[snippet(name = "pollard-rho", doc_hidden)]
+#[codesnip::entry("pollard-rho", doc_hidden)]
 #[allow(clippy::many_single_char_names)]
 impl PollardRho for u64 {
     fn prime_factorize(&self) -> Vec<u64> {

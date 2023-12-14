@@ -4,9 +4,9 @@
 use algebra::*;
 use prelude::*;
 
-#[snippet(name = "matrix", doc_hidden)]
+#[codesnip::entry("matrix", doc_hidden)]
 pub use matrix_impl::Matrix;
-#[snippet(name = "matrix", doc_hidden)]
+#[codesnip::entry("matrix", doc_hidden)]
 mod matrix_impl {
     use super::{
         Add, AddAssign, Debug, Display, Div, Formatter, Mul, MulAssign, Neg, One, Pow, Sub, Zero,

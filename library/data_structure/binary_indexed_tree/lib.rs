@@ -5,9 +5,9 @@ use algebra::{AbelianGroup, LeastSignificantBit, Magma};
 use prelude::*;
 use range_traits::{PointUpdate, RangeProduct, ToBounds};
 
-#[snippet(name = "binary-indexed-tree", doc_hidden)]
+#[codesnip::entry("binary-indexed-tree", doc_hidden)]
 pub use binary_indexed_tree_impl::BinaryIndexedTree;
-#[snippet(name = "binary-indexed-tree", doc_hidden)]
+#[codesnip::entry("binary-indexed-tree", doc_hidden)]
 mod binary_indexed_tree_impl {
     use super::{
         AbelianGroup, Debug, Formatter, LeastSignificantBit, Magma, PointUpdate, RangeProduct,

@@ -8,9 +8,9 @@ use graph::GraphTrait;
 use min_max_macro::{chmin, min};
 use prelude::*;
 
-#[snippet(name = "warshall-floyd", doc_hidden)]
+#[codesnip::entry("warshall-floyd", doc_hidden)]
 pub use warshall_floyd_impl::WarshallFloyd;
-#[snippet(name = "warshall-floyd", doc_hidden)]
+#[codesnip::entry("warshall-floyd", doc_hidden)]
 mod warshall_floyd_impl {
     use super::{chmin, min, Add, BoundedAbove, GraphTrait, Zero};
     pub struct WarshallFloyd<W> {

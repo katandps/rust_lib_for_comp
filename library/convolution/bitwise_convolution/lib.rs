@@ -9,12 +9,12 @@ pub mod and_convolution;
 pub mod or_convolution;
 pub mod xor_convolution;
 
-#[snippet(name = "bitwise-convolution", doc_hidden)]
+#[codesnip::entry("bitwise-convolution", doc_hidden)]
 pub trait ConvolutionType {
     fn fwht<const M: u32>(poly: &mut [ModInt<M>], rev: bool);
 }
 
-#[snippet(name = "bitwise-convolution", doc_hidden)]
+#[codesnip::entry("bitwise-convolution", doc_hidden)]
 pub fn convolution<T: ConvolutionType, const M: u32>(
     mut a: Vec<ModInt<M>>,
     mut b: Vec<ModInt<M>>,

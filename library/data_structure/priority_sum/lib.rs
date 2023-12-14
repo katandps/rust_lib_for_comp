@@ -4,9 +4,9 @@
 use algebra::AbelianGroup;
 use prelude::*;
 
-#[snippet(name = "priority-sum", doc_hidden)]
+#[codesnip::entry("priority-sum", doc_hidden)]
 pub use priority_sum_impl::PrioritySum;
-#[snippet(name = "priority-sum", doc_hidden)]
+#[codesnip::entry("priority-sum", doc_hidden)]
 mod priority_sum_impl {
     use super::{AbelianGroup, BinaryHeap, Ordering, Reverse};
 

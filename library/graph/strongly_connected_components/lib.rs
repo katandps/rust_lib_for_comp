@@ -4,9 +4,9 @@ use algebra::*;
 use graph::GraphTrait;
 use prelude::*;
 
-#[snippet(name = "strongly-connected-components", doc_hidden)]
+#[codesnip::entry("strongly-connected-components", doc_hidden)]
 pub use scc_impl::SCC;
-#[snippet(name = "strongly-connected-components", doc_hidden)]
+#[codesnip::entry("strongly-connected-components", doc_hidden)]
 mod scc_impl {
     use super::*;
     pub struct SCC<W, G> {

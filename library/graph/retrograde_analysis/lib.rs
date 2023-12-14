@@ -3,7 +3,7 @@
 use graph::GraphTrait;
 use prelude::*;
 
-#[snippet(name = "retrograde-analysis", doc_hidden)]
+#[codesnip::entry("retrograde-analysis", doc_hidden)]
 #[derive(Clone, Copy, Debug, PartialEq, Eq)]
 pub enum WinLose {
     DRAW,
@@ -11,13 +11,13 @@ pub enum WinLose {
     LOSE,
 }
 
-#[snippet(name = "retrograde-analysis", doc_hidden)]
+#[codesnip::entry("retrograde-analysis", doc_hidden)]
 /// 後退解析で各点をスタートとしたときの勝敗
 pub struct RetrogradeAnalysis {
     result: Vec<WinLose>,
 }
 
-#[snippet(name = "retrograde-analysis", doc_hidden)]
+#[codesnip::entry("retrograde-analysis", doc_hidden)]
 impl RetrogradeAnalysis {
     pub fn build<W, G>(g: &G) -> RetrogradeAnalysis
     where

@@ -5,7 +5,7 @@
 use graph::GraphTrait;
 use prelude::*;
 
-#[snippet(name = "bipartite-graph", doc_hidden)]
+#[codesnip::entry("bipartite-graph", doc_hidden)]
 pub trait BipartiteGraphTrait: GraphTrait {
     /// # 2部グラフとして分割する
     /// 連結成分ごとに二部グラフとしてbooleanで彩色した結果を返す
@@ -39,7 +39,7 @@ pub trait BipartiteGraphTrait: GraphTrait {
         Some(colors.into_iter().flatten().collect())
     }
 }
-#[snippet(name = "bipartite-graph", doc_hidden)]
+#[codesnip::entry("bipartite-graph", doc_hidden)]
 impl<G: GraphTrait> BipartiteGraphTrait for G {}
 
 #[cfg(test)]

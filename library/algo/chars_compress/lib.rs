@@ -10,7 +10,7 @@
 //! ```
 use prelude::*;
 
-#[snippet(name = "char-compress", doc_hidden)]
+#[codesnip::entry("char-compress", doc_hidden)]
 pub fn compress(src: &[char]) -> Vec<usize> {
     let mut map = vec![None; 256];
     let mut c = 0;

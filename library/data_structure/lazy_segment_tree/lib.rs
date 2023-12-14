@@ -6,9 +6,9 @@ use algebra::{Magma, MapMonoid};
 use prelude::*;
 use range_traits::{PointUpdate, RangeProductMut, RangeUpdate, ToBounds};
 
-#[snippet(name = "lazy-segment-tree", doc_hidden)]
+#[codesnip::entry("lazy-segment-tree", doc_hidden)]
 pub use lazy_segment_tree_impl::LazySegmentTree;
-#[snippet(name = "lazy-segment-tree", doc_hidden)]
+#[codesnip::entry("lazy-segment-tree", doc_hidden)]
 mod lazy_segment_tree_impl {
     use super::{Magma, MapMonoid, PointUpdate, RangeProductMut, RangeUpdate, ToBounds};
 

@@ -20,7 +20,7 @@
 use algebra::AbelianGroup;
 use prelude::*;
 
-#[snippet(name = "weighted-union-find-tree", doc_hidden)]
+#[codesnip::entry("weighted-union-find-tree", doc_hidden)]
 #[derive(Clone, Debug)]
 pub struct WeightedUnionFind<A: AbelianGroup> {
     parent: Vec<usize>,
@@ -28,7 +28,7 @@ pub struct WeightedUnionFind<A: AbelianGroup> {
     weight_diff: Vec<A::M>,
 }
 
-#[snippet(name = "weighted-union-find-tree", doc_hidden)]
+#[codesnip::entry("weighted-union-find-tree", doc_hidden)]
 impl<A: AbelianGroup> WeightedUnionFind<A> {
     pub fn new(n: usize) -> Self {
         let parent = (0..n + 1).collect::<Vec<_>>();

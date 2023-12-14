@@ -3,8 +3,7 @@
 
 pub use cargo_snippet::snippet;
 
-#[snippet(name = "prelude", doc_hidden)]
-#[rustfmt::skip]
+#[codesnip::entry("prelude", doc_hidden)]
 pub use std::{
     cmp::{max, min, Ordering, Reverse},
     collections::{hash_map::RandomState, BTreeMap, BTreeSet, BinaryHeap, VecDeque},

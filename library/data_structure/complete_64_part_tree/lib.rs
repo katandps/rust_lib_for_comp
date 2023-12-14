@@ -6,10 +6,10 @@
 
 use prelude::*;
 
-#[snippet(name = "complete_64_part_tree", doc_hidden)]
+#[codesnip::entry("complete_64_part_tree", doc_hidden)]
 pub use complete_64_part_tree_impl::{Complete64PartTree, WordAryTree};
 
-#[snippet(name = "complete_64_part_tree", doc_hidden)]
+#[codesnip::entry("complete_64_part_tree", doc_hidden)]
 mod complete_64_part_tree_impl {
 
     const WORD_SIZE: usize = 64;

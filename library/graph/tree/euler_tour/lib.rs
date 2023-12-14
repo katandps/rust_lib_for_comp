@@ -3,7 +3,7 @@
 use graph::GraphTrait;
 use prelude::*;
 
-#[snippet(name = "euler_tour", doc_hidden)]
+#[codesnip::entry("euler_tour", doc_hidden)]
 #[derive(Clone, Debug)]
 /// # オイラーツアー
 /// - time_in: 初めてその頂点を訪れた時刻(tourのindex)
@@ -19,7 +19,7 @@ pub struct EulerTour {
     pub tour: Vec<usize>,
 }
 
-#[snippet(name = "euler_tour", doc_hidden)]
+#[codesnip::entry("euler_tour", doc_hidden)]
 impl EulerTour {
     pub fn new<G: GraphTrait>(g: &G, root: usize) -> Self {
         let mut tour = EulerTour {

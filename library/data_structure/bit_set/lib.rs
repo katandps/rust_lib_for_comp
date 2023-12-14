@@ -2,9 +2,9 @@
 //! bitの大きな配列に対するbit演算を省メモリかつ高速に行うデータ構造
 use prelude::*;
 
-#[snippet(name = "bit-set", doc_hidden)]
+#[codesnip::entry("bit-set", doc_hidden)]
 pub use bitset_impl::BitSet;
-#[snippet(name = "bit-set", doc_hidden)]
+#[codesnip::entry("bit-set", doc_hidden)]
 mod bitset_impl {
     use super::{
         BitAnd, BitOr, BitXor, Debug, Display, Formatter, FromIterator, Index, Not, Shl, ShlAssign,

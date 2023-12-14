@@ -2,7 +2,7 @@
 //! (二乗して$x$以下になる最大の値, 二乗して$x$以上になる最小の値)
 use prelude::*;
 
-#[snippet(name = "sqrt", doc_hidden)]
+#[codesnip::entry("sqrt", doc_hidden)]
 pub fn sqrt(a: i64) -> (i64, i64) {
     let x = (a as f64).sqrt() as i64;
     match a.cmp(&(x * x)) {

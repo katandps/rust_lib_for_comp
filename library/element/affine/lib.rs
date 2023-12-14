@@ -2,9 +2,9 @@
 use algebra::*;
 use prelude::*;
 
-#[snippet(name = "affine", doc_hidden)]
+#[codesnip::entry("affine", doc_hidden)]
 pub use affine_impl::{Affine, Composition};
-#[snippet(name = "affine", doc_hidden)]
+#[codesnip::entry("affine", doc_hidden)]
 mod affine_impl {
     use super::{
         Add, Associative, Debug, Default, Magma, MonoidOperation, Mul, One, PhantomData, Unital,

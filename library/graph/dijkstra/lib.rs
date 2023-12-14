@@ -10,14 +10,14 @@ use graph::GraphTrait;
 use min_max_macro::{chmax, max};
 use prelude::*;
 
-#[snippet(name = "dijkstra", doc_hidden)]
+#[codesnip::entry("dijkstra", doc_hidden)]
 pub struct Dijkstra<W> {
     pub dist: Vec<W>,
     prev: Vec<usize>,
     src: usize,
 }
 
-#[snippet(name = "dijkstra", doc_hidden)]
+#[codesnip::entry("dijkstra", doc_hidden)]
 impl<W: Copy + BoundedAbove + Add<Output = W> + PartialEq + Ord + Zero> Dijkstra<W> {
     pub fn calc<G: GraphTrait<Weight = W>>(g: &G, src: usize) -> Self {
         let mut dist = vec![W::max_value(); g.size()];

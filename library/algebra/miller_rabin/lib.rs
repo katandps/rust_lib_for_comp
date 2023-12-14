@@ -7,13 +7,13 @@
 use montgomery_multiplication_64::MontgomeryReduction;
 use prelude::*;
 
-#[snippet(name = "miller-rabin", doc_hidden)]
+#[codesnip::entry("miller-rabin", doc_hidden)]
 pub trait MillerRabin {
     /// 素数判定
     fn is_prime(&self) -> bool;
 }
 
-#[snippet(name = "miller-rabin", doc_hidden)]
+#[codesnip::entry("miller-rabin", doc_hidden)]
 impl MillerRabin for u64 {
     fn is_prime(&self) -> bool {
         if *self < 2 || *self & 1 == 0 {

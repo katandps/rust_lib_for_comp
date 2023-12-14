@@ -5,10 +5,10 @@ use graph::GraphTrait;
 use min_max_macro::{chmax, max};
 use prelude::*;
 
-#[snippet(name = "tree-graph", doc_hidden)]
+#[codesnip::entry("tree-graph", doc_hidden)]
 pub use tree_graph_impl::TreeGraph;
 
-#[snippet(name = "tree-graph", doc_hidden)]
+#[codesnip::entry("tree-graph", doc_hidden)]
 mod tree_graph_impl {
     use super::{chmax, max, GraphTrait};
     pub struct TreeGraph;

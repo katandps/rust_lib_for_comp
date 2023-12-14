@@ -4,11 +4,11 @@
 //!
 use prelude::*;
 
-#[snippet(name = "boyer-moore-vote-algorithm", doc_hidden)]
+#[codesnip::entry("boyer-moore-vote-algorithm", doc_hidden)]
 #[derive(Clone, Debug)]
 pub struct BoyerMooreVoteAlgorithm(Vec<usize>);
 
-#[snippet(name = "boyer-moore-vote-algorithm", doc_hidden)]
+#[codesnip::entry("boyer-moore-vote-algorithm", doc_hidden)]
 impl BoyerMooreVoteAlgorithm {
     pub fn run<T: PartialEq>(src: &[T]) -> Self {
         let mut cnt = 0;

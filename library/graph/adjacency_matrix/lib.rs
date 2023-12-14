@@ -3,9 +3,9 @@
 use graph::GraphTrait;
 use prelude::*;
 
-#[snippet(name = "graph-adjacency-matrix", doc_hidden)]
+#[codesnip::entry("graph-adjacency-matrix", doc_hidden)]
 pub use adjacency_matrix_impl::GraphMatrix;
-#[snippet(name = "graph-adjacency-matrix", doc_hidden)]
+#[codesnip::entry("graph-adjacency-matrix", doc_hidden)]
 mod adjacency_matrix_impl {
     use super::{Debug, Formatter, GraphTrait};
     pub struct GraphMatrix<W> {

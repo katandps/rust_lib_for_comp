@@ -5,7 +5,7 @@
 
 use prelude::*;
 
-#[snippet(name = "z-algorithm", doc_hidden)]
+#[codesnip::entry("z-algorithm", doc_hidden)]
 pub fn z(src: &[char]) -> Vec<usize> {
     let mut c = 0;
     let n = src.len();

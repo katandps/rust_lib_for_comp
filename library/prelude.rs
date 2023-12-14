@@ -2,7 +2,6 @@
 //! スニペット結合時に衝突しないように読み込んでおく
 
 #[codesnip::entry("prelude")]
-#[rustfmt::skip]
 pub use std::{
     cmp::{max, min, Ordering, Reverse},
     collections::{hash_map::RandomState, BTreeMap, BTreeSet, BinaryHeap, VecDeque},

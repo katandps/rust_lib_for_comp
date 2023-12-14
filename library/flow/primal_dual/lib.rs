@@ -13,14 +13,14 @@ macro_rules! min {
     ($a:expr, $($rest:expr),+ $(,)*) => {{let b = min!($($rest),+);if $a > b {b} else {$a}}};
 }
 
-#[snippet(name = "primal_dual", doc_hidden)]
+#[codesnip::entry("primal_dual", doc_hidden)]
 #[derive(Clone, Debug)]
 pub struct PrimalDual<Co: Copy + Debug, Fl: Copy + Debug> {
     graph: Graph<(Fl, Co)>,
     rev: Vec<usize>,
 }
 
-#[snippet(name = "primal_dual", doc_hidden)]
+#[codesnip::entry("primal_dual", doc_hidden)]
 impl<Co: Copy + Debug, Fl: Copy + Debug> PrimalDual<Co, Fl>
 where
     Co: Ord + Zero + AddAssign + SubAssign + Add<Output = Co> + Sub<Output = Co>,
@@ -127,7 +127,7 @@ where
     }
 }
 
-#[snippet(name = "primal_dual", doc_hidden)]
+#[codesnip::entry("primal_dual", doc_hidden)]
 impl<Co: Copy + Debug, Fl: Copy + Debug + Add<Output = Fl> + Display> PrimalDual<Co, Fl> {
     pub fn result(&self) {
         for i in 0..self.graph.size() {

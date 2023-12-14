@@ -5,14 +5,14 @@ use prelude::*;
 use range_traits::*;
 use xor_shift::XorShift;
 
-#[snippet(name = "implicit_treap", doc_hidden)]
+#[codesnip::entry("implicit_treap", doc_hidden)]
 #[derive(Clone, Debug, Default)]
 pub struct ImplicitTreap<T> {
     randomizer: XorShift,
     root: Box<implicit_treap_impl::OptionalNode<T>>,
 }
 
-#[snippet(name = "implicit_treap", doc_hidden)]
+#[codesnip::entry("implicit_treap", doc_hidden)]
 mod implicit_treap_impl {
     use super::{swap, Display, Formatter, ImplicitTreap, Index, ToBounds};
     impl<T> ImplicitTreap<T> {

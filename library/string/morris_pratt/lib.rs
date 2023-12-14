@@ -6,7 +6,7 @@
 //!
 use prelude::*;
 
-#[snippet(name = "morris-pratt", doc_hidden)]
+#[codesnip::entry("morris-pratt", doc_hidden)]
 pub fn border<T: PartialEq>(src: &[T]) -> Vec<i64> {
     let mut ret = vec![0; src.len() + 1];
     ret[0] = -1;

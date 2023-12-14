@@ -8,10 +8,10 @@ use prelude::*;
 use range_traits::*;
 use string_util::JoinTrait;
 
-#[snippet(name = "disjoint-sparse-table", doc_hidden)]
+#[codesnip::entry("disjoint-sparse-table", doc_hidden)]
 pub use disjoint_sparse_table_impl::DisjointSparseTable;
 
-#[snippet(name = "disjoint-sparse-table", doc_hidden)]
+#[codesnip::entry("disjoint-sparse-table", doc_hidden)]
 mod disjoint_sparse_table_impl {
     use super::{min, Debug, Display, Formatter, JoinTrait, RangeProduct, SemiGroup, ToBounds};
 

@@ -2,12 +2,12 @@
 /// AtCoderではItertoolsでよい
 use prelude::*;
 
-#[snippet(name = "all_combination", doc_hidden)]
+#[codesnip::entry("all_combination", doc_hidden)]
 pub struct AllCombination {
     v: Vec<usize>,
 }
 
-#[snippet(name = "all_combination", doc_hidden)]
+#[codesnip::entry("all_combination", doc_hidden)]
 impl AllCombination {
     pub fn new(n: usize, r: usize) -> AllCombination {
         let mut c = AllCombination { v: Vec::new() };

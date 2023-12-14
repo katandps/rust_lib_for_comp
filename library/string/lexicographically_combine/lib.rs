@@ -10,7 +10,7 @@
 
 use prelude::*;
 
-#[snippet(name = "lexicographically-combine", doc_hidden)]
+#[codesnip::entry("lexicographically-combine", doc_hidden)]
 pub fn lexicographically_combine(s: &[Vec<char>]) -> Vec<char> {
     let mut v = (0..s.len()).collect::<Vec<_>>();
     v.sort_by(|&ai, &bi| {

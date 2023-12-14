@@ -12,10 +12,9 @@
 
 use prelude::*;
 use string_util::JoinTrait;
-#[snippet(name = "succinct-indexable-dictionaries", doc_hidden)]
+#[codesnip::entry("succinct-indexable-dictionaries", doc_hidden)]
 pub use succinct_indexable_dictionaries_impl::{SIDBuilder, SID};
-#[snippet(name = "succinct-indexable-dictionaries", doc_hidden)]
-#[rustfmt::skip]
+#[codesnip::entry("succinct-indexable-dictionaries", doc_hidden)]
 mod succinct_indexable_dictionaries_impl {
     use super::{Debug, Formatter, JoinTrait};
     pub struct SID {

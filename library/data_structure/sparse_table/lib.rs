@@ -8,9 +8,9 @@ use prelude::*;
 use range_traits::{RangeProduct, ToBounds};
 use string_util::JoinTrait;
 
-#[snippet(name = "sparse-table", doc_hidden)]
+#[codesnip::entry("sparse-table", doc_hidden)]
 pub use sparse_table_impl::SparseTable;
-#[snippet(name = "sparse-table", doc_hidden)]
+#[codesnip::entry("sparse-table", doc_hidden)]
 mod sparse_table_impl {
     use super::{Band, Debug, Display, Formatter, JoinTrait, RangeProduct, ToBounds};
 

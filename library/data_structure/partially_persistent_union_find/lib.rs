@@ -1,10 +1,10 @@
 //! # 部分永続UnionFindTree
 //!
 
-#[snippet(name = "partially-persistent-union-find-tree", doc_hidden)]
+#[codesnip::entry("partially-persistent-union-find-tree", doc_hidden)]
 pub use partial_persistent_union_find_impl::PartiallyPersistentUnionFind;
 use prelude::*;
-#[snippet(name = "partially-persistent-union-find-tree", doc_hidden)]
+#[codesnip::entry("partially-persistent-union-find-tree", doc_hidden)]
 mod partial_persistent_union_find_impl {
     use super::swap;
     pub struct PartiallyPersistentUnionFind {

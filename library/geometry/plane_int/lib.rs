@@ -1,9 +1,9 @@
 //! # 二次元平面(整数範囲)
 use prelude::*;
 
-#[snippet(name = "plane-int", doc_hidden)]
+#[codesnip::entry("plane-int", doc_hidden)]
 pub use plane_float_impl::Point;
-#[snippet(name = "plane-int", doc_hidden)]
+#[codesnip::entry("plane-int", doc_hidden)]
 mod plane_float_impl {
     use super::Ordering;
     #[derive(Clone, Copy, Debug, Eq, PartialEq)]

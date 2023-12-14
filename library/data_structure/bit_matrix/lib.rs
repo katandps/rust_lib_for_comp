@@ -7,7 +7,7 @@
 use bit_set::BitSet;
 use prelude::*;
 
-#[snippet(name = "bit-matrix", doc_hidden)]
+#[codesnip::entry("bit-matrix", doc_hidden)]
 #[derive(Clone, Debug)]
 pub struct BitMatrix {
     height: usize,
@@ -15,7 +15,7 @@ pub struct BitMatrix {
     pub val: Vec<BitSet>,
 }
 
-#[snippet(name = "bit-matrix", doc_hidden)]
+#[codesnip::entry("bit-matrix", doc_hidden)]
 impl BitMatrix {
     pub fn new(height: usize, width: usize) -> BitMatrix {
         let val = vec![BitSet::new(width); height];

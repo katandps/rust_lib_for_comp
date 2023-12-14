@@ -11,7 +11,7 @@ use adjacency_list::Graph;
 use graph::GraphTrait;
 use prelude::*;
 
-#[snippet(name = "find-cycle", doc_hidden)]
+#[codesnip::entry("find-cycle", doc_hidden)]
 pub trait FindCycle {
     /// # サイクル検出
     /// - is_undirected_graph: 無向グラフのときはtrue
@@ -30,7 +30,7 @@ pub trait FindCycle {
     ) -> bool;
 }
 
-#[snippet(name = "find-cycle", doc_hidden)]
+#[codesnip::entry("find-cycle", doc_hidden)]
 impl<C: Clone> FindCycle for Graph<C> {
     /// サイクルは辺の番号で表現される
     fn find_cycle(&self, is_undirected_graph: bool) -> Option<Vec<usize>> {

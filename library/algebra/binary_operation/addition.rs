@@ -2,12 +2,11 @@
 //!
 
 use crate::algebra::*;
-use crate::prelude::*;
 
-#[codesnip::entry("addition", doc_hidden)]
+#[codesnip::entry("addition", include("algebra"))]
 #[derive(Clone, Debug, Default)]
 pub struct Addition<S>(PhantomData<fn() -> S>);
-#[codesnip::entry("addition", doc_hidden)]
+#[codesnip::entry("addition", include("algebra"))]
 mod addition_impl {
     use super::{
         Add, Addition, Associative, Commutative, Debug, Invertible, Magma, Neg, Unital, Zero,
@@ -34,7 +33,7 @@ mod addition_impl {
 
 #[test]
 fn test() {
-    assert_eq!(0, Addition::unit());
+    assert_eq!(0, Addition::<i64>::unit());
     let addition = Addition::default();
     assert_eq!(15, addition.clone().pow(1i64, 15));
     assert_eq!(25600, addition.pow(100i64, 256));

@@ -4,11 +4,9 @@ use float_value::FValue;
 use io_util::*;
 use prelude::*;
 
-#[snippet(name = "io-debug", doc_hidden)]
-#[rustfmt::skip]
+#[codesnip::entry("io-debug", doc_hidden)]
 pub use io_debug_impl::{Assertion, FValueAssertion, IODebug, NoAssertion, StaticAssertion};
-#[snippet(name = "io-debug", doc_hidden)]
-#[rustfmt::skip]
+#[codesnip::entry("io-debug", doc_hidden)]
 mod io_debug_impl {
     use super::{stdout, BufWriter, Display, ReaderFromStr, ReaderTrait, Write, WriterTrait};
 
@@ -91,14 +89,14 @@ mod io_debug_impl {
     }
     impl Assertion for StaticAssertion {
         fn assert(&mut self, output: &mut ReaderFromStr, _: &mut ReaderFromStr) {
-            let (mut actual , mut expect) = (Vec::new(),Vec::new());
+            let (mut actual, mut expect) = (Vec::new(), Vec::new());
             while let Some(a) = output.next() {
                 actual.push(a);
             }
             while let Some(a) = self.expect.next() {
                 expect.push(a);
             }
-            assert_eq!(expect,actual);
+            assert_eq!(expect, actual);
         }
     }
     pub struct FValueAssertion {
@@ -120,9 +118,9 @@ mod io_debug_impl {
     }
 }
 
-#[snippet(name = "custom-assert", doc_hidden)]
+#[codesnip::entry("custom-assert", doc_hidden)]
 pub use custom_assertion_impl::ClosureAssertion;
-#[snippet(name = "custom-assert")]
+#[codesnip::entry("custom-assert")]
 mod custom_assertion_impl {
     use super::{Assertion, ReaderFromStr, ReaderTrait, WriterTrait};
     pub struct ClosureAssertion {

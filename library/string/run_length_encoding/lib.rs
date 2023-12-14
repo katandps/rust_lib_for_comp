@@ -5,7 +5,7 @@
 
 use prelude::*;
 
-#[snippet(name = "run-length-encoding", doc_hidden)]
+#[codesnip::entry("run-length-encoding", doc_hidden)]
 pub fn encode(s: &[char]) -> Vec<char> {
     let mut cur = '-';
     let mut cnt = 0;

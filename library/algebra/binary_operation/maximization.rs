@@ -3,10 +3,10 @@
 use crate::algebra::*;
 use crate::prelude::*;
 
-#[codesnip::entry("maximization")]
+#[codesnip::entry("maximization", include("algebra"))]
 #[derive(Clone, Debug, Default)]
 pub struct Maximization<S>(PhantomData<fn() -> S>);
-#[codesnip::entry("maximization")]
+#[codesnip::entry("maximization", include("algebra"))]
 mod maximization_impl {
     use super::{
         Associative, BoundedBelow, Commutative, Debug, Idempotent, Magma, Maximization, Unital,

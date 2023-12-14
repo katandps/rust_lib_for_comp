@@ -6,9 +6,9 @@ use prelude::*;
 use string_util::JoinTrait;
 pub mod recursive;
 
-#[snippet(name = "binary-trie", doc_hidden)]
+#[codesnip::entry("binary-trie", doc_hidden)]
 pub use binary_trie_impl::BinaryTrie;
-#[snippet(name = "binary-trie", doc_hidden)]
+#[codesnip::entry("binary-trie", doc_hidden)]
 mod binary_trie_impl {
     use super::{min, Debug, Formatter, JoinTrait};
     type TrieValue = u64;

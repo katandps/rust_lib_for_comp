@@ -3,7 +3,7 @@
 use graph::GraphTrait;
 use prelude::*;
 
-#[snippet(name = "graph-adjacency-list", doc_hidden)]
+#[codesnip::entry("graph-adjacency-list", doc_hidden)]
 pub struct Graph<W> {
     pub n: usize,
     /// Vec<(src, dst, weight)>
@@ -14,7 +14,7 @@ pub struct Graph<W> {
     pub rev: Vec<Option<usize>>,
 }
 
-#[snippet(name = "graph-adjacency-list", doc_hidden)]
+#[codesnip::entry("graph-adjacency-list", doc_hidden)]
 mod impl_graph_adjacency_list {
     use super::{Debug, Formatter, Graph, GraphTrait, Index};
 

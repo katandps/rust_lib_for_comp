@@ -8,7 +8,7 @@ macro_rules! min {
     ($a:expr, $($rest:expr),+ $(,)*) => {{let b = min!($($rest),+);if $a > b {b} else {$a}}};
 }
 
-#[snippet(name = "xor_basis", doc_hidden)]
+#[codesnip::entry("xor_basis", doc_hidden)]
 pub fn xor_basis(src: &[usize]) -> Vec<usize> {
     let mut base = Vec::new();
     for mut v in src.iter().copied() {

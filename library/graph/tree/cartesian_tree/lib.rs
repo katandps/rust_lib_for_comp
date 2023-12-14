@@ -6,9 +6,9 @@
 use adjacency_list::Graph;
 use prelude::*;
 
-#[snippet(name = "cartesian_tree", doc_hidden)]
+#[codesnip::entry("cartesian_tree", doc_hidden)]
 pub use cartesian_tree_impl::CartesianTree;
-#[snippet(name = "cartesian_tree", doc_hidden)]
+#[codesnip::entry("cartesian_tree", doc_hidden)]
 mod cartesian_tree_impl {
     use super::Graph;
 

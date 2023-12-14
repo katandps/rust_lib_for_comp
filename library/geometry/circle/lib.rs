@@ -3,10 +3,9 @@ use float_value::{FValue, EPS};
 use plane_float::{Line, Vector};
 use prelude::*;
 
-#[snippet(name = "circle", doc_hidden)]
+#[codesnip::entry("circle", doc_hidden)]
 pub use circle_impl::{Circle, CircleIntersection, Triangle};
-#[snippet(name = "circle", doc_hidden)]
-#[rustfmt::skip]
+#[codesnip::entry("circle", doc_hidden)]
 mod circle_impl {
     use super::{FValue, Line, Vector, EPS};
     #[derive(Copy, Clone)]

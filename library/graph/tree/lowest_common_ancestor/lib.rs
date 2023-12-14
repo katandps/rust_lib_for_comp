@@ -11,13 +11,13 @@ use prelude::*;
 use range_traits::RangeProduct;
 use sparse_table::SparseTable;
 
-#[snippet(name = "lowest-common-ancestor", doc_hidden)]
+#[codesnip::entry("lowest-common-ancestor", doc_hidden)]
 pub struct LowestCommonAncestor {
     tour: EulerTour,
     depth: SparseTable<Minimization<IntWithIndex<u32, u32>>>,
 }
 
-#[snippet(name = "lowest-common-ancestor", doc_hidden)]
+#[codesnip::entry("lowest-common-ancestor", doc_hidden)]
 impl LowestCommonAncestor {
     /// # 構築
     /// オイラーツアーを行い、時刻に対応する根からの距離を前計算する

@@ -24,12 +24,11 @@ use prelude::*;
 use range_traits::ToBounds;
 use succinct_indexable_dictionaries::{SIDBuilder, SID};
 
-#[snippet(name = "wavelet-matrix", doc_hidden)]
+#[codesnip::entry("wavelet-matrix", doc_hidden)]
 #[snippet(include = "succinct-indexable-dictionaries")]
 pub use wavelet_matrix_impl::WaveletMatrix;
 
-#[snippet(name = "wavelet-matrix", doc_hidden)]
-#[rustfmt::skip]
+#[codesnip::entry("wavelet-matrix", doc_hidden)]
 mod wavelet_matrix_impl {
     use super::{HashMap, SIDBuilder, ToBounds, SID};
 

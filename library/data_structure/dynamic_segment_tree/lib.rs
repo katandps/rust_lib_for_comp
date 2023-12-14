@@ -11,9 +11,9 @@ use algebra::*;
 use prelude::*;
 use range_traits::*;
 
-#[snippet(name = "dynamic-segment-tree", doc_hidden)]
+#[codesnip::entry("dynamic-segment-tree", doc_hidden)]
 pub use dynamic_segment_tree_impl::DynamicSegmentTree;
-#[snippet(name = "dynamic-segment-tree", doc_hidden)]
+#[codesnip::entry("dynamic-segment-tree", doc_hidden)]
 mod dynamic_segment_tree_impl {
     use super::{Debug, Formatter, Monoid, RangeProduct, ToBounds};
     type IndexType = i64;

@@ -4,9 +4,9 @@ use algebra::*;
 use prelude::*;
 use string_util::JoinTrait;
 
-#[snippet(name = "sum_and_prefix_max", doc_hidden)]
+#[codesnip::entry("sum_and_prefix_max", doc_hidden)]
 pub use sequence_impl::Sequence;
-#[snippet(name = "sum_and_prefix_max", doc_hidden)]
+#[codesnip::entry("sum_and_prefix_max", doc_hidden)]
 mod sequence_impl {
     use super::{Add, Debug, Display, JoinTrait, Zero};
     #[derive(Clone, Default)]
