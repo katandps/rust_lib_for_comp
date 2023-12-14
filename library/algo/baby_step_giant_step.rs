@@ -11,11 +11,11 @@
 //! $f^{-1}$の計算量を$F_{-1}$、$f^m(x)$の計算量を$F_M$とするとき
 //! $\sqrt{N}max(F_{-1}, F_M)$
 
-use fxhasher::HashMap;
-use prelude::*;
-use sqrt::sqrt;
+use crate::algo::fxhasher::HashMap;
+use crate::algo::sqrt::sqrt;
+use crate::prelude::*;
 
-#[codesnip::entry("baby-step-giant-step", doc_hidden)]
+#[codesnip::entry("baby-step-giant-step", include("faster-hashmap", "sqrt", "prelude"))]
 pub fn baby_step_giant_step<T, F, FINV>(
     mut x: T,
     y: T,
@@ -48,7 +48,7 @@ where
 
 #[test]
 fn test() {
-    use mod_pow::ModPow;
+    use crate::algebra::mod_pow::ModPow;
     const MOD: i64 = 10007;
     let x = 2;
     let mut cur = 1;

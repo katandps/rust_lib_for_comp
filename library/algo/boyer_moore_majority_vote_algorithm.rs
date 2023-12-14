@@ -2,13 +2,13 @@
 //! スライスの多数決要素を探す
 //! 生成されるのは多数決要素が *ある* ときの多数決要素があるINDEX ない場合の値は不定
 //!
-use prelude::*;
+use crate::prelude::*;
 
-#[codesnip::entry("boyer-moore-vote-algorithm", doc_hidden)]
+#[codesnip::entry("boyer-moore-vote-algorithm")]
 #[derive(Clone, Debug)]
 pub struct BoyerMooreVoteAlgorithm(Vec<usize>);
 
-#[codesnip::entry("boyer-moore-vote-algorithm", doc_hidden)]
+#[codesnip::entry("boyer-moore-vote-algorithm")]
 impl BoyerMooreVoteAlgorithm {
     pub fn run<T: PartialEq>(src: &[T]) -> Self {
         let mut cnt = 0;

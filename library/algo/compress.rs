@@ -1,10 +1,8 @@
 //! # 座標圧縮 $O( N \log N)$
 
-use prelude::*;
-
-#[codesnip::entry("compress", doc_hidden)]
+#[codesnip::entry("compress")]
 pub use compress_impl::Compress;
-#[codesnip::entry("compress", doc_hidden)]
+#[codesnip::entry("compress")]
 mod compress_impl {
     pub trait Compress {
         /// # 座圧

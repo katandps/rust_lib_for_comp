@@ -1,16 +1,7 @@
 //! # 文字列の符号化
 //! 文字列を前から現れた順で数値化する
-//!
-//! # 使い方
-//! ```
-//! # use chars_compress::compress;
-//! let src: Vec<_> = "abcdebbaz".chars().collect();
-//! let result = compress(&src);
-//! assert_eq!(vec![1, 2, 3, 4, 5, 2, 2, 1, 6], result);
-//! ```
-use prelude::*;
 
-#[codesnip::entry("char-compress", doc_hidden)]
+#[codesnip::entry("char-compress")]
 pub fn compress(src: &[char]) -> Vec<usize> {
     let mut map = vec![None; 256];
     let mut c = 0;
@@ -26,4 +17,11 @@ pub fn compress(src: &[char]) -> Vec<usize> {
         }
     }
     ret
+}
+
+#[test]
+fn test() {
+    let src: Vec<_> = "abcdebbaz".chars().collect();
+    let result = compress(&src);
+    assert_eq!(vec![1, 2, 3, 4, 5, 2, 2, 1, 6], result);
 }

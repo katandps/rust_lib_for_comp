@@ -2,7 +2,7 @@
 //!
 //! 二分探索のテンプレート
 
-use prelude::*;
+use crate::prelude::*;
 
 /// # 整数範囲の二分探索
 ///
@@ -13,7 +13,7 @@ use prelude::*;
 /// let res = binary_search(src.len() as i64, -1, |i| src[i as usize] > 55);
 /// assert_eq!(src[res as usize], 90);
 /// ```
-#[codesnip::entry("binary-search", doc_hidden)]
+#[codesnip::entry("binary-search", include("prelude"))]
 pub fn binary_search<F: Fn(i64) -> bool>(mut ok: i64, mut ng: i64, f: F) -> i64 {
     while (ok - ng).abs() > 1 {
         let mut mid = (ok + ng) / 2;

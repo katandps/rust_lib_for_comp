@@ -1,13 +1,5 @@
 //! # 桁分割
 //! 整数を10進数として桁ごとの値がはいったvecに変換する
-//!
-//! ```
-//! # use int_to_digits::int_to_digits;
-//! let a = 12345;
-//! let d = int_to_digits(a);
-//! assert_eq!(d, vec![1, 2, 3, 4, 5])
-//! ```
-use prelude::*;
 
 #[codesnip::entry("int-to-digits", doc_hidden)]
 pub fn int_to_digits(mut n: usize) -> Vec<usize> {
@@ -21,4 +13,11 @@ pub fn int_to_digits(mut n: usize) -> Vec<usize> {
     }
     ret.reverse();
     ret
+}
+
+#[test]
+fn test() {
+    let a = 12345;
+    let d = int_to_digits(a);
+    assert_eq!(d, vec![1, 2, 3, 4, 5])
 }

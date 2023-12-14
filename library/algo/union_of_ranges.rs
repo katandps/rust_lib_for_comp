@@ -1,17 +1,8 @@
 //! # 区間で与えられた集合の和を取る
 //!
-//! ## 使い方
-//! ```
-//! # use union_of_ranges::*;
-//! let ranges = vec![-2..5, 3..7, 7..10, 14..15, 11..18, -100000..-2345];
-//! assert_eq!(3, unite(&ranges).len());
-//! let ranges = vec![-2..=5, -2..=13, 2..=17, 10..=17];
-//! assert_eq!(vec![-2..18], unite(&ranges));
-//! ```
-//!
-use prelude::*;
+use crate::prelude::*;
 
-#[codesnip::entry("union-of-ranges", doc_hidden)]
+#[codesnip::entry("union-of-ranges", include("prelude"))]
 pub fn unite<R: RangeBounds<i64>>(set: &[R]) -> Vec<Range<i64>> {
     let mut b: Vec<_> = set
         .iter()
@@ -46,4 +37,12 @@ pub fn unite<R: RangeBounds<i64>>(set: &[R]) -> Vec<Range<i64>> {
     } else {
         Vec::new()
     }
+}
+
+#[test]
+fn test() {
+    let ranges = vec![-2..5, 3..7, 7..10, 14..15, 11..18, -100000..-2345];
+    assert_eq!(3, unite(&ranges).len());
+    let ranges = vec![-2..=5, -2..=13, 2..=17, 10..=17];
+    assert_eq!(vec![-2..18], unite(&ranges));
 }
