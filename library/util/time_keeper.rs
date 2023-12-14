@@ -1,5 +1,4 @@
 //! # 時間計測
-use prelude::*;
 
 #[codesnip::entry("time-keeper")]
 pub fn get_time() -> f64 {
