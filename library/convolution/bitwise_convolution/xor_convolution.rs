@@ -1,14 +1,12 @@
 //! # XOR畳み込み
 //!
 use super::ConvolutionType;
-use mod_int::ModInt;
-use prelude::*;
+use crate::algebra::mod_int::ModInt;
 
-#[codesnip::entry("xor-convolution", doc_hidden)]
-#[snippet(include = "bitwise-convolution")]
+#[codesnip::entry("xor-convolution")]
 pub struct XorConvolution;
 
-#[codesnip::entry("xor-convolution", doc_hidden)]
+#[codesnip::entry("xor-convolution", include("mod-int", "bitwise-convolution"))]
 impl ConvolutionType for XorConvolution {
     #[allow(clippy::many_single_char_names)]
     fn fwht<const M: u32>(src: &mut [ModInt<M>], rev: bool) {
@@ -36,7 +34,8 @@ impl ConvolutionType for XorConvolution {
 #[cfg(test)]
 mod test {
     use super::{super::convolution, ModInt, XorConvolution};
-    use xor_shift::XorShift;
+    use crate::algo::xor_shift::XorShift;
+    pub(crate) use crate::min_max_macro::max;
 
     #[test]
     fn rand() {

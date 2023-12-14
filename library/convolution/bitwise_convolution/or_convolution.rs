@@ -1,14 +1,12 @@
 //! # OR畳み込み
 
 use super::ConvolutionType;
-use mod_int::ModInt;
-use prelude::*;
+use crate::algebra::mod_int::ModInt;
 
-#[codesnip::entry("or-convolution", doc_hidden)]
-#[snippet(include = "bitwise-convolution")]
+#[codesnip::entry("or-convolution")]
 pub struct OrConvolution;
 
-#[codesnip::entry("or-convolution", doc_hidden)]
+#[codesnip::entry("or-convolution", include("bitwise-convolution", "mod-int"))]
 impl ConvolutionType for OrConvolution {
     fn fwht<const M: u32>(src: &mut [ModInt<M>], rev: bool) {
         let n = src.len();
@@ -33,7 +31,9 @@ impl ConvolutionType for OrConvolution {
 #[cfg(test)]
 mod test {
     use super::{super::convolution, ModInt, OrConvolution};
-    use xor_shift::XorShift;
+    use crate::algo::xor_shift::XorShift;
+    pub(crate) use crate::min_max_macro::max;
+
     #[test]
     fn rand() {
         let mut xor_shift = XorShift::default();

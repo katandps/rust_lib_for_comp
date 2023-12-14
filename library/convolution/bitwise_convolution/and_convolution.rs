@@ -2,14 +2,13 @@
 //!
 
 use super::ConvolutionType;
-use mod_int::ModInt;
-use prelude::*;
+use crate::algebra::mod_int::ModInt;
 
-#[codesnip::entry("and-convolution", doc_hidden)]
-#[snippet(include = "bitwise-convolution")]
+#[codesnip::entry("and-convolution")]
+
 pub struct AndConvolution;
 
-#[codesnip::entry("and-convolution", doc_hidden)]
+#[codesnip::entry("and-convolution", include("bitwise-convolution", "mod-int"))]
 impl ConvolutionType for AndConvolution {
     fn fwht<const M: u32>(src: &mut [ModInt<M>], rev: bool) {
         let mut i = 1;
@@ -31,7 +30,9 @@ impl ConvolutionType for AndConvolution {
 #[cfg(test)]
 mod test {
     use super::{super::convolution, AndConvolution, ModInt};
-    use xor_shift::XorShift;
+    use crate::algo::xor_shift::XorShift;
+    pub(crate) use crate::min_max_macro::max;
+
     #[test]
     fn rand() {
         let mut xor_shift = XorShift::default();

@@ -4,22 +4,22 @@
 //! ## todo
 //! - \[一般化]Garnerのアルゴリズムによる任意modでの畳み込みの実装
 //!
-use algebra::*;
-use prelude::*;
+use crate::algebra::*;
+use crate::prelude::*;
 
-#[codesnip::entry("fast-fourier-transform", doc_hidden)]
-pub struct FFT<T> {
-    root: Vec<T>,
-    root_inv: Vec<T>,
-    rate2: Vec<T>,
-    rate2_inv: Vec<T>,
-    rate3: Vec<T>,
-    rate3_inv: Vec<T>,
-}
-
-#[codesnip::entry("fast-fourier-transform", doc_hidden)]
+#[codesnip::entry("fast-fourier-transform")]
+pub use fast_fourier_transform_impl::FFT;
+#[codesnip::entry("fast-fourier-transform", include("prelude", "algebra"))]
 mod fast_fourier_transform_impl {
-    use super::{Add, Div, DivAssign, Mul, MulAssign, Neg, One, PrimitiveRoot, Sub, Zero, FFT};
+    use super::{Add, Div, DivAssign, Mul, MulAssign, Neg, One, PrimitiveRoot, Sub, Zero};
+    pub struct FFT<T> {
+        root: Vec<T>,
+        root_inv: Vec<T>,
+        rate2: Vec<T>,
+        rate2_inv: Vec<T>,
+        rate3: Vec<T>,
+        rate3_inv: Vec<T>,
+    }
 
     impl<
             T: Copy

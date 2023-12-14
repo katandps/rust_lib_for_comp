@@ -1,20 +1,18 @@
 //! # 高速アダマール変換 (Fast Walsh Hadamard Transform)
 
-use mod_int::ModInt;
-use prelude::*;
-
-macro_rules! max {($a:expr $(,)*) => {{$a}};($a:expr, $b:expr $(,)*) => {{if $a > $b {$a} else {$b}}};($a:expr, $($rest:expr),+ $(,)*) => {{let b = max!($($rest),+);if $a > b {$a} else {b}}};}
+use crate::algebra::mod_int::ModInt;
+pub(crate) use crate::min_max_macro::max;
 
 pub mod and_convolution;
 pub mod or_convolution;
 pub mod xor_convolution;
 
-#[codesnip::entry("bitwise-convolution", doc_hidden)]
+#[codesnip::entry("bitwise-convolution")]
 pub trait ConvolutionType {
     fn fwht<const M: u32>(poly: &mut [ModInt<M>], rev: bool);
 }
 
-#[codesnip::entry("bitwise-convolution", doc_hidden)]
+#[codesnip::entry("bitwise-convolution", include("max", "mod-int"))]
 pub fn convolution<T: ConvolutionType, const M: u32>(
     mut a: Vec<ModInt<M>>,
     mut b: Vec<ModInt<M>>,
