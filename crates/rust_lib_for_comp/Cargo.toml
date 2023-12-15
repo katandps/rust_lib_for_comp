@@ -1,5 +1,5 @@
 [package]
-name = "complib"
+name = "rust_lib_for_comp"
 version = "0.1.0"
 edition = "2018"
 

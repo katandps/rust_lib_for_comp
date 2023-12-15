@@ -4,10 +4,10 @@
 fn main() {
     solve(IO::default());
 }
-use complib::graph::adjacency_list::Graph;
-use complib::graph::warshall_floyd::WarshallFloyd;
-use complib::util::io_util::*;
-use complib::util::string_util::*;
+use rust_lib_for_comp::graph::adjacency_list::Graph;
+use rust_lib_for_comp::graph::warshall_floyd::WarshallFloyd;
+use rust_lib_for_comp::util::io_util::*;
+use rust_lib_for_comp::util::string_util::*;
 
 pub fn solve<IO: ReaderTrait + WriterTrait>(mut io: IO) {
     let (v, e) = io.v2::<usize, usize>();
@@ -43,7 +43,7 @@ pub fn solve<IO: ReaderTrait + WriterTrait>(mut io: IO) {
 pub fn grl_1_c(reader: impl std::io::Read, mut writer: impl std::io::Write) {}
 #[test]
 fn test() {
-    solve(complib::util::io_debug::IODebug::static_assert(
+    solve(rust_lib_for_comp::util::io_debug::IODebug::static_assert(
         "4 6
         0 1 1
         0 2 5
@@ -56,7 +56,7 @@ fn test() {
         INF INF 0 1
         INF INF 7 0",
     ));
-    solve(complib::util::io_debug::IODebug::static_assert(
+    solve(rust_lib_for_comp::util::io_debug::IODebug::static_assert(
         "4 6
         0 1 1
         0 2 -5
@@ -69,7 +69,7 @@ fn test() {
         INF INF 0 1
         INF INF 7 0",
     ));
-    solve(complib::util::io_debug::IODebug::static_assert(
+    solve(rust_lib_for_comp::util::io_debug::IODebug::static_assert(
         "4 6
         0 1 1
         0 2 5

@@ -30,7 +30,7 @@ dependencies = [
 name = "aizu_online_judge_solvers"
 version = "0.1.0"
 dependencies = [
- "complib",
+ "rust_lib_for_comp",
  "verify",
 ]
 
@@ -335,14 +335,6 @@ dependencies = [
 ]
 
 [[package]]
-name = "complib"
-version = "0.1.0"
-dependencies = [
- "codesnip",
- "rand",
-]
-
-[[package]]
 name = "console"
 version = "0.15.7"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -623,8 +615,8 @@ checksum = "4271d37baee1b8c7e4b708028c57d816cf9d2434acb33a549475f78c181f6253"
 name = "greatest_common_divisor"
 version = "0.1.0"
 dependencies = [
- "complib",
  "criterion",
+ "rust_lib_for_comp",
 ]
 
 [[package]]
@@ -1293,6 +1285,14 @@ dependencies = [
 ]
 
 [[package]]
+name = "rust_lib_for_comp"
+version = "0.1.0"
+dependencies = [
+ "codesnip",
+ "rand",
+]
+
+[[package]]
 name = "rust_minify"
 version = "0.1.2"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -1740,7 +1740,6 @@ checksum = "f1bddf1187be692e79c5ffeab891132dfb0f236ed36a43c7ed39f1165ee20191"
 [[package]]
 name = "verify"
 version = "0.1.0"
-source = "git+https://github.com/to-omer/competitive-library#d2495bdb377ad57d8bebddacf93f320283bceb5e"
 dependencies = [
  "chrono",
  "dirs",
@@ -1759,7 +1758,6 @@ dependencies = [
 [[package]]
 name = "verify_attr"
 version = "0.1.0"
-source = "git+https://github.com/to-omer/competitive-library#d2495bdb377ad57d8bebddacf93f320283bceb5e"
 dependencies = [
  "proc-macro2",
  "quote",

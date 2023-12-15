@@ -10,5 +10,5 @@ doc-scrape-examples = true
 path = "lib.rs"
 
 [dependencies]
-complib = { path = "../../complib" }
-verify = { git = "https://github.com/to-omer/competitive-library" }
+rust_lib_for_comp = { path = "../../rust_lib_for_comp" }
+verify = { path = "../../tools/verify" }

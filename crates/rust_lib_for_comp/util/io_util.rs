@@ -15,8 +15,8 @@ mod io_impl {
 
     #[derive(Clone, Debug, Default)]
     pub struct IO {
-        reader: ReaderFromStdin,
-        writer: WriterToStdout,
+        reader: ReaderTrait>,
+        writer: Box<WriterTrait>,
     }
 
     pub trait ReaderTrait {

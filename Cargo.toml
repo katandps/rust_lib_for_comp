@@ -1,11 +1,13 @@
 [workspace]
 members = [
-    'complib',
-    'verifications/aoj',
+    'crates/rust_lib_for_comp',
+    'crates/verifications/aoj',
     # 'verifications/atcoder/*',
     # 'verifications/library_checker/*',
     # 'verifications/yukicoder/*',
-    'benches/*',
+    'crates/benches/*',
+    'crates/tools/verify',
+    'crates/tools/verify_attr',
 ]
 resolver = "2"
 
