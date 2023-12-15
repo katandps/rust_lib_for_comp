@@ -1,7 +1,7 @@
 //! # 二次元平面(浮動小数点数)
+use crate::prelude::*;
 use float_value::FValue;
 use min_max_macro::min;
-use prelude::*;
 
 #[codesnip::entry("plane-float", doc_hidden)]
 pub use plane_float_impl::{ClockwiseDirection, Line, Segment, Vector};

@@ -1,8 +1,8 @@
 //! # トライ木(Trie, Prefix Tree)
 //!
 
+use crate::prelude::*;
 use fxhasher::*;
-use prelude::*;
 
 #[derive(Clone, Debug, Default)]
 pub struct Trie<K: Hash + Eq, T> {

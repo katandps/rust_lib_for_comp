@@ -1,5 +1,5 @@
 //! LCP配列 Longest Common Prefix Array
-use prelude::*;
+use crate::prelude::*;
 use suffix_array::SuffixArray;
 
 #[codesnip::entry("longest-common-prefix-array", doc_hidden)]

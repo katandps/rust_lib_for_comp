@@ -8,7 +8,7 @@
 //! ## verify
 //! [ABC042_B](https://atcoder.jp/contests/abc042/submissions/34830454)
 
-use prelude::*;
+use crate::prelude::*;
 
 #[codesnip::entry("lexicographically-combine", doc_hidden)]
 pub fn lexicographically_combine(s: &[Vec<char>]) -> Vec<char> {

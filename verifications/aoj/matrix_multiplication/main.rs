@@ -5,8 +5,8 @@ fn main() {
     solve(io_util::IO::default());
 }
 use io_util::*;
+use library::*;
 use matrix::Matrix;
-use prelude::*;
 use string_util::*;
 
 pub fn solve<IO: ReaderTrait + WriterTrait>(mut io: IO) {

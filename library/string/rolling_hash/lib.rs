@@ -3,9 +3,9 @@
 //!
 //! ## verify
 //! [047 - Monochromatic Diagonal](https://atcoder.jp/contests/typical90/submissions/31161891)
+use crate::prelude::*;
 use algebra::Zero;
 use mod_int_64bit::ModInt64;
-use prelude::*;
 use xor_shift::XorShift;
 
 #[codesnip::entry("rolling-hash", doc_hidden)]

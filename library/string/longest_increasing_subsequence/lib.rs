@@ -4,7 +4,7 @@
 //! かつ $A_{i_1} < A_{i_2} < \cdots < A_{i_M}$ を満たす部分列 $A_{i_1} , A_{i_2} , \cdots , A_{i_M}$ の中で、
 //! 最も$M$が大きいもののこと
 
-use prelude::*;
+use crate::prelude::*;
 
 #[codesnip::entry("longest-increasing-subsequence", doc_hidden)]
 #[derive(Debug, Clone)]

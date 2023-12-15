@@ -3,7 +3,7 @@
 //! ## 計算量
 //! $O(N)$
 
-use prelude::*;
+use crate::prelude::*;
 
 #[codesnip::entry("z-algorithm", doc_hidden)]
 pub fn z(src: &[char]) -> Vec<usize> {

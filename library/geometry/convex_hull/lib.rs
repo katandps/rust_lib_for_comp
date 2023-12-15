@@ -1,8 +1,8 @@
 //! # 凸包
+use crate::prelude::*;
 use float_value::FValue;
 use min_max_macro::{chmax, max};
 use plane_float::{ClockwiseDirection, Line, Segment, Vector};
-use prelude::*;
 
 #[codesnip::entry("convex-hull", doc_hidden)]
 pub use convex_hull_impl::{Including, Polygon};

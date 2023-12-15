@@ -1,8 +1,8 @@
 //! # 最近点対
+use crate::prelude::*;
 use float_value::FValue;
 use min_max_macro::{chmin, min};
 use plane_float::Vector;
-use prelude::*;
 
 #[codesnip::entry("closest-pair", doc_hidden)]
 pub struct ClosestPair;

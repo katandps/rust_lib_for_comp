@@ -3,7 +3,7 @@
 //! ## 計算量
 //! $O(N)$
 
-use prelude::*;
+use crate::prelude::*;
 
 #[codesnip::entry("run-length-encoding", doc_hidden)]
 pub fn encode(s: &[char]) -> Vec<char> {

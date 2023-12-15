@@ -1,7 +1,7 @@
 //! # 円
+use crate::prelude::*;
 use float_value::{FValue, EPS};
 use plane_float::{Line, Vector};
-use prelude::*;
 
 #[codesnip::entry("circle", doc_hidden)]
 pub use circle_impl::{Circle, CircleIntersection, Triangle};

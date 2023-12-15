@@ -2,7 +2,7 @@
 //! $y = \frac{Ax + B}{M} (0 \leq x \leq N) $  の下にある格子点の数を求める
 //! ## 計算量
 //! $O(\log \max_{A, M})$
-use prelude::*;
+use crate::prelude::*;
 
 #[codesnip::entry("floor-sum", doc_hidden)]
 pub fn floor_sum(n: i64, m: i64, mut a: i64, mut b: i64) -> i64 {

@@ -3,9 +3,9 @@
 //! ## 計算量
 //! $O(N)$
 
+use crate::prelude::*;
 #[codesnip::entry("manachar", doc_hidden)]
 pub use manachar_impl::Manachar;
-use prelude::*;
 #[codesnip::entry("manachar", doc_hidden)]
 mod manachar_impl {
     use super::Debug;

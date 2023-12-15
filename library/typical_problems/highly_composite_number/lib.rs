@@ -7,7 +7,7 @@
 //! ### x = 10
 //! 6(4個)
 
-use prelude::*;
+use crate::prelude::*;
 
 #[codesnip::entry("highly_composite_number", doc_hidden)]
 pub struct HighlyCompositeNumber;

@@ -1,7 +1,7 @@
 //! 接尾辞配列
 
+use crate::prelude::*;
 use compress::Compress;
-use prelude::*;
 
 #[codesnip::entry("suffix-array", doc_hidden)]
 pub use suffix_array_impl::SuffixArray;

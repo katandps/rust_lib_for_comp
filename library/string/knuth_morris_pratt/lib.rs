@@ -7,7 +7,7 @@
 //!
 //! ## verify
 //! [ABC150F](https://atcoder.jp/contests/abc150/submissions/34853947)
-use prelude::*;
+use crate::prelude::*;
 
 #[codesnip::entry("knuth-morris-pratt", doc_hidden)]
 pub fn tagged_border<T: PartialEq>(src: &[T]) -> Vec<i64> {

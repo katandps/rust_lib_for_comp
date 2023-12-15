@@ -1,5 +1,5 @@
 //! # 二次元平面(整数範囲)
-use prelude::*;
+use crate::prelude::*;
 
 #[codesnip::entry("plane-int", doc_hidden)]
 pub use plane_float_impl::Point;
