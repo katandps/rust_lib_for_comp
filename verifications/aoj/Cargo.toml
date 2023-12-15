@@ -1,0 +1,14 @@
+[package]
+name = "aizu_online_judge_solvers"
+version = "0.1.0"
+edition = "2018"
+
+[lib]
+doctest = false
+bench = false
+doc-scrape-examples = true
+path = "lib.rs"
+
+[dependencies]
+complib = { path = "../../complib" }
+verify = { git = "https://github.com/to-omer/competitive-library" }

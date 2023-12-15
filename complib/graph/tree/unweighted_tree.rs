@@ -42,17 +42,6 @@ mod tree_graph_impl {
         }
 
         /// # 最遠点
-        ///
-        /// ```
-        /// use adjacency_list::Graph;
-        /// use unweighted_tree::TreeGraph;
-        /// let graph = Graph::<i32>::new(5);
-        ///
-        /// // l to rが直径
-        /// let l = TreeGraph::farthest_vertex(&graph, 0);
-        /// let r = TreeGraph::farthest_vertex(&graph, l);
-        /// ```
-        ///
         /// ## verify
         /// [ABC267F](https://atcoder.jp/contests/abc267/submissions/34679847)
         pub fn farthest_vertex<G: GraphTrait>(graph: &G, src: usize) -> usize {

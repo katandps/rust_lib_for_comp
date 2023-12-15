@@ -1,10 +1,11 @@
 [workspace]
-members = ['library', 'verifications/*', 'benches/*']
-exclude = [
+members = [
+    'complib',
     'verifications/aoj',
-    'verifications/atcoder',
-    'verifications/library_checker',
-    'verifications/yukicoder',
+    # 'verifications/atcoder/*',
+    # 'verifications/library_checker/*',
+    # 'verifications/yukicoder/*',
+    'benches/*',
 ]
 resolver = "2"
 

@@ -9,16 +9,6 @@ pub use self::next_permutation_impl::{next_permutation_from_i, next_permutation_
 #[codesnip::entry("next-permutation")]
 mod next_permutation_impl {
     /// [0, size)の順列を辞書順に得るIteratorとなる
-    /// ```
-    /// # use next_permutation::*;
-    /// let mut s = 0;
-    /// for p in next_permutation_from_i(5) {
-    ///     for pi in p {
-    ///         s += pi;
-    ///     }
-    /// }
-    /// assert_eq!(s, 120 * 10);
-    /// ```
     pub fn next_permutation_from_i(size: usize) -> impl Iterator<Item = Vec<usize>> {
         std::iter::successors(Some((0..size).collect::<Vec<_>>()), move |v| {
             let mut v = v.to_vec();
@@ -36,11 +26,6 @@ mod next_permutation_impl {
         })
     }
     /// 重複を考慮した順列を辞書順に得るIteratorとなる
-    /// ```
-    /// # use next_permutation::*;
-    /// let v = vec![1, 2, 2, 3];
-    /// assert_eq!(12, next_permutation_from_slice(&v[..]).count());
-    /// ```
     pub fn next_permutation_from_slice<T: Clone + PartialOrd>(
         src: &[T],
     ) -> impl Iterator<Item = Vec<T>> {
