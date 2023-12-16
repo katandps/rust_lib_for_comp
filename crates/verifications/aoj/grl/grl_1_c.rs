@@ -1,3 +1,5 @@
+//! # All Pairs Shortest Path
+
 use rust_lib_for_comp::graph::adjacency_list::Graph;
 use rust_lib_for_comp::graph::warshall_floyd::WarshallFloyd;
 use rust_lib_for_comp::util::io_util::*;

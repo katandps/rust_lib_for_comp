@@ -1,12 +1,15 @@
 //! # 最近点対
+use super::plane_float::Vector;
+use crate::element::float_value::FValue;
+use crate::min_max_macro::{chmin, min};
 use crate::prelude::*;
-use float_value::FValue;
-use min_max_macro::{chmin, min};
-use plane_float::Vector;
 
-#[codesnip::entry("closest-pair", doc_hidden)]
+#[codesnip::entry("closest-pair")]
 pub struct ClosestPair;
-#[codesnip::entry("closest-pair", doc_hidden)]
+#[codesnip::entry(
+    "closest-pair",
+    include("plane-float", "chmin", "float-value", "prelude")
+)]
 impl ClosestPair {
     const INF: f64 = 1e30;
     pub fn closest_pair(mut points: Vec<Vector>) -> (FValue, Option<(Vector, Vector)>) {

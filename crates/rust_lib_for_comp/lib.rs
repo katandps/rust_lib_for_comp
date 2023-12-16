@@ -6,6 +6,7 @@ pub mod data_structure;
 pub mod element;
 pub mod enumerator;
 pub mod flow;
+pub mod geometry;
 pub mod graph;
 pub mod min_max_macro;
 pub mod prelude;

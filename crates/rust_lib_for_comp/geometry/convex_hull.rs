@@ -1,12 +1,15 @@
 //! # 凸包
+use super::plane_float::{ClockwiseDirection, Line, Segment, Vector};
+use crate::element::float_value::FValue;
+use crate::min_max_macro::{chmax, max};
 use crate::prelude::*;
-use float_value::FValue;
-use min_max_macro::{chmax, max};
-use plane_float::{ClockwiseDirection, Line, Segment, Vector};
 
-#[codesnip::entry("convex-hull", doc_hidden)]
+#[codesnip::entry("convex-hull")]
 pub use convex_hull_impl::{Including, Polygon};
-#[codesnip::entry("convex-hull", doc_hidden)]
+#[codesnip::entry(
+    "convex-hull",
+    include("chmax", "float-value", "plane-float", "prelude")
+)]
 mod convex_hull_impl {
     use super::{chmax, max, ClockwiseDirection, FValue, Index, IndexMut, Line, Segment, Vector};
 
@@ -157,7 +160,7 @@ mod convex_hull_impl {
                         nodes[nodes.len() - 1] - nodes[nodes.len() - 2],
                         p - nodes[nodes.len() - 2],
                     );
-                    if (include_on_line && c < -FValue::eps())
+                    if (include_on_line && c < (-FValue::eps()))
                         || (!include_on_line && c < FValue::eps())
                     {
                         nodes.pop();
@@ -175,7 +178,7 @@ mod convex_hull_impl {
                         nodes[nodes.len() - 1] - nodes[nodes.len() - 2],
                         p - nodes[nodes.len() - 1],
                     );
-                    if (include_on_line && c < -FValue::eps())
+                    if (include_on_line && c < (-FValue::eps()))
                         || (!include_on_line && c < FValue::eps())
                     {
                         nodes.pop();

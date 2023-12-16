@@ -5,6 +5,7 @@
 //! - `From<&[T]>`: スライスの順列を辞書順に得る
 //!     - 辞書順で入力以降のもののみ得られる
 
+#[codesnip::entry("next-permutation")]
 pub use self::next_permutation_impl::{next_permutation_from_i, next_permutation_from_slice};
 #[codesnip::entry("next-permutation")]
 mod next_permutation_impl {

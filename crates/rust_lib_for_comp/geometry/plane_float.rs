@@ -1,11 +1,11 @@
 //! # 二次元平面(浮動小数点数)
+use crate::element::float_value::FValue;
+use crate::min_max_macro::min;
 use crate::prelude::*;
-use float_value::FValue;
-use min_max_macro::min;
 
-#[codesnip::entry("plane-float", doc_hidden)]
+#[codesnip::entry("plane-float")]
 pub use plane_float_impl::{ClockwiseDirection, Line, Segment, Vector};
-#[codesnip::entry("plane-float", doc_hidden)]
+#[codesnip::entry("plane-float", include("min", "prelude", "float-value"))]
 mod plane_float_impl {
     use super::{
         min, Add, AddAssign, Debug, Display, Div, DivAssign, FValue, Formatter, Mul, MulAssign,
@@ -138,7 +138,7 @@ mod plane_float_impl {
             let cross = Vector::cross(b, c);
             if cross > FValue::eps() {
                 Self::CounterClockwise
-            } else if cross < -FValue::eps() {
+            } else if cross < (-FValue::eps()) {
                 Self::Clockwise
             } else if Vector::dot(b, c) < 0.0.into() {
                 Self::OneLineCAB

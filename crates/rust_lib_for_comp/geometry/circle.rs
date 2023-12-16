@@ -1,11 +1,10 @@
 //! # 円
-use crate::prelude::*;
-use float_value::{FValue, EPS};
-use plane_float::{Line, Vector};
+use super::plane_float::{Line, Vector};
+use crate::element::float_value::{FValue, EPS};
 
-#[codesnip::entry("circle", doc_hidden)]
+#[codesnip::entry("circle")]
 pub use circle_impl::{Circle, CircleIntersection, Triangle};
-#[codesnip::entry("circle", doc_hidden)]
+#[codesnip::entry("circle", include("plane-float", "float-value"))]
 mod circle_impl {
     use super::{FValue, Line, Vector, EPS};
     #[derive(Copy, Clone)]
@@ -144,7 +143,7 @@ mod circle_impl {
             let s = d - self.radius;
             if s > FValue::eps() {
                 Vec::new()
-            } else if s < -FValue::eps() {
+            } else if s < (-FValue::eps()) {
                 let proj = line.projection(self.center);
                 // 法線ベクトル
                 let e = line.normalize();
