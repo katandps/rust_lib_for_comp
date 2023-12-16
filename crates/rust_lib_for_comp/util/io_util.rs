@@ -5,13 +5,13 @@
 //! Readを引数に取り、StringのIteratorを得る
 //!
 
-use crate::prelude::*;
-
 #[codesnip::entry("io-util")]
 pub use io_impl::{ReadHelper, ReaderTrait};
-#[codesnip::entry("io-util", include("prelude"))]
+#[codesnip::entry("io-util")]
 mod io_impl {
-    use super::{FromStr as FS, Read, VecDeque};
+    use std::collections::VecDeque;
+    use std::io::{BufRead, Read};
+    use std::str::{from_utf8_unchecked, FromStr as FS};
 
     pub trait ReaderTrait {
         fn next(&mut self) -> Option<String>;
@@ -92,17 +92,18 @@ mod io_impl {
     }
 
     impl ReadHelper {
-        pub fn add(mut self, mut reader: impl Read) -> Self {
-            let mut l = Vec::new();
-            let _ = reader.read_to_end(&mut l).unwrap();
-            unsafe {
-                self.buf.append(
-                    &mut std::str::from_utf8_unchecked_mut(&mut l)
-                        .split_ascii_whitespace()
-                        .map(ToString::to_string)
-                        .collect(),
-                );
-            }
+        pub fn add(mut self, read: impl Read) -> Self {
+            let mut reader = std::io::BufReader::new(read);
+            let buffer = reader.fill_buf().expect("IO Error");
+            let length = buffer.len();
+            let s = unsafe { from_utf8_unchecked(buffer) };
+            self.buf.append(
+                &mut s
+                    .split_ascii_whitespace()
+                    .map(ToString::to_string)
+                    .collect(),
+            );
+            reader.consume(length);
             self
         }
     }
