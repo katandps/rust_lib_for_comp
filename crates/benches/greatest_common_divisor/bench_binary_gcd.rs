@@ -1,9 +1,9 @@
 //! # 愚直実装とBinary-GCDの速度の比較
 
-use complib::algebra::binary_operation::greatest_common_divisor::Gcd;
-use complib::algebra::Magma;
-use complib::algo::xor_shift::XorShift;
 use criterion::{criterion_group, criterion_main, Criterion};
+use rust_lib_for_comp::algebra::binary_operation::greatest_common_divisor::Gcd;
+use rust_lib_for_comp::algebra::Magma;
+use rust_lib_for_comp::algo::xor_shift::XorShift;
 
 criterion_group!(benches, f);
 criterion_main!(benches);

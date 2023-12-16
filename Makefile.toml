@@ -113,20 +113,20 @@ script = '''
 
 [tasks.codesnip-cache]
 script = '''
-    cargo codesnip --target=library/lib.rs --cfg=nightly cache target/codesnip/codesnip-cache.bin
+    cargo codesnip --target=crates/rust_lib_for_comp/lib.rs --cfg=nightly cache target/codesnip/codesnip-cache.bin
 '''
 
 [tasks.codesnip-verify]
 script = '''
-	cargo codesnip --target=library/lib.rs --cfg=nightly verify
+	cargo codesnip --target=crates/rust_lib_for_comp/lib.rs --filter-item=test --cfg=nightly verify --verbose --toolchain=1.70.0 --edition=2021
 '''
 
 [tasks.codesnip-list]
 script = '''
-	cargo codesnip --target=library/lib.rs --cfg=nightly list
+	cargo codesnip --target=crates/rust_lib_for_comp/lib.rs --cfg=nightly list
 '''
 
 [tasks.codesnip-bundle]
 script = '''
-	cargo codesnip --target=library/lib.rs --cfg=nightly bundle ${@}
+	cargo codesnip --target=crates/rust_lib_for_comp/lib.rs --cfg=nightly bundle ${@}
 '''

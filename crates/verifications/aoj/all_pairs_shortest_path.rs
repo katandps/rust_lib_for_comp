@@ -5,7 +5,7 @@ use rust_lib_for_comp::util::string_util::*;
 
 #[verify::aizu_online_judge("GRL_1_C")]
 pub fn grl_1_c(read: impl std::io::Read, mut write: impl std::io::Write) {
-    let (mut reader, mut writer) = (ReadHelper::default().add(read), WriteHelper::default());
+    let mut reader = ReadHelper::default().add(read);
     let (v, e) = reader.v2::<usize, usize>();
     let mut graph = Graph::new(v);
     for _ in 0..e {
@@ -14,10 +14,12 @@ pub fn grl_1_c(read: impl std::io::Read, mut write: impl std::io::Write) {
     }
     let wf = WarshallFloyd::build(&graph);
     if wf.contains_negative_cycle() {
-        writer.out("NEGATIVE CYCLE".line())
+        writeln!(write, "NEGATIVE CYCLE").ok();
     } else {
         for i in 0..v {
-            writer.out(
+            writeln!(
+                write,
+                "{}",
                 (0..v)
                     .map(|j| {
                         let d = wf.dist(i, j);
@@ -27,11 +29,10 @@ pub fn grl_1_c(read: impl std::io::Read, mut write: impl std::io::Write) {
                             d.to_string()
                         }
                     })
-                    .join(" ")
-                    .line(),
-            );
+                    .join(" "),
+            )
+            .ok();
         }
     }
-    write!(write, "{}", writer).unwrap();
-    write.flush().unwrap();
+    write.flush().ok();
 }

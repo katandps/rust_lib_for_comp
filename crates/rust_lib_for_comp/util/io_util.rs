@@ -8,15 +8,10 @@
 use crate::prelude::*;
 
 #[codesnip::entry("io-util")]
-pub use io_impl::{ReadHelper, ReaderTrait, WriteHelper};
+pub use io_impl::{ReadHelper, ReaderTrait};
 #[codesnip::entry("io-util", include("prelude"))]
 mod io_impl {
-    use super::{Display, Formatter, FromStr as FS, Read, VecDeque};
-
-    pub struct IO {
-        pub reader: ReadHelper,
-        pub writer: WriteHelper,
-    }
+    use super::{FromStr as FS, Read, VecDeque};
 
     pub trait ReaderTrait {
         fn next(&mut self) -> Option<String>;
@@ -115,29 +110,6 @@ mod io_impl {
     impl ReaderTrait for ReadHelper {
         fn next(&mut self) -> Option<String> {
             self.buf.pop_front()
-        }
-    }
-
-    #[derive(Clone, Debug, Default)]
-    pub struct WriteHelper {
-        pub buf: String,
-    }
-
-    impl Display for WriteHelper {
-        fn fmt(&self, f: &mut Formatter<'_>) -> std::fmt::Result {
-            write!(f, "{}", self.buf)
-        }
-    }
-
-    impl WriteHelper {
-        pub fn out<S: Display>(&mut self, s: S) {
-            self.buf.push_str(&s.to_string());
-        }
-    }
-
-    impl ReaderTrait for IO {
-        fn next(&mut self) -> Option<String> {
-            self.reader.next()
         }
     }
 }
