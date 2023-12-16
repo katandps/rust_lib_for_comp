@@ -4,4 +4,4 @@ target
 .idea
 lcov.info
 dropbox_token
-crate/verifications/**/*.md
+crates/verifications/**/*.md
