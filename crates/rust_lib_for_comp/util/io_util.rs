@@ -8,15 +8,14 @@
 use crate::prelude::*;
 
 #[codesnip::entry("io-util")]
-pub use io_impl::{ReaderFromStdin, ReaderFromStr, ReaderTrait, WriterToStdout, WriterTrait, IO};
+pub use io_impl::{ReadHelper, ReaderTrait, WriteHelper};
 #[codesnip::entry("io-util", include("prelude"))]
 mod io_impl {
-    use super::{stdin, stdout, BufRead, BufWriter, Display, FromStr as FS, VecDeque, Write};
+    use super::{Display, Formatter, FromStr as FS, Read, VecDeque};
 
-    #[derive(Clone, Debug, Default)]
     pub struct IO {
-        reader: ReaderTrait>,
-        writer: Box<WriterTrait>,
+        pub reader: ReadHelper,
+        pub writer: WriteHelper,
     }
 
     pub trait ReaderTrait {
@@ -92,92 +91,47 @@ mod io_impl {
         }
     }
 
-    pub struct ReaderFromStr {
-        buf: VecDeque<String>,
-    }
-
-    impl ReaderTrait for ReaderFromStr {
-        fn next(&mut self) -> Option<String> {
-            self.buf.pop_front()
-        }
-    }
-
-    impl ReaderFromStr {
-        pub fn new(src: &str) -> Self {
-            Self {
-                buf: src
-                    .split_whitespace()
-                    .map(ToString::to_string)
-                    .collect::<Vec<String>>()
-                    .into(),
-            }
-        }
-
-        pub fn push(&mut self, src: &str) {
-            for s in src.split_whitespace().map(ToString::to_string) {
-                self.buf.push_back(s);
-            }
-        }
-
-        pub fn from_file(path: &str) -> Result<Self, Box<dyn std::error::Error>> {
-            Ok(Self::new(&std::fs::read_to_string(path)?))
-        }
-    }
-
-    impl WriterTrait for ReaderFromStr {
-        fn out<S: Display>(&mut self, s: S) {
-            self.push(&s.to_string());
-        }
-        fn flush(&mut self) {}
-    }
-
     #[derive(Clone, Debug, Default)]
-    pub struct ReaderFromStdin {
-        buf: VecDeque<String>,
+    pub struct ReadHelper {
+        pub buf: VecDeque<String>,
     }
 
-    impl ReaderTrait for ReaderFromStdin {
-        fn next(&mut self) -> Option<String> {
-            while self.buf.is_empty() {
-                let stdin = stdin();
-                let mut reader = stdin.lock();
-                let mut l = String::new();
-                reader.read_line(&mut l).unwrap();
+    impl ReadHelper {
+        pub fn add(mut self, mut reader: impl Read) -> Self {
+            let mut l = Vec::new();
+            let _ = reader.read_to_end(&mut l).unwrap();
+            unsafe {
                 self.buf.append(
-                    &mut l
+                    &mut std::str::from_utf8_unchecked_mut(&mut l)
                         .split_ascii_whitespace()
                         .map(ToString::to_string)
                         .collect(),
                 );
             }
+            self
+        }
+    }
+
+    impl ReaderTrait for ReadHelper {
+        fn next(&mut self) -> Option<String> {
             self.buf.pop_front()
         }
     }
 
-    pub trait WriterTrait {
-        /// # Sを出力
-        fn out<S: Display>(&mut self, s: S);
-        /// # バッファをクリアする
-        fn flush(&mut self);
-    }
-
     #[derive(Clone, Debug, Default)]
-    pub struct WriterToStdout {
-        buf: String,
+    pub struct WriteHelper {
+        pub buf: String,
     }
 
-    impl WriterTrait for WriterToStdout {
-        fn out<S: Display>(&mut self, s: S) {
-            self.buf.push_str(&s.to_string());
+    impl Display for WriteHelper {
+        fn fmt(&self, f: &mut Formatter<'_>) -> std::fmt::Result {
+            write!(f, "{}", self.buf)
         }
-        fn flush(&mut self) {
-            if !self.buf.is_empty() {
-                let stdout = stdout();
-                let mut writer = BufWriter::new(stdout.lock());
-                write!(writer, "{}", self.buf).expect("Failed to write.");
-                let _ = writer.flush();
-                self.buf.clear();
-            }
+    }
+
+    impl WriteHelper {
+        pub fn out<S: Display>(&mut self, s: S) {
+            self.buf.push_str(&s.to_string());
         }
     }
 
@@ -186,24 +140,17 @@ mod io_impl {
             self.reader.next()
         }
     }
-
-    impl WriterTrait for IO {
-        fn out<S: std::fmt::Display>(&mut self, s: S) {
-            self.writer.out(s)
-        }
-        fn flush(&mut self) {
-            self.writer.flush()
-        }
-    }
 }
 
 #[cfg(test)]
 mod tests {
-    use super::*;
+    use super::{io_impl::ReadHelper, *};
 
     #[test]
     fn test() {
-        let mut reader = ReaderFromStr::new("-123 456.7 12345 hogehoge 123 456  789 012   345 678");
+        let data = "-123 456.7 12345 hogehoge 123 456  789 012   345 678";
+        let mut bytes = data.as_bytes();
+        let mut reader = ReadHelper::default().add(&mut bytes);
         assert_eq!(-123, reader.v::<i16>());
         assert_eq!(456.7, reader.v::<f64>());
         assert_eq!(12345, reader.v::<i32>());
@@ -212,22 +159,11 @@ mod tests {
     }
 
     #[test]
-    fn edge_cases() {
-        {
-            let mut reader = ReaderFromStr::new("8");
-            assert_eq!(8u32, reader.v::<u32>());
-        }
-        {
-            let mut reader = ReaderFromStr::new("9");
-            assert_eq!(9i32, reader.v::<i32>());
-        }
-    }
-
-    #[test]
     fn map() {
         {
             let data = "...#..\n.###..\n....##";
-            let mut reader = ReaderFromStr::new(data);
+            let mut bytes = data.as_bytes();
+            let mut reader = ReadHelper::default().add(&mut bytes);
             let res = reader.char_map(3);
 
             let v = data
@@ -242,7 +178,8 @@ mod tests {
         }
         {
             let data = "S..#..\n.###..\n...G##";
-            let mut reader = ReaderFromStr::new(data);
+            let mut bytes = data.as_bytes();
+            let mut reader = ReadHelper::default().add(&mut bytes);
             let v = data
                 .split_whitespace()
                 .map(|s| s.chars().collect::<Vec<_>>())
@@ -258,19 +195,9 @@ mod tests {
 
     #[test]
     fn digits() {
-        let mut reader = ReaderFromStr::new("123456");
+        let mut bytes = "123456".as_bytes();
+        let mut reader = ReadHelper::default().add(&mut bytes);
         let res = reader.digits();
         assert_eq!(res, vec![1, 2, 3, 4, 5, 6]);
     }
-}
-
-#[test]
-fn default() {
-    let io = IO::default();
-    let cloned = io.clone();
-    let debug = format!("{:?}", cloned);
-    assert_eq!(
-        debug.as_str(),
-        "IO { reader: ReaderFromStdin { buf: [] }, writer: WriterToStdout { buf: \"\" } }"
-    );
 }

@@ -1,9 +1,5 @@
 //! # main関数
 //!
-//! ## dependencies
-//! io_util
-//! prelude
-
 use crate::prelude::*;
 use crate::util::io_debug::*;
 use crate::util::io_util::*;
@@ -31,9 +27,9 @@ pub fn main() {
         .name("extend stack size".into())
         .stack_size(128 * 1024 * 1024)
         .spawn(move || {
-            let mut io = IO::default();
-            solve(&mut io);
-            io.flush();
+            let (stdin, stdout) = (stdin(), stdout());
+            let (stdin_lock, stdout_lock) = (stdin.lock(), stdout.lock());
+            solve(stdin_lock, stdout_lock);
         })
         .unwrap()
         .join()
@@ -41,9 +37,11 @@ pub fn main() {
 }
 
 #[codesnip::entry("solver", include("io-util", "string-util"))]
-pub fn solve<IO: ReaderTrait + WriterTrait>(io: &mut IO) {
-    let n = io.v::<usize>();
-    io.out(n.line());
+pub fn solve(read: impl Read, mut write: impl Write) {
+    let (mut reader, mut writer) = (ReadHelper::default().add(read), WriteHelper::default());
+    let n = reader.v::<usize>();
+    writer.out(n.line());
+    write!(write, "{}", writer).unwrap();
 }
 
 #[codesnip::entry("tester", include("solver", "io-debug"))]
@@ -59,9 +57,17 @@ pub fn test_helper(input: &'static str, expect: &'static str) {
         .name("extend stack size".into())
         .stack_size(128 * 1024 * 1024)
         .spawn(move || {
-            let mut io = IODebug::static_assert(input, expect);
-            solve(&mut io);
-            io.flush();
+            let mut bytes = expect.as_bytes();
+            let mut assertion: StaticAssertion = StaticAssertion {
+                expect: ReadHelper::default().add(&mut bytes),
+            };
+            let mut writer = Vec::new();
+            solve(input.as_bytes(), &mut writer);
+            let mut dummy = "".as_bytes();
+            assertion.assert(
+                &mut WriteHelper::default(),
+                &mut ReadHelper::default().add(&mut dummy),
+            );
         })
         .unwrap()
         .join()

@@ -1,1 +1,1 @@
-mod all_pairs_shortest_path;
+pub mod all_pairs_shortest_path;
