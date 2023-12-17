@@ -2,6 +2,7 @@ use crate::{app_cache_directory, build_client, gen_case, TestCase};
 use serde::Deserialize;
 use std::{
     fs::{create_dir, create_dir_all, remove_dir_all},
+    thread::sleep,
     time::Duration,
 };
 use tokio::runtime;
@@ -66,6 +67,7 @@ pub fn get_testcases(
                     output: output.clone(),
                 });
                 if !input.exists() || !output.exists() {
+                    sleep(Duration::from_secs(5));
                     let url = format!(
                         "https://judgedat.u-aizu.ac.jp/testcases/{}/{}/in",
                         problem_id, header.serial
