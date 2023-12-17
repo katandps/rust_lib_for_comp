@@ -7,10 +7,7 @@ pub struct StaticAssertion;
 #[codesnip::entry("assertion", include("io-util"))]
 impl StaticAssertion {
     pub fn assert(expect: impl std::io::Read, actual: impl std::io::Read) {
-        let (mut expect_read, mut actual_read) = (
-            ReadHelper::default().add(expect),
-            ReadHelper::default().add(actual),
-        );
+        let (mut expect_read, mut actual_read) = (ReadHelper::new(expect), ReadHelper::new(actual));
         let (mut actual, mut expect) = (Vec::new(), Vec::new());
         while let Some(a) = actual_read.next() {
             actual.push(a);

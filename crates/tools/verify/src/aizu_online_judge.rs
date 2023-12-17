@@ -65,7 +65,7 @@ pub fn get_testcases(
                     input: input.clone(),
                     output: output.clone(),
                 });
-                if !is_testcases_already_generated {
+                if !input.exists() || !output.exists() {
                     let url = format!(
                         "https://judgedat.u-aizu.ac.jp/testcases/{}/{}/in",
                         problem_id, header.serial

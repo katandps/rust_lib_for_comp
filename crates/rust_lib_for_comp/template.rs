@@ -36,7 +36,7 @@ pub fn main() {
 
 #[codesnip::entry("solver", include("io-util", "string-util"))]
 pub fn solve(read: impl Read, mut write: impl Write) {
-    let mut reader = ReadHelper::default().add(read);
+    let mut reader = ReadHelper::new(read);
     let n = reader.v::<usize>();
     writeln!(write, "{}", n).ok();
     write.flush().ok();
@@ -50,16 +50,8 @@ fn test_1() {
 /// # テスト実行用ヘルパー
 #[codesnip::entry("tester", include("solver", "assertion"))]
 #[allow(dead_code)]
-pub fn test_helper(input: &'static str, expect: &'static str) {
-    std::thread::Builder::new()
-        .name("extend stack size".into())
-        .stack_size(128 * 1024 * 1024)
-        .spawn(move || {
-            let mut writer = Vec::new();
-            solve(input.as_bytes(), &mut writer);
-            StaticAssertion::assert(expect.as_bytes(), &writer[..]);
-        })
-        .unwrap()
-        .join()
-        .unwrap()
+pub fn test_helper(input: &str, expect: &str) {
+    let mut writer = Vec::new();
+    solve(input.as_bytes(), &mut writer);
+    StaticAssertion::assert(expect.as_bytes(), &writer[..]);
 }

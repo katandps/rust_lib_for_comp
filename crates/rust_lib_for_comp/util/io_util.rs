@@ -11,7 +11,7 @@ pub use io_impl::{ReadHelper, ReaderTrait};
 mod io_impl {
     use std::collections::VecDeque;
     use std::io::{BufRead, Read};
-    use std::str::{from_utf8_unchecked, FromStr as FS};
+    use std::str::FromStr as FS;
 
     pub trait ReaderTrait {
         fn next(&mut self) -> Option<String>;
@@ -86,30 +86,33 @@ mod io_impl {
         }
     }
 
-    #[derive(Clone, Debug, Default)]
-    pub struct ReadHelper {
+    pub struct ReadHelper<'a> {
+        read: Box<dyn BufRead + 'a>,
         pub buf: VecDeque<String>,
     }
 
-    impl ReadHelper {
-        pub fn add(mut self, read: impl Read) -> Self {
-            let mut reader = std::io::BufReader::new(read);
-            let buffer = reader.fill_buf().expect("IO Error");
-            let length = buffer.len();
-            let s = unsafe { from_utf8_unchecked(buffer) };
-            self.buf.append(
-                &mut s
-                    .split_ascii_whitespace()
-                    .map(ToString::to_string)
-                    .collect(),
-            );
-            reader.consume(length);
-            self
+    impl<'a> ReadHelper<'a> {
+        pub fn new(read: impl Read + 'a) -> ReadHelper<'a> {
+            Self {
+                read: Box::new(std::io::BufReader::new(read)),
+                buf: VecDeque::new(),
+            }
         }
     }
 
-    impl ReaderTrait for ReadHelper {
+    impl<'a> ReaderTrait for ReadHelper<'a> {
         fn next(&mut self) -> Option<String> {
+            while self.buf.is_empty() {
+                let mut s = String::new();
+                if let Ok(_l) = self.read.read_line(&mut s) {
+                    self.buf.append(
+                        &mut s
+                            .split_ascii_whitespace()
+                            .map(ToString::to_string)
+                            .collect(),
+                    );
+                }
+            }
             self.buf.pop_front()
         }
     }
@@ -122,8 +125,8 @@ mod tests {
     #[test]
     fn test() {
         let data = "-123 456.7 12345 hogehoge 123 456  789 012   345 678";
-        let mut bytes = data.as_bytes();
-        let mut reader = ReadHelper::default().add(&mut bytes);
+        let bytes = data.as_bytes();
+        let mut reader = ReadHelper::new(bytes);
         assert_eq!(-123, reader.v::<i16>());
         assert_eq!(456.7, reader.v::<f64>());
         assert_eq!(12345, reader.v::<i32>());
@@ -135,8 +138,8 @@ mod tests {
     fn map() {
         {
             let data = "...#..\n.###..\n....##";
-            let mut bytes = data.as_bytes();
-            let mut reader = ReadHelper::default().add(&mut bytes);
+            let bytes = data.as_bytes();
+            let mut reader = ReadHelper::new(bytes);
             let res = reader.char_map(3);
 
             let v = data
@@ -151,8 +154,8 @@ mod tests {
         }
         {
             let data = "S..#..\n.###..\n...G##";
-            let mut bytes = data.as_bytes();
-            let mut reader = ReadHelper::default().add(&mut bytes);
+            let bytes = data.as_bytes();
+            let mut reader = ReadHelper::new(bytes);
             let v = data
                 .split_whitespace()
                 .map(|s| s.chars().collect::<Vec<_>>())
@@ -168,8 +171,8 @@ mod tests {
 
     #[test]
     fn digits() {
-        let mut bytes = "123456".as_bytes();
-        let mut reader = ReadHelper::default().add(&mut bytes);
+        let bytes = "123456".as_bytes();
+        let mut reader = ReadHelper::new(bytes);
         let res = reader.digits();
         assert_eq!(res, vec![1, 2, 3, 4, 5, 6]);
     }

@@ -7,7 +7,7 @@ use rust_lib_for_comp::util::string_util::*;
 
 #[verify::aizu_online_judge("GRL_1_C")]
 pub fn grl_1_c(read: impl std::io::Read, mut write: impl std::io::Write) {
-    let mut reader = ReadHelper::default().add(read);
+    let mut reader = ReadHelper::new(read);
     let (v, e) = reader.v2::<usize, usize>();
     let mut graph = Graph::new(v);
     for _ in 0..e {
