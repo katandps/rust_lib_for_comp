@@ -16,6 +16,24 @@ mod slice_traits {
         fn lower_bound(&self, k: &Self::Item) -> usize;
         /// kより大きい要素となる最小のindexを返す
         fn upper_bound(&self, k: &Self::Item) -> usize;
+
+        fn len(&self) -> usize;
+        /// k未満の要素の数
+        fn less_count(&self, k: &Self::Item) -> usize {
+            self.lower_bound(k)
+        }
+        /// k以下の要素の数
+        fn less_eq_count(&self, k: &Self::Item) -> usize {
+            self.upper_bound(k)
+        }
+        /// kより大きい要素の数
+        fn more_count(&self, k: &Self::Item) -> usize {
+            self.len() - self.less_eq_count(k)
+        }
+        /// k以上の要素の数
+        fn more_eq_count(&self, k: &Self::Item) -> usize {
+            self.len() - self.less_count(k)
+        }
     }
     /// # 比較関数
     pub trait SliceBoundsBy {
@@ -36,6 +54,9 @@ mod slice_traits {
         }
         fn upper_bound(&self, k: &T) -> usize {
             self.upper_bound_by(|p| p.cmp(k))
+        }
+        fn len(&self) -> usize {
+            self.len()
         }
     }
     impl<T> SliceBoundsBy for [T] {
