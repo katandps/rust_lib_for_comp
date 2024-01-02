@@ -102,7 +102,8 @@ mod io_impl {
 
     impl<'a> ReaderTrait for ReadHelper<'a> {
         fn next(&mut self) -> Option<String> {
-            while self.buf.is_empty() {
+            let mut cnt = 0; // 空行をある程度許容する
+            while self.buf.is_empty() && cnt < 100 {
                 let mut s = String::new();
                 if let Ok(_l) = self.read.read_line(&mut s) {
                     self.buf.append(
@@ -112,6 +113,7 @@ mod io_impl {
                             .collect(),
                     );
                 }
+                cnt += 1;
             }
             self.buf.pop_front()
         }

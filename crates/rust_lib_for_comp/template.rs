@@ -17,7 +17,7 @@ use crate::util::io_util::*;
         "faster-hashmap",
         "string-util",
         "float-value",
-        "solver"
+        "zzz-solver"
     )
 )]
 pub fn main() {
@@ -34,7 +34,7 @@ pub fn main() {
         .unwrap()
 }
 
-#[codesnip::entry("solver", include("io-util", "string-util"))]
+#[codesnip::entry("zzz-solver", include("io-util", "string-util"))]
 pub fn solve(read: impl Read, mut write: impl Write) {
     let mut reader = ReadHelper::new(read);
     let n = reader.v::<usize>();
@@ -48,7 +48,7 @@ fn test_1() {
     test_helper("1", "1");
 }
 /// # テスト実行用ヘルパー
-#[codesnip::entry("tester", include("solver", "assertion"))]
+#[codesnip::entry("tester", include("zzz-solver", "assertion"))]
 #[allow(dead_code)]
 pub fn test_helper(input: &str, expect: &str) {
     let mut writer = Vec::new();

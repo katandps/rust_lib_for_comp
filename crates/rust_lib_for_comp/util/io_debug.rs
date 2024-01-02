@@ -18,3 +18,24 @@ impl StaticAssertion {
         assert_eq!(expect, actual);
     }
 }
+
+#[test]
+fn test_ac() {
+    StaticAssertion::assert("123 45".as_bytes(), "123 45".as_bytes())
+}
+
+#[test]
+#[should_panic]
+fn test_no_match() {
+    StaticAssertion::assert("123 56".as_bytes(), "123 45".as_bytes())
+}
+#[test]
+#[should_panic]
+fn test_insufficient_output() {
+    StaticAssertion::assert("123 45 6".as_bytes(), "123 45".as_bytes())
+}
+#[test]
+#[should_panic]
+fn test_too_many_output() {
+    StaticAssertion::assert("123 45".as_bytes(), "123 45 6".as_bytes())
+}

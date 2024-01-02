@@ -1,9 +1,6 @@
 //! # Miller-Rabin素数判定法
 //! ここでは、$2^{64} - 1$ 以下の数について、決定的アルゴリズムとして扱う
 //!
-//! ## dependency
-//! [モンゴメリ乗算](montgomery_multiplication_64)
-//!
 use crate::algebra::montgomery_multiplication_64::MontgomeryReduction;
 
 #[codesnip::entry("miller-rabin", include("montgomery-multiplication"))]

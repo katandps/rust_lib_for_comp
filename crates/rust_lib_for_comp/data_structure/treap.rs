@@ -1,18 +1,17 @@
 //! # Treap
 //! 乱数を利用して平衡を保つ二分探索木 Tree + Heap
 //!
-//! ## dependency
-//! [xor-shift](xor_shift::XorShift)
-
 use crate::algo::xor_shift::XorShift;
-use crate::prelude::*;
 
 #[codesnip::entry("treap")]
 pub use treap_impl::{Treap, TreapSet};
-#[codesnip::entry("treap", include("xor-shift", "prelude"))]
+#[codesnip::entry("treap", include("xor-shift"))]
 mod treap_impl {
-
-    use super::{swap, Debug, Display, Formatter, FromIterator, Ordering, XorShift};
+    use super::XorShift;
+    use std::cmp::Ordering;
+    use std::fmt::{Debug, Display, Formatter};
+    use std::iter::FromIterator;
+    use std::mem::swap;
 
     #[derive(Default, Clone, Debug)]
     pub struct Treap<K, V> {

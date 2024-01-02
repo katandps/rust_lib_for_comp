@@ -119,7 +119,7 @@ macro_rules! define_verify {
                         #[cfg_attr(feature = "verify_doc", doc(alias = "verify"))]
                         #ast
                         #[test]
-                        #[ignore]
+                        // #[ignore]
                         fn #verify_name() {
                             let target = ::std::module_path!().to_string() + "::" + &::std::stringify!(#verify_name);
                             let _ = ::verify::init_logger(target.to_string());

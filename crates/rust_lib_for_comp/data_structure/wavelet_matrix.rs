@@ -2,9 +2,6 @@
 //! ## 概要
 //! 正整数列について、構築$O(N\log V)$で$O(\log V)$ or $O(\log^2 V)$のクエリを提供する
 //!
-//! ## dependencies
-//! [完備辞書](succinct_indexable_dictionaries)
-//!
 //! ## 計算量
 //! - 構築: $O(N \log V)$
 //! - クエリ: $O( \log^2 V)$

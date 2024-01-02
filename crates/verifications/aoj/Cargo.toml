@@ -12,3 +12,8 @@ path = "lib.rs"
 [dependencies]
 rust_lib_for_comp = { path = "../../rust_lib_for_comp" }
 verify = { path = "../../tools/verify" }
+
+[features]
+default = []
+verify_doc = []
+verify_test = []

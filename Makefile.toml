@@ -40,7 +40,7 @@ description = "Run unit tests with coverage"
 toolchain = "nightly"
 command = "cargo"
 category = "Coverage"
-args = ["llvm-cov", "--doctests", "--lcov", "--output-path", "lcov.info"]
+args = ["llvm-cov", "--lcov", "--output-path", "lcov.info"]
 
 [tasks.snippet]
 env = { SNIPPETS_DIR = "../rust_cp_workspace/.vscode", SNIPPETS_FILE = "libraries", SNIPPETS_SUFFIX = "code-snippets" }
