@@ -59,7 +59,14 @@ description = "Generate rustdoc with KATEX"
 command = "cargo"
 toolchain = "nightly"
 category = "Documentation"
-args = ["doc", "--no-deps", "-Zunstable-options", "-Zrustdoc-scrape-examples"]
+args = [
+	"doc",
+	"--no-deps",
+	"-Zunstable-options",
+	"-Zrustdoc-scrape-examples",
+	"--features",
+	"verify_result",
+]
 
 [tasks.refresh-dropbox-token]
 description = "Refresh local dropbox token"
@@ -75,11 +82,23 @@ script = '''
 [tasks.verify-download]
 description = "download verification problems"
 dependencies = ["refresh-dropbox-token"]
+command = "cargo"
 category = "Verification"
-script = '''
-	export DROPBOX_TOKEN=$(cat dropbox_token)
-	competitive-verifier download --verify-json ${VERIFY_DIR}/${VERIFY_FILE}
-'''
+args = [
+	"test",
+	"--features",
+	"fetch_testcases",
+	"--",
+	"--test-threads=1",
+	"--ignored",
+]
+
+[tasks.verify]
+description = "verify problems"
+dependencies = ["refresh-dropbox-token"]
+command = "cargo"
+category = "Verification"
+args = ["test", "--features", "verify", "--", "--ignored"]
 
 [tasks.verify-list]
 description = "list problem to verify"
@@ -93,14 +112,6 @@ description = "resolve A verification by oj-resolve"
 category = "Verification"
 script = '''
 	competitive-verifier oj-resolve --include *${@}* > ${VERIFY_DIR}/${VERIFY_FILE}
-'''
-
-[tasks.verify]
-description = "verify problems"
-dependencies = ["verify-resolve", "verify-download"]
-category = "Verification"
-script = '''
-    competitive-verifier verify --verify-json ${VERIFY_DIR}/${VERIFY_FILE} --output ${VERIFY_DIR}/${VERIFY_RESULT_FILE}
 '''
 
 [tasks.verify-doc]

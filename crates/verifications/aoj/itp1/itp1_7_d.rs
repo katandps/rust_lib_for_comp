@@ -3,7 +3,7 @@
 use rust_lib_for_comp::algebra::matrix::Matrix;
 use rust_lib_for_comp::util::io_util::*;
 
-#[verify::aizu_online_judge("ITP1_7_D")]
+//#[verify::aizu_online_judge("ITP1_7_D")]
 pub fn itp1_7_d(read: impl std::io::Read, mut write: impl std::io::Write) {
     let mut reader = ReadHelper::new(read);
     let (n, m, l) = reader.v3::<usize, usize, usize>();

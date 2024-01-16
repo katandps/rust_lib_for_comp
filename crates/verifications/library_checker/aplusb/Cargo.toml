@@ -11,3 +11,8 @@ string_util = { path = "../../../crates/util/string_util" }
 [[bin]]
 name = "library_checker_solver_aplusb"
 path = "main.rs"
+
+[features]
+fetch_testcases = []
+verify = []
+verify_result = []

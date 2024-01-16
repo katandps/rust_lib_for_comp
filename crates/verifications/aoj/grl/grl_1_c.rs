@@ -5,7 +5,7 @@ use rust_lib_for_comp::graph::warshall_floyd::WarshallFloyd;
 use rust_lib_for_comp::util::io_util::*;
 use rust_lib_for_comp::util::string_util::*;
 
-#[verify::aizu_online_judge("GRL_1_C")]
+//#[verify::aizu_online_judge("GRL_1_C")]
 pub fn grl_1_c(read: impl std::io::Read, mut write: impl std::io::Write) {
     let mut reader = ReadHelper::new(read);
     let (v, e) = reader.v2::<usize, usize>();

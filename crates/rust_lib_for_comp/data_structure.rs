@@ -25,3 +25,4 @@ pub mod succinct_indexable_dictionaries;
 pub mod treap;
 pub mod union_find;
 pub mod wavelet_matrix;
+pub mod weighted_union_find;

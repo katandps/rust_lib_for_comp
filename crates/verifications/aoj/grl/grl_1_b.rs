@@ -4,7 +4,7 @@ use rust_lib_for_comp::graph::adjacency_list::Graph;
 use rust_lib_for_comp::graph::bellman_ford::bellman_ford;
 use rust_lib_for_comp::util::io_util::*;
 
-#[verify::aizu_online_judge("GRL_1_B")]
+//#[verify::aizu_online_judge("GRL_1_B")]
 pub fn grl_1_b(read: impl std::io::Read, mut write: impl std::io::Write) {
     let mut reader = ReadHelper::new(read);
     let (v, e, r) = reader.v3::<usize, usize, usize>();

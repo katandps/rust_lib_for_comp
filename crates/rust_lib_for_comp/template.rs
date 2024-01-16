@@ -13,6 +13,8 @@ use crate::util::io_util::*;
         "algebra",
         "chmin",
         "chmax",
+        "chclamp",
+        "clamp",
         "range-traits",
         "faster-hashmap",
         "string-util",

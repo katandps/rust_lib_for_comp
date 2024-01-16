@@ -3,7 +3,7 @@
 use rust_lib_for_comp::flow::primal_dual::*;
 use rust_lib_for_comp::util::io_util::*;
 
-#[verify::aizu_online_judge("GRL_6_B")]
+//#[verify::aizu_online_judge("GRL_6_B")]
 pub fn grl_6_b(read: impl std::io::Read, mut write: impl std::io::Write) {
     let mut reader = ReadHelper::new(read);
     let (v, e, f) = reader.v3::<usize, usize, i64>();

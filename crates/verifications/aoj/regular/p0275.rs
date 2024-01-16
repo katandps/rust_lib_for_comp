@@ -6,7 +6,7 @@ use rust_lib_for_comp::graph::{
 use rust_lib_for_comp::util::io_util::*;
 use rust_lib_for_comp::util::string_util::*;
 
-#[verify::aizu_online_judge("0275")]
+//#[verify::aizu_online_judge("0275")]
 pub fn p0275(read: impl std::io::Read, mut write: impl std::io::Write) {
     let mut reader = ReadHelper::new(read);
     let (s, r) = reader.v2::<usize, usize>();

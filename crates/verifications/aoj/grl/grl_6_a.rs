@@ -3,7 +3,7 @@
 use rust_lib_for_comp::flow::dinic::*;
 use rust_lib_for_comp::util::io_util::*;
 
-#[verify::aizu_online_judge("GRL_6_A")]
+//#[verify::aizu_online_judge("GRL_6_A")]
 pub fn grl_6_a(read: impl std::io::Read, mut write: impl std::io::Write) {
     let mut reader = ReadHelper::new(read);
     let (v, e) = reader.v2::<usize, usize>();

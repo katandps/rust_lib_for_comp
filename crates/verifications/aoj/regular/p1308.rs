@@ -3,7 +3,7 @@
 use rust_lib_for_comp::data_structure::bit_matrix::BitMatrix;
 use rust_lib_for_comp::util::io_util::*;
 
-#[verify::aizu_online_judge("1308")]
+//#[verify::aizu_online_judge("1308")]
 pub fn p1308(read: impl std::io::Read, mut write: impl std::io::Write) {
     let mut reader = ReadHelper::new(read);
     loop {

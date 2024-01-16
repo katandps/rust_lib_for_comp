@@ -6,8 +6,6 @@ members = [
     # 'verifications/library_checker/*',
     # 'verifications/yukicoder/*',
     'crates/benches/*',
-    'crates/tools/verify',
-    'crates/tools/verify_attr',
 ]
 resolver = "2"
 

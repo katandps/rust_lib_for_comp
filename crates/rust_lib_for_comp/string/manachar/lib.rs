@@ -4,9 +4,9 @@
 //! $O(N)$
 
 use crate::prelude::*;
-#[codesnip::entry("manachar", doc_hidden)]
+#[codesnip::entry("manachar")]
 pub use manachar_impl::Manachar;
-#[codesnip::entry("manachar", doc_hidden)]
+#[codesnip::entry("manachar")]
 mod manachar_impl {
     use super::Debug;
     pub struct Manachar;

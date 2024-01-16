@@ -70,10 +70,27 @@ macro_rules! chmax {
     };
 }
 
-#[allow(unused_imports)]
-pub(crate) use {chmax, chmin, max, min};
+#[codesnip::entry("clamp", include("min", "max"))]
+#[allow(unused_macros)]
+#[macro_export]
+macro_rules! clamp {
+    ($base: expr, $lower_bound: expr, $upper_bound: expr) => {
+        max!($lower_bound, min!($upper_bound, $base))
+    };
+}
 
-#[cfg(test)]
+#[codesnip::entry("chclamp", include("min", "max"))]
+#[allow(unused_macros)]
+#[macro_export]
+macro_rules! chclamp {
+    ($base: expr, $lower_bound: expr, $upper_bound: expr) => {
+        chmin!($base, $upper_bound) || chmax!($base, $lower_bound)
+    };
+}
+
+#[allow(unused_imports)]
+pub(crate) use {chclamp, chmax, chmin, clamp, max, min};
+
 #[test]
 fn test() {
     // min
@@ -107,4 +124,26 @@ fn test() {
     let changed = chmax!(ans, 0.50, 0.51, 0.50 + 0.1);
     assert_eq!(ans, 0.6);
     assert!(changed);
+}
+
+#[test]
+fn test_clamp() {
+    assert_eq!(100, clamp!(200, 0, 100));
+    assert_eq!(0, clamp!(-100, 0, 100));
+    assert_eq!(50, clamp!(50, 0, 100));
+
+    let mut val = 200;
+    let b = chclamp!(val, 0, 100);
+    assert!(b);
+    assert_eq!(val, 100);
+
+    let mut val = -100;
+    let b = chclamp!(val, 0, 100);
+    assert!(b);
+    assert_eq!(val, 0);
+
+    let mut val = 50;
+    let b = chclamp!(val, 0, 100);
+    assert!(!b);
+    assert_eq!(val, 50);
 }

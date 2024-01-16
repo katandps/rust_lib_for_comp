@@ -11,9 +11,9 @@ path = "lib.rs"
 
 [dependencies]
 rust_lib_for_comp = { path = "../../rust_lib_for_comp" }
-verify = { path = "../../tools/verify" }
+verify = { git = "https://github.com/katandps/rust_judge" }
 
 [features]
-default = []
-verify_doc = []
-verify_test = []
+fetch_testcases = []
+verify = []
+verify_result = []
