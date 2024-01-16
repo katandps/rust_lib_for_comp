@@ -1644,7 +1644,6 @@ checksum = "f1bddf1187be692e79c5ffeab891132dfb0f236ed36a43c7ed39f1165ee20191"
 [[package]]
 name = "verify"
 version = "0.1.0"
-source = "git+https://github.com/katandps/rust_judge#e52cf5a190b9444754bae2f5939dee0b8579b3e3"
 dependencies = [
  "verify_attr",
  "verify_core",
@@ -1653,7 +1652,6 @@ dependencies = [
 [[package]]
 name = "verify_attr"
 version = "0.1.0"
-source = "git+https://github.com/katandps/rust_judge#e52cf5a190b9444754bae2f5939dee0b8579b3e3"
 dependencies = [
  "proc-macro2",
  "quote",
@@ -1664,7 +1662,6 @@ dependencies = [
 [[package]]
 name = "verify_core"
 version = "0.1.0"
-source = "git+https://github.com/katandps/rust_judge#e52cf5a190b9444754bae2f5939dee0b8579b3e3"
 dependencies = [
  "anyhow",
  "dirs",

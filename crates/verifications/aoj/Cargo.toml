@@ -11,7 +11,8 @@ path = "lib.rs"
 
 [dependencies]
 rust_lib_for_comp = { path = "../../rust_lib_for_comp" }
-verify = { git = "https://github.com/katandps/rust_judge" }
+# verify = { git = "https://github.com/katandps/rust_judge" }
+verify = { path = "../../../../rust_judge/crates/verify" }
 
 [features]
 fetch_testcases = []
