@@ -1,0 +1,19 @@
+[package]
+name = "library_checker_solvers"
+version = "0.1.0"
+edition = "2018"
+
+[lib]
+doctest = false
+bench = false
+doc-scrape-examples = true
+path = "lib.rs"
+
+[dependencies]
+rust_lib_for_comp = { path = "../../rust_lib_for_comp" }
+verify = { path = "../../../../rust_judge/crates/verify" }
+
+[features]
+fetch_testcases = []
+verify = []
+verify_result = []
