@@ -15,7 +15,6 @@ impl verify::Solver for APlusB {
 }
 #[test]
 fn test() {
-    use verify::StaticAssertion;
-    StaticAssertion::equals::<APlusB>("1234 5678", "6912");
-    StaticAssertion::equals::<APlusB>("1000000000 1000000000", "2000000000");
+    APlusB::assert("1234 5678", "6912");
+    APlusB::assert("1000000000 1000000000", "2000000000");
 }
