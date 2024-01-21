@@ -6,7 +6,7 @@ use verify::{LibraryChecker, Solver};
 #[derive(LibraryChecker)]
 pub struct SuffixArraySolver;
 impl verify::Solver for SuffixArraySolver {
-    const PROBLEM_ID: &'static str = "scc";
+    const PROBLEM_ID: &'static str = "suffixarray";
     const TIME_LIMIT_MILLIS: u64 = 5000;
     fn solve(read: impl std::io::Read, mut write: impl std::io::Write) {
         let mut reader = ReadHelper::new(read);
