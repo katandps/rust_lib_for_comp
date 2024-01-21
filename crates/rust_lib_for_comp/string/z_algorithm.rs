@@ -3,9 +3,7 @@
 //! ## 計算量
 //! $O(N)$
 
-use crate::prelude::*;
-
-#[codesnip::entry("z-algorithm", doc_hidden)]
+#[codesnip::entry("z-algorithm")]
 pub fn z(src: &[char]) -> Vec<usize> {
     let mut c = 0;
     let n = src.len();

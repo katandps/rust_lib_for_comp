@@ -3,9 +3,7 @@
 //! ## 計算量
 //! $O(N)$
 
-use crate::prelude::*;
-
-#[codesnip::entry("run-length-encoding", doc_hidden)]
+#[codesnip::entry("run-length-encoding")]
 pub fn encode(s: &[char]) -> Vec<char> {
     let mut cur = '-';
     let mut cnt = 0;

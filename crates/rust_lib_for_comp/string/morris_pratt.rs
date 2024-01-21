@@ -4,9 +4,8 @@
 //! 先頭から各iまでの文字列について、接頭辞と接尾辞が何文字一致しているかをborderと呼ぶ。
 //! この値をならし計算量$O(N)$ですべて求める。
 //!
-use crate::prelude::*;
 
-#[codesnip::entry("morris-pratt", doc_hidden)]
+#[codesnip::entry("morris-pratt")]
 pub fn border<T: PartialEq>(src: &[T]) -> Vec<i64> {
     let mut ret = vec![0; src.len() + 1];
     ret[0] = -1;

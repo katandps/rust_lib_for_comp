@@ -1,11 +1,11 @@
 //! 接尾辞配列
 
+use crate::algo::compress::Compress;
 use crate::prelude::*;
-use compress::Compress;
 
-#[codesnip::entry("suffix-array", doc_hidden)]
+#[codesnip::entry("suffix-array")]
 pub use suffix_array_impl::SuffixArray;
-#[codesnip::entry("suffix-array", doc_hidden)]
+#[codesnip::entry("suffix-array")]
 mod suffix_array_impl {
     use super::{BTreeMap, Compress, Index};
 

@@ -1,50 +1,49 @@
-// // verification-helper: PROBLEM https://judge.yosupo.jp/problem/scc
-// #![cfg_attr(coverage_nightly, feature(coverage_attribute))]
-// #[cfg_attr(coverage_nightly, coverage(off))]
-// fn main() {
-//     solve(io_util::IO::default());
-// }
-// use adjacency_list::Graph;
-// use directed_acyclic_graph::Dag;
-// use io_util::*;
-// use string_util::*;
-// use strongly_connected_components::SCC;
+use rust_lib_for_comp::graph::directed_acyclic_graph::Dag;
+use rust_lib_for_comp::graph::strongly_connected_components::SCC;
+use rust_lib_for_comp::util::string_util::JoinTrait;
+use rust_lib_for_comp::{graph::adjacency_list::Graph, util::io_util::*};
+use verify::{LibraryChecker, Solver};
 
-// pub fn solve<IO: ReaderTrait + WriterTrait>(mut io: IO) {
-//     let (n, m) = io.v2::<usize, usize>();
-//     let ab = io.vec2::<usize, usize>(m);
-//     let mut graph = Graph::new(n);
-//     for (a, b) in ab {
-//         graph.add_arc(a, b, 1);
-//     }
-//     let scc = SCC::build(&graph);
-//     scc.graph.topological_sort();
-//     io.out(scc.n.line());
-//     let mut ans = vec![Vec::new(); scc.n];
-//     for i in 0..n {
-//         ans[scc.group[i]].push(i);
-//     }
-//     for v in ans {
-//         io.out(format!("{} {}\n", v.len(), v.join(" ")));
-//     }
-//     io.flush();
-// }
-
-// #[test]
-// fn test() {
-//     solve(io_debug::IODebug::static_assert(
-//         "6 7
-//         1 4
-//         5 2
-//         3 0
-//         5 5
-//         4 1
-//         0 3
-//         4 2",
-//         "4
-//         1 5
-//         2 1 4
-//         1 2
-//         2 0 3",
-//     ))
-// }
+#[derive(LibraryChecker)]
+pub struct StronglyConnectedComponents;
+impl verify::Solver for StronglyConnectedComponents {
+    const PROBLEM_ID: &'static str = "scc";
+    const TIME_LIMIT_MILLIS: u64 = 5000;
+    fn solve(read: impl std::io::Read, mut write: impl std::io::Write) {
+        let mut reader = ReadHelper::new(read);
+        let (n, m) = reader.v2::<usize, usize>();
+        let ab = reader.vec2::<usize, usize>(m);
+        let mut graph = Graph::new(n);
+        for (a, b) in ab {
+            graph.add_arc(a, b, 1);
+        }
+        let scc = SCC::build(&graph);
+        scc.graph.topological_sort();
+        writeln!(write, "{}", scc.n).ok();
+        let mut ans = vec![Vec::new(); scc.n];
+        for i in 0..n {
+            ans[scc.group[i]].push(i);
+        }
+        for v in ans {
+            writeln!(write, "{} {}", v.len(), v.join(" ")).ok();
+        }
+    }
+}
+#[test]
+fn test() {
+    StronglyConnectedComponents::assert(
+        "6 7
+        1 4
+        5 2
+        3 0
+        5 5
+        4 1
+        0 3
+        4 2",
+        "4
+        1 5
+        2 1 4
+        1 2
+        2 0 3",
+    );
+}

@@ -61,7 +61,7 @@ mod test {
     #[test]
     fn test_empty() {
         let empty = vec![1];
-        assert_eq!(Manachar::manachar(&empty[0..0]), Vec::new());
+        assert_eq!(Manachar::manachar(&empty[0..0]), Vec::<usize>::new());
     }
 
     #[test]

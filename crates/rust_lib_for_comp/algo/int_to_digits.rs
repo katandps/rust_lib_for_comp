@@ -1,7 +1,7 @@
 //! # 桁分割
 //! 整数を10進数として桁ごとの値がはいったvecに変換する
 
-#[codesnip::entry("int-to-digits", doc_hidden)]
+#[codesnip::entry("int-to-digits")]
 pub fn int_to_digits(mut n: usize) -> Vec<usize> {
     let mut ret = Vec::new();
     if n == 0 {

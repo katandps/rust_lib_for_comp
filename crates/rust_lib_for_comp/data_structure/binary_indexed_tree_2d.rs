@@ -57,7 +57,7 @@ impl<A: AbelianGroup> BinaryIndexedTree2<A> {
     }
 }
 
-#[codesnip::entry("binary-indexed-tree-2d", doc_hidden)]
+#[codesnip::entry("binary-indexed-tree-2d")]
 impl<A: AbelianGroup> Debug for BinaryIndexedTree2<A>
 where
     A::M: Debug,

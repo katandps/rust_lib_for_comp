@@ -3,14 +3,14 @@
 //!
 //! ## verify
 //! [047 - Monochromatic Diagonal](https://atcoder.jp/contests/typical90/submissions/31161891)
+use crate::algebra::mod_int::mod_int_64bit::ModInt64;
+use crate::algebra::Zero;
+use crate::algo::xor_shift::XorShift;
 use crate::prelude::*;
-use algebra::Zero;
-use mod_int_64bit::ModInt64;
-use xor_shift::XorShift;
 
-#[codesnip::entry("rolling-hash", doc_hidden)]
+#[codesnip::entry("rolling-hash")]
 pub use rolling_hash_impl::RollingHash;
-#[codesnip::entry("rolling-hash", doc_hidden)]
+#[codesnip::entry("rolling-hash", include("mod-int-64bit", "algebra", "xor-shift"))]
 mod rolling_hash_impl {
     use super::{Add, Debug, ModInt64, Sub, XorShift, Zero};
     use std::sync::OnceLock;
@@ -105,7 +105,7 @@ mod rolling_hash_impl {
     }
 
     impl Debug for RollingHash {
-        fn fmt(&self, f: &mut prelude::Formatter<'_>) -> std::fmt::Result {
+        fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
             write!(f, "hash:{}, len:{}", self.hash, self.len)
         }
     }

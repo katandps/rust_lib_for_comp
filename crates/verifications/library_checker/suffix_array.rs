@@ -1,30 +1,24 @@
-// // verification-helper: PROBLEM https://judge.yosupo.jp/problem/suffixarray
-// #![cfg_attr(coverage_nightly, feature(coverage_attribute))]
-// #[cfg_attr(coverage_nightly, coverage(off))]
-// fn main() {
-//     solve(io_util::IO::default());
-// }
-// use io_util::*;
-// use string_util::*;
-// use suffix_array::*;
+use rust_lib_for_comp::string::suffix_array::SuffixArray;
+use rust_lib_for_comp::util::io_util::{ReadHelper, ReaderTrait};
+use rust_lib_for_comp::util::string_util::JoinTrait;
+use verify::{LibraryChecker, Solver};
 
-// pub fn solve<IO: ReaderTrait + WriterTrait>(mut io: IO) {
-//     let s = io.lowercase();
-//     let result = SuffixArray::build(&s);
-//     io.out(result.sa[1..].join(" ").line());
-//     io.flush();
-// }
-
-// #[test]
-// fn test() {
-//     solve(io_debug::IODebug::static_assert("abcbcba", "6 0 5 3 1 4 2"));
-//     solve(io_debug::IODebug::static_assert(
-//         "mississippi",
-//         "10 7 4 1 0 9 8 6 3 5 2",
-//     ));
-//     solve(io_debug::IODebug::static_assert(
-//         "ababacaca",
-//         "8 0 2 6 4 1 3 7 5",
-//     ));
-//     solve(io_debug::IODebug::static_assert("aaaaa", "4 3 2 1 0"))
-// }
+#[derive(LibraryChecker)]
+pub struct SuffixArraySolver;
+impl verify::Solver for SuffixArraySolver {
+    const PROBLEM_ID: &'static str = "scc";
+    const TIME_LIMIT_MILLIS: u64 = 5000;
+    fn solve(read: impl std::io::Read, mut write: impl std::io::Write) {
+        let mut reader = ReadHelper::new(read);
+        let s = reader.lowercase();
+        let result = SuffixArray::build(&s);
+        writeln!(write, "{}", result.sa[1..].join(" ")).ok();
+    }
+}
+#[test]
+fn test() {
+    SuffixArraySolver::assert("abcbcba", "6 0 5 3 1 4 2");
+    SuffixArraySolver::assert("mississippi", "10 7 4 1 0 9 8 6 3 5 2");
+    SuffixArraySolver::assert("ababacaca", "8 0 2 6 4 1 3 7 5");
+    SuffixArraySolver::assert("aaaaa", "4 3 2 1 0");
+}

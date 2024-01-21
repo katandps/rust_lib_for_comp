@@ -101,27 +101,8 @@ command = "cargo"
 category = "Verification"
 args = ["test", "--features", "verify", "--", "--ignored"]
 
-[tasks.verify-list]
-description = "list problem to verify"
-install_crate = "cargo-workspaces"
-category = "Verification"
-command = "cargo"
-args = ["check", "--bin"]
-
-[tasks.verify-resolve]
-description = "resolve A verification by oj-resolve"
-category = "Verification"
-script = '''
-	competitive-verifier oj-resolve --include *${@}* > ${VERIFY_DIR}/${VERIFY_FILE}
-'''
-
-[tasks.verify-doc]
-description = "build verify docs by result"
-category = "Verification"
-script = '''
-    competitive-verifier docs --verify-json ${VERIFY_DIR}/${VERIFY_FILE} ${VERIFY_DIR}/${VERIFY_RESULT_FILE}
-    cd .competitive-verifier/_jekyll && bundle add webrick && bundle exec jekyll serve --incremental
-'''
+[tasks.verify-run]
+dependencies = ["verify-download", "verify"]
 
 [tasks.codesnip-cache]
 script = '''

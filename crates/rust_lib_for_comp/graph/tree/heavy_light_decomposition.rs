@@ -9,9 +9,9 @@ use crate::graph::GraphTrait;
 use crate::prelude::*;
 use crate::range_traits::*;
 
-#[codesnip::entry("heavy-light-decomposition", doc_hidden)]
+#[codesnip::entry("heavy-light-decomposition")]
 pub use heavy_light_decomposition_impl::HLDecomposition;
-#[codesnip::entry("heavy-light-decomposition", doc_hidden)]
+#[codesnip::entry("heavy-light-decomposition")]
 mod heavy_light_decomposition_impl {
     use super::{swap, GraphTrait, Monoid, PointUpdate, Range, RangeProduct, SegmentTree};
 

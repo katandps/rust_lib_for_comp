@@ -6,7 +6,7 @@
 
 use crate::prelude::*;
 
-#[codesnip::entry("longest-increasing-subsequence", doc_hidden)]
+#[codesnip::entry("longest-increasing-subsequence")]
 #[derive(Debug, Clone)]
 pub struct LIS {
     n: usize,
@@ -14,7 +14,7 @@ pub struct LIS {
     stack: VecDeque<(usize, i64)>,
 }
 
-#[codesnip::entry("longest-increasing-subsequence", doc_hidden)]
+#[codesnip::entry("longest-increasing-subsequence")]
 impl LIS {
     const INF: i64 = 1 << 60;
     pub fn new(n: usize) -> LIS {

@@ -5,6 +5,7 @@ pub mod bitwise_xor_convolution;
 pub mod cartesian_tree;
 pub mod convolution;
 pub mod cycle_detection;
+pub mod cycle_detection_undirected;
 pub mod strongly_connected_components;
 pub mod suffix_array;
 pub mod sum_of_floor_of_linear;

@@ -1,10 +1,10 @@
 //! LCP配列 Longest Common Prefix Array
+use super::suffix_array::SuffixArray;
 use crate::prelude::*;
-use suffix_array::SuffixArray;
 
-#[codesnip::entry("longest-common-prefix-array", doc_hidden)]
+#[codesnip::entry("longest-common-prefix-array")]
 pub use longest_common_prefix_array_impl::LCPArray;
-#[codesnip::entry("longest-common-prefix-array", doc_hidden)]
+#[codesnip::entry("longest-common-prefix-array", include("suffix-array"))]
 mod longest_common_prefix_array_impl {
     use super::{Index, SuffixArray};
 
