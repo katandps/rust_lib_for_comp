@@ -1,54 +1,54 @@
-// verification-helper: PROBLEM https://judge.yosupo.jp/problem/predecessor_problem
-#![cfg_attr(coverage_nightly, feature(coverage_attribute))]
-#[cfg_attr(coverage_nightly, coverage(off))]
-fn main() {
-    solve(io_util::IO::default());
-}
-use complete_64_part_tree::Complete64PartTree;
-use io_util::*;
-use string_util::*;
+use rust_lib_for_comp::{
+    data_structure::complete_64_part_tree::Complete64PartTree, util::io_util::*,
+};
+use verify::{LibraryChecker, Solver};
 
-pub fn solve<IO: ReaderTrait + WriterTrait>(mut io: IO) {
-    let (_n, q) = io.v2::<usize, usize>();
-    let mut tree = Complete64PartTree::build(10000000);
-    let t = io.digits();
-    for (i, ti) in t.iter().enumerate() {
-        if *ti == 1 {
-            tree.insert(i as u64);
-        }
-    }
-    for _ in 0..q {
-        let (c, k) = io.v2::<usize, u64>();
-        if c == 0 {
-            tree.insert(k);
-        } else if c == 1 {
-            tree.remove(k);
-        } else if c == 2 {
-            io.out(usize::from(tree.contains(k)).line())
-        } else if c == 3 {
-            if tree.contains(k) {
-                io.out(k.line())
-            } else if let Some(ans) = tree.next(k) {
-                io.out(ans.line())
-            } else {
-                io.out((-1).line())
-            }
-        } else if c == 4 {
-            if tree.contains(k) {
-                io.out(k.line())
-            } else if let Some(ans) = tree.prev(k) {
-                io.out(ans.line())
-            } else {
-                io.out((-1).line())
+#[derive(LibraryChecker)]
+pub struct PredecessorProblemWAryTree;
+impl verify::Solver for PredecessorProblemWAryTree {
+    const PROBLEM_ID: &'static str = "predecessor_problem";
+    const TIME_LIMIT_MILLIS: u64 = 5000;
+    fn solve(read: impl std::io::Read, mut write: impl std::io::Write) {
+        let mut reader = ReadHelper::new(read);
+        let (_n, q) = reader.v2::<usize, usize>();
+        let mut tree = Complete64PartTree::build(10000000);
+        let t = reader.digits();
+        for (i, ti) in t.iter().enumerate() {
+            if *ti == 1 {
+                tree.insert(i as u64);
             }
         }
+        for _ in 0..q {
+            let (c, k) = reader.v2::<usize, u64>();
+            if c == 0 {
+                tree.insert(k);
+            } else if c == 1 {
+                tree.remove(k);
+            } else if c == 2 {
+                writeln!(write, "{}", usize::from(tree.contains(k))).ok();
+            } else if c == 3 {
+                if tree.contains(k) {
+                    writeln!(write, "{k}").ok();
+                } else if let Some(ans) = tree.next(k) {
+                    writeln!(write, "{ans}").ok();
+                } else {
+                    writeln!(write, "-1").ok();
+                }
+            } else if c == 4 {
+                if tree.contains(k) {
+                    writeln!(write, "{k}").ok();
+                } else if let Some(ans) = tree.prev(k) {
+                    writeln!(write, "{ans}").ok();
+                } else {
+                    writeln!(write, "-1").ok();
+                }
+            }
+        }
     }
-    io.flush();
 }
-
 #[test]
 fn test() {
-    solve(io_debug::IODebug::static_assert(
+    PredecessorProblemWAryTree::assert(
         "6 9
         010101
         3 3
@@ -67,5 +67,5 @@ fn test() {
         0
         4
         1",
-    ));
+    );
 }

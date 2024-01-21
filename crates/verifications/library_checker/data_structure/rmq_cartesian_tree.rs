@@ -1,29 +1,29 @@
-// verification-helper: PROBLEM https://judge.yosupo.jp/problem/staticrmq
-#![cfg_attr(coverage_nightly, feature(coverage_attribute))]
-#[cfg_attr(coverage_nightly, coverage(off))]
-fn main() {
-    solve(io_util::IO::default());
-}
-use cartesian_tree::CartesianTree;
-use io_util::*;
-use lowest_common_ancestor::LowestCommonAncestor;
-use string_util::*;
+use rust_lib_for_comp::{
+    graph::tree::{cartesian_tree::CartesianTree, lowest_common_ancestor::LowestCommonAncestor},
+    util::io_util::*,
+};
+use verify::{LibraryChecker, Solver};
 
-pub fn solve<IO: ReaderTrait + WriterTrait>(mut io: IO) {
-    let (n, q) = io.v2::<usize, usize>();
-    let a = io.vec::<i64>(n);
-    let ct = CartesianTree::build(&a);
-    let lca = LowestCommonAncestor::new(&ct.graph, ct.root);
-    for _ in 0..q {
-        let (l, r) = io.v2::<usize, usize>();
-        io.out(a[lca.query(l, r - 1)].line());
+#[derive(LibraryChecker)]
+pub struct StaticRMQCartesianTree;
+impl verify::Solver for StaticRMQCartesianTree {
+    const PROBLEM_ID: &'static str = "staticrmq";
+    const TIME_LIMIT_MILLIS: u64 = 5000;
+    fn solve(read: impl std::io::Read, mut write: impl std::io::Write) {
+        let mut reader = ReadHelper::new(read);
+        let (n, q) = reader.v2::<usize, usize>();
+        let a = reader.vec::<i64>(n);
+        let ct = CartesianTree::build(&a);
+        let lca = LowestCommonAncestor::new(&ct.graph, ct.root);
+        for _ in 0..q {
+            let (l, r) = reader.v2::<usize, usize>();
+            writeln!(write, "{}", a[lca.query(l, r - 1)]).ok();
+        }
     }
-    io.flush();
 }
-
 #[test]
 fn test() {
-    solve(io_debug::IODebug::static_assert(
+    StaticRMQCartesianTree::assert(
         "4 10
         2 10 1 100
         0 1
@@ -46,5 +46,5 @@ fn test() {
         1
         1
         100",
-    ))
+    );
 }

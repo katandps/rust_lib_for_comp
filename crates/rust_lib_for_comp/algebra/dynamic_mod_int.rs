@@ -4,7 +4,7 @@
 use crate::algebra::*;
 
 #[codesnip::entry("dynamic-mod-int", include("algebra"))]
-pub use dynamic_mod_int_impl::ModInt;
+pub use dynamic_mod_int_impl::DynamicModInt;
 #[codesnip::entry("dynamic-mod-int", include("algebra"))]
 mod dynamic_mod_int_impl {
     use std::num::ParseIntError;
@@ -18,9 +18,9 @@ mod dynamic_mod_int_impl {
     static MOD: OnceLock<u32> = OnceLock::new();
 
     #[derive(Copy, Clone, Eq, PartialEq, Default, Hash)]
-    pub struct ModInt(u32);
+    pub struct DynamicModInt(u32);
 
-    impl ModInt {
+    impl DynamicModInt {
         #[inline]
         fn get_mod() -> u32 {
             *MOD.get().expect("uninitialized mod int")
@@ -96,77 +96,77 @@ mod dynamic_mod_int_impl {
     /// # 累乗
     /// ## 計算量
     /// $M$を法として $ O(\log M) $
-    impl Pow for ModInt {
+    impl Pow for DynamicModInt {
         #[inline]
         fn pow(self, e: i64) -> Self {
             Self::pow(self, e)
         }
     }
-    impl<Rhs: Into<Self>> Add<Rhs> for ModInt {
+    impl<Rhs: Into<Self>> Add<Rhs> for DynamicModInt {
         type Output = Self;
         #[inline]
         fn add(self, rhs: Rhs) -> Self {
             Self::add(&self, rhs.into())
         }
     }
-    impl<Rhs: Into<Self>> AddAssign<Rhs> for ModInt {
+    impl<Rhs: Into<Self>> AddAssign<Rhs> for DynamicModInt {
         #[inline]
         fn add_assign(&mut self, rhs: Rhs) {
             self.0 = Self::add(self, rhs.into()).0
         }
     }
-    impl Neg for ModInt {
+    impl Neg for DynamicModInt {
         type Output = Self;
         #[inline]
         fn neg(self) -> Self {
             Self::zero() - self
         }
     }
-    impl<Rhs: Into<Self>> Sub<Rhs> for ModInt {
+    impl<Rhs: Into<Self>> Sub<Rhs> for DynamicModInt {
         type Output = Self;
         #[inline]
         fn sub(self, rhs: Rhs) -> Self {
             Self::sub(&self, rhs.into())
         }
     }
-    impl<Rhs: Into<Self>> SubAssign<Rhs> for ModInt {
+    impl<Rhs: Into<Self>> SubAssign<Rhs> for DynamicModInt {
         #[inline]
         fn sub_assign(&mut self, rhs: Rhs) {
             self.0 = Self::sub(self, rhs.into()).0
         }
     }
-    impl<Rhs: Into<Self>> Mul<Rhs> for ModInt {
+    impl<Rhs: Into<Self>> Mul<Rhs> for DynamicModInt {
         type Output = Self;
         #[inline]
         fn mul(self, rhs: Rhs) -> Self {
             Self::mul(&self, rhs.into())
         }
     }
-    impl<Rhs: Into<Self>> MulAssign<Rhs> for ModInt {
+    impl<Rhs: Into<Self>> MulAssign<Rhs> for DynamicModInt {
         #[inline]
         fn mul_assign(&mut self, rhs: Rhs) {
             self.0 = Self::mul(self, rhs.into()).0
         }
     }
-    impl Display for ModInt {
+    impl Display for DynamicModInt {
         #[inline]
         fn fmt(&self, f: &mut Formatter) -> std::fmt::Result {
             write!(f, "{}", self.0)
         }
     }
-    impl Debug for ModInt {
+    impl Debug for DynamicModInt {
         #[inline]
         fn fmt(&self, f: &mut Formatter) -> std::fmt::Result {
             write!(f, "{}", self.0)
         }
     }
-    impl Sum for ModInt {
+    impl Sum for DynamicModInt {
         #[inline]
         fn sum<I: Iterator<Item = Self>>(iter: I) -> Self {
             iter.fold(Self::zero(), |x, a| x + a)
         }
     }
-    impl FromStr for ModInt {
+    impl FromStr for DynamicModInt {
         type Err = ParseIntError;
         #[inline]
         fn from_str(s: &str) -> Result<Self, Self::Err> {
@@ -176,7 +176,7 @@ mod dynamic_mod_int_impl {
     macro_rules! impl_integral {
         ($($ty:ty),*) => {
             $(
-                impl From<$ty> for ModInt {
+                impl From<$ty> for DynamicModInt {
                     #[inline]
                     fn from(i: $ty) -> Self {
                         Self::new(i.rem_euclid(Self::get_mod() as $ty) as u32)
@@ -186,19 +186,19 @@ mod dynamic_mod_int_impl {
         };
     }
     impl_integral!(i32, i64, i128, isize, u32, u64, u128, usize);
-    impl From<ModInt> for i64 {
+    impl From<DynamicModInt> for i64 {
         #[inline]
-        fn from(m: ModInt) -> Self {
+        fn from(m: DynamicModInt) -> Self {
             m.0 as i64
         }
     }
-    impl Zero for ModInt {
+    impl Zero for DynamicModInt {
         #[inline]
         fn zero() -> Self {
             Self::zero()
         }
     }
-    impl One for ModInt {
+    impl One for DynamicModInt {
         #[inline]
         fn one() -> Self {
             Self::one()
@@ -221,29 +221,29 @@ mod test {
             let x: i64 = between.sample_iter(&mut rng).take(1).collect::<Vec<i64>>()[0];
             let y: i64 = between.sample_iter(&mut rng).take(1).collect::<Vec<i64>>()[0];
 
-            let (mx, my) = (ModInt::new(x as u32), ModInt::new(y as u32));
+            let (mx, my) = (DynamicModInt::new(x as u32), DynamicModInt::new(y as u32));
 
-            assert_eq!(ModInt::from((x + y) % MOD), mx + my);
-            assert_eq!(ModInt::from((x + y) % MOD), (mx + y).into());
-            assert_eq!(ModInt::from((x + MOD - y) % MOD), (mx - my).into());
-            assert_eq!(ModInt::from((x + MOD - y) % MOD), (mx - y).into());
+            assert_eq!(DynamicModInt::from((x + y) % MOD), mx + my);
+            assert_eq!(DynamicModInt::from((x + y) % MOD), (mx + y).into());
+            assert_eq!(DynamicModInt::from((x + MOD - y) % MOD), (mx - my).into());
+            assert_eq!(DynamicModInt::from((x + MOD - y) % MOD), (mx - y).into());
 
             let (mut x, mut mx) = (x, mx);
             x += y;
             mx += my;
-            assert_eq!(ModInt::from(x % MOD), mx.into());
+            assert_eq!(DynamicModInt::from(x % MOD), mx.into());
 
             mx += y;
             x += y;
-            assert_eq!(ModInt::from(x % MOD), mx.into());
+            assert_eq!(DynamicModInt::from(x % MOD), mx.into());
 
             mx -= my;
             x = (x + MOD as i64 - y % MOD) % MOD;
-            assert_eq!(ModInt::from(x), mx.into());
+            assert_eq!(DynamicModInt::from(x), mx.into());
 
             mx -= y;
             x = (x + MOD - y % MOD) % MOD;
-            assert_eq!(ModInt::from(x), mx.into());
+            assert_eq!(DynamicModInt::from(x), mx.into());
         }
     }
 
@@ -255,81 +255,84 @@ mod test {
             let x: i64 = between.sample_iter(&mut rng).take(1).collect::<Vec<i64>>()[0];
             let y: i64 = between.sample_iter(&mut rng).take(1).collect::<Vec<i64>>()[0];
 
-            let (mx, my) = (ModInt::new(x as u32), ModInt::new(y as u32));
+            let (mx, my) = (DynamicModInt::new(x as u32), DynamicModInt::new(y as u32));
 
-            assert_eq!(ModInt::from((x * y) % MOD), (mx * my).into());
-            assert_eq!(ModInt::from((x * y) % MOD), (mx * y).into());
+            assert_eq!(DynamicModInt::from((x * y) % MOD), (mx * my).into());
+            assert_eq!(DynamicModInt::from((x * y) % MOD), (mx * y).into());
         }
     }
 
     #[test]
     fn zero_test() {
-        ModInt::set_mod(MOD as u32);
-        let a = ModInt::new(1_000_000_000);
-        let b = ModInt::new(7);
+        DynamicModInt::set_mod(MOD as u32);
+        let a = DynamicModInt::new(1_000_000_000);
+        let b = DynamicModInt::new(7);
         let c = a + b;
         assert_eq!(c.reduce(), 0);
     }
 
     #[test]
     fn pow_test() {
-        ModInt::set_mod(MOD as u32);
-        let a = ModInt::new(3);
+        DynamicModInt::set_mod(MOD as u32);
+        let a = DynamicModInt::new(3);
         let a = a.pow(4);
         assert_eq!(a.reduce(), 81);
     }
 
     #[test]
     fn neg_test() {
-        ModInt::set_mod(MOD as u32);
+        DynamicModInt::set_mod(MOD as u32);
         for i in 1..=100000 {
-            let a = ModInt::new(i);
-            assert_eq!(ModInt::zero(), -a + a);
+            let a = DynamicModInt::new(i);
+            assert_eq!(DynamicModInt::zero(), -a + a);
         }
     }
 
     #[test]
     fn edge_cases() {
-        ModInt::set_mod(MOD as u32);
-        assert_eq!(1, ModInt::from(MOD + 1).reduce());
-        assert_eq!(291172004, (ModInt::from(std::i64::MAX) + 1).reduce());
+        DynamicModInt::set_mod(MOD as u32);
+        assert_eq!(1, DynamicModInt::from(MOD + 1).reduce());
+        assert_eq!(291172004, (DynamicModInt::from(std::i64::MAX) + 1).reduce());
         assert_eq!(
-            ModInt::new(1_000_000_000) * std::i64::MAX,
-            ModInt::new(961796000)
+            DynamicModInt::new(1_000_000_000) * std::i64::MAX,
+            DynamicModInt::new(961796000)
         );
         assert_eq!(
-            ModInt::new(1_000_000_000) + std::i64::MAX,
-            ModInt::new(291171996)
+            DynamicModInt::new(1_000_000_000) + std::i64::MAX,
+            DynamicModInt::new(291171996)
         );
         assert_eq!(
-            ModInt::new(1_000_000_000) - std::i64::MAX,
-            ModInt::new(708827997)
+            DynamicModInt::new(1_000_000_000) - std::i64::MAX,
+            DynamicModInt::new(708827997)
         );
 
-        let mut a = ModInt::new(1_000_000_000);
+        let mut a = DynamicModInt::new(1_000_000_000);
         a *= std::i64::MAX;
         assert_eq!(a.reduce(), 961796000);
 
-        let mut a = ModInt::new(1_000_000_000);
+        let mut a = DynamicModInt::new(1_000_000_000);
         a += std::i64::MAX;
         assert_eq!(a.reduce(), 291171996);
 
-        let mut a = ModInt::new(1_000_000_000);
+        let mut a = DynamicModInt::new(1_000_000_000);
         a -= std::i64::MAX;
         assert_eq!(a.reduce(), 708827997);
     }
 
     #[test]
     fn display() {
-        ModInt::set_mod(MOD as u32);
-        assert_eq!("1", &format!("{}", ModInt::new(1)));
+        DynamicModInt::set_mod(MOD as u32);
+        assert_eq!("1", &format!("{}", DynamicModInt::new(1)));
     }
 
     #[test]
     fn from_str() {
-        ModInt::set_mod(MOD as u32);
-        assert_eq!(Ok(ModInt::new(5)), ModInt::from_str("5"));
-        assert_eq!(Ok(ModInt::new(1)), ModInt::from_str("1000000008"));
-        assert!(ModInt::from_str("5a").is_err());
+        DynamicModInt::set_mod(MOD as u32);
+        assert_eq!(Ok(DynamicModInt::new(5)), DynamicModInt::from_str("5"));
+        assert_eq!(
+            Ok(DynamicModInt::new(1)),
+            DynamicModInt::from_str("1000000008")
+        );
+        assert!(DynamicModInt::from_str("5a").is_err());
     }
 }

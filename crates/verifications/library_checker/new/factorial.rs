@@ -1,24 +1,23 @@
-// verification-helper: PROBLEM https://judge.yosupo.jp/problem/factorial
-#![cfg_attr(coverage_nightly, feature(coverage_attribute))]
-#[cfg_attr(coverage_nightly, coverage(off))]
-fn main() {
-    solve(io_util::IO::default());
-}
-use embedded_mod_factorial::Factorial;
-use io_util::*;
-use string_util::*;
+use rust_lib_for_comp::algebra::mod_int::embedded_mod_factorial::Factorial;
+use rust_lib_for_comp::util::io_util::{ReadHelper, ReaderTrait};
+use verify::{LibraryChecker, Solver};
 
-pub fn solve<IO: ReaderTrait + WriterTrait>(mut io: IO) {
-    for _ in 0..io.v() {
-        let n = io.v::<i64>();
-        io.out(Factorial::factorial(n).line());
+#[derive(LibraryChecker)]
+pub struct UnionFindSolver;
+impl verify::Solver for UnionFindSolver {
+    const PROBLEM_ID: &'static str = "factorial";
+    const TIME_LIMIT_MILLIS: u64 = 5000;
+    fn solve(read: impl std::io::Read, mut write: impl std::io::Write) {
+        let mut reader = ReadHelper::new(read);
+        for _ in 0..reader.v() {
+            let n = reader.v::<i64>();
+            writeln!(write, "{}", Factorial::factorial(n)).ok();
+        }
     }
-    io.flush();
 }
-
 #[test]
 fn test() {
-    solve(io_debug::IODebug::static_assert(
+    UnionFindSolver::assert(
         "5
         0
         5
@@ -30,5 +29,5 @@ fn test() {
         35305197
         972177311
         998244352",
-    ))
+    );
 }

@@ -1,4 +1,3 @@
-// verification-helper: PROBLEM https://judge.yosupo.jp/problem/static_range_frequency
 //! # Static Range Frequency (整数の出現回数)
 //! <https://judge.yosupo.jp/problem/static_range_frequency>
 //!
@@ -9,37 +8,38 @@
 //! - $LRX$: クエリ $[L, R)$ に Xがいくつあるか
 //!
 
-#![cfg_attr(coverage_nightly, feature(coverage_attribute))]
-#[cfg_attr(coverage_nightly, coverage(off))]
-fn main() {
-    solve(io_util::IO::default());
-}
-use io_util::*;
-use slice_bounds::SliceBounds;
-use string_util::*;
+use rust_lib_for_comp::{algo::slice_bounds::SliceBounds, util::io_util::*};
+use verify::{LibraryChecker, Solver};
 
-pub fn solve<IO: ReaderTrait + WriterTrait>(mut io: IO) {
-    let (n, q) = io.v2::<usize, usize>();
-    let a = io.vec::<i64>(n);
-    let lrx = io.vec3::<usize, usize, i64>(q);
-    let mut a = a
-        .into_iter()
-        .enumerate()
-        .map(|(i, ai)| (ai, i))
-        .collect::<Vec<_>>();
-    a.sort_unstable(); // 値が小さいほうから並び、同じ値ならindexが小さいほうが左になるようなソート
-    (0..q)
-        .map(|i| {
-            let (l, r, x) = lrx[i];
-            a.lower_bound(&(x, r)) - a.lower_bound(&(x, l))
-        })
-        .for_each(|ans| io.out(ans.line()));
-    io.flush();
+#[derive(LibraryChecker)]
+pub struct StaticRangeFrequency;
+impl verify::Solver for StaticRangeFrequency {
+    const PROBLEM_ID: &'static str = "static_range_frequency";
+    const TIME_LIMIT_MILLIS: u64 = 5000;
+    fn solve(read: impl std::io::Read, mut write: impl std::io::Write) {
+        let mut reader = ReadHelper::new(read);
+        let (n, q) = reader.v2::<usize, usize>();
+        let a = reader.vec::<i64>(n);
+        let lrx = reader.vec3::<usize, usize, i64>(q);
+        let mut a = a
+            .into_iter()
+            .enumerate()
+            .map(|(i, ai)| (ai, i))
+            .collect::<Vec<_>>();
+        a.sort_unstable(); // 値が小さいほうから並び、同じ値ならindexが小さいほうが左になるようなソート
+        (0..q)
+            .map(|i| {
+                let (l, r, x) = lrx[i];
+                a.lower_bound(&(x, r)) - a.lower_bound(&(x, l))
+            })
+            .for_each(|ans| {
+                writeln!(write, "{ans}").ok();
+            });
+    }
 }
-
 #[test]
 fn test() {
-    solve(io_debug::IODebug::static_assert(
+    StaticRangeFrequency::assert(
         "5 3
         3 7 1 2 1
         1 5 1
@@ -48,5 +48,5 @@ fn test() {
         "2
         0
         1",
-    ))
+    );
 }

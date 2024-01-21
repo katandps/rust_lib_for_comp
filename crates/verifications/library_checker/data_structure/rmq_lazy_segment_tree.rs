@@ -1,15 +1,11 @@
-// verification-helper: PROBLEM https://judge.yosupo.jp/problem/staticrmq
-#![cfg_attr(coverage_nightly, feature(coverage_attribute))]
-#[cfg_attr(coverage_nightly, coverage(off))]
-fn main() {
-    solve(io_util::IO::default());
-}
-use algebra::*;
-use io_util::*;
-use lazy_segment_tree::LazySegmentTree;
-use minimization::Minimization;
-use range_traits::*;
-use string_util::*;
+use rust_lib_for_comp::algebra::{Magma, MapMonoid};
+use rust_lib_for_comp::range_traits::RangeProductMut;
+use rust_lib_for_comp::util::io_util::*;
+use rust_lib_for_comp::{
+    algebra::binary_operation::minimization::Minimization,
+    data_structure::lazy_segment_tree::LazySegmentTree,
+};
+use verify::{LibraryChecker, Solver};
 
 struct MinMin;
 impl MapMonoid for MinMin {
@@ -25,20 +21,25 @@ impl MapMonoid for MinMin {
     }
 }
 
-pub fn solve<IO: ReaderTrait + WriterTrait>(mut io: IO) {
-    let (n, q) = io.v2::<usize, usize>();
-    let a = io.vec::<i64>(n);
-    let mut dst = LazySegmentTree::from((&a[..], MinMin));
-    for _ in 0..q {
-        let (l, r) = io.v2::<usize, usize>();
-        io.out(dst.product(l..r).line());
+#[derive(LibraryChecker)]
+pub struct StaticRmqLazySegmentTree;
+impl verify::Solver for StaticRmqLazySegmentTree {
+    const PROBLEM_ID: &'static str = "staticrmq";
+    const TIME_LIMIT_MILLIS: u64 = 5000;
+    fn solve(read: impl std::io::Read, mut write: impl std::io::Write) {
+        let mut reader = ReadHelper::new(read);
+        let (n, q) = reader.v2::<usize, usize>();
+        let a = reader.vec::<i64>(n);
+        let mut segtree = LazySegmentTree::from((&a[..], MinMin));
+        for _ in 0..q {
+            let (l, r) = reader.v2::<usize, usize>();
+            writeln!(write, "{}", segtree.product(l..r)).ok();
+        }
     }
-    io.flush();
 }
-
 #[test]
 fn test() {
-    solve(io_debug::IODebug::static_assert(
+    StaticRmqLazySegmentTree::assert(
         "4 10
         2 10 1 100
         0 1
@@ -61,5 +62,5 @@ fn test() {
         1
         1
         100",
-    ))
+    );
 }

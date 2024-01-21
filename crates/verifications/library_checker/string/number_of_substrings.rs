@@ -1,28 +1,28 @@
-// verification-helper: PROBLEM https://judge.yosupo.jp/problem/number_of_substrings
-//! # 部分文字列の個数
-#![cfg_attr(coverage_nightly, feature(coverage_attribute))]
-#[cfg_attr(coverage_nightly, coverage(off))]
-fn main() {
-    solve(io_util::IO::default());
-}
-use io_util::*;
-use longest_common_prefix_array::*;
-use string_util::*;
-use suffix_array::*;
+//! # 部分文字列の種類数
+use rust_lib_for_comp::{
+    string::{longest_common_prefix_array::LCPArray, suffix_array::SuffixArray},
+    util::io_util::{ReadHelper, ReaderTrait},
+};
+use verify::{LibraryChecker, Solver};
 
-pub fn solve<IO: ReaderTrait + WriterTrait>(mut io: IO) {
-    let s = io.lowercase();
-    let sa = SuffixArray::build(&s);
-    let lcp = LCPArray::build(&sa);
-    let sum = lcp.lcp.iter().sum::<usize>();
-    io.out((s.len() * (s.len() + 1) / 2 - sum).line());
-    io.flush();
+#[derive(LibraryChecker)]
+pub struct NumberOfSubStrings;
+impl verify::Solver for NumberOfSubStrings {
+    const PROBLEM_ID: &'static str = "number_of_substrings";
+    const TIME_LIMIT_MILLIS: u64 = 5000;
+    fn solve(read: impl std::io::Read, mut write: impl std::io::Write) {
+        let mut reader = ReadHelper::new(read);
+        let s = reader.lowercase();
+        let sa = SuffixArray::build(&s);
+        let lcp = LCPArray::build(&sa);
+        let sum = lcp.lcp.iter().sum::<usize>();
+        writeln!(write, "{}", s.len() * (s.len() + 1) / 2 - sum).ok();
+    }
 }
-
 #[test]
 fn test() {
-    solve(io_debug::IODebug::static_assert("abcbcba", "21"));
-    solve(io_debug::IODebug::static_assert("mississippi", "53"));
-    solve(io_debug::IODebug::static_assert("ababacaca", "33"));
-    solve(io_debug::IODebug::static_assert("aaaaa", "5"))
+    NumberOfSubStrings::assert("abcbcba", "21");
+    NumberOfSubStrings::assert("mississippi", "53");
+    NumberOfSubStrings::assert("ababacaca", "33");
+    NumberOfSubStrings::assert("aaaaa", "5")
 }

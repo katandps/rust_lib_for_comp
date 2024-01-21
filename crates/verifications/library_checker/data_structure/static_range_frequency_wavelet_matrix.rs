@@ -1,27 +1,25 @@
-// verification-helper: PROBLEM https://judge.yosupo.jp/problem/static_range_frequency
-#![cfg_attr(coverage_nightly, feature(coverage_attribute))]
-#[cfg_attr(coverage_nightly, coverage(off))]
-fn main() {
-    solve(io_util::IO::default());
-}
-use io_util::*;
-use string_util::*;
-use wavelet_matrix::*;
+use rust_lib_for_comp::{data_structure::wavelet_matrix::WaveletMatrix, util::io_util::*};
+use verify::{LibraryChecker, Solver};
 
-pub fn solve<IO: ReaderTrait + WriterTrait>(mut io: IO) {
-    let (n, q) = io.v2::<usize, usize>();
-    let wm = WaveletMatrix::from(io.vec::<u64>(n));
-    for _ in 0..q {
-        let (l, r, x) = io.v3::<usize, usize, u64>();
-        let ans = wm.rank_section(l..r, x);
-        io.out(ans.line());
+#[derive(LibraryChecker)]
+pub struct StaticRangeFrequencyWaveletMatrix;
+impl verify::Solver for StaticRangeFrequencyWaveletMatrix {
+    const PROBLEM_ID: &'static str = "static_range_frequency";
+    const TIME_LIMIT_MILLIS: u64 = 5000;
+    fn solve(read: impl std::io::Read, mut write: impl std::io::Write) {
+        let mut reader = ReadHelper::new(read);
+        let (n, q) = reader.v2::<usize, usize>();
+        let wm = WaveletMatrix::from(reader.vec::<u64>(n));
+        for _ in 0..q {
+            let (l, r, x) = reader.v3::<usize, usize, u64>();
+            let ans = wm.rank_section(l..r, x);
+            writeln!(write, "{ans}").ok();
+        }
     }
-    io.flush();
 }
-
 #[test]
 fn test() {
-    solve(io_debug::IODebug::static_assert(
+    StaticRangeFrequencyWaveletMatrix::assert(
         "5 3
         3 7 1 2 1
         1 5 1
@@ -30,5 +28,5 @@ fn test() {
         "2
         0
         1",
-    ))
+    );
 }

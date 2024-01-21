@@ -1,61 +1,62 @@
-// verification-helper: PROBLEM https://judge.yosupo.jp/problem/longest_common_substring
-#![cfg_attr(coverage_nightly, feature(coverage_attribute))]
-#[cfg_attr(coverage_nightly, coverage(off))]
-fn main() {
-    solve(io_util::IO::default());
-}
-use io_util::*;
-use longest_common_prefix_array::LCPArray;
-use min_max_macro::{chmax, max};
-use prelude::*;
-use string_util::*;
-use suffix_array::SuffixArray;
+use std::mem::swap;
 
-pub fn solve<IO: ReaderTrait + WriterTrait>(mut io: IO) {
-    let mut s = io.chars();
-    let sn = s.len();
-    let mut t = io.chars();
-    s.push('#');
-    s.append(&mut t);
-    let sa = SuffixArray::build(&s);
-    let lcp = LCPArray::build(&sa);
-    let (mut max_size, mut sl, mut sr, mut tl, mut tr) = (0, 0, 0, 0, 0);
-    // saの先頭は番兵(空文字)
-    for i in 0..s.len() {
-        let (mut i1, mut i2) = (sa[i], sa[i + 1]);
-        if i1 > i2 {
-            swap(&mut i1, &mut i2);
-        }
+use rust_lib_for_comp::{
+    chmax, max,
+    string::{longest_common_prefix_array::LCPArray, suffix_array::SuffixArray},
+    util::io_util::{ReadHelper, ReaderTrait},
+};
+use verify::{LibraryChecker, Solver};
 
-        if i1 < sn && sn < i2 && chmax!(max_size, lcp[i + 1]) {
-            let (a, b) = (i1, i2 - sn - 1);
-            (sl, sr, tl, tr) = (a, a + max_size, b, b + max_size)
+#[derive(LibraryChecker)]
+pub struct LongestCommonSubString;
+impl verify::Solver for LongestCommonSubString {
+    const PROBLEM_ID: &'static str = "longest_common_substring";
+    const TIME_LIMIT_MILLIS: u64 = 5000;
+    fn solve(read: impl std::io::Read, mut write: impl std::io::Write) {
+        let mut reader = ReadHelper::new(read);
+        let mut s = reader.chars();
+        let sn = s.len();
+        let mut t = reader.chars();
+        s.push('#');
+        s.append(&mut t);
+        let sa = SuffixArray::build(&s);
+        let lcp = LCPArray::build(&sa);
+        let (mut max_size, mut sl, mut sr, mut tl, mut tr) = (0, 0, 0, 0, 0);
+        // saの先頭は番兵(空文字)
+        for i in 0..s.len() {
+            let (mut i1, mut i2) = (sa[i], sa[i + 1]);
+            if i1 > i2 {
+                swap(&mut i1, &mut i2);
+            }
+
+            if i1 < sn && sn < i2 && chmax!(max_size, lcp[i + 1]) {
+                let (a, b) = (i1, i2 - sn - 1);
+                (sl, sr, tl, tr) = (a, a + max_size, b, b + max_size)
+            }
         }
+        writeln!(write, "{} {} {} {}", sl, sr, tl, tr).ok();
     }
-    io.out(format!("{} {} {} {}", sl, sr, tl, tr).line());
-    io.flush()
 }
-
 #[test]
 fn test() {
-    solve(io_debug::IODebug::static_assert(
+    LongestCommonSubString::assert(
         "abcdef
         abcxdef",
         "0 3 0 3",
-    ));
-    solve(io_debug::IODebug::static_assert(
+    );
+    LongestCommonSubString::assert(
         "aaa
     bbbb",
         "0 0 0 0",
-    ));
-    solve(io_debug::IODebug::static_assert(
+    );
+    LongestCommonSubString::assert(
         "abcabcabc
         cabcabcab",
         "0 8 1 9",
-    ));
-    solve(io_debug::IODebug::static_assert(
+    );
+    LongestCommonSubString::assert(
         "aaa
         aaaaa",
         "0 3 2 5",
-    ));
+    );
 }

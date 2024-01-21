@@ -1,39 +1,40 @@
-// verification-helper: PROBLEM https://judge.yosupo.jp/problem/point_set_range_composite
-#![cfg_attr(coverage_nightly, feature(coverage_attribute))]
-#[cfg_attr(coverage_nightly, coverage(off))]
-fn main() {
-    solve(io_util::IO::default());
-}
-use affine::{Affine, Composition};
-use io_util::*;
-use mod_int::ModInt;
-use range_traits::*;
-use segment_tree::SegmentTree;
-use string_util::*;
+use rust_lib_for_comp::{
+    algebra::mod_int::ModInt,
+    data_structure::segment_tree::SegmentTree,
+    element::affine::{Affine, Composition},
+    range_traits::{PointUpdate, RangeProduct},
+    util::io_util::*,
+};
+use verify::{LibraryChecker, Solver};
 
-pub fn solve<IO: ReaderTrait + WriterTrait>(mut io: IO) {
-    let (n, q) = io.v2::<usize, usize>();
-    let ab = io
-        .vec2::<ModInt<998_244_353>, ModInt>(n)
-        .into_iter()
-        .map(|(a, b)| Affine::new(a, b))
-        .collect::<Vec<_>>();
-    let mut segtree = SegmentTree::<Composition<ModInt>>::from(ab);
-    for _ in 0..q {
-        if 0 == io.v() {
-            let (p, c, d) = io.v3::<usize, ModInt, ModInt>();
-            segtree.update_at(p, Affine::new(c, d));
-        } else {
-            let (l, r, x) = io.v3::<usize, usize, ModInt>();
-            io.out(segtree.product(l..r).apply(x).line());
+#[derive(LibraryChecker)]
+pub struct PointSetRangeComposite;
+impl verify::Solver for PointSetRangeComposite {
+    const PROBLEM_ID: &'static str = "point_set_range_composite";
+    const TIME_LIMIT_MILLIS: u64 = 5000;
+    fn solve(read: impl std::io::Read, mut write: impl std::io::Write) {
+        let mut reader = ReadHelper::new(read);
+        let (n, q) = reader.v2::<usize, usize>();
+        let ab = reader
+            .vec2::<ModInt<998_244_353>, ModInt>(n)
+            .into_iter()
+            .map(|(a, b)| Affine::new(a, b))
+            .collect::<Vec<_>>();
+        let mut segtree = SegmentTree::<Composition<ModInt>>::from(ab);
+        for _ in 0..q {
+            if 0 == reader.v::<usize>() {
+                let (p, c, d) = reader.v3::<usize, ModInt, ModInt>();
+                segtree.update_at(p, Affine::new(c, d));
+            } else {
+                let (l, r, x) = reader.v3::<usize, usize, ModInt>();
+                writeln!(write, "{}", segtree.product(l..r).apply(x)).ok();
+            }
         }
     }
-    io.flush();
 }
-
 #[test]
 fn test() {
-    solve(io_debug::IODebug::static_assert(
+    PointSetRangeComposite::assert(
         "5 5
         1 2
         3 4
@@ -49,5 +50,5 @@ fn test() {
         470
         8275
         5500",
-    ))
+    );
 }

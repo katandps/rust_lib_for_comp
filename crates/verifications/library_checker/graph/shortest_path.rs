@@ -1,37 +1,37 @@
-// verification-helper: PROBLEM https://judge.yosupo.jp/problem/shortest_path
-#![cfg_attr(coverage_nightly, feature(coverage_attribute))]
-#[cfg_attr(coverage_nightly, coverage(off))]
-fn main() {
-    solve(io_util::IO::default());
-}
-use adjacency_list::Graph;
-use dijkstra::*;
-use io_util::*;
-use string_util::*;
+use rust_lib_for_comp::{
+    graph::{adjacency_list::Graph, dijkstra::Dijkstra},
+    util::io_util::{ReadHelper, ReaderTrait},
+};
+use verify::{LibraryChecker, Solver};
 
-pub fn solve<IO: ReaderTrait + WriterTrait>(mut io: IO) {
-    let (n, m, s, t) = io.v4::<usize, usize, usize, usize>();
-    let abc = io.vec3::<usize, usize, i64>(m);
-    let mut graph = Graph::new(n);
-    for (a, b, c) in abc {
-        graph.add_arc(a, b, c);
-    }
-    let dijkstra = Dijkstra::calc(&graph, s);
-    if dijkstra.dist[t] == i64::MAX {
-        io.out((-1).line());
-    } else {
-        let path = dijkstra.path(t);
-        io.out(format!("{} {}\n", dijkstra.dist[t], path.len() - 1));
-        for i in 1..path.len() {
-            io.out(format!("{} {}\n", path[i - 1], path[i]));
+#[derive(LibraryChecker)]
+pub struct ShortestPath;
+impl verify::Solver for ShortestPath {
+    const PROBLEM_ID: &'static str = "shortest_path";
+    const TIME_LIMIT_MILLIS: u64 = 5000;
+    fn solve(read: impl std::io::Read, mut write: impl std::io::Write) {
+        let mut reader = ReadHelper::new(read);
+        let (n, m, s, t) = reader.v4::<usize, usize, usize, usize>();
+        let abc = reader.vec3::<usize, usize, i64>(m);
+        let mut graph = Graph::new(n);
+        for (a, b, c) in abc {
+            graph.add_arc(a, b, c);
+        }
+        let dijkstra = Dijkstra::calc(&graph, s);
+        if dijkstra.dist[t] == i64::MAX {
+            writeln!(write, "-1").ok();
+        } else {
+            let path = dijkstra.path(t);
+            writeln!(write, "{} {}", dijkstra.dist[t], path.len() - 1).ok();
+            for i in 1..path.len() {
+                writeln!(write, "{} {}", path[i - 1], path[i]).ok();
+            }
         }
     }
-    io.flush()
 }
-
 #[test]
 fn test() {
-    solve(io_debug::IODebug::static_assert(
+    ShortestPath::assert(
         "5 7 2 3
         0 3 5
         0 4 3
@@ -44,14 +44,10 @@ fn test() {
         2 1
         1 0
         0 3",
-    ))
-}
-
-#[test]
-fn test2() {
-    solve(io_debug::IODebug::static_assert(
+    );
+    ShortestPath::assert(
         "2 1 0 1
         1 0 10",
         "-1",
-    ))
+    );
 }

@@ -1,35 +1,36 @@
-// verification-helper: PROBLEM https://judge.yosupo.jp/problem/range_affine_point_get
-#![cfg_attr(coverage_nightly, feature(coverage_attribute))]
-#[cfg_attr(coverage_nightly, coverage(off))]
-fn main() {
-    solve(io_util::IO::default());
-}
-use affine::{Affine, Composition};
-use dual_segment_tree::DualSegmentTree;
-use io_util::*;
-use mod_int::ModInt;
-use range_traits::*;
-use string_util::*;
+use rust_lib_for_comp::{
+    algebra::mod_int::ModInt,
+    data_structure::dual_segment_tree::DualSegmentTree,
+    element::affine::{Affine, Composition},
+    range_traits::RangeUpdate,
+    util::io_util::*,
+};
+use verify::{LibraryChecker, Solver};
 
-pub fn solve<IO: ReaderTrait + WriterTrait>(mut io: IO) {
-    let (n, q) = io.v2::<usize, usize>();
-    let a = io.vec::<ModInt>(n);
-    let mut segtree = DualSegmentTree::new(&a, Composition::default());
-    for _ in 0..q {
-        if 0 == io.v() {
-            let (l, r, b, c) = io.v4::<usize, usize, ModInt, ModInt>();
-            segtree.update_range(l..r, Affine::new(b, c));
-        } else {
-            let i = io.v::<usize>();
-            io.out(segtree.get(i).line());
+#[derive(LibraryChecker)]
+pub struct RangeAffinePointGet;
+impl verify::Solver for RangeAffinePointGet {
+    const PROBLEM_ID: &'static str = "range_affine_point_get";
+    const TIME_LIMIT_MILLIS: u64 = 5000;
+    fn solve(read: impl std::io::Read, mut write: impl std::io::Write) {
+        let mut reader = ReadHelper::new(read);
+        let (n, q) = reader.v2::<usize, usize>();
+        let a = reader.vec::<ModInt>(n);
+        let mut segtree = DualSegmentTree::new(&a, Composition::default());
+        for _ in 0..q {
+            if 0 == reader.v::<usize>() {
+                let (l, r, b, c) = reader.v4::<usize, usize, ModInt, ModInt>();
+                segtree.update_range(l..r, Affine::new(b, c));
+            } else {
+                let i = reader.v::<usize>();
+                writeln!(write, "{}", segtree.get(i)).ok();
+            }
         }
     }
-    io.flush()
 }
-
 #[test]
 fn test() {
-    solve(io_debug::IODebug::static_assert(
+    RangeAffinePointGet::assert(
         "5 12
         1 2 3 4 5
         0 2 4 100 101
@@ -55,5 +56,5 @@ fn test() {
         501
         5
         ",
-    ))
+    );
 }

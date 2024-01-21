@@ -1,32 +1,32 @@
-// verification-helper: PROBLEM https://judge.yosupo.jp/problem/staticrmq
-#![cfg_attr(coverage_nightly, feature(coverage_attribute))]
-#[cfg_attr(coverage_nightly, coverage(off))]
-fn main() {
-    solve(io_util::IO::default());
-}
-use dynamic_segment_tree::DynamicSegmentTree;
-use io_util::*;
-use minimization::Minimization;
-use range_traits::*;
-use string_util::*;
+use rust_lib_for_comp::{
+    algebra::binary_operation::minimization::Minimization,
+    data_structure::dynamic_segment_tree::DynamicSegmentTree, range_traits::RangeProduct,
+    util::io_util::*,
+};
+use verify::{LibraryChecker, Solver};
 
-pub fn solve<IO: ReaderTrait + WriterTrait>(mut io: IO) {
-    let (n, q) = io.v2::<usize, usize>();
-    let a = io.vec::<i64>(n);
-    let mut segtree = DynamicSegmentTree::<Minimization<i64>>::new(500010);
-    for (i, &ai) in a.iter().enumerate() {
-        segtree.set(i as i64, ai);
+#[derive(LibraryChecker)]
+pub struct StaticRmqDynamicSegmentTree;
+impl verify::Solver for StaticRmqDynamicSegmentTree {
+    const PROBLEM_ID: &'static str = "staticrmq";
+    const TIME_LIMIT_MILLIS: u64 = 5000;
+    fn solve(read: impl std::io::Read, mut write: impl std::io::Write) {
+        let mut reader = ReadHelper::new(read);
+        let (n, q) = reader.v2::<usize, usize>();
+        let a = reader.vec::<i64>(n);
+        let mut segtree = DynamicSegmentTree::<Minimization<i64>>::new(500010);
+        for (i, &ai) in a.iter().enumerate() {
+            segtree.set(i as i64, ai);
+        }
+        for _ in 0..q {
+            let (l, r) = reader.v2::<i64, i64>();
+            writeln!(write, "{}", segtree.product(l..r)).ok();
+        }
     }
-    for _ in 0..q {
-        let (l, r) = io.v2::<i64, i64>();
-        io.out(segtree.product(l..r).line());
-    }
-    io.flush();
 }
-
 #[test]
 fn test() {
-    solve(io_debug::IODebug::static_assert(
+    StaticRmqDynamicSegmentTree::assert(
         "4 10
         2 10 1 100
         0 1
@@ -49,5 +49,5 @@ fn test() {
         1
         1
         100",
-    ))
+    );
 }

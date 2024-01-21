@@ -1,34 +1,34 @@
-// verification-helper: PROBLEM https://judge.yosupo.jp/problem/point_add_range_sum
-#![cfg_attr(coverage_nightly, feature(coverage_attribute))]
-#[cfg_attr(coverage_nightly, coverage(off))]
-fn main() {
-    solve(io_util::IO::default());
-}
-use addition::Addition;
-use binary_indexed_tree::BinaryIndexedTree;
-use io_util::*;
-use range_traits::*;
-use string_util::*;
+use rust_lib_for_comp::{
+    algebra::binary_operation::addition::Addition,
+    data_structure::binary_indexed_tree::BinaryIndexedTree, range_traits::RangeProduct,
+    util::io_util::*,
+};
+use verify::{LibraryChecker, Solver};
 
-pub fn solve<IO: ReaderTrait + WriterTrait>(mut io: IO) {
-    let (n, q) = io.v2::<usize, usize>();
-    let a = io.vec::<i64>(n);
-    let mut bit = BinaryIndexedTree::<Addition<i64>>::from(a);
-    for _ in 0..q {
-        if 0 == io.v() {
-            let (p, x) = io.v2::<usize, i64>();
-            bit.add(p, x);
-        } else {
-            let (l, r) = io.v2::<usize, usize>();
-            io.out(bit.product(l..r).line());
+#[derive(LibraryChecker)]
+pub struct PointAddRangeSumByBit;
+impl verify::Solver for PointAddRangeSumByBit {
+    const PROBLEM_ID: &'static str = "point_add_range_sum";
+    const TIME_LIMIT_MILLIS: u64 = 5000;
+    fn solve(read: impl std::io::Read, mut write: impl std::io::Write) {
+        let mut reader = ReadHelper::new(read);
+        let (n, q) = reader.v2::<usize, usize>();
+        let a = reader.vec::<i64>(n);
+        let mut bit = BinaryIndexedTree::<Addition<i64>>::from(a);
+        for _ in 0..q {
+            if 0 == reader.v::<usize>() {
+                let (p, x) = reader.v2::<usize, i64>();
+                bit.add(p, x);
+            } else {
+                let (l, r) = reader.v2::<usize, usize>();
+                writeln!(write, "{}", bit.product(l..r)).ok();
+            }
         }
     }
-    io.flush();
 }
-
 #[test]
 fn test() {
-    solve(io_debug::IODebug::static_assert(
+    PointAddRangeSumByBit::assert(
         "5 5
         1 2 3 4 5
         1 0 5
@@ -40,5 +40,5 @@ fn test() {
         7
         25
         6",
-    ))
+    );
 }

@@ -1,58 +1,56 @@
-// verification-helper: PROBLEM https://judge.yosupo.jp/problem/predecessor_problem
-#![cfg_attr(coverage_nightly, feature(coverage_attribute))]
-#[cfg_attr(coverage_nightly, coverage(off))]
-fn main() {
-    solve(io_util::IO::default());
-}
-use binary_trie::BinaryTrie;
-use io_util::*;
-use string_util::*;
+use rust_lib_for_comp::{data_structure::binary_trie::BinaryTrie, util::io_util::*};
+use verify::{LibraryChecker, Solver};
 
-pub fn solve<IO: ReaderTrait + WriterTrait>(mut io: IO) {
-    let (n, q) = io.v2::<usize, usize>();
-    let mut trie = BinaryTrie::new(n.next_power_of_two().trailing_zeros() as i32 + 1);
-    let t = io.digits();
-    for (i, ti) in t.iter().enumerate() {
-        if *ti == 1 {
-            trie.insert(i as u64);
-        }
-    }
-    for _ in 0..q {
-        let (c, k) = io.v2::<usize, u64>();
-        if c == 0 {
-            if !trie.contains(k) {
-                trie.insert(k);
-            }
-        } else if c == 1 {
-            if trie.contains(k) {
-                trie.erase(k);
-            }
-        } else if c == 2 {
-            io.out(usize::from(trie.contains(k)).line())
-        } else if c == 3 {
-            if trie.contains(k) {
-                io.out(k.line())
-            } else if let Some(ans) = trie.next(k) {
-                io.out(ans.line())
-            } else {
-                io.out((-1).line())
-            }
-        } else if c == 4 {
-            if trie.contains(k) {
-                io.out(k.line())
-            } else if let Some(ans) = trie.prev(k) {
-                io.out(ans.line())
-            } else {
-                io.out((-1).line())
+#[derive(LibraryChecker)]
+pub struct PredecessorProblemBinaryTrie;
+impl verify::Solver for PredecessorProblemBinaryTrie {
+    const PROBLEM_ID: &'static str = "predecessor_problem";
+    const TIME_LIMIT_MILLIS: u64 = 5000;
+    fn solve(read: impl std::io::Read, mut write: impl std::io::Write) {
+        let mut reader = ReadHelper::new(read);
+        let (n, q) = reader.v2::<usize, usize>();
+        let mut trie = BinaryTrie::new(n.next_power_of_two().trailing_zeros() as i32 + 1);
+        let t = reader.digits();
+        for (i, ti) in t.iter().enumerate() {
+            if *ti == 1 {
+                trie.insert(i as u64);
             }
         }
+        for _ in 0..q {
+            let (c, k) = reader.v2::<usize, u64>();
+            if c == 0 {
+                if !trie.contains(k) {
+                    trie.insert(k);
+                }
+            } else if c == 1 {
+                if trie.contains(k) {
+                    trie.erase(k);
+                }
+            } else if c == 2 {
+                writeln!(write, "{}", usize::from(trie.contains(k))).ok();
+            } else if c == 3 {
+                if trie.contains(k) {
+                    writeln!(write, "{k}").ok();
+                } else if let Some(ans) = trie.next(k) {
+                    writeln!(write, "{ans}").ok();
+                } else {
+                    writeln!(write, "-1").ok();
+                }
+            } else if c == 4 {
+                if trie.contains(k) {
+                    writeln!(write, "{k}").ok();
+                } else if let Some(ans) = trie.prev(k) {
+                    writeln!(write, "{ans}").ok();
+                } else {
+                    writeln!(write, "-1").ok();
+                }
+            }
+        }
     }
-    io.flush();
 }
-
 #[test]
 fn test() {
-    solve(io_debug::IODebug::static_assert(
+    PredecessorProblemBinaryTrie::assert(
         "6 9
         010101
         3 3
@@ -71,5 +69,5 @@ fn test() {
         0
         4
         1",
-    ));
+    );
 }
