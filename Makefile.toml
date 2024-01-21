@@ -99,10 +99,24 @@ description = "verify problems"
 dependencies = ["refresh-dropbox-token"]
 command = "cargo"
 category = "Verification"
-args = ["test", "--features", "verify", "--", "--ignored"]
+args = ["test", "--release", "--features", "verify", "--", "--ignored"]
 
 [tasks.verify-run]
 dependencies = ["verify-download", "verify"]
+
+[tasks.verify-list]
+command = "cargo"
+category = "Verification"
+args = [
+	"test",
+	"--release",
+	"--features",
+	"verify",
+	"--quiet",
+	"--",
+	"--list",
+	"--ignored",
+]
 
 [tasks.codesnip-cache]
 script = '''
