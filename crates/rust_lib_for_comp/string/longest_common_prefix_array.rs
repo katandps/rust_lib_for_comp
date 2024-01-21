@@ -4,7 +4,7 @@ use crate::prelude::*;
 
 #[codesnip::entry("longest-common-prefix-array")]
 pub use longest_common_prefix_array_impl::LCPArray;
-#[codesnip::entry("longest-common-prefix-array", include("suffix-array"))]
+#[codesnip::entry("longest-common-prefix-array", include("suffix-array", "prelude"))]
 mod longest_common_prefix_array_impl {
     use super::{Index, SuffixArray};
 

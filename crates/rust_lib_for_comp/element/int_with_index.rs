@@ -14,14 +14,12 @@ mod int_with_index_impl {
         pub value: V,
         pub index: I,
     }
-    #[codesnip::entry("int-with-index")]
     impl<V: Integral, I: Integral> PartialOrd for IntWithIndex<V, I> {
         fn partial_cmp(&self, rhs: &Self) -> Option<Ordering> {
             Some(self.cmp(rhs))
         }
     }
 
-    #[codesnip::entry("int-with-index")]
     impl<V: Integral, I: Integral> Ord for IntWithIndex<V, I> {
         fn cmp(&self, rhs: &Self) -> Ordering {
             use Ordering::*;
@@ -33,7 +31,6 @@ mod int_with_index_impl {
         }
     }
 
-    #[codesnip::entry("int-with-index")]
     impl<V: Integral, I: Integral> From<(I, V)> for IntWithIndex<V, I> {
         fn from((index, value): (I, V)) -> Self {
             IntWithIndex { value, index }

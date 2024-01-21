@@ -5,7 +5,7 @@ use crate::prelude::*;
 
 #[codesnip::entry("suffix-array")]
 pub use suffix_array_impl::SuffixArray;
-#[codesnip::entry("suffix-array")]
+#[codesnip::entry("suffix-array", include("prelude", "compress"))]
 mod suffix_array_impl {
     use super::{BTreeMap, Compress, Index};
 

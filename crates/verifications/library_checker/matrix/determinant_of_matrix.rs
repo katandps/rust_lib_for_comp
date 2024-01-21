@@ -5,8 +5,8 @@ use rust_lib_for_comp::{
 use verify::{LibraryChecker, Solver};
 
 #[derive(LibraryChecker)]
-pub struct UnionFindSolver;
-impl verify::Solver for UnionFindSolver {
+pub struct DeterminantOfMatrix;
+impl verify::Solver for DeterminantOfMatrix {
     const PROBLEM_ID: &'static str = "matrix_det";
     const TIME_LIMIT_MILLIS: u64 = 5000;
     fn solve(read: impl std::io::Read, mut write: impl std::io::Write) {
@@ -19,21 +19,21 @@ impl verify::Solver for UnionFindSolver {
 }
 #[test]
 fn test() {
-    UnionFindSolver::assert(
+    DeterminantOfMatrix::assert(
         "3
         3 1 4
         1 5 9
         2 6 5",
         "998244263",
     );
-    UnionFindSolver::assert(
+    DeterminantOfMatrix::assert(
         "3
         1 2 3
         4 5 6
         7 8 9",
         "0",
     );
-    UnionFindSolver::assert(
+    DeterminantOfMatrix::assert(
         "2
         0 1
         1 0",

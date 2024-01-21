@@ -16,7 +16,7 @@ pub fn binary_search<F: Fn(i64) -> bool>(mut ok: i64, mut ng: i64, f: F) -> i64 
 }
 
 /// # 浮動小数点数の二分探索
-#[codesnip::entry("binary-search-float")]
+#[codesnip::entry("binary-search-float", include("prelude"))]
 pub fn binary_search_float<F: Fn(f64) -> bool>(mut ok: f64, mut ng: f64, f: F) -> f64 {
     const EPS: f64 = 1e-15;
     while (ok - ng).abs() > EPS {

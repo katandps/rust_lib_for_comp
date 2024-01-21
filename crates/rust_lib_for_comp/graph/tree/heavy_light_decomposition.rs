@@ -11,7 +11,10 @@ use crate::range_traits::*;
 
 #[codesnip::entry("heavy-light-decomposition")]
 pub use heavy_light_decomposition_impl::HLDecomposition;
-#[codesnip::entry("heavy-light-decomposition")]
+#[codesnip::entry(
+    "heavy-light-decomposition",
+    include("prelude", "graph", "algebra", "range-traits", "segment-tree")
+)]
 mod heavy_light_decomposition_impl {
     use super::{swap, GraphTrait, Monoid, PointUpdate, Range, RangeProduct, SegmentTree};
 

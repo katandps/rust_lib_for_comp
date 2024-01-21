@@ -10,7 +10,7 @@ use crate::prelude::*;
 
 #[codesnip::entry("rolling-hash")]
 pub use rolling_hash_impl::RollingHash;
-#[codesnip::entry("rolling-hash", include("mod-int-64bit", "algebra", "xor-shift"))]
+#[codesnip::entry("rolling-hash", include("mod-int-64", "algebra", "xor-shift"))]
 mod rolling_hash_impl {
     use super::{Add, Debug, ModInt64, Sub, XorShift, Zero};
     use std::sync::OnceLock;

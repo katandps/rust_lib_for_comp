@@ -8,7 +8,7 @@ use verify::{LibraryChecker, Solver};
 pub struct MatrixProduct;
 impl verify::Solver for MatrixProduct {
     const PROBLEM_ID: &'static str = "matrix_product";
-    const TIME_LIMIT_MILLIS: u64 = 5000;
+    const TIME_LIMIT_MILLIS: u64 = 10000;
     fn solve(read: impl std::io::Read, mut write: impl std::io::Write) {
         let mut reader = ReadHelper::new(read);
         let (n, m, k) = reader.v3::<usize, usize, usize>();

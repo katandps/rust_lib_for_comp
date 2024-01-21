@@ -8,7 +8,6 @@ use crate::prelude::*;
 pub use manachar_impl::Manachar;
 #[codesnip::entry("manachar")]
 mod manachar_impl {
-    use super::Debug;
     pub struct Manachar;
     impl Manachar {
         /// # 文字 $i$ を中心とした(奇数長の)最大回文長
@@ -16,7 +15,7 @@ mod manachar_impl {
             Self::logic(src).into_iter().map(|r| r * 2 - 1).collect()
         }
         /// # 最大回文長
-        pub fn manachar<T: Eq + Clone + Debug>(src: &[T]) -> Vec<usize> {
+        pub fn manachar<T: Eq + Clone + std::fmt::Debug>(src: &[T]) -> Vec<usize> {
             if src.is_empty() {
                 return Vec::new();
             }

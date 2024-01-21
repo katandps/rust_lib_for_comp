@@ -11,126 +11,138 @@ use crate::graph::GraphTrait;
 use crate::prelude::*;
 use crate::range_traits::RangeProduct;
 
+#[codesnip::entry("lowest-common-ancestor")]
+pub use lca_impl::LowestCommonAncestor;
 #[codesnip::entry(
     "lowest-common-ancestor",
-    include("euler-tour", "sparse-table", "int-with-index", "minimization")
+    include(
+        "euler-tour",
+        "sparse-table",
+        "int-with-index",
+        "minimization",
+        "prelude"
+    )
 )]
-pub struct LowestCommonAncestor {
-    tour: EulerTour,
-    depth: SparseTable<Minimization<IntWithIndex<u32, u32>>>,
-}
+mod lca_impl {
+    use super::{
+        swap, EulerTour, GraphTrait, IntWithIndex, Minimization, RangeProduct, SparseTable,
+    };
 
-#[codesnip::entry("lowest-common-ancestor")]
-impl LowestCommonAncestor {
-    /// # 構築
-    /// オイラーツアーを行い、時刻に対応する根からの距離を前計算する
-    ///
-    /// ## 計算量
-    /// $O(N\log N)$
-    pub fn new<G: GraphTrait>(g: &G, root: usize) -> Self {
-        let tour = EulerTour::new(g, root);
-        let depth = SparseTable::<Minimization<IntWithIndex<u32, u32>>>::from(
-            &(0..tour.tour.len())
-                .map(|i| IntWithIndex::from((i as u32, tour.depth[tour.tour[i]] as u32)))
-                .collect::<Vec<_>>()[..],
-        );
-        Self { tour, depth }
+    pub struct LowestCommonAncestor {
+        tour: EulerTour,
+        depth: SparseTable<Minimization<IntWithIndex<u32, u32>>>,
     }
 
-    /// # LCAを求める
-    /// $u$,$v$の最近共通祖先(LCA)を求める
-    ///
-    /// オイラーツアー上で $u \to v$ の順に訪れているとする。
-    /// $u$に初めて訪れた時刻から$v$を抜けた時刻までにアクセスした頂点のうち、最も根に近いものがLCA
-    ///
-    /// ## 計算量
-    /// $O(1)$
-    pub fn query(&self, u: usize, v: usize) -> usize {
-        let (mut l, mut r) = (self.tour.time_in[u], self.tour.time_out[v]);
-        if l > r {
-            swap(&mut l, &mut r)
+    impl LowestCommonAncestor {
+        /// # 構築
+        /// オイラーツアーを行い、時刻に対応する根からの距離を前計算する
+        ///
+        /// ## 計算量
+        /// $O(N\log N)$
+        pub fn new<G: GraphTrait>(g: &G, root: usize) -> Self {
+            let tour = EulerTour::new(g, root);
+            let depth = SparseTable::<Minimization<IntWithIndex<u32, u32>>>::from(
+                &(0..tour.tour.len())
+                    .map(|i| IntWithIndex::from((i as u32, tour.depth[tour.tour[i]] as u32)))
+                    .collect::<Vec<_>>()[..],
+            );
+            Self { tour, depth }
         }
-        self.tour.tour[self.depth.product(l..r).index as usize]
-    }
 
-    /// # $u \to v$のパスを求める
-    ///
-    /// ## 計算量
-    /// $O(パスの長さ)$
-    pub fn path(&self, mut u: usize, mut v: usize) -> Vec<usize> {
-        let lca = self.query(u, v);
-        let mut left = Vec::new();
-        while u != lca {
-            left.push(u);
-            u = self.tour.parent[u];
-        }
-        left.push(lca);
-        let mut right = Vec::new();
-        while v != lca {
-            right.push(v);
-            v = self.tour.parent[v];
-        }
-        right.reverse();
-        left.append(&mut right);
-        left
-    }
-
-    /// # 2頂点$u$,$v$間の距離
-    /// ## 計算量
-    /// $O(1)$
-    pub fn dist(&self, u: usize, v: usize) -> usize {
-        let lca = self.query(u, v);
-        self.tour.depth[u] + self.tour.depth[v] - 2 * self.tour.depth[lca]
-    }
-
-    /// # $u$,$v$を結ぶパス上に頂点$a$が存在するかどうか
-    /// ## 計算量
-    /// $O(1)$
-    pub fn on_path(&self, u: usize, v: usize, a: usize) -> bool {
-        self.dist(u, a) + self.dist(a, v) == self.dist(u, v)
-    }
-
-    /// # 木構造の圧縮
-    /// 木を指定した部分集合とそのLCAだけの木に変形する
-    ///
-    /// ## 概要
-    /// vsに必要になる頂点を追加し、グラフの隣接リストを返す
-    ///
-    /// ## 計算量
-    /// 元となるvsの長さをkとして
-    /// $O(K\log K)$
-    ///
-    /// ## verify
-    /// [典型90 035](https://atcoder.jp/contests/typical90/submissions/29216435)
-    pub fn auxiliary_tree(&self, vs: &mut Vec<usize>) -> Vec<(usize, usize)> {
-        vs.sort_by_key(|v| self.tour.time_in[*v]);
-        let mut stack = vec![vs[0]];
-        let mut edges = Vec::new();
-        for i in 1..vs.len() {
-            let lca = self.query(vs[i - 1], vs[i]);
-            if lca != vs[i - 1] {
-                let mut last = stack.pop().unwrap();
-                while !stack.is_empty()
-                    && self.tour.depth[lca] < self.tour.depth[stack[stack.len() - 1]]
-                {
-                    edges.push((stack[stack.len() - 1], last));
-                    last = stack.pop().unwrap();
-                }
-                if stack.is_empty() || stack[stack.len() - 1] != lca {
-                    stack.push(lca);
-                    vs.push(lca);
-                }
-                edges.push((lca, last));
+        /// # LCAを求める
+        /// $u$,$v$の最近共通祖先(LCA)を求める
+        ///
+        /// オイラーツアー上で $u \to v$ の順に訪れているとする。
+        /// $u$に初めて訪れた時刻から$v$を抜けた時刻までにアクセスした頂点のうち、最も根に近いものがLCA
+        ///
+        /// ## 計算量
+        /// $O(1)$
+        pub fn query(&self, u: usize, v: usize) -> usize {
+            let (mut l, mut r) = (self.tour.time_in[u], self.tour.time_out[v]);
+            if l > r {
+                swap(&mut l, &mut r)
             }
-            stack.push(vs[i]);
+            self.tour.tour[self.depth.product(l..r).index as usize]
         }
-        for i in 1..stack.len() {
-            edges.push((stack[i - 1], stack[i]));
+
+        /// # $u \to v$のパスを求める
+        ///
+        /// ## 計算量
+        /// $O(パスの長さ)$
+        pub fn path(&self, mut u: usize, mut v: usize) -> Vec<usize> {
+            let lca = self.query(u, v);
+            let mut left = Vec::new();
+            while u != lca {
+                left.push(u);
+                u = self.tour.parent[u];
+            }
+            left.push(lca);
+            let mut right = Vec::new();
+            while v != lca {
+                right.push(v);
+                v = self.tour.parent[v];
+            }
+            right.reverse();
+            left.append(&mut right);
+            left
         }
-        edges
+
+        /// # 2頂点$u$,$v$間の距離
+        /// ## 計算量
+        /// $O(1)$
+        pub fn dist(&self, u: usize, v: usize) -> usize {
+            let lca = self.query(u, v);
+            self.tour.depth[u] + self.tour.depth[v] - 2 * self.tour.depth[lca]
+        }
+
+        /// # $u$,$v$を結ぶパス上に頂点$a$が存在するかどうか
+        /// ## 計算量
+        /// $O(1)$
+        pub fn on_path(&self, u: usize, v: usize, a: usize) -> bool {
+            self.dist(u, a) + self.dist(a, v) == self.dist(u, v)
+        }
+
+        /// # 木構造の圧縮
+        /// 木を指定した部分集合とそのLCAだけの木に変形する
+        ///
+        /// ## 概要
+        /// vsに必要になる頂点を追加し、グラフの隣接リストを返す
+        ///
+        /// ## 計算量
+        /// 元となるvsの長さをkとして
+        /// $O(K\log K)$
+        ///
+        /// ## verify
+        /// [典型90 035](https://atcoder.jp/contests/typical90/submissions/29216435)
+        pub fn auxiliary_tree(&self, vs: &mut Vec<usize>) -> Vec<(usize, usize)> {
+            vs.sort_by_key(|v| self.tour.time_in[*v]);
+            let mut stack = vec![vs[0]];
+            let mut edges = Vec::new();
+            for i in 1..vs.len() {
+                let lca = self.query(vs[i - 1], vs[i]);
+                if lca != vs[i - 1] {
+                    let mut last = stack.pop().unwrap();
+                    while !stack.is_empty()
+                        && self.tour.depth[lca] < self.tour.depth[stack[stack.len() - 1]]
+                    {
+                        edges.push((stack[stack.len() - 1], last));
+                        last = stack.pop().unwrap();
+                    }
+                    if stack.is_empty() || stack[stack.len() - 1] != lca {
+                        stack.push(lca);
+                        vs.push(lca);
+                    }
+                    edges.push((lca, last));
+                }
+                stack.push(vs[i]);
+            }
+            for i in 1..stack.len() {
+                edges.push((stack[i - 1], stack[i]));
+            }
+            edges
+        }
     }
 }
-
 #[cfg(test)]
 mod test {
     use super::*;
