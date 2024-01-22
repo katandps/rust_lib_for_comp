@@ -3,7 +3,6 @@
 //! ## 計算量
 //! $O(N)$
 
-use crate::prelude::*;
 #[codesnip::entry("manachar")]
 pub use manachar_impl::Manachar;
 #[codesnip::entry("manachar")]
