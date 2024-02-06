@@ -13,6 +13,3 @@ criterion = "0.5.1"
 name = "binary-gcd"
 path = "./bench_binary_gcd.rs"
 harness = false
-
-[lib]
-path = "lib.rs"
