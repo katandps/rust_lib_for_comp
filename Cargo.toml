@@ -2,7 +2,7 @@
 members = [
     'crates/rust_lib_for_comp',
     'crates/verifications/aoj',
-    # 'verifications/atcoder/*',
+    'crates/verifications/atcoder',
     'crates/verifications/library_checker',
     'crates/verifications/yukicoder',
     'crates/benches/*',
