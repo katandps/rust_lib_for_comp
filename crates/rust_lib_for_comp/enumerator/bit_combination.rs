@@ -30,6 +30,6 @@ fn test() {
         v[c as usize] = true;
     }
     for i in 0..v.len() {
-        assert!(v[i] ^ !(i.count_ones() == 4))
+        assert!(v[i] ^ (i.count_ones() != 4))
     }
 }

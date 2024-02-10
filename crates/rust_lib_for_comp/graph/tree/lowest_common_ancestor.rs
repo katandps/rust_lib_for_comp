@@ -175,8 +175,8 @@ mod test {
         assert_eq!(2, lca.dist(0, 5));
         assert_eq!(4, lca.dist(5, 4));
 
-        assert_eq!(true, lca.on_path(5, 8, 1));
-        assert_eq!(false, lca.on_path(5, 8, 3));
+        assert!(lca.on_path(5, 8, 1));
+        assert!(!lca.on_path(5, 8, 3));
 
         assert_eq!(vec![2, 0, 1, 3, 7], lca.path(2, 7));
     }

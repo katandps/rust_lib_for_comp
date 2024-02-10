@@ -94,7 +94,7 @@ fn test() {
             assert_eq!(dst, src);
         }
     } else {
-        assert!(false, "must be found")
+        unreachable!("must be found")
     }
 }
 
@@ -116,7 +116,7 @@ fn test2() {
             assert_eq!(dst, src);
         }
     } else {
-        assert!(false, "must be found")
+        unreachable!("must be found")
     }
 }
 

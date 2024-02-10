@@ -49,7 +49,7 @@ mod next_permutation_impl {
 
 #[test]
 fn test() {
-    let v = vec![1, 2, 3];
+    let v = [1, 2, 3];
     let mut b = Vec::new();
     for p in next_permutation_from_slice(&v[..]) {
         b.push(p);

@@ -393,7 +393,7 @@ mod test {
         graph.add_edge(4, 6, ());
         graph.add_edge(5, 6, ());
 
-        let hld = HLDecomposition::<Addition<i64>>::build(&graph, 0, &vec![1, 2, 4, 8, 16, 32, 64]);
+        let hld = HLDecomposition::<Addition<i64>>::build(&graph, 0, &[1, 2, 4, 8, 16, 32, 64]);
         assert_eq!(
             vec![127, 2, 124, 8, 112, 32, 96],
             (0..7).map(|i| hld.prod_subtree(i)).collect::<Vec<_>>()
@@ -422,7 +422,7 @@ mod test {
         let mut hld = HLDecomposition::<Addition<Sequence<usize>>>::build(
             &graph,
             0,
-            &(0..n).map(|i| Sequence::new(i)).collect::<Vec<_>>()[..],
+            &(0..n).map(Sequence::new).collect::<Vec<_>>()[..],
         );
         assert_eq!(Sequence(vec![4, 2, 0, 1]), hld.prod_path(4, 1));
         assert_eq!(Sequence(vec![1, 0, 2, 4]), hld.prod_path(1, 4));

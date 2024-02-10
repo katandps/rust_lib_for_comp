@@ -275,14 +275,14 @@ mod test {
     #[test]
     fn search_test() {
         let s = "mmiissiissiippii".as_bytes();
-        let sa = SuffixArray::build(&s);
+        let sa = SuffixArray::build(s);
         assert!(sa.search(&Vec::new()).is_some());
-        assert!(sa.search(&"i".as_bytes()).is_some());
+        assert!(sa.search("i".as_bytes()).is_some());
         assert_eq!(Some(0), sa.search("mmiissii".as_bytes()));
         assert_eq!(Some(3), sa.search("issii".as_bytes()));
         assert_eq!(Some(12), sa.search(&sa.src[12..]));
-        assert_eq!(None, sa.search(&vec![4, 4, 1, 1, 1,]));
-        assert_eq!(None, sa.search(&vec![5]));
-        assert_eq!(None, sa.search(&vec![1, 1, 4, 4, 1, 1, 3, 3, 3,]));
+        assert_eq!(None, sa.search(&[4, 4, 1, 1, 1,]));
+        assert_eq!(None, sa.search(&[5]));
+        assert_eq!(None, sa.search(&[1, 1, 4, 4, 1, 1, 3, 3, 3,]));
     }
 }

@@ -315,7 +315,7 @@ mod tests {
         let del = treap.remove(&5);
         assert_eq!(Some((5, 6)), del);
         treap.remove(&3);
-        for v in vec![0, 1, 2, 4, 6, 7, 8, 9] {
+        for v in [0, 1, 2, 4, 6, 7, 8, 9] {
             assert_eq!(Some(&(v + 1)), treap.find(&v));
         }
     }

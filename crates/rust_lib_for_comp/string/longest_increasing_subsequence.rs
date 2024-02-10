@@ -81,8 +81,8 @@ mod test {
     #[test]
     fn test() {
         let mut lis = LIS::new(5);
-        let v = vec![1, 4, 2, 3, 5];
-        let expect = vec![1, 2, 2, 3, 4];
+        let v = [1, 4, 2, 3, 5];
+        let expect = [1, 2, 2, 3, 4];
         for i in 0..5 {
             lis.insert(v[i]);
             assert_eq!(expect[i], lis.calc());
