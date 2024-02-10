@@ -1,25 +1,29 @@
-// verification-helper: PROBLEM https://judge.yosupo.jp/problem/factorize
-#![cfg_attr(coverage_nightly, feature(coverage_attribute))]
-#[cfg_attr(coverage_nightly, coverage(off))]
-fn main() {
-    solve(io_util::IO::default());
-}
-use io_util::*;
-use pollard_rho::PollardRho;
-use string_util::*;
+use rust_lib_for_comp::{
+    algebra::pollard_rho::PollardRho,
+    util::{
+        io_util::{ReadHelper, ReaderTrait},
+        string_util::JoinTrait,
+    },
+};
+use verify::{LibraryChecker, Solver};
 
-pub fn solve<IO: ReaderTrait + WriterTrait>(mut io: IO) {
-    let n = io.v::<usize>();
-    for _ in 0..n {
-        let p = io.v::<u64>().prime_factorize();
-        io.out(format!("{} {}\n", p.len(), p.join(" ")));
+#[derive(LibraryChecker)]
+pub struct Factorize;
+impl verify::Solver for Factorize {
+    const PROBLEM_ID: &'static str = "factorize";
+    const TIME_LIMIT_MILLIS: u64 = 10000;
+    fn solve(read: impl std::io::Read, mut write: impl std::io::Write) {
+        let mut reader = ReadHelper::new(read);
+        let n = reader.v::<usize>();
+        for _ in 0..n {
+            let p = reader.v::<u64>().prime_factorize();
+            writeln!(write, "{} {}\n", p.len(), p.join(" ")).unwrap();
+        }
     }
-    io.flush();
 }
-
 #[test]
 fn test() {
-    solve(io_debug::IODebug::static_assert(
+    Factorize::assert(
         "10
         1
         2
@@ -40,7 +44,6 @@ fn test() {
         1 7
         3 2 2 2
         2 3 3
-        2 2 5
-        ",
-    ))
+        2 2 5",
+    );
 }

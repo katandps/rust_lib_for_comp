@@ -1,24 +1,25 @@
-// verification-helper: PROBLEM https://judge.yosupo.jp/problem/primality_test
-#![cfg_attr(coverage_nightly, feature(coverage_attribute))]
-#[cfg_attr(coverage_nightly, coverage(off))]
-fn main() {
-    solve(io_util::IO::default());
-}
-use io_util::*;
-use miller_rabin::MillerRabin;
-use string_util::*;
+use rust_lib_for_comp::{
+    algebra::miller_rabin::MillerRabin,
+    util::io_util::{ReadHelper, ReaderTrait},
+};
+use verify::{LibraryChecker, Solver};
 
-pub fn solve<IO: ReaderTrait + WriterTrait>(mut io: IO) {
-    for _ in 0..io.v::<usize>() {
-        let n = io.v::<u64>();
-        io.out(if n.is_prime() { "Yes" } else { "No" }.line());
+#[derive(LibraryChecker)]
+pub struct PrimalityTest;
+impl verify::Solver for PrimalityTest {
+    const PROBLEM_ID: &'static str = "primality_test";
+    const TIME_LIMIT_MILLIS: u64 = 10000;
+    fn solve(read: impl std::io::Read, mut write: impl std::io::Write) {
+        let mut reader = ReadHelper::new(read);
+        for _ in 0..reader.v::<usize>() {
+            let n = reader.v::<u64>();
+            writeln!(write, "{}", if n.is_prime() { "Yes" } else { "No" }).unwrap()
+        }
     }
-    io.flush();
 }
-
 #[test]
 fn test() {
-    solve(io_debug::IODebug::static_assert(
+    PrimalityTest::assert(
         "6
         1
         2
@@ -32,5 +33,5 @@ fn test() {
         No
         Yes
         No",
-    ));
+    );
 }
