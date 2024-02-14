@@ -80,9 +80,7 @@ jobs:
           key: cv-${{ hashFiles('Cargo.toml') }}
 
       - name: Set up Rust
-        uses: dtolnay/rust-toolchain
-        with:
-          toolchain: nightly
+        uses: dtolnay/rust-toolchain@nightly
 
       - name: Install cargo make
         run: cargo install cargo-make
