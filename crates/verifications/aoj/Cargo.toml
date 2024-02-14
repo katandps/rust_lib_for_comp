@@ -1,0 +1,19 @@
+[package]
+name = "aizu_online_judge_solvers"
+version = "0.1.0"
+edition = "2018"
+
+[lib]
+doctest = false
+bench = false
+doc-scrape-examples = true
+path = "lib.rs"
+
+[dependencies]
+rust_lib_for_comp = { path = "../../rust_lib_for_comp" }
+verify = { git = "https://github.com/katandps/rust_judge" }
+
+[features]
+fetch_testcases = []
+verify = []
+verify_result = []

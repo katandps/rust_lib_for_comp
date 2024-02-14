@@ -40,7 +40,7 @@ description = "Run unit tests with coverage"
 toolchain = "nightly"
 command = "cargo"
 category = "Coverage"
-args = ["llvm-cov", "--doctests", "--lcov", "--output-path", "lcov.info"]
+args = ["llvm-cov", "--lcov", "--output-path", "lcov.info"]
 
 [tasks.snippet]
 env = { SNIPPETS_DIR = "../rust_cp_workspace/.vscode", SNIPPETS_FILE = "libraries", SNIPPETS_SUFFIX = "code-snippets" }
@@ -54,11 +54,19 @@ cargo snippet -t vscode crates > ${SNIPPETS_DIR}/${SNIPPETS_FILE}.${SNIPPETS_SUF
 dependencies = ["format", "lint", "check", "coverage", "verify", "snippet"]
 
 [tasks.rustdoc]
-env = { RUSTDOCFLAGS = "--html-in-header katex.html" }
+env = { RUSTDOCFLAGS = "--html-in-header katex.html -Z unstable-options --generate-link-to-definition" }
 description = "Generate rustdoc with KATEX"
 command = "cargo"
+toolchain = "nightly"
 category = "Documentation"
-args = ["doc", "--no-deps"]
+args = [
+	"doc",
+	"--no-deps",
+	"-Zunstable-options",
+	"-Zrustdoc-scrape-examples",
+	"--features",
+	"verify_result",
+]
 
 [tasks.refresh-dropbox-token]
 description = "Refresh local dropbox token"
@@ -72,40 +80,59 @@ script = '''
 '''
 
 [tasks.verify-download]
+env = { PYTHON = "python3" }
 description = "download verification problems"
-dependencies = ["refresh-dropbox-token"]
-category = "Verification"
-script = '''
-	export DROPBOX_TOKEN=$(cat dropbox_token)
-	competitive-verifier download --verify-json ${VERIFY_DIR}/${VERIFY_FILE}
-'''
-
-[tasks.verify-list]
-description = "list problem to verify"
-install_crate = "cargo-workspaces"
-category = "Verification"
 command = "cargo"
-args = ["check", "--bin"]
-
-[tasks.verify-resolve]
-description = "resolve A verification by oj-resolve"
 category = "Verification"
-script = '''
-	competitive-verifier oj-resolve --include *${@}* > ${VERIFY_DIR}/${VERIFY_FILE}
-'''
+args = [
+	"test",
+	"--features",
+	"fetch_testcases",
+	"--",
+	"--test-threads=1",
+	"--ignored",
+]
 
 [tasks.verify]
 description = "verify problems"
-dependencies = ["verify-resolve", "verify-download"]
+command = "cargo"
 category = "Verification"
+args = ["test", "--release", "--lib", "--features", "verify", "--", "--ignored"]
+
+[tasks.verify-run]
+dependencies = ["verify-download", "verify"]
+
+[tasks.verify-list]
+command = "cargo"
+category = "Verification"
+args = [
+	"test",
+	"--release",
+	"--lib",
+	"--features",
+	"verify",
+	"--quiet",
+	"--",
+	"--list",
+	"--ignored",
+]
+
+[tasks.codesnip-cache]
 script = '''
-    competitive-verifier verify --verify-json ${VERIFY_DIR}/${VERIFY_FILE} --output ${VERIFY_DIR}/${VERIFY_RESULT_FILE}
+    cargo codesnip --target=crates/rust_lib_for_comp/lib.rs --cfg=nightly cache target/codesnip/codesnip-cache.bin
 '''
 
-[tasks.verify-doc]
-description = "build verify docs by result"
-category = "Verification"
+[tasks.codesnip-verify]
 script = '''
-    competitive-verifier docs --verify-json ${VERIFY_DIR}/${VERIFY_FILE} ${VERIFY_DIR}/${VERIFY_RESULT_FILE}
-    cd .competitive-verifier/_jekyll && bundle add webrick && bundle exec jekyll serve --incremental
+	cargo codesnip --target=crates/rust_lib_for_comp/lib.rs --filter-item=test --cfg=nightly verify --verbose --toolchain=1.70.0 --edition=2021
+'''
+
+[tasks.codesnip-list]
+script = '''
+	cargo codesnip --target=crates/rust_lib_for_comp/lib.rs --cfg=nightly list
+'''
+
+[tasks.codesnip-bundle]
+script = '''
+	cargo codesnip --target=crates/rust_lib_for_comp/lib.rs --cfg=nightly bundle ${@}
 '''

@@ -1,22 +1,11 @@
 [workspace]
-members = ['crates/*', 'verifications/*']
-exclude = [
-    'crates/algebra/binary_operation',
-    'crates/algo',
-    'crates/convolution',
-    'crates/data_structure',
-    'crates/dynamic_programming',
-    'crates/element',
-    'crates/enumerator',
-    'crates/flow',
-    'crates/geometry',
-    'crates/string',
-    'crates/typical_problems',
-    'crates/util',
-    'verifications/aoj',
-    'verifications/atcoder',
-    'verifications/library_checker',
-    'verifications/yukicoder',
+members = [
+    'crates/rust_lib_for_comp',
+    'crates/verifications/aoj',
+    'crates/verifications/atcoder',
+    'crates/verifications/library_checker',
+    'crates/verifications/yukicoder',
+    'crates/benches/*',
 ]
 resolver = "2"
 

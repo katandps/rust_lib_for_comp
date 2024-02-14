@@ -1,0 +1,15 @@
+[package]
+name = "rust_lib_for_comp"
+version = "0.1.0"
+edition = "2018"
+
+[lib]
+path = "lib.rs"
+doc-scrape-examples = true
+
+[dependencies]
+codesnip = "0.3.2"
+
+[dev-dependencies]
+rand = "0.8.5"
+itertools = "0.12.1"

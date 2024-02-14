@@ -1,7 +1,7 @@
 # Rust Library for Competitive Programming
 
 [![Rust](https://github.com/katandps/rust_lib_for_comp/actions/workflows/rust.yml/badge.svg)](https://github.com/katandps/rust_lib_for_comp/actions/workflows/rust.yml)
-[![document](https://img.shields.io/badge/Doc-GitHubPages-brightgreen)](https://library.katand.net/)
+[![document](https://img.shields.io/badge/Doc-GitHubPages-brightgreen)](https://library.katand.net/rust_lib_for_comp)
 [![codecov](https://codecov.io/gh/katandps/rust_lib_for_comp/graph/badge.svg?token=MQ3QNO200B)](https://codecov.io/gh/katandps/rust_lib_for_comp)
 
 ## About
@@ -10,7 +10,7 @@
 
 ## Usage
 
-Makefileを見るべし
+Makefile を見るべし
 
 ### Export snippets
 
