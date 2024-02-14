@@ -7,7 +7,7 @@ on:
 env:
   CARGO_TERM_COLOR: always
   CARGO_INCREMENTAL: 0
-  RUST_BACKTRACE: 1
+  RUST_BACKTRACE: full
   RUSTDOCFLAGS: --html-in-header /home/runner/work/rust_lib_for_comp/rust_lib_for_comp/katex.html
 
 # Sets permissions of the GITHUB_TOKEN to allow deployment to GitHub Pages
@@ -22,10 +22,9 @@ concurrency:
   cancel-in-progress: true
 
 jobs:
-  setup:
+  build:
+    name: Build
     runs-on: ubuntu-latest
-    outputs:
-      dropbox_token: ${{ steps.dropbox.outputs.token }}
     steps:
       - uses: actions/checkout@v3
 
@@ -37,20 +36,8 @@ jobs:
           toolchain: nightly
           targets: x86_64-unknown-linux-gnu
 
-      - name: Get dropbox access token
-        id: dropbox
-        run: |
-          curl https://api.dropbox.com/oauth2/token \
-          -d grant_type=refresh_token \
-          -d refresh_token=${DROPBOX_REFRESH_TOKEN} \
-          -u ${DROPBOX_APP_KEY}:${DROPBOX_APP_SECRET} | \
-          python3 -c "import sys, json; data=json.load(sys.stdin); print(data['access_token'], end='')" \
-           > temp
-          echo "token=$(cat temp)" >> $GITHUB_OUTPUT
-        env:
-          DROPBOX_APP_KEY: ${{secrets.DROPBOX_APP_KEY}}
-          DROPBOX_APP_SECRET: ${{secrets.DROPBOX_APP_SECRET}}
-          DROPBOX_REFRESH_TOKEN: ${{secrets.DROPBOX_REFRESH_TOKEN}}
+      - name: Install cargo-llvm-cov
+        uses: taiki-e/install-action@cargo-llvm-cov
 
       - name: cargo-fmt
         run: cargo fmt --all -- --check
@@ -58,153 +45,11 @@ jobs:
       # - name: cargo-clippy
       # run: cargo clippy --workspace --lib --tests
 
-  verify:
-    runs-on: ubuntu-latest
-    needs: [setup]
-    env:
-      SPLIT_SIZE: 20
-    strategy:
-      matrix:
-        # prettier-ignore
-        index:
-          ["00", "01", "02", "03", "04", "05", "06", "07", "08", "09",
-            "10", "11", "12", "13", "14", "15", "16", "17", "18", "19"]
-    steps:
-      - uses: actions/checkout@v3
+      - name: cargo-build
+        run: cargo build --workspace --lib --tests
 
-      - uses: actions/cache@v3
-        with:
-          path: .competitive-verifier/cache
-          key: cv-${{ hashFiles('Cargo.toml') }}-${{ matrix.index }}
-          restore-keys: cv-
-
-      - name: Get dropbox token
-        run: echo "DROPBOX_TOKEN=${{needs.setup.outputs.dropbox_token}}" >> $GITHUB_ENV
-
-      - name: Download verify_files.json
-        uses: competitive-verifier/actions/download-verify-artifact@v1
-
-      - name: Set up competitive-verifier
-        uses: competitive-verifier/actions/setup@v1
-        with:
-          python-version: "3.9"
-          cache-pip: true
-
-      - name: Verify
-        uses: competitive-verifier/actions/verify@v1
-        with:
-          destination: ${{runner.temp}}/result.json
-          split-size: ${{ env.SPLIT_SIZE }}
-          split-index: ${{ matrix.index }}
-          timeout: 1200
-        env:
-          YUKICODER_TOKEN: ${{secrets.YUKICODER_TOKEN}}
-
-      - name: Upload result artifact
-        uses: actions/upload-artifact@v3
-        with:
-          name: Result-${{ runner.os }}-${{ matrix.index }}
-          path: ${{runner.temp}}/result.json
-          retention-days: 1
-
-  docs-and-check:
-    runs-on: ubuntu-latest
-    needs: verify
-    steps:
-      - uses: actions/checkout@v3
-        with:
-          fetch-depth: 0
-
-      - name: Download verify_files.json and all artifacts
-        id: all-artifacts
-        uses: competitive-verifier/actions/download-verify-artifact@v1
-        with:
-          download-all: true
-          artifact-root: .artifacts/
-
-      - name: Extract bundled
-        shell: bash
-        run: |
-          rm -rf .competitive-verifier/bundled
-          if test -d "$SRCDIR"; then
-            mkdir -p .competitive-verifier/
-            mv "$SRCDIR" .competitive-verifier/bundled
-          else
-            echo "$SRCDIR is not exists."
-          fi
-        env:
-          SRCDIR: .artifacts/Bundled-${{ runner.os }}
-
-      - name: Set up competitive-verifier
-        uses: competitive-verifier/actions/setup@v1
-        with:
-          python-version: "3.9"
-          cache-pip: true
-
-      - name: Docs
-        uses: competitive-verifier/actions/docs@v1
-        with:
-          verify-result: ${{ steps.all-artifacts.outputs.artifacts-root }}/Result-*/result.json
-          destination: _jekyll
-          write-summary: true
-
-      - name: Setup Pages
-        uses: actions/configure-pages@v3
-      - name: Build with Jekyll
-        uses: actions/jekyll-build-pages@v1
-        with:
-          source: _jekyll
-          destination: _site
-
-      - name: Generate rustdocs
-        run: cargo doc --workspace --no-deps
-
-      - name: merge rustdocs
-        run: |
-          mkdir public
-          cp -r ./target/doc/* public
-          cp -r ./_site/* public
-
-      - name: Upload pages artifact
-        uses: actions/upload-pages-artifact@v1
-        with:
-          path: _site
-      - name: Check
-        uses: competitive-verifier/actions/check@v1
-        with:
-          verify-result: ${{ steps.all-artifacts.outputs.artifacts-root }}/Result-*/result.json
-
-  test:
-    runs-on: ubuntu-latest
-    needs: [setup]
-    steps:
-      - uses: actions/checkout@v3
-      - uses: Swatinem/rust-cache@v2
-      - name: Set up Rust (nightly)
-        uses: dtolnay/rust-toolchain@stable
-        with:
-          toolchain: nightly
-          targets: x86_64-unknown-linux-gnu
-      - name: Install cargo-llvm-cov
-        uses: taiki-e/install-action@cargo-llvm-cov
-      - name: Generate code coverage
-        run: cargo +nightly llvm-cov --doctests --lcov --output-path lcov.info
-      - name: Upload result artifact
-        uses: actions/upload-artifact@v3
-        with:
-          name: coverage
-          path: lcov.info
-          retention-days: 1
-
-  upload-coverage:
-    runs-on: ubuntu-latest
-    needs: [test]
-    steps:
-      - uses: actions/checkout@v3
-      - name: Download result artifact
-        uses: actions/download-artifact@v3
-        with:
-          name: coverage
+      - name: cargo-test with coverage
+        run: cargo llvm-cov --all-features --workspace --lcov --output-path lcov.info
 
       - name: Upload coverage to Codecov
         uses: codecov/codecov-action@v3
@@ -213,33 +58,60 @@ jobs:
           files: lcov.info
           fail_ci_if_error: true
 
-  lint:
-    needs: setup
+  snippet:
+    name: Snippet
     runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v3
-      - run: cargo clippy --workspace -- -D warnings
 
-  compile:
-    needs: setup
-    runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v3
-      - uses: Swatinem/rust-cache@v2
-      - name: Set up Rust (1.70.0)
+      - name: Checkout
+        uses: actions/checkout@v3
+
+      - name: Setup `1.70.0`
+        uses: dtolnay/rust-toolchain@1.70.0
+
+      - name: Setup `stable`
         uses: dtolnay/rust-toolchain@stable
         with:
-          toolchain: "1.70.0"
-          targets: x86_64-unknown-linux-gnu
-      - run: cargo +1.70.0 check
+          components: rustfmt
 
-  deploy:
-    needs: [test, lint, compile, docs-and-check]
+      - name: Cache
+        uses: Swatinem/rust-cache@v2
+
+      - name: cargo-install codesnip
+        run: cargo install codesnip
+
+      - name: Snippet Verification
+        run: cargo codesnip --target=crates/competitive/src/lib.rs --filter-item=test --cfg=nightly verify --verbose --toolchain=1.70.0 --edition=2021
+
+  verify:
+    name: Verify
     runs-on: ubuntu-latest
-    environment:
-      name: github-pages
-      url: ${{ steps.deployment.outputs.page_url }}
+
     steps:
+      - uses: actions/checkout@v3
+
+      - uses: actions/cache@v3
+        with:
+          path: .cache/rust_judge
+          key: cv-${{ hashFiles('Cargo.toml') }}
+
+      - name: Install cargo make
+        run: cargo install cargo-make
+
+      - name: Download Testcases
+        run: makers verify-download
+
+      - name: Verify
+        run: makers verify
+
+      - name: Generate docs
+        run: makers rustdoc
+
+      - name: Upload pages artifact
+        uses: actions/upload-pages-artifact@v1
+        with:
+          path: ./target/doc
+
       - name: Deploy to GitHub Pages
         id: deployment
         uses: actions/deploy-pages@v2

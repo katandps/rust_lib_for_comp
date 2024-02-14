@@ -12,3 +12,4 @@ codesnip = "0.3.2"
 
 [dev-dependencies]
 rand = "0.8.5"
+itertools = "0.12.1"
