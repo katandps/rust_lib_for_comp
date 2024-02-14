@@ -30,9 +30,6 @@ jobs:
 
       - uses: Swatinem/rust-cache@v2
 
-      - name: Set up Rust
-        uses: dtolnay/rust-toolchain@stable
-
       - name: cargo-fmt
         run: cargo fmt --all -- --check
 
@@ -81,6 +78,11 @@ jobs:
         with:
           path: .cache/rust_judge
           key: cv-${{ hashFiles('Cargo.toml') }}
+
+      - name: Set up Rust
+        uses: dtolnay/rust-toolchain
+        with:
+          toolchain: nightly
 
       - name: Install cargo make
         run: cargo install cargo-make
