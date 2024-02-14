@@ -33,9 +33,6 @@ jobs:
       - name: Set up Rust (with nightly)
         uses: dtolnay/rust-toolchain@stable
 
-      - name: Install components
-        run: cargo install rustfmt
-
       - name: Install cargo-llvm-cov
         uses: taiki-e/install-action@cargo-llvm-cov
 
