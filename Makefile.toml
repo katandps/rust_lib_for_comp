@@ -82,7 +82,6 @@ script = '''
 [tasks.verify-download]
 env = { PYTHON = "python3" }
 description = "download verification problems"
-dependencies = ["refresh-dropbox-token"]
 command = "cargo"
 category = "Verification"
 args = [
