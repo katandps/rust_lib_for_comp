@@ -13,4 +13,5 @@ pub mod prelude;
 pub mod range_traits;
 pub mod string;
 pub mod template;
+pub mod typical_problems;
 pub mod util;
