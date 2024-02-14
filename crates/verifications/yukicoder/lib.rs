@@ -1,1 +1,1 @@
-mod p0600;
+pub mod p0600;
