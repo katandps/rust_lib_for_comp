@@ -30,11 +30,8 @@ jobs:
 
       - uses: Swatinem/rust-cache@v2
 
-      - name: Set up Rust (with nightly)
+      - name: Set up Rust
         uses: dtolnay/rust-toolchain@stable
-
-      - name: Install cargo-llvm-cov
-        uses: taiki-e/install-action@cargo-llvm-cov
 
       - name: cargo-fmt
         run: cargo fmt --all -- --check
@@ -45,15 +42,8 @@ jobs:
       - name: cargo-build
         run: cargo build --workspace --lib --tests
 
-      - name: cargo-test with coverage
-        run: cargo llvm-cov --all-features --workspace --lcov --output-path lcov.info
-
-      - name: Upload coverage to Codecov
-        uses: codecov/codecov-action@v3
-        with:
-          token: ${{ secrets.CODECOV_TOKEN }}
-          files: lcov.info
-          fail_ci_if_error: true
+      - name: cargo-test
+        run: cargo test --workspace --no-fail-fast
 
   snippet:
     name: Snippet
@@ -95,11 +85,17 @@ jobs:
       - name: Install cargo make
         run: cargo install cargo-make
 
+      - name: Install cargo-llvm-cov
+        uses: taiki-e/install-action@cargo-llvm-cov
+
       - name: Download Testcases
         run: makers verify-download
 
       - name: Verify
         run: makers verify
+
+      - name: Generate coverage
+        run: cargo llvm-cov --all-features --workspace --lcov --output-path lcov.info
 
       - name: Generate docs
         run: makers rustdoc
@@ -112,3 +108,10 @@ jobs:
       - name: Deploy to GitHub Pages
         id: deployment
         uses: actions/deploy-pages@v2
+
+      - name: Upload coverage to Codecov
+        uses: codecov/codecov-action@v3
+        with:
+          token: ${{ secrets.CODECOV_TOKEN }}
+          files: lcov.info
+          fail_ci_if_error: true
