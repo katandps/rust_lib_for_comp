@@ -96,7 +96,6 @@ args = [
 
 [tasks.verify]
 description = "verify problems"
-dependencies = ["refresh-dropbox-token"]
 command = "cargo"
 category = "Verification"
 args = ["test", "--release", "--lib", "--features", "verify", "--", "--ignored"]
