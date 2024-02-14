@@ -201,7 +201,7 @@ mod test {
 
     #[test]
     fn test_non_commutative() {
-        let v = (0..100).map(|i| Sequence::new(i)).collect::<Vec<_>>();
+        let v = (0..100).map(Sequence::new).collect::<Vec<_>>();
         let segtree: SegmentTree<Addition<Sequence<i64>>> = SegmentTree::from(v.clone());
         for i in 0..v.len() {
             assert_eq!(v[i], segtree[i]);
@@ -219,7 +219,7 @@ mod test {
 
     #[test]
     fn test_rev_non_commutative() {
-        let v = (0..100).map(|i| Sequence::new(i)).collect::<Vec<_>>();
+        let v = (0..100).map(Sequence::new).collect::<Vec<_>>();
         let segtree: SegmentTree<Addition<Sequence<i64>>, true> = SegmentTree::from(v.clone());
         for i in 0..v.len() {
             assert_eq!(v[i], segtree[i]);

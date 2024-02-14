@@ -29,7 +29,7 @@ pub fn binary_search_float<F: Fn(f64) -> bool>(mut ok: f64, mut ng: f64, f: F) -
 
 #[test]
 fn test() {
-    let src = vec![1, 5, 15, 30, 55, 90, 150];
+    let src = [1, 5, 15, 30, 55, 90, 150];
     let res = binary_search(src.len() as i64, -1, |i| src[i as usize] > 55);
     assert_eq!(src[res as usize], 90);
 }

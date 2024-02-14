@@ -48,7 +48,7 @@ mod compress_impl {
 
 #[test]
 fn compress_test() {
-    let s = vec![0, 10, 100, 50, 5, 2];
+    let s = [0, 10, 100, 50, 5, 2];
     let r = s[..].compress(0);
     assert_eq!(r, vec![0, 3, 5, 4, 2, 1]);
 }

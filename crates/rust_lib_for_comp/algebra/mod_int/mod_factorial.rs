@@ -202,7 +202,7 @@ fn permutation_test() {
 #[test]
 fn factorial_test() {
     let mut five = Factorial::<ModInt>::new(5);
-    let res = vec![1, 1, 2, 6, 24, 120];
+    let res = [1, 1, 2, 6, 24, 120];
     for i in 0..=5 {
         assert_eq!(res[i], five.factorial(i as i64).reduce());
     }

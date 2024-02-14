@@ -1,3 +1,6 @@
+pub mod bitwise_and_convolution;
+pub mod bitwise_xor_convolution;
+
 use rust_lib_for_comp::{
     algebra::mod_int::ModInt,
     convolution::fast_fourier_transform::FFT,

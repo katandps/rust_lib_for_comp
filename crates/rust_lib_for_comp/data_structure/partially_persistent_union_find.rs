@@ -107,7 +107,7 @@ fn test() {
     uf.unite(0, 2);
     uf.unite(0, 1);
 
-    let expect = vec![
+    let expect = [
         vec![0, 1, 2, 3, 4],
         vec![0, 1, 2, 1, 4],
         vec![0, 1, 2, 1, 2],
@@ -115,7 +115,7 @@ fn test() {
         vec![2, 1, 2, 1, 2],
         vec![2, 2, 2, 2, 2],
     ];
-    let expect_size = vec![
+    let expect_size = [
         vec![1, 1, 1, 1, 1],
         vec![1, 2, 1, 2, 1],
         vec![1, 2, 2, 2, 2],

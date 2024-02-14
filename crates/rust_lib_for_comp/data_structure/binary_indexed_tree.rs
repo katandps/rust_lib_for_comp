@@ -188,7 +188,7 @@ mod test {
     #[test]
     fn test_hand() {
         const LEN: usize = 10;
-        let mut v = vec![0; LEN];
+        let mut v = [0; LEN];
         let mut bit = BinaryIndexedTree::<Addition<i64>>::from(LEN);
 
         for i in 3..5 {

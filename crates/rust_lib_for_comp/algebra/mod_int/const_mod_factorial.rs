@@ -193,7 +193,7 @@ fn permutation_test() {
 #[test]
 fn factorial_test() {
     let five: Factorial<998_244_353, 100> = Factorial::new();
-    let res = vec![1, 1, 2, 6, 24, 120];
+    let res = [1, 1, 2, 6, 24, 120];
     for i in 0..=5 {
         assert_eq!(res[i], five.factorial(i as i64).reduce());
     }

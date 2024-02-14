@@ -618,9 +618,9 @@ mod test {
         assert_eq!(sub_matrix.determinant(), Some(ModInt::new(0)));
 
         let lhs: Matrix<ModInt> =
-            Matrix::row_vector(&vec![ModInt::new(1), ModInt::new(2), ModInt::new(3)]);
+            Matrix::row_vector(&[ModInt::new(1), ModInt::new(2), ModInt::new(3)]);
         let rhs: Matrix<ModInt> =
-            Matrix::column_vector(&vec![ModInt::new(4), ModInt::new(5), ModInt::new(6)]);
+            Matrix::column_vector(&[ModInt::new(4), ModInt::new(5), ModInt::new(6)]);
         let expect: Matrix<ModInt> = Matrix::build(vec![vec![ModInt::new(32)]]).unwrap();
         assert_eq!(lhs * rhs, Some(expect));
     }

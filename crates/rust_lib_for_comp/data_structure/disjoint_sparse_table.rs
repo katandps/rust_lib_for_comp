@@ -102,7 +102,7 @@ mod disjoint_sparse_table_impl {
 fn test() {
     use crate::algebra::binary_operation::addition::Addition;
 
-    let src = vec![1i64, 2, 4, 8, 16, 32, 64, 128, 256, 512];
+    let src = [1i64, 2, 4, 8, 16, 32, 64, 128, 256, 512];
     let dst = DisjointSparseTable::<Addition<i64>>::from(&src[..]);
 
     for i in 0..src.len() {

@@ -82,9 +82,9 @@ mod slice_traits {
 }
 #[test]
 fn test() {
-    let src = vec![1, 1, 1, 2, 2, 5, 8];
-    let expect_lower = vec![0, 0, 3, 5, 5, 5, 6, 6, 6, 7, 7];
-    let expect_upper = vec![0, 3, 5, 5, 5, 6, 6, 6, 7, 7, 7];
+    let src = [1, 1, 1, 2, 2, 5, 8];
+    let expect_lower = [0, 0, 3, 5, 5, 5, 6, 6, 6, 7, 7];
+    let expect_upper = [0, 3, 5, 5, 5, 6, 6, 6, 7, 7, 7];
 
     for i in 0..=10 {
         assert_eq!(expect_lower[i], src.lower_bound(&i));

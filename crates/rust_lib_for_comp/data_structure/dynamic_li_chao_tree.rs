@@ -318,7 +318,7 @@ fn test() {
     assert_eq!(std::i64::MAX, cht.query(-100));
     assert_eq!(std::i64::MAX, cht.query(0));
     assert_eq!(std::i64::MAX, cht.query(100));
-    let lines = vec![(1, 0), (-1, 10), (0, -10), (0, -20), (3, -150), (-2, 500)];
+    let lines = [(1, 0), (-1, 10), (0, -10), (0, -20), (3, -150), (-2, 500)];
     for i in 0..lines.len() {
         let (a, b) = lines[i];
         cht.add_line(a, b);
