@@ -90,6 +90,8 @@ jobs:
 
       - name: Download Testcases
         run: makers verify-download
+        env:
+          YUKICODER_TOKEN: ${{ secrets.YUKICODER_TOKEN }}
 
       - name: Verify
         run: makers verify
