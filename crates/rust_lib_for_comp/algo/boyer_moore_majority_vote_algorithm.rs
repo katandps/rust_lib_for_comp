@@ -6,6 +6,7 @@ use crate::prelude::*;
 
 #[codesnip::entry("boyer-moore-vote-algorithm")]
 #[derive(Clone, Debug)]
+#[allow(unused)]
 pub struct BoyerMooreVoteAlgorithm(Vec<usize>);
 
 #[codesnip::entry("boyer-moore-vote-algorithm")]
