@@ -80,8 +80,8 @@ jobs:
 
       - uses: actions/cache@v3
         with:
-          path: .cache/rust_judge
-          key: cv-${{ hashFiles('Cargo.toml') }}
+          path: ~/.cache
+          key: testcases
 
       - name: Set up Rust
         uses: dtolnay/rust-toolchain@nightly
