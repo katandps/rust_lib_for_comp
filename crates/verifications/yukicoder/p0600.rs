@@ -1,1 +1,1 @@
-mod bernoulli_bernoulli;
+pub mod bernoulli_bernoulli;
