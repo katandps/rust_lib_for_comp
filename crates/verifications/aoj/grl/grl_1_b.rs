@@ -36,3 +36,41 @@ impl verify::Solver for Grl1B {
         write.flush().ok();
     }
 }
+
+#[test]
+fn test() {
+    Grl1B::assert(
+        "4 5 0
+    0 1 2
+    0 2 3
+    1 2 -5
+    1 3 1
+    2 3 2",
+        "0
+        2
+        -3
+        -1",
+    );
+    Grl1B::assert(
+        "4 6 0
+    0 1 2
+    0 2 3
+    1 2 -5
+    1 3 1
+    2 3 2
+    3 1 0",
+        "NEGATIVE CYCLE",
+    );
+    Grl1B::assert(
+        "4 5 1
+    0 1 2
+    0 2 3
+    1 2 -5
+    1 3 1
+    2 3 2",
+        "INF
+        0
+        -5
+        -3",
+    )
+}

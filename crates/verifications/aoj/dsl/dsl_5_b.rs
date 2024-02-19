@@ -32,3 +32,26 @@ impl verify::Solver for Dsl5B {
         write.flush().ok();
     }
 }
+
+#[test]
+fn test() {
+    Dsl5B::assert(
+        "2
+    0 0 3 2
+    2 1 4 3",
+        "2",
+    );
+    Dsl5B::assert(
+        "2
+    0 0 2 2
+    2 0 4 2",
+        "1",
+    );
+    Dsl5B::assert(
+        "3
+    0 0 2 2
+    0 0 2 2
+    0 0 2 2",
+        "3",
+    )
+}

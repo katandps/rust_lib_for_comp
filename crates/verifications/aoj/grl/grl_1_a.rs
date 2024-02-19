@@ -29,3 +29,32 @@ impl verify::Solver for Grl1A {
         write.flush().ok();
     }
 }
+
+#[test]
+fn test() {
+    Grl1A::assert(
+        "4 5 0
+    0 1 1
+    0 2 4
+    1 2 2
+    2 3 1
+    1 3 5",
+        "0
+        1
+        3
+        4",
+    );
+    Grl1A::assert(
+        "4 6 1
+    0 1 1
+    0 2 4
+    2 0 1
+    1 2 2
+    3 1 1
+    3 2 5",
+        "3
+        0
+        2
+        INF",
+    )
+}
