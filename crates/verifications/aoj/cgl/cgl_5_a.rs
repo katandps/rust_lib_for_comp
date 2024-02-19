@@ -24,3 +24,20 @@ impl verify::Solver for Cgl5A {
         write.flush().ok();
     }
 }
+
+#[test]
+fn test() {
+    Cgl5A::assert(
+        "2
+    0.0 0.0
+    1.0 0.0",
+        "1.0",
+    );
+    Cgl5A::assert(
+        "3
+    0.0 0.0
+    2.0 0.0
+    1.0 1.0",
+        "1.41421356237",
+    )
+}

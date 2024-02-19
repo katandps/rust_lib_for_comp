@@ -31,3 +31,21 @@ impl verify::Solver for Cgl3C {
         write.flush().ok();
     }
 }
+
+#[test]
+fn test() {
+    Cgl3C::assert(
+        "4
+    0 0
+    3 1
+    2 3
+    0 3
+    3
+    2 1
+    0 2
+    3 2",
+        "2
+        1
+        0",
+    )
+}

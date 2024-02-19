@@ -26,3 +26,16 @@ impl verify::Solver for Cgl2D {
         write.flush().ok();
     }
 }
+
+#[test]
+fn test() {
+    Cgl2D::assert(
+        "3
+    0 0 1 0 0 1 1 1
+    0 0 1 0 2 1 1 2
+    -1 0 1 0 0 1 0 -1",
+        "1.0000000000
+        1.4142135624
+        0.0000000000",
+    )
+}

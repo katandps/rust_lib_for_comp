@@ -31,3 +31,32 @@ impl verify::Solver for Cgl7A {
         write.flush().ok();
     }
 }
+
+#[test]
+fn test() {
+    Cgl7A::assert(
+        "1 1 1
+    6 2 2",
+        "4",
+    );
+    Cgl7A::assert(
+        "1 2 1
+    4 2 2",
+        "3",
+    );
+    Cgl7A::assert(
+        "1 2 1
+    3 2 2",
+        "2",
+    );
+    Cgl7A::assert(
+        "0 0 1
+    1 0 2",
+        "1",
+    );
+    Cgl7A::assert(
+        "0 0 1
+    0 0 2",
+        "0",
+    )
+}

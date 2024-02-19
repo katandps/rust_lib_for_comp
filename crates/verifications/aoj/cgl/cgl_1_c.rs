@@ -28,3 +28,21 @@ impl verify::Solver for Cgl1C {
         write.flush().ok();
     }
 }
+
+#[test]
+fn test() {
+    Cgl1C::assert(
+        "0 0 2 0
+    5
+    -1 1
+    -1 -1
+    -1 0
+    0 0
+    3 0",
+        "COUNTER_CLOCKWISE
+        CLOCKWISE
+        ONLINE_BACK
+        ON_SEGMENT
+        ONLINE_FRONT",
+    )
+}

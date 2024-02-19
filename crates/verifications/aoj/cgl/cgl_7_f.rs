@@ -25,3 +25,19 @@ impl verify::Solver for Cgl7F {
         write.flush().ok();
     }
 }
+
+#[test]
+fn test() {
+    Cgl7F::assert(
+        "0 0
+    2 2 2",
+        "0 2
+        2 0",
+    );
+    Cgl7F::assert(
+        "-3 0
+    2 2 2",
+        "0.6206896552 3.4482758621
+        2.0000000000 0.0000000000",
+    )
+}

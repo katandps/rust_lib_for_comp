@@ -19,3 +19,22 @@ impl verify::Solver for Cgl3A {
         write.flush().ok();
     }
 }
+
+#[test]
+fn test() {
+    Cgl3A::assert(
+        "3
+    0 0
+    2 2
+    -1 1",
+        "2.0",
+    );
+    Cgl3A::assert(
+        "4
+    0 0
+    1 1
+    1 2
+    0 2",
+        "1.5",
+    )
+}

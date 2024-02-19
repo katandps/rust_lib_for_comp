@@ -31,3 +31,23 @@ impl verify::Solver for Cgl4A {
         write.flush().ok();
     }
 }
+
+#[test]
+fn test() {
+    Cgl4A::assert(
+        "7
+    2 1
+    0 0
+    1 2
+    2 2
+    4 2
+    1 3
+    3 3",
+        "5
+        0 0
+        2 1
+        4 2
+        3 3
+        1 3",
+    )
+}

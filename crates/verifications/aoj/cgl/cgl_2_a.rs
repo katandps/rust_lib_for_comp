@@ -31,3 +31,16 @@ impl verify::Solver for Cgl2A {
         write.flush().ok();
     }
 }
+
+#[test]
+fn test() {
+    Cgl2A::assert(
+        "3
+    0 0 3 0 0 2 3 2
+    0 0 3 0 1 1 1 4
+    0 0 3 0 1 1 2 2",
+        "2
+        1
+        0",
+    )
+}

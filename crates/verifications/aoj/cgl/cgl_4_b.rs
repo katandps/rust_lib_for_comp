@@ -24,3 +24,22 @@ impl verify::Solver for Cgl4B {
         write.flush().ok();
     }
 }
+
+#[test]
+fn test() {
+    Cgl4B::assert(
+        "3
+    0.0 0.0
+    4.0 0.0
+    2.0 2.0",
+        "4.00",
+    );
+    Cgl4B::assert(
+        "4
+    0.0 0.0
+    1.0 0.0
+    1.0 1.0
+    0.0 1.0",
+        "1.414213562373",
+    )
+}

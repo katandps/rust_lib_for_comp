@@ -18,3 +18,24 @@ impl verify::Solver for Cgl3B {
         write.flush().ok();
     }
 }
+
+#[test]
+fn test() {
+    Cgl3B::assert(
+        "4
+    0 0
+    3 1
+    2 3
+    0 3",
+        "1",
+    );
+    Cgl3B::assert(
+        "5
+    0 0
+    2 0
+    1 1
+    2 2
+    0 2",
+        "0",
+    )
+}
