@@ -27,6 +27,14 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
+
+      - name: Install Python
+        uses: actions/setup-python@v2
+
+      - name: Restore mtime
+        run: python ./.github/workflows/git-restore-mtime.py
 
       - uses: Swatinem/rust-cache@v2
 
@@ -49,6 +57,14 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
+
+      - name: Install Python
+        uses: actions/setup-python@v2
+
+      - name: Restore mtime
+        run: python ./.github/workflows/git-restore-mtime.py
 
       - uses: Swatinem/rust-cache@v2
 
@@ -75,6 +91,14 @@ jobs:
 
     steps:
       - uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
+
+      - name: Install Python
+        uses: actions/setup-python@v2
+
+      - name: Restore mtime
+        run: python ./.github/workflows/git-restore-mtime.py
 
       - uses: Swatinem/rust-cache@v2
 
