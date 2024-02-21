@@ -42,14 +42,6 @@ command = "cargo"
 category = "Coverage"
 args = ["llvm-cov", "--lcov", "--output-path", "lcov.info"]
 
-[tasks.snippet]
-env = { SNIPPETS_DIR = "../rust_cp_workspace/.vscode", SNIPPETS_FILE = "libraries", SNIPPETS_SUFFIX = "code-snippets" }
-category = "Development"
-script = '''
-mkdir -p ${SNIPPETS_DIR}
-cargo snippet -t vscode crates > ${SNIPPETS_DIR}/${SNIPPETS_FILE}.${SNIPPETS_SUFFIX}
-'''
-
 [tasks.build]
 dependencies = ["format", "lint", "check", "coverage", "verify", "snippet"]
 
@@ -82,16 +74,13 @@ script = '''
 [tasks.verify-download]
 env = { PYTHON = "python3" }
 description = "download verification problems"
-command = "cargo"
 category = "Verification"
-args = [
-	"test",
-	"--features",
-	"fetch_testcases",
-	"--",
-	"--test-threads=1",
-	"--ignored",
-]
+script = '''
+cargo test --features fetch_testcases --package library_checker_solvers -- --ignored
+cargo test --features fetch_testcases --package yukicoder_solvers -- --ignored --test-threads=1
+cargo test --features fetch_testcases --package atcoder_solvers -- --ignored --test-threads=1
+cargo test --features fetch_testcases --package aizu_online_judge_solvers -- --ignored --test-threads=1
+'''
 
 [tasks.verify]
 description = "verify problems"
