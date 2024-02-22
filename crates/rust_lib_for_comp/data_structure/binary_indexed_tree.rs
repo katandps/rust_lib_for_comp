@@ -173,16 +173,12 @@ mod test {
             let left = rand::thread_rng().gen_range(0..LEN);
             let right = rand::thread_rng().gen_range(left..LEN);
 
-            for i in left..right {
-                v[i] += 1;
-            }
+            v[left..right].iter_mut().for_each(|vi| *vi += 1);
             bit.add(left, 1);
             bit.add(right, -1);
         }
 
-        for i in 0..LEN {
-            assert_eq!(v[i], bit.sum(i));
-        }
+        (0..LEN).for_each(|i: usize| assert_eq!(v[i], bit.sum(i)));
     }
 
     #[test]
@@ -191,15 +187,11 @@ mod test {
         let mut v = [0; LEN];
         let mut bit = BinaryIndexedTree::<Addition<i64>>::from(LEN);
 
-        for i in 3..5 {
-            v[i] += 1;
-        }
+        v[3] += 1;
+        v[4] += 1;
         bit.add(3, 1);
         bit.add(5, -1);
-
-        for i in 0..LEN {
-            assert_eq!(v[i], bit.sum(i));
-        }
+        (0..LEN).for_each(|i: usize| assert_eq!(v[i], bit.sum(i)));
     }
 
     #[test]

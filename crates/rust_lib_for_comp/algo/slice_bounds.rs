@@ -16,7 +16,9 @@ mod slice_traits {
         fn lower_bound(&self, k: &Self::Item) -> usize;
         /// kより大きい要素となる最小のindexを返す
         fn upper_bound(&self, k: &Self::Item) -> usize;
-
+        fn is_empty(&self) -> bool {
+            self.len() == 0
+        }
         fn len(&self) -> usize;
         /// k未満の要素の数
         fn less_count(&self, k: &Self::Item) -> usize {

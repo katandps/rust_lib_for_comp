@@ -229,14 +229,10 @@ mod test {
     fn test_access() {
         let src = vec![5u64, 4, 5, 5, 2, 1, 5, 6, 1, 3, 5, 0];
         let wm = WaveletMatrix::from(src.clone());
-        for i in 0..src.len() {
-            assert_eq!(src[i], wm.access(i));
-        }
+        (0..src.len()).for_each(|i| assert_eq!(src[i], wm.access(i)));
         let src = vec![0u64, 0, 0, 0];
         let wm = WaveletMatrix::from(src.clone());
-        for i in 0..src.len() {
-            assert_eq!(src[i], wm.access(i));
-        }
+        (0..src.len()).for_each(|i| assert_eq!(src[i], wm.access(i)));
     }
 
     #[test]
@@ -245,8 +241,8 @@ mod test {
         let wm = WaveletMatrix::from(src.clone());
         for i in 0..10 {
             let mut cnt = 0;
-            for j in 0..src.len() {
-                if src[j] == i {
+            for (j, &sj) in src.iter().enumerate() {
+                if sj == i {
                     cnt += 1;
                 }
                 assert_eq!(cnt, wm.rank(i, j + 1), "{} {}", i, j);
@@ -263,10 +259,10 @@ mod test {
             .collect::<Vec<_>>();
         let mut map = HashMap::default();
         let wm = WaveletMatrix::from(src.clone());
-        for i in 0..n {
-            *map.entry(src[i]).or_insert(0) += 1;
-            let c = map.get(&src[i]).unwrap();
-            assert_eq!(wm.select(src[i], *c), Some(i));
+        for (i, &si) in src.iter().enumerate() {
+            *map.entry(si).or_insert(0) += 1;
+            let c = map.get(&si).unwrap();
+            assert_eq!(wm.select(si, *c), Some(i));
         }
     }
 
@@ -280,10 +276,7 @@ mod test {
         let wm = WaveletMatrix::from(src.clone());
         for l in 0..n {
             for r in l + 1..n {
-                let mut v = Vec::new();
-                for i in l..r {
-                    v.push(src[i]);
-                }
+                let mut v = src[l..r].to_vec();
                 v.sort();
                 for i in l..r {
                     assert_eq!(v[i - l], wm.kth_smallest(l..r, i - l));
@@ -302,10 +295,7 @@ mod test {
         let wm = WaveletMatrix::from(src.clone());
         for l in 0..n {
             for r in l + 1..n {
-                let mut v = Vec::new();
-                for i in l..r {
-                    v.push(src[i]);
-                }
+                let mut v = src[l..r].to_vec();
                 v.sort();
                 for i in l..r {
                     assert_eq!(v[v.len() + l - 1 - i], wm.kth_largest(l..r, i - l));

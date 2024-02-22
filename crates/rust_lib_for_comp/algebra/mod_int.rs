@@ -354,26 +354,26 @@ mod test {
             let (mx, my) = (Mi::new(x as u32), Mi::new(y as u32));
 
             assert_eq!(ModInt::from((x + y) % MOD), mx + my);
-            assert_eq!(ModInt::from((x + y) % MOD), (mx + y).into());
-            assert_eq!(ModInt::from((x + MOD - y) % MOD), (mx - my).into());
-            assert_eq!(ModInt::from((x + MOD - y) % MOD), (mx - y).into());
+            assert_eq!(ModInt::from((x + y) % MOD), (mx + y));
+            assert_eq!(ModInt::from((x + MOD - y) % MOD), (mx - my));
+            assert_eq!(ModInt::from((x + MOD - y) % MOD), (mx - y));
 
             let (mut x, mut mx) = (x, mx);
             x += y;
             mx += my;
-            assert_eq!(ModInt::from(x % MOD), mx.into());
+            assert_eq!(ModInt::from(x % MOD), mx);
 
             mx += y;
             x += y;
-            assert_eq!(ModInt::from(x % MOD), mx.into());
+            assert_eq!(ModInt::from(x % MOD), mx);
 
             mx -= my;
-            x = (x + MOD as i64 - y % MOD) % MOD;
-            assert_eq!(ModInt::from(x), mx.into());
+            x = (x + MOD - y % MOD) % MOD;
+            assert_eq!(ModInt::from(x), mx);
 
             mx -= y;
             x = (x + MOD - y % MOD) % MOD;
-            assert_eq!(ModInt::from(x), mx.into());
+            assert_eq!(ModInt::from(x), mx);
         }
     }
 
@@ -387,8 +387,8 @@ mod test {
 
             let (mx, my) = (Mi::new(x as u32), Mi::new(y as u32));
 
-            assert_eq!(ModInt::from((x * y) % MOD), (mx * my).into());
-            assert_eq!(ModInt::from((x * y) % MOD), (mx * y).into());
+            assert_eq!(ModInt::from((x * y) % MOD), (mx * my));
+            assert_eq!(ModInt::from((x * y) % MOD), (mx * y));
         }
     }
 

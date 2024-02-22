@@ -79,10 +79,7 @@ fn test() {
     let sparse_table = SparseTable::<Minimization<i64>>::from(&src[..]);
     for i in 0..src.len() {
         for j in i + 1..=src.len() {
-            let mut m = 10;
-            for k in i..j {
-                m = Minimization::op(&m, &src[k]);
-            }
+            let m = (i..j).fold(10, |x, i| Minimization::op(&x, &src[i]));
             assert_eq!(m, sparse_table.product(i..j));
         }
     }

@@ -29,7 +29,7 @@ fn test() {
     for c in comb {
         v[c as usize] = true;
     }
-    for i in 0..v.len() {
-        assert!(v[i] ^ (i.count_ones() != 4))
+    for (i, &vi) in v.iter().enumerate() {
+        assert!(vi ^ (i.count_ones() != 4))
     }
 }

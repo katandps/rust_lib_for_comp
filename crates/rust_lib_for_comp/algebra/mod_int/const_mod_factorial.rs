@@ -194,8 +194,8 @@ fn permutation_test() {
 fn factorial_test() {
     let five: Factorial<998_244_353, 100> = Factorial::new();
     let res = [1, 1, 2, 6, 24, 120];
-    for i in 0..=5 {
-        assert_eq!(res[i], five.factorial(i as i64).reduce());
+    for (i, &ri) in res.iter().enumerate() {
+        assert_eq!(ri, five.factorial(i as i64).reduce());
     }
 }
 

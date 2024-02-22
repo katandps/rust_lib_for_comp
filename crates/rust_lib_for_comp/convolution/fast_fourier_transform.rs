@@ -36,7 +36,7 @@ mod fast_fourier_transform_impl {
                 + One,
         > FFT<T>
     {
-        fn fft(&self, src: &mut Vec<T>, height: usize) {
+        fn fft(&self, src: &mut [T], height: usize) {
             assert!(src.len() == 1 << height);
             let imag = self.root[2];
             let mut phase = 1;
@@ -84,7 +84,7 @@ mod fast_fourier_transform_impl {
                 }
             }
         }
-        fn ifft(&self, src: &mut Vec<T>, height: usize) {
+        fn ifft(&self, src: &mut [T], height: usize) {
             assert!(src.len() == 1 << height);
             let imag_inv = self.root_inv[2];
             let mut phase = height;

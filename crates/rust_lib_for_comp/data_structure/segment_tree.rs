@@ -249,10 +249,7 @@ mod test {
 
         for l in 0..base.len() {
             for r in l + 1..base.len() {
-                let mut p = 0;
-                for i in l..r {
-                    p = Maximization::op(&p, &base[i]);
-                }
+                let p = (l..r).fold(0, |x, i: usize| Maximization::op(&x, &base[i]));
                 assert_eq!(p, segtree.product(l..r));
             }
         }
@@ -261,10 +258,7 @@ mod test {
         segtree.update_at(3, 8);
         for l in 0..base.len() {
             for r in l + 1..base.len() {
-                let mut p = 0;
-                for i in l..r {
-                    p = Maximization::op(&p, &base[i]);
-                }
+                let p = (l..r).fold(0, |x, i: usize| Maximization::op(&x, &base[i]));
                 assert_eq!(p, segtree.product(l..r));
             }
         }

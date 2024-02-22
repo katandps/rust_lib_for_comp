@@ -107,10 +107,7 @@ fn test() {
 
     for i in 0..src.len() {
         for j in i + 1..=src.len() {
-            let mut m = 0;
-            for k in i..j {
-                m = Addition::op(&m, &src[k]);
-            }
+            let m = (i..j).fold(0, |x, i| Addition::op(&x, &src[i]));
             assert_eq!(m, dst.product(i..j), "{}..{}", i, j);
         }
     }

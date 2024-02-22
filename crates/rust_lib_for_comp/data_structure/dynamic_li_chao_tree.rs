@@ -324,10 +324,9 @@ fn test() {
         cht.add_line(a, b);
         for j in -1000..1000 {
             let mut t = std::i64::MAX;
-            for k in 0..=i {
-                let (a, b) = lines[k];
+            lines.iter().take(i + 1).for_each(|(a, b)| {
                 chmin!(t, a * j + b);
-            }
+            });
             assert_eq!(
                 t,
                 cht.query(j),

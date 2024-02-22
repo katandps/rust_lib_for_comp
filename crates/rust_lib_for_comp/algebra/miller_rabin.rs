@@ -45,14 +45,14 @@ impl MillerRabin for u64 {
 
 #[test]
 fn test() {
-    assert_eq!(false, 0.is_prime());
-    assert_eq!(false, 1.is_prime());
-    assert_eq!(true, 2.is_prime());
-    assert_eq!(true, 3.is_prime());
-    assert_eq!(false, 4.is_prime());
-    assert_eq!(true, 5.is_prime());
-    assert_eq!(false, 99.is_prime());
-    assert_eq!(false, 100.is_prime());
-    assert_eq!(true, 101.is_prime());
-    assert_eq!(false, 1565912117761.is_prime());
+    assert!(!0.is_prime());
+    assert!(!1.is_prime());
+    assert!(2.is_prime());
+    assert!(3.is_prime());
+    assert!(!4.is_prime());
+    assert!(5.is_prime());
+    assert!(!99.is_prime());
+    assert!(!100.is_prime());
+    assert!(101.is_prime());
+    assert!(!1565912117761.is_prime());
 }

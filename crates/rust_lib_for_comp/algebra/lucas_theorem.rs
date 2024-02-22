@@ -31,19 +31,19 @@ pub fn lucas_theorem(mut n: i64, mut r: i64, p: i64) -> i64 {
 #[test]
 fn test() {
     assert_eq!(0, lucas_theorem(5, 2, 1));
-    assert_eq!(1 % 3, lucas_theorem(5, 0, 3));
+    assert_eq!(1, lucas_theorem(5, 0, 3));
     assert_eq!(5 % 3, lucas_theorem(5, 1, 3));
     assert_eq!(10 % 3, lucas_theorem(5, 2, 3));
     assert_eq!(10 % 3, lucas_theorem(5, 3, 3));
     assert_eq!(5 % 3, lucas_theorem(5, 4, 3));
-    assert_eq!(1 % 3, lucas_theorem(5, 5, 3));
+    assert_eq!(1, lucas_theorem(5, 5, 3));
 
-    assert_eq!(1 % 3, lucas_theorem(7, 0, 3));
+    assert_eq!(1, lucas_theorem(7, 0, 3));
     assert_eq!(7 % 3, lucas_theorem(7, 1, 3));
     assert_eq!(21 % 3, lucas_theorem(7, 2, 3));
     assert_eq!(35 % 3, lucas_theorem(7, 3, 3));
     assert_eq!(35 % 3, lucas_theorem(7, 4, 3));
     assert_eq!(21 % 3, lucas_theorem(7, 5, 3));
     assert_eq!(7 % 3, lucas_theorem(7, 6, 3));
-    assert_eq!(1 % 3, lucas_theorem(7, 7, 3));
+    assert_eq!(1, lucas_theorem(7, 7, 3));
 }
