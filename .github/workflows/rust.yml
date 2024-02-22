@@ -115,6 +115,9 @@ jobs:
       - name: Install cargo-llvm-cov
         uses: taiki-e/install-action@cargo-llvm-cov
 
+      - name: build
+        run: cargo test --all-features
+
       - name: Download Testcases
         run: makers verify-download
         env:
