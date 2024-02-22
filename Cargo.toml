@@ -13,6 +13,7 @@ resolver = "2"
 lto = true
 panic = 'abort'
 overflow-checks = true
+incremental = true
 
 [profile.test]
 opt-level = 3
