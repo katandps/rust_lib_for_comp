@@ -40,8 +40,8 @@ jobs:
       - name: cargo-fmt
         run: cargo fmt --all -- --check
 
-      # - name: cargo-clippy
-      # run: cargo clippy --workspace --lib --tests
+      - name: cargo-clippy
+        run: cargo clippy --workspace --lib --tests
 
       - name: cargo-build
         run: cargo build --workspace --lib --tests
