@@ -6,7 +6,7 @@ on:
 
 env:
   CARGO_TERM_COLOR: always
-  CARGO_INCREMENTAL: 0
+  CARGO_INCREMENTAL: 1
   RUST_BACKTRACE: full
   RUSTDOCFLAGS: --html-in-header /home/runner/work/rust_lib_for_comp/rust_lib_for_comp/katex.html
 
