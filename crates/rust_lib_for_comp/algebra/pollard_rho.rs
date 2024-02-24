@@ -16,7 +16,12 @@ pub trait PollardRho {
 
 #[codesnip::entry(
     "pollard-rho",
-    include("algebra, gcd, miller-rabin, montgomery-multiplication-64")
+    include(
+        "algebra",
+        "gcd-operation",
+        "miller-rabin",
+        "montgomery-multiplication"
+    )
 )]
 #[allow(clippy::many_single_char_names)]
 impl PollardRho for u64 {
