@@ -42,3 +42,30 @@ impl verify::Solver for P0275 {
         write.flush().ok();
     }
 }
+
+#[test]
+fn test() {
+    P0275::assert(
+        "6 7
+    1 2 3
+    1 4 1
+    2 3 5
+    4 3 1
+    3 6 2
+    4 5 2
+    5 6 1
+    1 6 6
+    1 6
+    4 3
+    4 6
+    5 6
+    2 6
+    2 5",
+        "Yes
+        Yes
+        Yes
+        Yes
+        No
+        No",
+    )
+}

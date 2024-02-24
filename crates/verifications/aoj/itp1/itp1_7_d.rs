@@ -21,3 +21,18 @@ impl verify::Solver for Itp1_7D {
         write.flush().ok();
     }
 }
+
+#[test]
+fn test() {
+    Itp1_7D::assert(
+        "3 2 3
+    1 2
+    0 3
+    4 5
+    1 2 1
+    0 3 2",
+        "1 8 5
+        0 9 6
+        4 23 14",
+    )
+}
