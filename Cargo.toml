@@ -11,7 +11,6 @@ resolver = "2"
 
 [profile.release]
 lto = true
-debug = true
 panic = 'abort'
 overflow-checks = true
 incremental = true
