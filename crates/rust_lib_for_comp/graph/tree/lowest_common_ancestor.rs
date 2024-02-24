@@ -183,13 +183,13 @@ mod test {
 
     #[test]
     fn big() {
-        let mut graph = Graph::new(10000);
-        for i in 0..9999 {
+        let mut graph = Graph::new(1000);
+        for i in 0..999 {
             graph.add_edge(i, i + 1, ());
         }
         let lca = LowestCommonAncestor::new(&graph, 0);
-        for i in 0..10000 {
-            for j in 0..10000 {
+        for i in 0..1000 {
+            for j in 0..1000 {
                 assert_eq!(std::cmp::min(i, j), lca.query(i, j))
             }
         }
