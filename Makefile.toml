@@ -76,10 +76,10 @@ env = { PYTHON = "python3" }
 description = "download verification problems"
 category = "Verification"
 script = '''
-cargo test --features fetch_testcases --package library_checker_solvers -- --ignored
-cargo test --features fetch_testcases --package yukicoder_solvers -- --ignored --test-threads=1
-cargo test --features fetch_testcases --package atcoder_solvers -- --ignored --test-threads=1
-cargo test --features fetch_testcases --package aizu_online_judge_solvers -- --ignored --test-threads=1
+cargo test --release --features fetch_testcases --package library_checker_solvers -- --ignored
+cargo test --release --features fetch_testcases --package yukicoder_solvers -- --ignored --test-threads=1
+cargo test --release --features fetch_testcases --package atcoder_solvers -- --ignored --test-threads=1
+cargo test --release --features fetch_testcases --package aizu_online_judge_solvers -- --ignored --test-threads=1
 '''
 
 [tasks.verify]
