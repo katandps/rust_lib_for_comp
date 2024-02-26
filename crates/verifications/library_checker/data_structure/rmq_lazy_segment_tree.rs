@@ -30,7 +30,7 @@ impl verify::Solver for StaticRmqLazySegmentTree {
         let mut reader = ReadHelper::new(read);
         let (n, q) = reader.v2::<usize, usize>();
         let a = reader.vec::<i64>(n);
-        let mut segtree = LazySegmentTree::from((&a[..], MinMin));
+        let mut segtree = LazySegmentTree::from_slice((&a[..], MinMin));
         for _ in 0..q {
             let (l, r) = reader.v2::<usize, usize>();
             writeln!(write, "{}", segtree.product(l..r)).ok();

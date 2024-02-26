@@ -1,6 +1,6 @@
 //! # 区間
 //! ### algo
-//! 例えば、[0, 4)の区間に3を足した時、 合計の値は3に区間の幅をかけた12増える
+//! 例えば、 $[0, 4)$ の区間に3を足した時、 合計の値は3に区間の幅をかけた12増える
 //! 区間の長さを持たせることで区間和などを計算できるようになる
 
 use crate::algebra::Zero;
@@ -15,7 +15,7 @@ mod section_impl {
     #[derive(Clone, PartialEq, Ord, PartialOrd, Eq)]
     pub struct Section<M: Clone + PartialEq> {
         pub value: M,
-        size: i64,
+        pub size: i64,
     }
     impl<M: Clone + PartialEq> Section<M> {
         pub fn new(value: M, size: i64) -> Self {
@@ -25,7 +25,7 @@ mod section_impl {
 
     impl<M: Clone + PartialEq + Display> Debug for Section<M> {
         fn fmt(&self, f: &mut Formatter<'_>) -> std::fmt::Result {
-            write!(f, "v: {}, size: {}", self.value, self.size)
+            write!(f, "{}/{}", self.value, self.size)
         }
     }
     impl<M: Clone + PartialEq + Add<Output = M> + Zero> Add for Section<M> {

@@ -13,8 +13,8 @@ mod affine_impl {
 
     #[derive(Clone, Debug, PartialEq, Eq)]
     pub struct Affine<T> {
-        a: T,
-        b: T,
+        pub a: T,
+        pub b: T,
     }
 
     impl<T> Affine<T> {

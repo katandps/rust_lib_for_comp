@@ -32,7 +32,7 @@ impl verify::Solver for Dsl2B {
     fn solve(read: impl std::io::Read, mut write: impl std::io::Write) {
         let mut reader = ReadHelper::new(read);
         let (n, q) = reader.v2::<usize, usize>();
-        let mut segtree = LazySegmentTree::from((n + 1, AddSum));
+        let mut segtree = LazySegmentTree::from_length((n + 1, AddSum));
         for _ in 0..q {
             if reader.v::<usize>() == 0 {
                 let (i, x) = reader.v2::<usize, i64>();

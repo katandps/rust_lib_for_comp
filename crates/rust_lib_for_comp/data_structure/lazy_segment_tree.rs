@@ -4,48 +4,21 @@
 
 use crate::algebra::{Magma, MapMonoid};
 use crate::range_traits::{PointUpdate, RangeProductMut, RangeUpdate, ToBounds};
+use crate::util::string_util::JoinTrait;
 
 #[codesnip::entry("lazy-segment-tree")]
 pub use lazy_segment_tree_impl::LazySegmentTree;
 #[codesnip::entry("lazy-segment-tree", include("algebra", "range-traits"))]
 mod lazy_segment_tree_impl {
-    use super::{Magma, MapMonoid, PointUpdate, RangeProductMut, RangeUpdate, ToBounds};
+    use super::{JoinTrait, Magma, MapMonoid, PointUpdate, RangeProductMut, RangeUpdate, ToBounds};
 
     #[derive(Clone)]
     pub struct LazySegmentTree<M: MapMonoid> {
-        m: M,
+        map: M,
         n: usize,
         log: usize,
         node: Vec<<M::Mono as Magma>::M>,
         lazy: Vec<<M::Func as Magma>::M>,
-    }
-
-    impl<M: MapMonoid> From<(usize, M)> for LazySegmentTree<M> {
-        fn from((length, m): (usize, M)) -> Self {
-            let n = (length + 1).next_power_of_two();
-            let log = n.trailing_zeros() as usize;
-            let node = vec![M::unit(); 2 * n];
-            let lazy = vec![M::identity_map(); n];
-            let mut tree = Self {
-                m,
-                n,
-                log,
-                node,
-                lazy,
-            };
-            (1..n).rev().for_each(|i| tree.calc(i));
-            tree
-        }
-    }
-
-    /// 1-indexedで配列の内容を詰めたセグメント木を生成する
-    impl<M: MapMonoid> From<(&[<M::Mono as Magma>::M], M)> for LazySegmentTree<M> {
-        fn from((v, m): (&[<M::Mono as Magma>::M], M)) -> Self {
-            let mut segtree = Self::from((v.len() + 1, m));
-            segtree.node[segtree.n..segtree.n + v.len()].clone_from_slice(v);
-            (0..segtree.n - 1).rev().for_each(|i| segtree.calc(i));
-            segtree
-        }
     }
 
     /// # 区間の総積
@@ -71,17 +44,17 @@ mod lazy_segment_tree_impl {
             let (mut sml, mut smr) = (M::unit(), M::unit());
             while l < r {
                 if l & 1 != 0 {
-                    sml = self.m.op(&sml, &self.node[l]);
+                    sml = self.map.op(&sml, &self.node[l]);
                     l += 1;
                 }
                 if r & 1 != 0 {
                     r -= 1;
-                    smr = self.m.op(&self.node[r], &smr);
+                    smr = self.map.op(&self.node[r], &smr);
                 }
                 l >>= 1;
                 r >>= 1;
             }
-            self.m.op(&sml, &smr)
+            self.map.op(&sml, &smr)
         }
     }
 
@@ -90,7 +63,7 @@ mod lazy_segment_tree_impl {
             assert!(i < self.n);
             i += self.n;
             (1..=self.log).rev().for_each(|j| self.propagate(i >> j));
-            self.node[i] = self.m.apply(&f, &self.node[i]);
+            self.node[i] = self.map.apply(&f, &self.node[i]);
             (1..=self.log).for_each(|j| self.calc(i >> j));
         }
     }
@@ -138,6 +111,30 @@ mod lazy_segment_tree_impl {
     }
 
     impl<M: MapMonoid> LazySegmentTree<M> {
+        /// 0-indexedで配列の内容を詰めたセグメント木を生成する
+        pub fn from_slice((v, m): (&[<M::Mono as Magma>::M], M)) -> Self {
+            let mut segtree = Self::from_length((v.len() + 1, m));
+            segtree.node[segtree.n..segtree.n + v.len()].clone_from_slice(v);
+            (0..segtree.n - 1).rev().for_each(|i| segtree.calc(i));
+            segtree
+        }
+
+        pub fn from_length((length, map): (usize, M)) -> Self {
+            let n = (length + 1).next_power_of_two();
+            let log = n.trailing_zeros() as usize;
+            let node = vec![M::unit(); 2 * n];
+            let lazy = vec![M::identity_map(); n];
+            let mut tree = Self {
+                map,
+                n,
+                log,
+                node,
+                lazy,
+            };
+            (1..n).rev().for_each(|i| tree.calc(i));
+            tree
+        }
+
         /// i番目の値を取得する
         pub fn get(&mut self, mut i: usize) -> <M::Mono as Magma>::M {
             assert!(i < self.n);
@@ -151,14 +148,14 @@ mod lazy_segment_tree_impl {
         /// k番目の区間を内包する区間の値から計算する
         fn calc(&mut self, k: usize) {
             assert!(2 * k + 1 < self.node.len());
-            self.node[k] = self.m.op(&self.node[2 * k], &self.node[2 * k + 1]);
+            self.node[k] = self.map.op(&self.node[2 * k], &self.node[2 * k + 1]);
         }
 
         /// k番目の区間の値に作用を適用する
         fn eval(&mut self, k: usize, f: <M::Func as Magma>::M) {
-            self.node[k] = self.m.apply(&f, &self.node[k]);
+            self.node[k] = self.map.apply(&f, &self.node[k]);
             if k < self.n {
-                self.lazy[k] = self.m.compose(&self.lazy[k], &f);
+                self.lazy[k] = self.map.compose(&self.lazy[k], &f);
             }
         }
 
@@ -168,6 +165,13 @@ mod lazy_segment_tree_impl {
             self.eval(2 * k + 1, self.lazy[k].clone());
             self.lazy[k] = M::identity_map();
         }
+
+        pub fn debug(&mut self) -> String {
+            (0..self.n).for_each(|i| {
+                self.get(i);
+            });
+            (0..self.n).map(|i| format!("{:?}", self.get(i))).join(" ")
+        }
     }
 }
 
@@ -176,6 +180,7 @@ mod test {
     use super::*;
     use crate::algebra::binary_operation::addition::Addition;
     use crate::element::section::Section;
+    use crate::element::sequence::Sequence;
 
     // これは毎回書く(モノイドとモノイドから作用付きモノイドを作る)
     pub struct AddSum;
@@ -196,7 +201,7 @@ mod test {
     fn a() {
         let n = 5;
         let m = AddSum;
-        let mut segtree = LazySegmentTree::<AddSum>::from((n, m));
+        let mut segtree = LazySegmentTree::<AddSum>::from_length((n, m));
 
         for i in 1..n {
             assert_eq!(0, segtree.product(i - 1..i).value);
@@ -209,5 +214,26 @@ mod test {
         // [0, 2, 5, 2, 0]
         segtree.update_range(1..4, 2);
         assert_eq!(7, segtree.product(0..3).value);
+    }
+
+    struct RangeAddRangeSum;
+    impl MapMonoid for RangeAddRangeSum {
+        type Mono = Addition<Sequence<i64>>;
+        type Func = Addition<Sequence<i64>>;
+        fn apply(&self, f: &Sequence<i64>, value: &Sequence<i64>) -> Sequence<i64> {
+            value.clone() + f.clone()
+        }
+    }
+
+    #[test]
+    fn seq_test() {
+        let n = 5;
+        let m = RangeAddRangeSum;
+        let mut segtree = LazySegmentTree::<RangeAddRangeSum>::from_length((n, m));
+        segtree.update_range(2..4, Sequence::new(1));
+        segtree.update_range(1..3, Sequence::new(2));
+        segtree.update_range(3..5, Sequence::new(3));
+
+        assert_eq!("[] [2] [1, 2] [1, 3] [3] [] [] []", &segtree.debug())
     }
 }
