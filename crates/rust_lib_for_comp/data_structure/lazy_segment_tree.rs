@@ -8,7 +8,7 @@ use crate::util::string_util::JoinTrait;
 
 #[codesnip::entry("lazy-segment-tree")]
 pub use lazy_segment_tree_impl::LazySegmentTree;
-#[codesnip::entry("lazy-segment-tree", include("algebra", "range-traits"))]
+#[codesnip::entry("lazy-segment-tree", include("algebra", "range-traits", "string-util"))]
 mod lazy_segment_tree_impl {
     use super::{JoinTrait, Magma, MapMonoid, PointUpdate, RangeProductMut, RangeUpdate, ToBounds};
 
