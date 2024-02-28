@@ -89,13 +89,29 @@ mod matrix_impl {
     }
 
     impl<T> Matrix<T> {
-        pub fn build(src: Vec<Vec<T>>) -> Option<Matrix<T>> {
+        pub fn build(src: Vec<Vec<T>>) -> Option<Self> {
             if (1..src.len()).any(|i| src[0].len() != src[i].len()) {
                 None
             } else {
                 let (height, width) = (src.len(), src[0].len());
                 Some(Self { src, height, width })
             }
+        }
+
+        pub fn shrink(mut self, height: usize, width: usize) -> Self {
+            assert!(height <= self.height);
+            assert!(width <= self.width);
+            for _ in height..self.height {
+                self.src.pop();
+            }
+            for i in 0..height {
+                for _ in width..self.width {
+                    self.src[i].pop();
+                }
+            }
+            self.height = height;
+            self.width = width;
+            self
         }
 
         #[inline]
@@ -200,6 +216,15 @@ mod matrix_impl {
                 v.push(l)
             }
             Matrix::build(v).unwrap()
+        }
+
+        pub fn shrink(&self, height: usize, width: usize) -> Self {
+            assert!(height <= self.height);
+            assert!(width <= self.width);
+            let mut ret = self.clone();
+            ret.width = width;
+            ret.height = height;
+            ret
         }
     }
 
@@ -430,53 +455,35 @@ mod matrix_impl {
                 return self.naive_mul(rhs);
             }
             let n = self.height;
-            if n & 1 == 0 {
-                let half = n / 2;
-                let (a1, a2) = self.row_divide(half);
-                let (a11, a12) = a1.column_divide(half);
-                let (a21, a22) = a2.column_divide(half);
-                let (b1, b2) = rhs.row_divide(half);
-                let (b11, b12) = b1.column_divide(half);
-                let (b21, b22) = b2.column_divide(half);
-                let p1 = ((a11 + a22) * (b11 + b22)).unwrap();
-                let p2 = ((a21 + a22) * b11).unwrap();
-                let p3 = (a11 * (b12 - b22)).unwrap();
-                let p4 = (a22 * (b21 - b11)).unwrap();
-                let p5 = ((a11 + a12) * b22).unwrap();
-                let p6 = ((a21 - a11) * (b11 + b12)).unwrap();
-                let p7 = ((a12 - a22) * (b21 + b22)).unwrap();
-                let c11 = p1.clone() + p4.clone() - p5.clone() + p7;
-                let c12 = p3.clone() + p5;
-                let c21 = p2.clone() + p4;
-                let c22 = p1 + p3 - p2 + p6;
-                let c1 = c11.pointer().combine_column(&c12.pointer());
-                let c2 = c21.pointer().combine_column(&c22.pointer());
-                Some(c1.pointer().combine_row(&c2.pointer()))
-            } else {
-                let half = (n + 1) / 2;
-                let (a1, a2) = self.row_divide(half);
-                let (a11, a12) = a1.column_divide(half);
-                let (a21, a22) = a2.column_divide(half);
-                let (b1, b2) = rhs.row_divide(half);
-                let (b11, b12) = b1.column_divide(half);
-                let (b21, b22) = b2.column_divide(half);
-                let p1 = ((a11 + a22) * (b11 + b22)).unwrap();
-                let p2 = ((a21 + a22) * b11).unwrap();
-                let p3 = (a11 * (b12 - b22)).unwrap();
-                let a22e = a22.extend(half, half);
-                let p4 = (a22e * (b21 - b11)).unwrap();
-                let b22e = b22.extend(half, half);
-                let p5 = ((a11 + a12) * b22e).unwrap();
-                let p6 = ((a21 - a11) * (b11 + b12)).unwrap();
-                let p7 = ((a12 - a22) * (b21 + b22)).unwrap();
-                let c11 = p1.clone() + p4.clone() - p5.clone() + p7;
-                let c12 = p3.clone() + p5;
-                let c21 = p2.clone() + p4;
-                let c22 = p1 + p3 - p2 + p6;
-                let c1 = c11.pointer().combine_column(&c12.pointer());
-                let c2 = c21.pointer().combine_column(&c22.pointer());
-                Some(c1.pointer().combine_row(&c2.pointer()))
+            if n & 1 == 1 {
+                let lhs = self.extend(n + 1, n + 1);
+                let rhs = rhs.extend(n + 1, n + 1);
+                return lhs
+                    .pointer()
+                    .strassen_mul(&rhs.pointer())
+                    .map(|m| m.shrink(n, n));
             }
+            let half = n / 2;
+            let (a1, a2) = self.row_divide(half);
+            let (a11, a12) = a1.column_divide(half);
+            let (a21, a22) = a2.column_divide(half);
+            let (b1, b2) = rhs.row_divide(half);
+            let (b11, b12) = b1.column_divide(half);
+            let (b21, b22) = b2.column_divide(half);
+            let p1 = ((a11 + a22) * (b11 + b22)).unwrap();
+            let p2 = ((a21 + a22) * b11).unwrap();
+            let p3 = (a11 * (b12 - b22)).unwrap();
+            let p4 = (a22 * (b21 - b11)).unwrap();
+            let p5 = ((a11 + a12) * b22).unwrap();
+            let p6 = ((a21 - a11) * (b11 + b12)).unwrap();
+            let p7 = ((a12 - a22) * (b21 + b22)).unwrap();
+            let c11 = p1.clone() + p4.clone() - p5.clone() + p7;
+            let c12 = p3.clone() + p5;
+            let c21 = p2.clone() + p4;
+            let c22 = p1 + p3 - p2 + p6;
+            let c1 = c11.pointer().combine_column(&c12.pointer());
+            let c2 = c21.pointer().combine_column(&c22.pointer());
+            Some(c1.pointer().combine_row(&c2.pointer()))
         }
     }
 
@@ -538,16 +545,17 @@ mod matrix_impl {
             )
         }
     }
+    impl<'a, T: ToString> Display for PointerMatrix<'a, T> {
+        fn fmt(&self, f: &mut Formatter<'_>) -> std::fmt::Result {
+            Debug::fmt(self, f)
+        }
+    }
 
     impl<'a, T: ToString> Debug for PointerMatrix<'a, T> {
         fn fmt(&self, f: &mut Formatter<'_>) -> std::fmt::Result {
             write!(
                 f,
-                "height:{} width:{}\ny_offset:{} x_offset:{}\n{}",
-                self.height,
-                self.width,
-                self.y_offset,
-                self.x_offset,
+                "{}",
                 self.src
                     .iter()
                     .skip(self.y_offset)
