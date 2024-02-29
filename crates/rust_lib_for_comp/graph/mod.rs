@@ -7,6 +7,7 @@ pub mod directed_acyclic_graph;
 pub mod find_cycle;
 pub mod grid;
 pub mod kruskal;
+pub mod low_link;
 pub mod prim;
 pub mod retrograde_analysis;
 pub mod strongly_connected_components;
