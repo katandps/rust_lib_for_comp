@@ -221,7 +221,7 @@ mod matrix_impl {
         pub fn shrink(&self, height: usize, width: usize) -> Self {
             assert!(height <= self.height);
             assert!(width <= self.width);
-            let mut ret = self.clone();
+            let mut ret = *self;
             ret.width = width;
             ret.height = height;
             ret
