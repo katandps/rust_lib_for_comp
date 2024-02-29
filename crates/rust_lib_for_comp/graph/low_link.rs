@@ -2,7 +2,9 @@ use super::GraphTrait;
 use crate::data_structure::union_find::UnionFind;
 pub(crate) use crate::min_max_macro::{chmin, max, min};
 
+#[codesnip::entry("low-link")]
 pub use low_link_impl::LowLink;
+#[codesnip::entry("low-link", include("graph", "union-find-tree", "chmin", "max"))]
 mod low_link_impl {
     use super::{chmin, max, min, GraphTrait, UnionFind};
     #[derive(Clone, Debug)]
