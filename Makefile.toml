@@ -106,6 +106,9 @@ args = [
 	"--ignored",
 ]
 
+[tasks.snippet]
+dependencies = ["codesnip-verify", "codesnip-cache"]
+
 [tasks.codesnip-cache]
 script = '''
     cargo codesnip --target=crates/rust_lib_for_comp/lib.rs --cfg=nightly cache target/codesnip/codesnip-cache.bin
