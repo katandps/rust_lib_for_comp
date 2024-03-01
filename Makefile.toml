@@ -82,14 +82,14 @@ cargo test --release --features fetch_testcases --package atcoder_solvers -- --i
 cargo test --release --features fetch_testcases --package aizu_online_judge_solvers -- --ignored --test-threads=1
 '''
 
-[tasks.verify]
+[tasks.verify-run]
 description = "verify problems"
 command = "cargo"
 category = "Verification"
 args = ["test", "--release", "--lib", "--features", "verify", "--", "--ignored"]
 
-[tasks.verify-run]
-dependencies = ["verify-download", "verify"]
+[tasks.verify]
+dependencies = ["verify-download", "verify-run"]
 
 [tasks.verify-list]
 command = "cargo"
