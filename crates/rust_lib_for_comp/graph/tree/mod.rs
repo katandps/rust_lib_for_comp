@@ -30,27 +30,29 @@ mod tree_graph_impl {
         /// # 頂点の高さ
         /// 適当な頂点を根としたときの頂点の高さを返す
         ///
-        /// ## todo
-        /// 直径からの高さを求めるべき
-        ///
         /// ## verify
         /// [ABC233F](https://atcoder.jp/contests/abc233/submissions/28183153)
         fn rank(&self) -> Vec<G::Weight> {
-            let mut rank = vec![None; self.size()];
-            for i in 0..self.size() {
-                if rank[i].is_none() {
-                    rank[i] = Some(G::Weight::zero());
-                    self.rank_dfs(i, i, &mut rank);
-                }
-            }
-            rank.into_iter().flatten().collect()
+            let (l, r, _) = self.diameter();
+            let (mut rank_l, mut rank_r) = (vec![None; self.size()], vec![None; self.size()]);
+            chmax!(rank_l[l], Some(G::Weight::zero()));
+            self.rank_dfs(l, !0, &mut rank_l);
+            chmax!(rank_r[r], Some(G::Weight::zero()));
+            self.rank_dfs(r, !0, &mut rank_r);
+
+            rank_l
+                .into_iter()
+                .zip(rank_r)
+                .map(|(ld, rd)| max!(ld, rd))
+                .flatten()
+                .collect()
         }
         fn rank_dfs(&self, cur: usize, par: usize, rank: &mut Vec<Option<G::Weight>>) {
             for (dst, weight) in self.edges(cur) {
                 if dst == par {
                     continue;
                 }
-                rank[dst] = rank[cur].clone().map(|k| k + weight);
+                chmax!(rank[dst], rank[cur].clone().map(|k| k + weight));
                 self.rank_dfs(dst, cur, rank);
             }
         }
