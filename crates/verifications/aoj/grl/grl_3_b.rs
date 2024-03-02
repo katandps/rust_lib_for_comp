@@ -2,6 +2,7 @@
 
 use rust_lib_for_comp::graph::{adjacency_list::Graph, low_link::LowLink};
 use rust_lib_for_comp::util::io_util::*;
+use rust_lib_for_comp::{max, min};
 use verify::{AizuOnlineJudge, Solver};
 
 #[derive(AizuOnlineJudge)]
@@ -19,7 +20,7 @@ impl verify::Solver for Grl3B {
         }
         let ll = LowLink::build(&graph);
         for (s, t) in &ll.bridge {
-            writeln!(write, "{s} {t}").unwrap()
+            writeln!(write, "{} {}", min!(s, t), max!(s, t)).unwrap()
         }
     }
 }

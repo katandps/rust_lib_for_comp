@@ -1,12 +1,18 @@
+//! # LowLink
+//! 橋と関節点を求める
+//!
+//! ## 計算量
+//! $O(V)$
+
 use super::GraphTrait;
-use crate::data_structure::union_find::UnionFind;
-pub(crate) use crate::min_max_macro::{chmin, max, min};
+pub(crate) use crate::min_max_macro::{chmin, min};
+use crate::prelude::*;
 
 #[codesnip::entry("low-link")]
 pub use low_link_impl::LowLink;
-#[codesnip::entry("low-link", include("graph", "union-find-tree", "chmin", "max"))]
+#[codesnip::entry("low-link", include("graph", "prelude", "chmin"))]
 mod low_link_impl {
-    use super::{chmin, max, min, GraphTrait, UnionFind};
+    use super::{chmin, min, swap, GraphTrait};
     #[derive(Clone, Debug)]
     pub struct LowLink {
         ord: Vec<usize>,
@@ -20,13 +26,17 @@ mod low_link_impl {
         pub fn build<G: GraphTrait>(graph: &G) -> Self {
             let n = graph.size();
             let mut ret = Self {
-                ord: vec![n; n],
-                low: vec![n; n],
+                ord: vec![!0; n],
+                low: vec![!0; n],
                 articulation: Vec::new(),
                 bridge: Vec::new(),
             };
-            let mut uf = UnionFind::new(n);
-            ret.dfs(0, !0, 0, graph, &mut uf, &mut vec![false; n]);
+            let mut time = 0;
+            for i in 0..n {
+                if ret.ord[i] == !0 {
+                    time = ret.dfs(i, !0, time, graph);
+                }
+            }
             ret.articulation.sort();
             ret.bridge.sort();
             ret
@@ -37,25 +47,25 @@ mod low_link_impl {
             par: usize,
             mut time: usize,
             graph: &G,
-            uf: &mut UnionFind,
-            done: &mut [bool],
         ) -> usize {
             self.ord[src] = time;
             time += 1;
-            done[src] = true;
             let (mut is_articulation, mut cnt) = (false, 0);
+            let mut first_p = true; // 多重辺対策
             for (dst, _) in graph.edges(src) {
-                if !done[dst] {
+                if dst == par && first_p {
+                    first_p = false;
+                    continue;
+                }
+                if self.ord[dst] == !0 {
                     cnt += 1;
-                    time = self.dfs(dst, src, time, graph, uf, done);
+                    time = self.dfs(dst, src, time, graph);
                     chmin!(self.low[src], self.low[dst]);
                     is_articulation |= (!par > 0) && self.low[dst] >= self.ord[src];
-                    if self.ord[src] >= self.low[dst] {
-                        uf.unite(src, dst);
-                    } else {
-                        self.bridge.push((min!(src, dst), max!(src, dst)));
+                    if self.ord[src] < self.low[dst] {
+                        self.bridge.push((src, dst));
                     }
-                } else if dst != par {
+                } else {
                     chmin!(self.low[src], self.ord[dst]);
                 }
             }
@@ -66,7 +76,10 @@ mod low_link_impl {
             time
         }
 
-        pub fn is_bridge(&self, u: usize, v: usize) -> bool {
+        pub fn is_bridge(&self, mut u: usize, mut v: usize) -> bool {
+            if self.ord[u] > self.ord[v] {
+                swap(&mut u, &mut v);
+            }
             self.ord[u] < self.low[v]
         }
     }

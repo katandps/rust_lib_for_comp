@@ -43,8 +43,7 @@ mod tree_graph_impl {
             rank_l
                 .into_iter()
                 .zip(rank_r)
-                .map(|(ld, rd)| max!(ld, rd))
-                .flatten()
+                .flat_map(|(ld, rd)| max!(ld, rd))
                 .collect()
         }
         fn rank_dfs(&self, cur: usize, par: usize, rank: &mut Vec<Option<G::Weight>>) {
