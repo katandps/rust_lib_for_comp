@@ -1,4 +1,4 @@
-//! # Diameter of a Tree(木の直径)
+//! # Height of a Tree(木の高さ)
 
 use rust_lib_for_comp::graph::{adjacency_list::Graph, tree::TreeGraph};
 use rust_lib_for_comp::util::io_util::*;
