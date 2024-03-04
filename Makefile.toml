@@ -70,6 +70,9 @@ script = '''
 		python3 -c "import sys, json; data=json.load(sys.stdin); print(data['access_token'], end='')" > dropbox_token
 '''
 
+[tasks.verify]
+dependencies = ["verify-download", "verify-run"]
+
 [tasks.verify-download]
 env = { PYTHON = "python3" }
 description = "download verification problems"
@@ -87,23 +90,11 @@ command = "cargo"
 category = "Verification"
 args = ["test", "--release", "--lib", "--features", "verify", "--", "--ignored"]
 
-[tasks.verify]
-dependencies = ["verify-download", "verify-run"]
-
 [tasks.verify-list]
-command = "cargo"
 category = "Verification"
-args = [
-	"test",
-	"--release",
-	"--lib",
-	"--features",
-	"verify",
-	"--quiet",
-	"--",
-	"--list",
-	"--ignored",
-]
+script = '''
+cargo test --release --lib --features verify --quiet -- --list --ignored
+'''
 
 [tasks.snippet]
 dependencies = ["codesnip-verify", "codesnip-cache"]
