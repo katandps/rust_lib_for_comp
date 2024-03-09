@@ -41,7 +41,6 @@ pub fn solve(read: impl Read, mut write: impl Write) {
     let mut reader = ReadHelper::new(read);
     let n = reader.v::<usize>();
     writeln!(write, "{}", n).ok();
-    write.flush().ok();
 }
 
 #[codesnip::entry("tester")]
