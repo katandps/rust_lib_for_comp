@@ -2,6 +2,7 @@
 
 use rust_lib_for_comp::graph::{adjacency_list::Graph, low_link::LowLink};
 use rust_lib_for_comp::util::io_util::*;
+use rust_lib_for_comp::util::string_util::JoinTrait;
 use verify::{AizuOnlineJudge, Solver};
 
 #[derive(AizuOnlineJudge)]
@@ -18,9 +19,14 @@ impl verify::Solver for Grl3A {
             graph.add_edge(s, t, ());
         }
         let ll = LowLink::build(&graph);
-        for a in &ll.articulation {
-            writeln!(write, "{}", a).unwrap()
-        }
+        writeln!(
+            write,
+            "{}",
+            (0..v)
+                .flat_map(|i| if ll.is_articulation(i) { Some(i) } else { None })
+                .join(" ")
+        )
+        .unwrap()
     }
 }
 

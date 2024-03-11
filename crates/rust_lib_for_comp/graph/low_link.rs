@@ -18,7 +18,7 @@ mod low_link_impl {
         ord: Vec<usize>,
         low: Vec<usize>,
         /// # 関節点
-        pub articulation: Vec<usize>,
+        articulation: Vec<bool>,
         /// # 橋
         pub bridge: Vec<(usize, usize)>,
     }
@@ -28,7 +28,7 @@ mod low_link_impl {
             let mut ret = Self {
                 ord: vec![!0; n],
                 low: vec![!0; n],
-                articulation: Vec::new(),
+                articulation: vec![false; n],
                 bridge: Vec::new(),
             };
             let mut time = 0;
@@ -37,7 +37,6 @@ mod low_link_impl {
                     time = ret.dfs(i, !0, time, graph);
                 }
             }
-            ret.articulation.sort();
             ret.bridge.sort();
             ret
         }
@@ -69,10 +68,7 @@ mod low_link_impl {
                     chmin!(self.low[src], self.ord[dst]);
                 }
             }
-            is_articulation |= par == !0 && cnt > 1;
-            if is_articulation {
-                self.articulation.push(src)
-            }
+            self.articulation[src] = is_articulation || par == !0 && cnt > 1;
             time
         }
 
@@ -81,6 +77,10 @@ mod low_link_impl {
                 swap(&mut u, &mut v);
             }
             self.ord[u] < self.low[v]
+        }
+
+        pub fn is_articulation(&self, v: usize) -> bool {
+            self.articulation[v]
         }
     }
 }
