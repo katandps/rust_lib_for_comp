@@ -4,6 +4,7 @@ pub mod longest_common_prefix_array;
 pub mod longest_increasing_subsequence;
 pub mod manachar;
 pub mod morris_pratt;
+pub mod repeat_string;
 pub mod rolling_hash;
 pub mod run_length_encoding;
 pub mod suffix_array;
