@@ -1,17 +1,18 @@
 //! # XorShift法による疑似乱数生成
 use crate::range_traits::*;
 
-#[codesnip::entry("xor-shift", include("range-traits"))]
-#[derive(Clone, Debug)]
-pub struct XorShift {
-    seed: u64,
-}
-
+#[codesnip::entry("xor-shift")]
+pub use xor_shift_impl::XorShift;
 #[codesnip::entry("xor-shift", include("range-traits"))]
 mod xor_shift_impl {
     use std::time::SystemTime;
 
-    use super::{ToBounds, XorShift};
+    use super::ToBounds;
+
+    #[derive(Clone, Debug)]
+    pub struct XorShift {
+        seed: u64,
+    }
 
     const DEFAULT_SEED: u64 = 0xf0fb588ca2196dac;
     impl Default for XorShift {

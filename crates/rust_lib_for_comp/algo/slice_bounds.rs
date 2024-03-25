@@ -4,7 +4,7 @@
 //! $ \log N (Nはスライスの長さ)$
 use crate::prelude::*;
 
-#[codesnip::entry("slice-bounds", include("prelude"))]
+#[codesnip::entry("slice-bounds")]
 pub use slice_traits::{SliceBounds, SliceBoundsBy, SliceBoundsByKey};
 #[codesnip::entry("slice-bounds", include("prelude"))]
 mod slice_traits {
