@@ -44,6 +44,13 @@ mod range_traits_impl {
         fn product<R: ToBounds<I>>(&mut self, range: R) -> <Self::Magma as Magma>::M;
     }
 
+    impl<T: RangeProduct<I>, I> RangeProductMut<I> for T {
+        type Magma = T::Magma;
+        fn product<R: ToBounds<I>>(&mut self, range: R) -> <Self::Magma as Magma>::M {
+            <Self as RangeProduct<I>>::product(self, range)
+        }
+    }
+
     /// # 値の更新
     /// indexで指定した値をfで更新する
     pub trait PointUpdate<T> {
