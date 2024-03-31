@@ -20,6 +20,7 @@ pub mod persistent_queue;
 pub mod persistent_stack;
 pub mod priority_sum;
 pub mod segment_tree;
+pub mod segment_tree_2d;
 pub mod sparse_table;
 pub mod succinct_indexable_dictionaries;
 pub mod treap;
