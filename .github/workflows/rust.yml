@@ -117,7 +117,7 @@ jobs:
           mkdir -p ~/.cache/rust_judge/library_checker && cd ~/.cache/rust_judge/library_checker
           git init
           git remote add origin https://github.com/yosupo06/library-checker-problems.git
-          git pull
+          git pull origin master
 
       - name: Install cargo-llvm-cov
         uses: taiki-e/install-action@cargo-llvm-cov
