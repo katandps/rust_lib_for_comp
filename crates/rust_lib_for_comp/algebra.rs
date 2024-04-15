@@ -20,8 +20,9 @@ use crate::prelude::*;
 #[codesnip::entry("algebra", include("prelude"))]
 pub use algebra_traits::{
     AbelianGroup, Associative, Band, BoundedAbove, BoundedBelow, Commutative, CommutativeMonoid,
-    Group, Idempotent, Integral, Invertible, LeastSignificantBit, Magma, MapMonoid, Mapping,
-    Monoid, MonoidMapping, One, Pow, PrimitiveRoot, SemiGroup, TrailingZeros, Unital, Zero,
+    Group, Idempotent, Integral, Invertible, LeastSignificantBit, Magma, MagmaWithContext,
+    MapMonoid, Mapping, Monoid, MonoidMapping, One, Pow, PrimitiveRoot, SemiGroup, TrailingZeros,
+    Unital, Zero,
 };
 #[codesnip::entry("algebra", include("prelude"))]
 mod algebra_traits {
@@ -39,6 +40,18 @@ mod algebra_traits {
         fn op(x: &Self::M, y: &Self::M) -> Self::M;
         fn op_rev(x: &Self::M, y: &Self::M) -> Self::M {
             Self::op(y, x)
+        }
+    }
+
+    pub trait MagmaWithContext {
+        type M: Clone + PartialEq + Debug;
+        fn op_with_context(&mut self, lhs: &Self::M, rhs: &Self::M) -> Self::M;
+    }
+
+    impl<T: Magma> MagmaWithContext for T {
+        type M = T::M;
+        fn op_with_context(&mut self, x: &Self::M, y: &Self::M) -> Self::M {
+            Self::op(x, y)
         }
     }
 
