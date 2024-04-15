@@ -112,17 +112,18 @@ jobs:
       - name: Install cargo make
         run: cargo install cargo-make
 
+      - name: pre-download library-checker
+        run: |
+          mkdir -p ~/.cache/rust_judge/library_checker && cd ~/.cache/rust_judge/library_checker
+          git init
+          git remote add origin https://github.com/yosupo06/library-checker-problems.git
+          git pull
+
       - name: Install cargo-llvm-cov
         uses: taiki-e/install-action@cargo-llvm-cov
 
       - name: build
         run: cargo test --release --no-run --features verify,fetch_testcases
-
-      - name: pre-download library-checker
-        run: |
-          mkdir -p ~/.cache/rust_judge/library_checker && cd ~/.cache/rust_judge/library_checker
-          git init
-          git pull
 
       - name: Download Testcases
         run: makers verify-download
