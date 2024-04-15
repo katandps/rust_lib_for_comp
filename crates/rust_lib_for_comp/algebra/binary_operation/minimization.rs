@@ -7,8 +7,8 @@ pub use minimization_impl::Minimization;
 #[codesnip::entry("minimization", include("algebra"))]
 mod minimization_impl {
     use super::{
-        Associative, BoundedAbove, Commutative, Debug, Default, Idempotent, Magma, PhantomData,
-        Unital,
+        Associative, BoundedAbove, Commutative, Debug, Default, Idempotent, Magma, Mapping,
+        PhantomData, Unital,
     };
 
     #[derive(Clone, Debug, Default)]
@@ -31,4 +31,12 @@ mod minimization_impl {
     impl<S: Clone + Debug + PartialOrd> Associative for Minimization<S> {}
     impl<S: Clone + Debug + PartialOrd> Commutative for Minimization<S> {}
     impl<S: Clone + Debug + PartialOrd> Idempotent for Minimization<S> {}
+    impl<S: Clone + Debug + PartialOrd> Mapping for Minimization<S> {
+        type Mapping = S;
+        type Domain = S;
+        type Codomain = S;
+        fn apply(map: &Self::Mapping, a: &Self::Domain) -> Self::Codomain {
+            Self::op(map, a)
+        }
+    }
 }

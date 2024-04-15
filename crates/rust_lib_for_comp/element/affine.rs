@@ -7,10 +7,10 @@ pub use affine_impl::{Affine, Composition};
 #[codesnip::entry("affine", include("algebra", "prelude"))]
 mod affine_impl {
     use super::{
-        Add, Associative, Debug, Default, Magma, MonoidOperation, Mul, One, PhantomData, Unital,
-        Zero,
+        Add, Associative, Debug, Default, Magma, Mapping, Mul, One, PhantomData, Unital, Zero,
     };
 
+    /// # 線形写像 $ax + b$
     #[derive(Clone, Debug, PartialEq, Eq)]
     pub struct Affine<T> {
         pub a: T,
@@ -22,67 +22,56 @@ mod affine_impl {
             Affine { a, b }
         }
     }
-    impl<T: Clone + Mul<Output = T> + Add<Output = T>> Affine<T> {
-        pub fn apply(&self, x: T) -> T {
-            self.a.clone() * x + self.b.clone()
+    impl<T: Clone> Affine<T> {
+        pub fn apply<S: Mul<T, Output = S> + Add<T, Output = S>>(&self, x: S) -> S {
+            x * self.a.clone() + self.b.clone()
         }
     }
 
-    impl<T: Zero + One> Default for Affine<T> {
-        fn default() -> Self {
-            Affine {
-                a: T::one(),
-                b: T::zero(),
-            }
-        }
-    }
-    impl<T: One + Zero> One for Affine<T> {
-        fn one() -> Self {
-            Affine {
-                a: T::one(),
-                b: T::zero(),
-            }
-        }
-    }
-
-    impl<T: Zero> Zero for Affine<T> {
-        fn zero() -> Self {
-            Affine {
-                a: T::zero(),
-                b: T::zero(),
-            }
-        }
-    }
-
-    #[derive(Debug, Clone, Default)]
-    pub struct Composition<T>(PhantomData<T>);
-
-    impl<T: Clone + PartialEq + Debug + Mul<Output = T> + Add<Output = T>> Magma for Composition<T> {
-        type M = Affine<T>;
-        fn op(x: &Self::M, y: &Self::M) -> Self::M {
+    impl<M: Clone + Debug + Mul<Output = M> + Add<Output = M> + One + Zero> Affine<M> {
+        fn op(x: &Self, y: &Self) -> Self {
             Affine {
                 a: x.a.clone() * y.a.clone(),
                 b: x.b.clone() * y.a.clone() + y.b.clone(),
             }
         }
     }
-    impl<T: Zero + One + Clone + PartialEq + Debug + Mul<Output = T> + Add<Output = T>> Unital
-        for Composition<T>
+
+    /// # 関数の合成
+    #[derive(Debug, Clone, Default)]
+    pub struct Composition<T, M = T>(PhantomData<fn() -> (T, M)>);
+    trait CanComposite:
+        Clone + Debug + PartialEq + Mul<Output = Self> + Add<Output = Self> + One + Zero
     {
-        fn unit() -> Self::M {
+    }
+    impl<T: Clone + Debug + PartialEq + Mul<Output = Self> + Add<Output = Self> + One + Zero>
+        CanComposite for T
+    {
+    }
+
+    impl<T: CanComposite, M> Magma for Composition<T, M> {
+        type M = Affine<T>;
+        fn op(x: &Affine<T>, y: &Affine<T>) -> Self::M {
+            Affine::op(x, y)
+        }
+    }
+    impl<T: CanComposite, M> Unital for Composition<T, M> {
+        fn unit() -> Affine<T> {
             Affine {
                 a: T::one(),
                 b: T::zero(),
             }
         }
     }
-    impl<T> Associative for Composition<T> {}
-    impl<T: Zero + One + Clone + PartialEq + Debug + Mul<Output = T> + Add<Output = T>>
-        MonoidOperation for Composition<T>
+    impl<T: CanComposite, M> Associative for Composition<T, M> {}
+    impl<T: CanComposite, M: Clone + Debug + Mul<T, Output = M> + Add<T, Output = M>> Mapping
+        for Composition<T, M>
     {
-        type V = T;
-        fn apply(&self, f: &Self::M, value: &Self::V) -> Self::V {
-            f.apply(value.clone())
+        type Mapping = Affine<T>;
+        type Domain = M;
+        type Codomain = M;
+        fn apply(map: &Affine<T>, value: &M) -> M {
+            map.apply(value.clone())
         }
     }
 }
@@ -90,8 +79,8 @@ mod affine_impl {
 #[test]
 fn test() {
     let a = Affine::new(3, 2);
-    let one = Affine::one();
-    assert_eq!(Composition::op(&a, &one), a);
+    let one = Composition::<i32>::unit();
+    assert_eq!(Composition::<i32>::op(&a, &one), a);
     let b = Affine::new(5, 5);
-    assert_eq!(Composition::op(&a, &b), Affine::new(15, 15));
+    assert_eq!(Composition::<i32>::op(&a, &b), Affine::new(15, 15));
 }

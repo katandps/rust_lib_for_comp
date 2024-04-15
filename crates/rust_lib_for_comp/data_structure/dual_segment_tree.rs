@@ -7,18 +7,17 @@ use crate::range_traits::*;
 pub use dual_segment_tree_impl::DualSegmentTree;
 #[codesnip::entry("dual-segment-tree", include("algebra", "range-traits"))]
 mod dual_segment_tree_impl {
-    use super::{MonoidOperation, RangeUpdate, ToBounds};
+    use super::{MonoidMapping, RangeUpdate, ToBounds};
 
     #[derive(Clone, Debug)]
-    pub struct DualSegmentTree<M: MonoidOperation> {
+    pub struct DualSegmentTree<M: MonoidMapping> {
         n: usize,
-        operation_monoid: M,
         log: usize,
-        node: Vec<M::V>,
-        lazy: Vec<M::M>,
+        node: Vec<M::Domain>,
+        lazy: Vec<M::Mapping>,
     }
 
-    impl<M: MonoidOperation> RangeUpdate<usize, M::M> for DualSegmentTree<M> {
+    impl<M: MonoidMapping> RangeUpdate<usize, M::M> for DualSegmentTree<M> {
         fn update_range<R: ToBounds<usize>>(&mut self, range: R, f: M::M) {
             let (mut l, mut r) = range.lr();
             if l == r {
@@ -52,16 +51,15 @@ mod dual_segment_tree_impl {
         }
     }
 
-    impl<M: MonoidOperation> DualSegmentTree<M> {
+    impl<M: MonoidMapping> DualSegmentTree<M> {
         /// vを初期値としてセグメント木を生成する(完全二分木)
         /// vの長さを要素数とする
         /// ## 計算量
         /// $O(N)$
-        pub fn new(src: &[M::V], operation_monoid: M) -> Self {
+        pub fn new(src: &[M::Domain]) -> Self {
             let n = src.len().next_power_of_two();
             Self {
                 n,
-                operation_monoid,
                 log: n.trailing_zeros() as usize,
                 node: src.to_vec(),
                 lazy: vec![M::unit(); n * 2],
@@ -69,23 +67,18 @@ mod dual_segment_tree_impl {
         }
 
         /// i番目の値を取得する
-        pub fn get(&mut self, mut i: usize) -> M::V {
+        pub fn get(&mut self, mut i: usize) -> M::Codomain {
             assert!(i < self.n);
             i += self.n;
             for j in (1..=self.log).rev() {
                 self.propagate(i >> j);
             }
-            self.node[i - self.n].clone()
+            M::apply(&self.lazy[i], &self.node[i - self.n])
         }
 
         /// k番目の区間の値に作用を適用する
         fn eval(&mut self, k: usize, f: M::M) {
-            if k >= self.n && k - self.n < self.node.len() {
-                self.node[k - self.n] = self.operation_monoid.apply(&f, &self.node[k - self.n]);
-            }
-            if k < self.n {
-                self.lazy[k] = M::op(&self.lazy[k], &f);
-            }
+            self.lazy[k] = M::op(&self.lazy[k], &f);
         }
 
         /// k番目の区間に作用を適用し、その区間が含む区間に作用を伝播させる
@@ -105,7 +98,7 @@ mod test {
     #[test]
     fn test() {
         let a = vec![1i64, 2, 3, 4, 5];
-        let mut segtree = DualSegmentTree::new(&a, Composition::default());
+        let mut segtree = DualSegmentTree::<Composition<i64>>::new(&a);
         segtree.update_range(0..3, Affine::new(3, 2));
         assert_eq!(5, segtree.get(0));
         assert_eq!(8, segtree.get(1));

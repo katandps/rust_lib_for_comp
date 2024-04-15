@@ -2,7 +2,7 @@
 //! 区間更新 $O(\log N)$、区間取得 $O(\log N)$
 //!
 
-use crate::algebra::{Magma, MapMonoid};
+use crate::algebra::{Magma, MapMonoid, Mapping};
 use crate::range_traits::{PointUpdate, RangeProductMut, RangeUpdate, ToBounds};
 use crate::util::string_util::JoinTrait;
 
@@ -10,15 +10,17 @@ use crate::util::string_util::JoinTrait;
 pub use lazy_segment_tree_impl::LazySegmentTree;
 #[codesnip::entry("lazy-segment-tree", include("algebra", "range-traits", "string-util"))]
 mod lazy_segment_tree_impl {
-    use super::{JoinTrait, Magma, MapMonoid, PointUpdate, RangeProductMut, RangeUpdate, ToBounds};
+    use super::{
+        JoinTrait, Magma, MapMonoid, Mapping, PointUpdate, RangeProductMut, RangeUpdate, ToBounds,
+    };
 
     #[derive(Clone)]
     pub struct LazySegmentTree<M: MapMonoid> {
         map: M,
         n: usize,
         log: usize,
-        node: Vec<<M::Mono as Magma>::M>,
-        lazy: Vec<<M::Func as Magma>::M>,
+        node: Vec<<M::Map as Mapping>::Domain>,
+        lazy: Vec<<M::Map as Mapping>::Mapping>,
     }
 
     /// # 区間の総積
@@ -58,8 +60,8 @@ mod lazy_segment_tree_impl {
         }
     }
 
-    impl<M: MapMonoid> PointUpdate<<M::Func as Magma>::M> for LazySegmentTree<M> {
-        fn update_at(&mut self, mut i: usize, f: <M::Func as Magma>::M) {
+    impl<M: MapMonoid> PointUpdate<<M::Map as Magma>::M> for LazySegmentTree<M> {
+        fn update_at(&mut self, mut i: usize, f: <M::Map as Magma>::M) {
             assert!(i < self.n);
             i += self.n;
             (1..=self.log).rev().for_each(|j| self.propagate(i >> j));
@@ -68,8 +70,8 @@ mod lazy_segment_tree_impl {
         }
     }
 
-    impl<M: MapMonoid> RangeUpdate<usize, <M::Func as Magma>::M> for LazySegmentTree<M> {
-        fn update_range<R: ToBounds<usize>>(&mut self, range: R, f: <M::Func as Magma>::M) {
+    impl<M: MapMonoid> RangeUpdate<usize, <M::Map as Magma>::M> for LazySegmentTree<M> {
+        fn update_range<R: ToBounds<usize>>(&mut self, range: R, f: <M::Map as Magma>::M) {
             let (mut l, mut r) = range.lr();
             if l == r {
                 return;
@@ -152,7 +154,7 @@ mod lazy_segment_tree_impl {
         }
 
         /// k番目の区間の値に作用を適用する
-        fn eval(&mut self, k: usize, f: <M::Func as Magma>::M) {
+        fn eval(&mut self, k: usize, f: <M::Map as Magma>::M) {
             self.node[k] = self.map.apply(&f, &self.node[k]);
             if k < self.n {
                 self.lazy[k] = self.map.compose(&self.lazy[k], &f);
@@ -179,6 +181,7 @@ mod lazy_segment_tree_impl {
 mod test {
     use super::*;
     use crate::algebra::binary_operation::addition::Addition;
+    use crate::algebra::mapping::add_mapping::AddMapping;
     use crate::element::section::Section;
     use crate::element::sequence::Sequence;
 
@@ -186,15 +189,7 @@ mod test {
     pub struct AddSum;
     impl MapMonoid for AddSum {
         type Mono = Addition<Section<i64>>;
-        type Func = Addition<i64>;
-
-        fn apply(
-            &self,
-            f: &<Self::Func as Magma>::M,
-            value: &<Self::Mono as Magma>::M,
-        ) -> <Self::Mono as Magma>::M {
-            value.clone() + *f
-        }
+        type Map = AddMapping<i64, Section<i64>, Section<i64>>;
     }
 
     #[test]
@@ -219,7 +214,7 @@ mod test {
     struct RangeAddRangeSum;
     impl MapMonoid for RangeAddRangeSum {
         type Mono = Addition<Sequence<i64>>;
-        type Func = Addition<Sequence<i64>>;
+        type Map = Addition<Sequence<i64>>;
         fn apply(&self, f: &Sequence<i64>, value: &Sequence<i64>) -> Sequence<i64> {
             value.clone() + f.clone()
         }

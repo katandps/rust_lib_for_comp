@@ -1,5 +1,5 @@
 use rust_lib_for_comp::{
-    algebra::{binary_operation::addition::Addition, mod_int::ModInt, Magma, MapMonoid},
+    algebra::{binary_operation::addition::Addition, mod_int::ModInt, MapMonoid},
     data_structure::lazy_segment_tree::LazySegmentTree,
     element::{
         affine::{Affine, Composition},
@@ -35,16 +35,8 @@ impl verify::Solver for RangeAffineRangeSum {
     }
 }
 impl MapMonoid for RangeAffineRangeSum {
-    type Func = Composition<ModInt>;
+    type Map = Composition<ModInt, Section<ModInt>>;
     type Mono = Addition<Section<ModInt>>;
-    fn apply(
-        &self,
-        f: &<Self::Func as Magma>::M,
-        value: &<Self::Mono as Magma>::M,
-    ) -> <Self::Mono as Magma>::M {
-        // assert!(value.size > 0);
-        Section::new(f.a * value.value + f.b * value.size, value.size)
-    }
 }
 
 #[test]

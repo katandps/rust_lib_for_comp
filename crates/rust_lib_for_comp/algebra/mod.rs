@@ -4,6 +4,7 @@ pub mod dynamic_mod_int;
 pub mod formal_power_series;
 pub mod lagrange_interpolation;
 pub mod lucas_theorem;
+pub mod mapping;
 pub mod matrix;
 pub mod miller_rabin;
 pub mod mod_int;
@@ -19,8 +20,8 @@ use crate::prelude::*;
 #[codesnip::entry("algebra", include("prelude"))]
 pub use algebra_traits::{
     AbelianGroup, Associative, Band, BoundedAbove, BoundedBelow, Commutative, CommutativeMonoid,
-    Group, Idempotent, Integral, Invertible, LeastSignificantBit, Magma, MapMonoid, Monoid,
-    MonoidOperation, One, Pow, PrimitiveRoot, SemiGroup, TrailingZeros, Unital, Zero,
+    Group, Idempotent, Integral, Invertible, LeastSignificantBit, Magma, MapMonoid, Mapping,
+    Monoid, MonoidMapping, One, Pow, PrimitiveRoot, SemiGroup, TrailingZeros, Unital, Zero,
 };
 #[codesnip::entry("algebra", include("prelude"))]
 mod algebra_traits {
@@ -43,7 +44,7 @@ mod algebra_traits {
 
     /// # 結合則
     /// $\forall a,\forall b, \forall c \in T, (a \circ b) \circ c = a \circ (b \circ c)$
-    pub trait Associative {}
+    pub trait Associative: Magma {}
 
     /// # 単位的
     pub trait Unital: Magma {
@@ -111,18 +112,33 @@ mod algebra_traits {
     impl<M: Magma + Associative + Unital + Commutative + Invertible> AbelianGroup for M {}
     impl<M: Magma + Associative + Idempotent> Band for M {}
 
-    /// # 作用モノイド
-    /// 作用で、その合成がモノイドをなすもの
-    pub trait MonoidOperation: Magma + Associative + Unital {
-        type V: Clone + Debug;
-        fn apply(&self, f: &Self::M, value: &Self::V) -> Self::V;
+    /// # 写像
+    pub trait Mapping {
+        /// # 写像を表現する値
+        type Mapping: Clone + Debug;
+        /// # 始集合
+        type Domain: Clone + Debug;
+        /// # 終集合
+        type Codomain: Clone + Debug;
+        /// #
+        fn apply(map: &Self::Mapping, a: &Self::Domain) -> Self::Codomain;
     }
 
+    /// # 作用モノイド
+    /// 作用で、その合成がモノイドをなすもの
+    pub trait MonoidMapping: Monoid<M = <Self as Mapping>::Mapping> + Mapping {}
+    impl<T: Monoid + Mapping + Magma<M = <T as Mapping>::Mapping>> MonoidMapping for T {}
+
     /// # 作用モノイド付きモノイド
+    /// 作用が同一集合上の変換である必要がある
     pub trait MapMonoid {
-        /// モノイドM
+        /// 値の合成
         type Mono: Monoid;
-        type Func: Monoid;
+        /// 作用の合成
+        type Map: MonoidMapping<
+            Domain = <Self::Mono as Magma>::M,
+            Codomain = <Self::Mono as Magma>::M,
+        >;
         /// 値xと値yを併合する
         fn op(
             &self,
@@ -137,21 +153,23 @@ mod algebra_traits {
         /// 作用fをvalueに作用させる
         fn apply(
             &self,
-            f: &<Self::Func as Magma>::M,
+            f: &<Self::Map as Mapping>::Mapping,
             value: &<Self::Mono as Magma>::M,
-        ) -> <Self::Mono as Magma>::M;
+        ) -> <Self::Map as Mapping>::Codomain {
+            Self::Map::apply(f, value)
+        }
         /// 作用fの単位元
-        fn identity_map() -> <Self::Func as Magma>::M {
-            Self::Func::unit()
+        fn identity_map() -> <Self::Map as Magma>::M {
+            Self::Map::unit()
         }
         /// composition:
         /// $h() = f(g())$
         fn compose(
             &self,
-            f: &<Self::Func as Magma>::M,
-            g: &<Self::Func as Magma>::M,
-        ) -> <Self::Func as Magma>::M {
-            Self::Func::op(f, g)
+            f: &<Self::Map as Magma>::M,
+            g: &<Self::Map as Magma>::M,
+        ) -> <Self::Map as Magma>::M {
+            Self::Map::op(f, g)
         }
     }
 

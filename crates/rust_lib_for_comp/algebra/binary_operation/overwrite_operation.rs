@@ -8,7 +8,7 @@ use crate::algebra::*;
 pub use overwrite_operation_mod::OverwriteOperation;
 #[codesnip::entry("overwrite_operation", include("algebra"))]
 mod overwrite_operation_mod {
-    use super::{Associative, Debug, Default, Idempotent, Magma, PhantomData, Unital};
+    use super::{Associative, Debug, Default, Idempotent, Magma, Mapping, PhantomData, Unital};
     #[derive(Clone, Debug, Default)]
     pub struct OverwriteOperation<S>(PhantomData<fn() -> S>);
     impl<S: Clone + Debug + PartialEq> Magma for OverwriteOperation<S> {
@@ -28,4 +28,12 @@ mod overwrite_operation_mod {
     }
     impl<S: Clone + Debug + PartialEq> Associative for OverwriteOperation<S> {}
     impl<S: Clone + Debug + PartialEq> Idempotent for OverwriteOperation<S> {}
+    impl<S: Clone + Debug + PartialEq> Mapping for OverwriteOperation<S> {
+        type Mapping = S;
+        type Domain = S;
+        type Codomain = S;
+        fn apply(map: &Self::Mapping, _: &Self::Domain) -> Self::Codomain {
+            map.clone()
+        }
+    }
 }

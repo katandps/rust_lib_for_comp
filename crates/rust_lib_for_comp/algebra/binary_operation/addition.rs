@@ -5,11 +5,12 @@ use crate::algebra::*;
 
 #[codesnip::entry("addition", include("algebra"))]
 #[derive(Clone, Debug, Default)]
-pub struct Addition<S>(PhantomData<fn() -> S>);
+pub struct Addition<Lhs, Rhs = Lhs>(PhantomData<fn() -> (Lhs, Rhs)>);
 #[codesnip::entry("addition", include("algebra"))]
 mod addition_impl {
     use super::{
-        Add, Addition, Associative, Commutative, Debug, Invertible, Magma, Neg, Unital, Zero,
+        Add, Addition, Associative, Commutative, Debug, Invertible, Magma, Mapping, Neg, Unital,
+        Zero,
     };
     impl<S: Clone + Debug + Add<Output = S> + PartialEq> Magma for Addition<S> {
         type M = S;
@@ -27,6 +28,16 @@ mod addition_impl {
     impl<S: Clone + Debug + Add<Output = S> + PartialEq + Neg<Output = S>> Invertible for Addition<S> {
         fn inv(x: &S) -> S {
             x.clone().neg()
+        }
+    }
+    impl<S: Clone + Debug + Add<T, Output = T> + PartialEq, T: Clone + Debug> Mapping
+        for Addition<S, T>
+    {
+        type Mapping = S;
+        type Domain = T;
+        type Codomain = T;
+        fn apply(map: &Self::Mapping, a: &Self::Domain) -> Self::Codomain {
+            map.clone() + a.clone()
         }
     }
 }

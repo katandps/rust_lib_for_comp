@@ -2,7 +2,7 @@
 // range add range sum
 
 use rust_lib_for_comp::{
-    algebra::{binary_operation::addition::Addition, Magma, MapMonoid},
+    algebra::{binary_operation::addition::Addition, mapping::add_mapping::AddMapping, MapMonoid},
     data_structure::lazy_segment_tree::LazySegmentTree,
     element::section::Section,
     range_traits::{PointUpdate, RangeProductMut},
@@ -13,15 +13,7 @@ use verify::{AizuOnlineJudge, Solver};
 pub struct AddSum;
 impl MapMonoid for AddSum {
     type Mono = Addition<Section<i64>>;
-    type Func = Addition<i64>;
-
-    fn apply(
-        &self,
-        f: &<Self::Func as Magma>::M,
-        value: &<Self::Mono as Magma>::M,
-    ) -> <Self::Mono as Magma>::M {
-        value.clone() + *f
-    }
+    type Map = AddMapping<i64, Section<i64>, Section<i64>>;
 }
 
 #[derive(AizuOnlineJudge)]

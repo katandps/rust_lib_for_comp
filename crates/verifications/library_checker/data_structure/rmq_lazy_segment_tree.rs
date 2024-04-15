@@ -1,4 +1,4 @@
-use rust_lib_for_comp::algebra::{Magma, MapMonoid};
+use rust_lib_for_comp::algebra::MapMonoid;
 use rust_lib_for_comp::range_traits::RangeProductMut;
 use rust_lib_for_comp::util::io_util::*;
 use rust_lib_for_comp::{
@@ -10,15 +10,7 @@ use verify::{LibraryChecker, Solver};
 struct MinMin;
 impl MapMonoid for MinMin {
     type Mono = Minimization<i64>;
-    type Func = Minimization<i64>;
-
-    fn apply(
-        &self,
-        f: &<Self::Func as Magma>::M,
-        value: &<Self::Mono as Magma>::M,
-    ) -> <Self::Mono as Magma>::M {
-        std::cmp::min(*f, *value)
-    }
+    type Map = Minimization<i64>;
 }
 
 #[derive(LibraryChecker)]
