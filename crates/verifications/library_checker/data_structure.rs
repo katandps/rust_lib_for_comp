@@ -9,6 +9,7 @@ pub mod predecessor_problem_w_ary_tree;
 pub mod range_affine_point_get;
 pub mod range_affine_range_sum;
 pub mod range_kth_smallest;
+pub mod range_set_range_composite;
 pub mod rmq_cartesian_tree;
 pub mod rmq_disjoint_sparse_table;
 pub mod rmq_dynamic_segment_tree;
