@@ -24,7 +24,6 @@ args = ["clippy", "--", "-D", "warnings"]
 
 [tasks.check]
 description = "Check compile for Rust 1.70.0"
-toolchain = "1.70.0"
 category = "Development"
 command = "cargo"
 args = ["check"]

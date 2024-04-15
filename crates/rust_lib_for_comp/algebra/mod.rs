@@ -242,8 +242,8 @@ mod algebra_traits {
         $(
             impl Zero for $ty { #[inline] fn zero() -> Self { 0 }}
             impl One for $ty { #[inline] fn one() -> Self { 1 }}
-            impl BoundedBelow for $ty { #[inline] fn min_value() -> Self { Self::min_value() }}
-            impl BoundedAbove for $ty { #[inline] fn max_value() -> Self { Self::max_value() }}
+            impl BoundedBelow for $ty { #[inline] fn min_value() -> Self { Self::MIN }}
+            impl BoundedAbove for $ty { #[inline] fn max_value() -> Self { Self::MAX }}
             impl TrailingZeros for $ty { #[inline] fn trailing_zero(self) -> Self { self.trailing_zeros() as $ty}}
             impl LeastSignificantBit for $ty { #[inline] fn lsb(self) -> Self {if self == 0 {0} else {self & !(self - 1)}}}
             impl Integral for $ty {}

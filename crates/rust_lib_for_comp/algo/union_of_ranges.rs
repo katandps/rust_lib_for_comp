@@ -9,12 +9,12 @@ pub fn unite<R: RangeBounds<i64>>(set: &[R]) -> Vec<Range<i64>> {
         .map(|r| {
             use Bound::{Excluded, Included, Unbounded};
             let l = match r.start_bound() {
-                Unbounded => std::i64::MIN,
+                Unbounded => i64::MIN,
                 Included(&s) => s,
                 Excluded(&s) => s + 1,
             };
             let r = match r.end_bound() {
-                Unbounded => std::i64::MAX,
+                Unbounded => i64::MAX,
                 Included(&e) => e + 1,
                 Excluded(&e) => e,
             };

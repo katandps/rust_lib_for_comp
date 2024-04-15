@@ -57,7 +57,7 @@ mod segment_tree_impl {
             while i > 0 {
                 let id = self.id(i, x);
                 self.node[id] = M::op(
-                    &self.node[self.id(2 * i + 0, x)],
+                    &self.node[self.id(2 * i, x)],
                     &self.node[self.id(2 * i + 1, x)],
                 );
                 i >>= 1;
@@ -67,7 +67,7 @@ mod segment_tree_impl {
                 while x > 0 {
                     let id = self.id(y, x);
                     self.node[id] = M::op(
-                        &self.node[self.id(y, 2 * x + 0)],
+                        &self.node[self.id(y, 2 * x)],
                         &self.node[self.id(y, 2 * x + 1)],
                     );
                     x >>= 1;

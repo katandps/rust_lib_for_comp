@@ -18,6 +18,13 @@ pub mod mod_val_table_impl {
         /// # fact_inv$\[i] = i!$の逆元
         pub fact_inv: [ModInt<M>; N],
     }
+
+    impl<const M: u32, const N: usize> Default for Factorial<M, N> {
+        fn default() -> Self {
+            Self::new()
+        }
+    }
+
     impl<const M: u32, const N: usize> Factorial<M, N> {
         /// # 初期化
         /// あるnについてModValTableを初期化する

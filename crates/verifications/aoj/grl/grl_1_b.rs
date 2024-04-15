@@ -20,7 +20,7 @@ impl verify::Solver for Grl1B {
         }
         let d = bellman_ford(&graph, r);
         for di in &d {
-            if di == &std::i64::MIN {
+            if di == &i64::MIN {
                 writeln!(write, "NEGATIVE CYCLE").ok();
                 write.flush().ok();
                 return;

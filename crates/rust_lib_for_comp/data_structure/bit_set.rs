@@ -200,7 +200,7 @@ mod bitset_impl {
         type Output = Self;
         fn not(self) -> Self::Output {
             Self {
-                bits: self.bits.iter().map(|&i| i ^ std::u64::MAX).collect(),
+                bits: self.bits.iter().map(|&i| i ^ u64::MAX).collect(),
                 size: self.size,
             }
         }

@@ -120,7 +120,7 @@ mod circle_impl {
                 let xxyy = p.x * p.x + p.y * p.y;
                 let a = (xxyy + rad2 - (another.radius * another.radius)).0 / 2.0;
                 let sq = (xxyy * rad2 - a * a).0.sqrt();
-                if sq < std::f64::EPSILON {
+                if sq < f64::EPSILON {
                     vec![Vector::new(p.x * a / xxyy, a * p.y / xxyy)]
                 } else {
                     vec![

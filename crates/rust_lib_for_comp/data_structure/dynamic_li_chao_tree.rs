@@ -40,7 +40,7 @@ mod dynamic_li_chao_tree_impl {
     }
 
     impl DynamicLiChaoTree {
-        pub const INF: i64 = std::i64::MAX;
+        pub const INF: i64 = i64::MAX;
 
         pub fn new(left_limit: i64, right_limit: i64) -> Self {
             Self {

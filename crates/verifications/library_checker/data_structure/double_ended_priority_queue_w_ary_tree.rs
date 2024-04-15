@@ -23,9 +23,9 @@ impl verify::Solver for DoubleEndedPriorityQueueWAryTree {
                 s.push(x);
                 queries.push(x);
             } else if q == 1 {
-                queries.push(std::i64::MIN + 1);
+                queries.push(i64::MIN + 1);
             } else {
-                queries.push(std::i64::MIN + 2);
+                queries.push(i64::MIN + 2);
             }
         }
         let (comp, rev) = s[..].compress_with_reverse();
@@ -39,14 +39,14 @@ impl verify::Solver for DoubleEndedPriorityQueueWAryTree {
         }
         let mut i = n;
         for q in queries {
-            if q == std::i64::MIN + 1 {
+            if q == i64::MIN + 1 {
                 let p = tree.min().unwrap();
                 cnt[p as usize] -= 1;
                 if cnt[p as usize] == 0 {
                     tree.remove(p);
                 }
                 writeln!(write, "{}", s[rev[p as usize]]).ok();
-            } else if q == std::i64::MIN + 2 {
+            } else if q == i64::MIN + 2 {
                 let p = tree.max().unwrap();
                 cnt[p as usize] -= 1;
                 if cnt[p as usize] == 0 {
