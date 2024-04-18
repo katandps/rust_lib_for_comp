@@ -116,7 +116,7 @@ jobs:
         run: |
           mkdir -p ~/.cache/rust_judge/library_checker && cd ~/.cache/rust_judge/library_checker
           git init
-          git remote add origin https://github.com/yosupo06/library-checker-problems.git
+          git remote add origin https://github.com/yosupo06/library-checker-problems.git || true
           git pull origin master
 
       - name: Install cargo-llvm-cov
