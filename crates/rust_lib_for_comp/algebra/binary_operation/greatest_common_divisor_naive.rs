@@ -3,12 +3,15 @@
 use crate::algebra::*;
 use crate::prelude::*;
 
-#[derive(Clone, Debug, Default)]
-pub struct Gcd<S>(PhantomData<fn() -> S>);
-mod gcd_impl {
+mod naive_gcd_impl {
     use super::{
-        swap, Associative, Commutative, Debug, Gcd, Idempotent, Magma, RemAssign, Unital, Zero,
+        swap, Associative, Commutative, Debug, Default, Idempotent, Magma, PhantomData, RemAssign,
+        Unital, Zero,
     };
+
+    #[derive(Clone, Debug, Default)]
+    pub struct Gcd<S>(PhantomData<fn() -> S>);
+
     impl<S: Clone + Debug + RemAssign + PartialOrd + Zero> Magma for Gcd<S> {
         type M = S;
         #[inline]
@@ -36,7 +39,7 @@ mod gcd_impl {
 
 #[test]
 fn test() {
-    let mut gcd = Gcd::default();
+    let mut gcd = naive_gcd_impl::Gcd::default();
     assert_eq!(1, gcd.op(&3, &5));
     assert_eq!(2, gcd.op(&4, &6));
     assert_eq!(3, gcd.op(&3, &9));
@@ -45,6 +48,6 @@ fn test() {
     assert_eq!(1, gcd.op(&1_000_000_007, &998_244_353));
     assert_eq!(100, gcd.op(&100, &0));
     assert_eq!(100, gcd.op(&0, &100));
-    assert_eq!(100, gcd.op(&Gcd::unit(), &100));
-    assert_eq!(100, gcd.op(&100, &Gcd::unit()));
+    assert_eq!(100, gcd.op(&naive_gcd_impl::Gcd::unit(), &100));
+    assert_eq!(100, gcd.op(&100, &naive_gcd_impl::Gcd::unit()));
 }
