@@ -14,7 +14,7 @@ impl verify::Solver for StaticRMQCartesianTree {
         let (n, q) = reader.v2::<usize, usize>();
         let a = reader.vec::<i64>(n);
         let ct = CartesianTree::build(&a);
-        let lca = LowestCommonAncestor::new(&ct.graph, ct.root);
+        let mut lca = LowestCommonAncestor::new(&ct.graph, ct.root);
         for _ in 0..q {
             let (l, r) = reader.v2::<usize, usize>();
             writeln!(write, "{}", a[lca.query(l, r - 1)]).ok();

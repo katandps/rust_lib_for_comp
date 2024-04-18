@@ -12,7 +12,7 @@ mod gcd_impl {
     impl<S: Clone + Debug + RemAssign + PartialOrd + Zero> Magma for Gcd<S> {
         type M = S;
         #[inline]
-        fn op(x: &S, y: &S) -> S {
+        fn op(&mut self, x: &S, y: &S) -> S {
             let (mut x, mut y) = (x.clone(), y.clone());
             if y > x {
                 swap(&mut x, &mut y);
@@ -36,14 +36,15 @@ mod gcd_impl {
 
 #[test]
 fn test() {
-    assert_eq!(1, Gcd::op(&3, &5));
-    assert_eq!(2, Gcd::op(&4, &6));
-    assert_eq!(3, Gcd::op(&3, &9));
-    assert_eq!(3, Gcd::op(&9, &3));
-    assert_eq!(11, Gcd::op(&11, &11));
-    assert_eq!(1, Gcd::op(&1_000_000_007, &998_244_353));
-    assert_eq!(100, Gcd::op(&100, &0));
-    assert_eq!(100, Gcd::op(&0, &100));
-    assert_eq!(100, Gcd::op(&Gcd::unit(), &100));
-    assert_eq!(100, Gcd::op(&100, &Gcd::unit()));
+    let mut gcd = Gcd::default();
+    assert_eq!(1, gcd.op(&3, &5));
+    assert_eq!(2, gcd.op(&4, &6));
+    assert_eq!(3, gcd.op(&3, &9));
+    assert_eq!(3, gcd.op(&9, &3));
+    assert_eq!(11, gcd.op(&11, &11));
+    assert_eq!(1, gcd.op(&1_000_000_007, &998_244_353));
+    assert_eq!(100, gcd.op(&100, &0));
+    assert_eq!(100, gcd.op(&0, &100));
+    assert_eq!(100, gcd.op(&Gcd::unit(), &100));
+    assert_eq!(100, gcd.op(&100, &Gcd::unit()));
 }

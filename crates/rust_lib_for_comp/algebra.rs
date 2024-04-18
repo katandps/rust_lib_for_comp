@@ -20,9 +20,8 @@ use crate::prelude::*;
 #[codesnip::entry("algebra", include("prelude"))]
 pub use algebra_traits::{
     AbelianGroup, Associative, Band, BoundedAbove, BoundedBelow, Commutative, CommutativeMonoid,
-    Group, Idempotent, Integral, Invertible, LeastSignificantBit, Magma, MagmaWithContext,
-    MapMonoid, Mapping, Monoid, MonoidMapping, One, Pow, PrimitiveRoot, SemiGroup, TrailingZeros,
-    Unital, Zero,
+    Group, Idempotent, Integral, Invertible, LeastSignificantBit, Magma, MapMonoid, Mapping,
+    Monoid, MonoidMapping, One, Pow, PrimitiveRoot, SemiGroup, TrailingZeros, Unital, Zero,
 };
 #[codesnip::entry("algebra", include("prelude"))]
 mod algebra_traits {
@@ -37,21 +36,9 @@ mod algebra_traits {
         /// マグマを構成する集合$M$
         type M: Clone + PartialEq + Debug;
         /// マグマを構成する演算$op$
-        fn op(x: &Self::M, y: &Self::M) -> Self::M;
-        fn op_rev(x: &Self::M, y: &Self::M) -> Self::M {
-            Self::op(y, x)
-        }
-    }
-
-    pub trait MagmaWithContext {
-        type M: Clone + PartialEq + Debug;
-        fn op_with_context(&mut self, lhs: &Self::M, rhs: &Self::M) -> Self::M;
-    }
-
-    impl<T: Magma> MagmaWithContext for T {
-        type M = T::M;
-        fn op_with_context(&mut self, x: &Self::M, y: &Self::M) -> Self::M {
-            Self::op(x, y)
+        fn op(&mut self, x: &Self::M, y: &Self::M) -> Self::M;
+        fn op_rev(&mut self, x: &Self::M, y: &Self::M) -> Self::M {
+            self.op(y, x)
         }
     }
 
@@ -87,14 +74,14 @@ mod algebra_traits {
     /// 1. 単位元
     pub trait Monoid: Magma + Associative + Unital {
         /// $x^n = x\circ\cdots\circ x$
-        fn pow(&self, x: Self::M, mut n: usize) -> Self::M {
+        fn pow(&mut self, x: Self::M, mut n: usize) -> Self::M {
             let mut res = Self::unit();
             let mut base = x;
             while n > 0 {
                 if n & 1 == 1 {
-                    res = Self::op(&res, &base);
+                    res = self.op(&res, &base);
                 }
-                base = Self::op(&base, &base);
+                base = self.op(&base, &base);
                 n >>= 1;
             }
             res
@@ -134,7 +121,7 @@ mod algebra_traits {
         /// # 終集合
         type Codomain: Clone + Debug;
         /// #
-        fn apply(map: &Self::Mapping, a: &Self::Domain) -> Self::Codomain;
+        fn apply(&mut self, map: &Self::Mapping, a: &Self::Domain) -> Self::Codomain;
     }
 
     /// # 作用モノイド
@@ -152,24 +139,26 @@ mod algebra_traits {
             Domain = <Self::Mono as Magma>::M,
             Codomain = <Self::Mono as Magma>::M,
         >;
+        fn monoid(&mut self) -> &mut Self::Mono;
+        fn map(&mut self) -> &mut Self::Map;
         /// 値xと値yを併合する
         fn op(
-            &self,
+            &mut self,
             x: &<Self::Mono as Magma>::M,
             y: &<Self::Mono as Magma>::M,
         ) -> <Self::Mono as Magma>::M {
-            Self::Mono::op(x, y)
+            self.monoid().op(x, y)
         }
         fn unit() -> <Self::Mono as Magma>::M {
             Self::Mono::unit()
         }
         /// 作用fをvalueに作用させる
         fn apply(
-            &self,
+            &mut self,
             f: &<Self::Map as Mapping>::Mapping,
             value: &<Self::Mono as Magma>::M,
         ) -> <Self::Map as Mapping>::Codomain {
-            Self::Map::apply(f, value)
+            self.map().apply(f, value)
         }
         /// 作用fの単位元
         fn identity_map() -> <Self::Map as Magma>::M {
@@ -178,11 +167,11 @@ mod algebra_traits {
         /// composition:
         /// $h() = f(g())$
         fn compose(
-            &self,
+            &mut self,
             f: &<Self::Map as Magma>::M,
             g: &<Self::Map as Magma>::M,
         ) -> <Self::Map as Magma>::M {
-            Self::Map::op(f, g)
+            self.map().op(f, g)
         }
     }
 

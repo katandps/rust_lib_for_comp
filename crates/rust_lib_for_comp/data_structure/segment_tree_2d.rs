@@ -13,9 +13,10 @@ mod segment_tree_impl {
         h: usize,
         w: usize,
         node: Vec<M::M>,
+        monoid: M,
     }
     impl<M: Monoid, const REV: bool> SegmentTree2D<M, REV> {
-        pub fn init(height: usize, width: usize) -> Self {
+        pub fn init(height: usize, width: usize, monoid: M) -> Self {
             let (mut h, mut w) = (1, 1);
             while h < height {
                 h <<= 1;
@@ -27,21 +28,22 @@ mod segment_tree_impl {
                 h,
                 w,
                 node: vec![M::unit(); 4 * h * w],
+                monoid,
             }
         }
         fn id(&self, y: usize, x: usize) -> usize {
             y * 2 * self.w + x
         }
-        fn query(&self, y: usize, mut x1: usize, mut x2: usize) -> M::M {
+        fn query(&mut self, y: usize, mut x1: usize, mut x2: usize) -> M::M {
             let mut ret = M::unit();
             while x1 < x2 {
                 if x1 & 1 == 1 {
-                    ret = M::op(&ret, &self.node[self.id(y, x1)]);
+                    ret = self.monoid.op(&ret, &self.node[self.id(y, x1)]);
                     x1 += 1;
                 }
                 if x2 & 1 == 1 {
                     x2 -= 1;
-                    ret = M::op(&ret, &self.node[self.id(y, x2)]);
+                    ret = self.monoid.op(&ret, &self.node[self.id(y, x2)]);
                 }
                 x1 >>= 1;
                 x2 >>= 1;
@@ -56,7 +58,7 @@ mod segment_tree_impl {
             let mut i = y >> 1;
             while i > 0 {
                 let id = self.id(i, x);
-                self.node[id] = M::op(
+                self.node[id] = self.monoid.op(
                     &self.node[self.id(2 * i, x)],
                     &self.node[self.id(2 * i + 1, x)],
                 );
@@ -66,7 +68,7 @@ mod segment_tree_impl {
                 let mut x = x >> 1;
                 while x > 0 {
                     let id = self.id(y, x);
-                    self.node[id] = M::op(
+                    self.node[id] = self.monoid.op(
                         &self.node[self.id(y, 2 * x)],
                         &self.node[self.id(y, 2 * x + 1)],
                     );
@@ -75,7 +77,7 @@ mod segment_tree_impl {
                 y >>= 1;
             }
         }
-        pub fn prod(&self, mut y1: usize, mut x1: usize, mut y2: usize, mut x2: usize) -> M::M {
+        pub fn prod(&mut self, mut y1: usize, mut x1: usize, mut y2: usize, mut x2: usize) -> M::M {
             if y1 >= y2 || x1 >= x2 {
                 return M::unit();
             }
@@ -93,13 +95,13 @@ mod segment_tree_impl {
             while y1 < y2 {
                 if y1 & 1 == 1 {
                     let t = self.query(y1, x1, x2);
-                    ret = M::op(&ret, &t);
+                    ret = self.monoid.op(&ret, &t);
                     y1 += 1;
                 }
                 if y2 & 1 == 1 {
                     y2 -= 1;
                     let t = self.query(y2, x1, x2);
-                    ret = M::op(&ret, &t);
+                    ret = self.monoid.op(&ret, &t);
                 }
                 y1 >>= 1;
                 y2 >>= 1;

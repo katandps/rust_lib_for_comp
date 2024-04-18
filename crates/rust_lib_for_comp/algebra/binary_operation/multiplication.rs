@@ -13,7 +13,7 @@ mod multiplication_impl {
     pub struct Multiplication<S>(PhantomData<fn() -> S>);
     impl<S: Clone + Debug + Mul<Output = S> + PartialEq> Magma for Multiplication<S> {
         type M = S;
-        fn op(x: &S, y: &S) -> S {
+        fn op(&mut self, x: &S, y: &S) -> S {
             x.clone() * y.clone()
         }
     }

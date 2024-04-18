@@ -1,6 +1,6 @@
 use rust_lib_for_comp::{
     algebra::binary_operation::minimization::Minimization,
-    data_structure::dynamic_segment_tree::DynamicSegmentTree, range_traits::RangeProduct,
+    data_structure::dynamic_segment_tree::DynamicSegmentTree, range_traits::RangeProductMut,
     util::io_util::*,
 };
 use verify::{LibraryChecker, Solver};
@@ -14,7 +14,8 @@ impl verify::Solver for StaticRmqDynamicSegmentTree {
         let mut reader = ReadHelper::new(read);
         let (n, q) = reader.v2::<usize, usize>();
         let a = reader.vec::<i64>(n);
-        let mut segtree = DynamicSegmentTree::<Minimization<i64>>::new(500010);
+        let mut segtree =
+            DynamicSegmentTree::<Minimization<i64>>::new(500010, Minimization::default());
         for (i, &ai) in a.iter().enumerate() {
             segtree.set(i as i64, ai);
         }

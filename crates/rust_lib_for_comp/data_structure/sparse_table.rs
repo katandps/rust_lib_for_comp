@@ -5,7 +5,7 @@
 //! Bandが載る
 use crate::algebra::Band;
 use crate::prelude::*;
-use crate::range_traits::{RangeProduct, ToBounds};
+use crate::range_traits::{RangeProductMut, ToBounds};
 use crate::util::string_util::JoinTrait;
 
 #[codesnip::entry("sparse-table")]
@@ -15,16 +15,17 @@ pub use sparse_table_impl::SparseTable;
     include("algebra", "prelude", "range-traits", "string-util")
 )]
 mod sparse_table_impl {
-    use super::{Band, Debug, Display, Formatter, JoinTrait, RangeProduct, ToBounds};
+    use super::{Band, Display, JoinTrait, RangeProductMut, ToBounds};
 
     #[derive(Clone)]
     pub struct SparseTable<B: Band> {
         pub len: usize,
         table: Vec<Vec<B::M>>,
+        band: B,
     }
 
-    impl<B: Band> From<&[B::M]> for SparseTable<B> {
-        fn from(v: &[B::M]) -> Self {
+    impl<B: Band> SparseTable<B> {
+        pub fn build(v: &[B::M], mut band: B) -> Self {
             let len = v.len();
             let l = v.len();
             let lg = 63 - l.leading_zeros();
@@ -33,38 +34,32 @@ mod sparse_table_impl {
             let mut k = 1;
             while 1 << k <= len {
                 table[k] = (0..=len - (1 << k))
-                    .map(|i| B::op(&table[k - 1][i], &table[k - 1][i + (1 << (k - 1))]))
+                    .map(|i| band.op(&table[k - 1][i], &table[k - 1][i + (1 << (k - 1))]))
                     .collect();
                 k += 1;
             }
-            Self { len, table }
+            Self { len, table, band }
+        }
+
+        pub fn into_string(mut self) -> String
+        where
+            B::M: Display,
+        {
+            (0..self.len).map(|i| self.product(i..=i)).join(" ")
         }
     }
 
     /// # 区間の総積
     /// ## 計算量
     /// $O(1)$
-    impl<B: Band> RangeProduct<usize> for SparseTable<B> {
+    impl<B: Band> RangeProductMut<usize> for SparseTable<B> {
         type Magma = B;
-        fn product<R: ToBounds<usize>>(&self, range: R) -> B::M {
+        fn product<R: ToBounds<usize>>(&mut self, range: R) -> B::M {
             let (l, r) = range.lr();
             let lg = 63 - (r - l).leading_zeros();
-            B::op(
+            self.band.op(
                 &self.table[lg as usize][l],
                 &self.table[lg as usize][r - (1 << lg)],
-            )
-        }
-    }
-
-    impl<B: Band> Debug for SparseTable<B>
-    where
-        B::M: Display,
-    {
-        fn fmt(&self, f: &mut Formatter) -> std::fmt::Result {
-            writeln!(
-                f,
-                "\n{}",
-                (0..self.len).map(|i| self.product(i..=i)).join(" ")
             )
         }
     }
@@ -76,10 +71,11 @@ fn test() {
     use crate::algebra::Magma;
 
     let src = [1i64, 5, 6, 2, 3, 9, 7, 4, 0, 8];
-    let sparse_table = SparseTable::<Minimization<i64>>::from(&src[..]);
+    let mut band = Minimization::default();
+    let mut sparse_table = SparseTable::build(&src[..], band.clone());
     for i in 0..src.len() {
         for j in i + 1..=src.len() {
-            let m = (i..j).fold(10, |x, i| Minimization::op(&x, &src[i]));
+            let m = (i..j).fold(10, |x, i| band.op(&x, &src[i]));
             assert_eq!(m, sparse_table.product(i..j));
         }
     }
@@ -89,7 +85,6 @@ fn test() {
 fn debug_test() {
     use crate::algebra::binary_operation::minimization::Minimization;
     let src = [1i64, 5, 6, 2, 3, 9, 7, 4, 0, 8];
-    let sparse_table = SparseTable::<Minimization<i64>>::from(&src[..]);
-    let debug = format!("{:?}", sparse_table);
-    assert_eq!(debug.as_str(), "\n1 5 6 2 3 9 7 4 0 8\n");
+    let sparse_table = SparseTable::build(&src[..], Minimization::default());
+    assert_eq!(sparse_table.into_string().as_str(), "1 5 6 2 3 9 7 4 0 8");
 }

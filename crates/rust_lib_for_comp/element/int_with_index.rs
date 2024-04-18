@@ -7,9 +7,9 @@ use crate::prelude::*;
 pub use int_with_index_impl::IntWithIndex;
 #[codesnip::entry("int-with-index", include("algebra", "prelude"))]
 mod int_with_index_impl {
-    use super::{Integral, Ordering};
+    use super::{Display, Formatter, Integral, Ordering};
 
-    #[derive(Clone, Copy, Debug, Eq, PartialEq)]
+    #[derive(Clone, Copy, Debug, Eq, PartialEq, Default)]
     pub struct IntWithIndex<V: Integral, I: Integral> {
         pub value: V,
         pub index: I,
@@ -34,6 +34,12 @@ mod int_with_index_impl {
     impl<V: Integral, I: Integral> From<(I, V)> for IntWithIndex<V, I> {
         fn from((index, value): (I, V)) -> Self {
             IntWithIndex { value, index }
+        }
+    }
+
+    impl<V: Integral, I: Integral> Display for IntWithIndex<V, I> {
+        fn fmt(&self, f: &mut Formatter<'_>) -> std::fmt::Result {
+            writeln!(f, "{}:{}", self.index, self.value)
         }
     }
 }

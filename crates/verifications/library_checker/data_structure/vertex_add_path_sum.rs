@@ -18,11 +18,12 @@ impl verify::Solver for VertexAddPathSum {
         for (u, v) in reader.vec2::<usize, usize>(n - 1) {
             graph.add_edge(u, v, ());
         }
-        let mut hld = HLDecomposition::<Addition<i64>>::build(&graph, 0, &a);
+        let mut hld = HLDecomposition::<Addition<i64>>::build(&graph, 0, &a, Addition::default());
         for _ in 0..q {
             if 0 == reader.v::<usize>() {
                 let (p, x) = reader.v2::<usize, i64>();
-                hld.update_at(p, hld.prod_path(p, p) + x);
+                let t = hld.prod_path(p, p);
+                hld.update_at(p, t + x);
             } else {
                 let (u, v) = reader.v2::<usize, usize>();
                 writeln!(write, "{}", hld.prod_path(u, v)).ok();

@@ -19,10 +19,11 @@ impl verify::Solver for ABC226F {
         let (n, k) = reader.v2::<usize, usize>();
         let mut ans = ModInt::<998_244_353>::zero();
         let mvt: Factorial<998_244_353, 10010> = Factorial::new();
+        let mut gcd = Gcd::default();
         for p in SplitOfNumber::from(n) {
             let mut score = ModInt::from(
                 p.iter()
-                    .fold(1, |a, x| a * *x as i64 / Gcd::op(&a, &(*x as i64))),
+                    .fold(1, |a, x| a * *x as i64 / gcd.op(&a, &(*x as i64))),
             )
             .pow(k as i64)
                 * mvt.factorial(n as i64);

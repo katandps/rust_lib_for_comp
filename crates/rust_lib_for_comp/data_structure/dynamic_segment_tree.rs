@@ -15,7 +15,7 @@ use crate::range_traits::*;
 pub use dynamic_segment_tree_impl::DynamicSegmentTree;
 #[codesnip::entry("dynamic-segment-tree", include("algebra", "prelude", "range-traits"))]
 mod dynamic_segment_tree_impl {
-    use super::{Debug, Formatter, Monoid, RangeProduct, ToBounds};
+    use super::{Debug, Formatter, Monoid, RangeProductMut, ToBounds};
     type IndexType = i64;
 
     type NodeId = u32;
@@ -27,14 +27,16 @@ mod dynamic_segment_tree_impl {
         nodes: Vec<Node<M>>,
         bit_len: i8,
         root: usize,
+        monoid: M,
     }
 
-    impl<M: Monoid> Default for DynamicSegmentTree<M> {
+    impl<M: Monoid + Default> Default for DynamicSegmentTree<M> {
         fn default() -> Self {
             Self {
                 nodes: vec![Node::default()],
                 bit_len: BIT_LEN,
                 root: 0,
+                monoid: M::default(),
             }
         }
     }
@@ -42,9 +44,9 @@ mod dynamic_segment_tree_impl {
     /// # 区間の総積
     /// ## 計算量
     /// $O(\log N)$
-    impl<M: Monoid> RangeProduct<IndexType> for DynamicSegmentTree<M> {
+    impl<M: Monoid> RangeProductMut<IndexType> for DynamicSegmentTree<M> {
         type Magma = M;
-        fn product<R: ToBounds<IndexType>>(&self, range: R) -> M::M {
+        fn product<R: ToBounds<IndexType>>(&mut self, range: R) -> M::M {
             let (l, r) = range.lr();
             // stack[(node, nodeのlower_bound, nodeのupper_bound)]
             let mut stack = vec![(self.root as NodeId, 0, 1 << self.bit_len)];
@@ -55,7 +57,8 @@ mod dynamic_segment_tree_impl {
                 };
                 // todo 非可換クエリに対応する
                 if l <= lb && ub <= r {
-                    ret = M::op(&ret, &node.value);
+                    let val = node.value.clone();
+                    ret = self.monoid.op(&ret, &val);
                 } else if lb < r && l < ub {
                     stack.push((node.children[0], lb, (lb + ub) >> 1));
                     stack.push((node.children[1], (lb + ub) >> 1, ub));
@@ -66,12 +69,13 @@ mod dynamic_segment_tree_impl {
     }
 
     impl<M: Monoid> DynamicSegmentTree<M> {
-        pub fn new(max: i64) -> Self {
+        pub fn new(max: i64, monoid: M) -> Self {
             let bit_len = ((max as u64).next_power_of_two()).ilog2() as i8;
             Self {
                 nodes: vec![Node::default()],
                 bit_len,
                 root: 0,
+                monoid,
             }
         }
         fn node(&self, id: NodeId) -> Option<&Node<M>> {
@@ -120,7 +124,10 @@ mod dynamic_segment_tree_impl {
                     let v = !v;
                     let value = if let Some(node) = self.node(v) {
                         match (self.node(node.children[0]), self.node(node.children[1])) {
-                            (Some(l), Some(r)) => M::op(&l.value, &r.value),
+                            (Some(l), Some(r)) => {
+                                let (l_val, r_val) = (l.value.clone(), r.value.clone());
+                                self.monoid.op(&l_val, &r_val)
+                            }
                             (Some(l), None) => l.value.clone(),
                             (_, Some(r)) => r.value.clone(),
                             (_, _) => node.value.clone(),
@@ -196,7 +203,7 @@ mod test {
 
     #[test]
     fn test() {
-        let mut segtree = DynamicSegmentTree::<Addition<i64>>::new(10);
+        let mut segtree = DynamicSegmentTree::new(10, Addition::default());
 
         const I1: i64 = 5;
         const I2: i64 = 8;

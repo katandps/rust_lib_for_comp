@@ -11,9 +11,11 @@ criterion_main!(benches);
 fn f(c: &mut Criterion) {
     let mut xorshift = XorShift::default();
     c.bench_function("Naive GCD", |b| {
-        b.iter(|| crate::Gcd::op(&xorshift.rand(1 << 60), &xorshift.rand(1 << 60)));
+        let mut gcd = crate::Gcd::default();
+        b.iter(|| gcd.op(&xorshift.rand(1 << 60), &xorshift.rand(1 << 60)));
     });
     c.bench_function("Binary GCD", |b| {
-        b.iter(|| Gcd::op(&xorshift.rand(1 << 60), &xorshift.rand(1 << 60)));
+        let mut gcd = Gcd::default();
+        b.iter(|| gcd.op(&xorshift.rand(1 << 60), &xorshift.rand(1 << 60)));
     });
 }

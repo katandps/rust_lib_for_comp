@@ -16,7 +16,7 @@ impl verify::Solver for RangeAffinePointGet {
         let mut reader = ReadHelper::new(read);
         let (n, q) = reader.v2::<usize, usize>();
         let a = reader.vec::<ModInt>(n);
-        let mut segtree = DualSegmentTree::<Composition<ModInt>>::new(&a);
+        let mut segtree = DualSegmentTree::<Composition<ModInt>>::build(&a, Composition::default());
         for _ in 0..q {
             if 0 == reader.v::<usize>() {
                 let (l, r, b, c) = reader.v4::<usize, usize, ModInt, ModInt>();

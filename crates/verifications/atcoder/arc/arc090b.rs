@@ -13,7 +13,7 @@ impl verify::Solver for ARC090B {
     fn solve(read: impl std::io::Read, mut write: impl std::io::Write) {
         let mut reader = ReadHelper::new(read);
         let (n, m) = reader.v2::<usize, usize>();
-        let mut wuf = WeightedUnionFind::<Addition<i64>>::new(n);
+        let mut wuf = WeightedUnionFind::new(n, Addition::default());
         for _ in 0..m {
             let (x, y, d) = reader.v3::<usize, usize, i64>();
             wuf.unite(x, y, d);

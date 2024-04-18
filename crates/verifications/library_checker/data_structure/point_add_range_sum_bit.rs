@@ -1,6 +1,6 @@
 use rust_lib_for_comp::{
     algebra::binary_operation::addition::Addition,
-    data_structure::binary_indexed_tree::BinaryIndexedTree, range_traits::RangeProduct,
+    data_structure::binary_indexed_tree::BinaryIndexedTree, range_traits::RangeProductMut,
     util::io_util::*,
 };
 use verify::{LibraryChecker, Solver};
@@ -14,7 +14,7 @@ impl verify::Solver for PointAddRangeSumByBit {
         let mut reader = ReadHelper::new(read);
         let (n, q) = reader.v2::<usize, usize>();
         let a = reader.vec::<i64>(n);
-        let mut bit = BinaryIndexedTree::<Addition<i64>>::from(a);
+        let mut bit = BinaryIndexedTree::<Addition<i64>>::build(a, Addition::default());
         for _ in 0..q {
             if 0 == reader.v::<usize>() {
                 let (p, x) = reader.v2::<usize, i64>();

@@ -13,7 +13,7 @@ mod maximization_impl {
     };
     impl<S: Clone + Debug + PartialOrd> Magma for Maximization<S> {
         type M = S;
-        fn op(x: &Self::M, y: &Self::M) -> Self::M {
+        fn op(&mut self, x: &Self::M, y: &Self::M) -> Self::M {
             if x >= y {
                 x.clone()
             } else {

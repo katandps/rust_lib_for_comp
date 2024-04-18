@@ -19,10 +19,10 @@ impl verify::Solver for RangeAffineRangeSum {
         let mut reader = ReadHelper::new(read);
         let (n, q) = reader.v2::<usize, usize>();
         let a = reader.vec::<ModInt>(n);
-        let mut segtree = LazySegmentTree::from_slice((
+        let mut segtree = LazySegmentTree::build(
             &a.iter().map(|ai| Section::new(*ai, 1)).collect::<Vec<_>>()[..],
-            Self,
-        ));
+            P::default(),
+        );
         for _ in 0..q {
             if 0 == reader.v::<usize>() {
                 let (l, r, b, c) = reader.v4::<usize, usize, ModInt, ModInt>();
@@ -34,9 +34,20 @@ impl verify::Solver for RangeAffineRangeSum {
         }
     }
 }
-impl MapMonoid for RangeAffineRangeSum {
+#[derive(Clone, Debug, Default)]
+struct P {
+    map: Composition<ModInt, Section<ModInt>>,
+    mono: Addition<Section<ModInt>>,
+}
+impl MapMonoid for P {
     type Map = Composition<ModInt, Section<ModInt>>;
     type Mono = Addition<Section<ModInt>>;
+    fn map(&mut self) -> &mut Self::Map {
+        &mut self.map
+    }
+    fn monoid(&mut self) -> &mut Self::Mono {
+        &mut self.mono
+    }
 }
 
 #[test]

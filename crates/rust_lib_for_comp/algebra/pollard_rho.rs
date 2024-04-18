@@ -39,6 +39,7 @@ impl PollardRho for u64 {
             if n.is_prime() {
                 return n;
             }
+            let mut gcd = Gcd::default();
             let mul = MontgomeryReduction::new(n);
             const LIMIT: u64 = 256;
             for epoch in 1..LIMIT {
@@ -58,7 +59,7 @@ impl PollardRho for u64 {
                             y = prng_next(y);
                             q = mul.mrmul(q, max(x, y) - min(x, y));
                         }
-                        g = Gcd::op(&q, &n);
+                        g = gcd.op(&q, &n);
                         k += m;
                     }
                     r <<= 1;
@@ -67,7 +68,7 @@ impl PollardRho for u64 {
                     g = 1;
                     while g == 1 {
                         ys = prng_next(ys);
-                        g = Gcd::op(&(max(x, ys) - min(x, ys)), &n);
+                        g = gcd.op(&(max(x, ys) - min(x, ys)), &n);
                     }
                 }
                 if g < n {

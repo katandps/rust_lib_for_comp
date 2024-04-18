@@ -6,23 +6,37 @@
 //! $O(N)$
 //!
 use crate::algebra::*;
-use crate::prelude::*;
 use crate::range_traits::*;
 
 #[codesnip::entry("cumulative-sum")]
 pub use cumulative_sum_impl::CumulativeSum;
 #[codesnip::entry("cumulative-sum", include("algebra", "prelude", "range-traits"))]
 mod cumulative_sum_impl {
-    use super::{AbelianGroup, Add, FromIterator, Magma, Monoid, RangeProduct, ToBounds};
+    use super::{AbelianGroup, Magma, RangeProductMut, ToBounds};
     pub struct CumulativeSum<A: Magma> {
         n: usize,
         ret: Vec<A::M>,
+        abelian_group: A,
     }
 
-    impl<A: Magma> CumulativeSum<A>
-    where
-        A::M: Clone,
-    {
+    impl<A: Magma> CumulativeSum<A> {
+        pub fn build<I: IntoIterator<Item = A::M>>(
+            iter: I,
+            mut abelian_group: A,
+            initial: A::M,
+        ) -> Self {
+            let mut ret = vec![initial];
+            for t in iter {
+                ret.push(abelian_group.op(&ret[ret.len() - 1], &t));
+            }
+            let n = ret.len();
+            Self {
+                n,
+                ret,
+                abelian_group,
+            }
+        }
+
         /// # sum of $[0, i)$
         pub fn sum(&self, i: usize) -> A::M {
             assert!(i < self.n);
@@ -30,32 +44,17 @@ mod cumulative_sum_impl {
         }
     }
 
-    impl<A: AbelianGroup> RangeProduct<usize> for CumulativeSum<A> {
+    impl<A: AbelianGroup> RangeProductMut<usize> for CumulativeSum<A> {
         type Magma = A;
-        fn product<R: ToBounds<usize>>(&self, range: R) -> A::M {
+        fn product<R: ToBounds<usize>>(&mut self, range: R) -> A::M {
             let (a, b) = range.lr();
             if b == 0 {
                 A::unit()
             } else if a == 0 {
                 self.sum(b)
             } else {
-                A::op(&self.sum(b), &A::inv(&self.sum(a)))
+                self.abelian_group.op(&self.sum(b), &A::inv(&self.sum(a)))
             }
-        }
-    }
-
-    impl<A, T> FromIterator<T> for CumulativeSum<A>
-    where
-        A: Monoid<M = T>,
-        T: Clone + Add<Output = T>,
-    {
-        fn from_iter<I: IntoIterator<Item = T>>(iter: I) -> Self {
-            let mut ret = vec![A::unit()];
-            for t in iter {
-                ret.push(ret[ret.len() - 1].clone() + t);
-            }
-            let n = ret.len();
-            Self { n, ret }
         }
     }
 }

@@ -14,7 +14,7 @@ mod addition_impl {
     };
     impl<S: Clone + Debug + Add<Output = S> + PartialEq> Magma for Addition<S> {
         type M = S;
-        fn op(x: &S, y: &S) -> S {
+        fn op(&mut self, x: &S, y: &S) -> S {
             x.clone() + y.clone()
         }
     }
@@ -30,14 +30,14 @@ mod addition_impl {
             x.clone().neg()
         }
     }
-    impl<S: Clone + Debug + Add<T, Output = T> + PartialEq, T: Clone + Debug> Mapping
+    impl<S: Clone + Debug + PartialEq, T: Clone + Debug + Add<S, Output = T>> Mapping
         for Addition<S, T>
     {
         type Mapping = S;
         type Domain = T;
         type Codomain = T;
-        fn apply(map: &Self::Mapping, a: &Self::Domain) -> Self::Codomain {
-            map.clone() + a.clone()
+        fn apply(&mut self, map: &S, value: &T) -> T {
+            value.clone() + map.clone()
         }
     }
 }
@@ -45,7 +45,7 @@ mod addition_impl {
 #[test]
 fn test() {
     assert_eq!(0, Addition::<i64>::unit());
-    let addition = Addition::default();
+    let mut addition = Addition::default();
     assert_eq!(15, addition.clone().pow(1i64, 15));
     assert_eq!(25600, addition.pow(100i64, 256));
     let _ = format!("{:?}", addition);

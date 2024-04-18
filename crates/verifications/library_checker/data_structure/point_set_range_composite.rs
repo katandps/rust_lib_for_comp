@@ -2,7 +2,7 @@ use rust_lib_for_comp::{
     algebra::mod_int::ModInt,
     data_structure::segment_tree::SegmentTree,
     element::affine::{Affine, Composition},
-    range_traits::{PointUpdate, RangeProduct},
+    range_traits::{PointUpdate, RangeProductMut},
     util::io_util::*,
 };
 use verify::{LibraryChecker, Solver};
@@ -20,7 +20,7 @@ impl verify::Solver for PointSetRangeComposite {
             .into_iter()
             .map(|(a, b)| Affine::new(a, b))
             .collect::<Vec<_>>();
-        let mut segtree = SegmentTree::<Composition<ModInt>>::from(ab);
+        let mut segtree = SegmentTree::<Composition<ModInt>>::build(ab, Composition::default());
         for _ in 0..q {
             if 0 == reader.v::<usize>() {
                 let (p, c, d) = reader.v3::<usize, ModInt, ModInt>();

@@ -12,7 +12,7 @@ pub use section_impl::Section;
 mod section_impl {
     use super::{Add, Debug, Formatter, Mul, Zero};
 
-    #[derive(Clone, PartialEq, Ord, PartialOrd, Eq)]
+    #[derive(Clone, PartialEq, Ord, PartialOrd, Eq, Default)]
     pub struct Section<M: Clone + PartialEq> {
         pub value: M,
         pub size: i64,

@@ -16,11 +16,12 @@ impl verify::Solver for VertexAddSubtreeSum {
         let a = reader.vec::<i64>(n);
         let p = reader.vec::<usize>(n - 1);
         let graph = Graph::tree_root_0(&p);
-        let mut hld = HLDecomposition::<Addition<i64>>::build(&graph, 0, &a);
+        let mut hld = HLDecomposition::<Addition<i64>>::build(&graph, 0, &a, Addition::default());
         for _ in 0..q {
             if 0 == reader.v::<usize>() {
                 let (u, x) = reader.v2::<usize, i64>();
-                hld.update_at(u, hld.prod_path(u, u) + x);
+                let t = hld.prod_path(u, u);
+                hld.update_at(u, t + x);
             } else {
                 let u = reader.v::<usize>();
                 writeln!(write, "{}", hld.prod_subtree(u)).ok();

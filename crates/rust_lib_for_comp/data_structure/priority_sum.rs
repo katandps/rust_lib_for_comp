@@ -11,34 +11,36 @@ mod priority_sum_impl {
     use super::{AbelianGroup, BinaryHeap, Ordering, Reverse};
 
     #[derive(Debug, Clone, Default)]
-    pub struct PrioritySum<M: AbelianGroup>
+    pub struct PrioritySum<A: AbelianGroup>
     where
-        M::M: Ord,
+        A::M: Ord,
     {
-        sum: M::M,
+        sum: A::M,
         k: usize,
-        in_v: BinaryHeap<M::M>,
-        out_v: BinaryHeap<Reverse<M::M>>,
-        d_in: BinaryHeap<M::M>,
-        d_out: BinaryHeap<Reverse<M::M>>,
+        in_v: BinaryHeap<A::M>,
+        out_v: BinaryHeap<Reverse<A::M>>,
+        d_in: BinaryHeap<A::M>,
+        d_out: BinaryHeap<Reverse<A::M>>,
+        abelian_group: A,
     }
 
-    impl<M: AbelianGroup> PrioritySum<M>
+    impl<A: AbelianGroup> PrioritySum<A>
     where
-        M::M: Ord,
+        A::M: Ord,
     {
         /// # $k$で初期化
         ///
         /// ## 計算量
         /// $O(1)$
-        pub fn new(k: usize) -> Self {
+        pub fn new(k: usize, abelian_group: A) -> Self {
             Self {
-                sum: M::unit(),
+                sum: A::unit(),
                 k,
                 in_v: BinaryHeap::new(),
                 out_v: BinaryHeap::new(),
                 d_in: BinaryHeap::new(),
                 d_out: BinaryHeap::new(),
+                abelian_group,
             }
         }
 
@@ -46,8 +48,8 @@ mod priority_sum_impl {
         ///
         /// ## 計算量
         /// ならし$O(\logN)$ ($N$は集合の要素数)
-        pub fn add(&mut self, x: M::M) {
-            self.sum = M::op(&self.sum, &x);
+        pub fn add(&mut self, x: A::M) {
+            self.sum = self.abelian_group.op(&self.sum, &x);
             self.in_v.push(x);
             self.modify();
         }
@@ -56,16 +58,16 @@ mod priority_sum_impl {
         ///
         /// ## 計算量
         /// ならし$O(\logN)$ ($N$は集合の要素数)
-        pub fn erase(&mut self, x: M::M) {
+        pub fn erase(&mut self, x: A::M) {
             if let Some(xd) = self.in_v.pop() {
                 match x.cmp(&xd) {
-                    Ordering::Equal => self.sum = M::op(&self.sum, &M::inv(&x)),
+                    Ordering::Equal => self.sum = self.abelian_group.op(&self.sum, &A::inv(&x)),
                     Ordering::Greater => {
                         self.in_v.push(xd);
                         self.d_out.push(Reverse(x));
                     }
                     Ordering::Less => {
-                        self.sum = M::op(&self.sum, &M::inv(&x));
+                        self.sum = self.abelian_group.op(&self.sum, &A::inv(&x));
                         self.in_v.push(xd);
                         self.d_in.push(x);
                     }
@@ -80,7 +82,7 @@ mod priority_sum_impl {
         ///
         /// ## 計算量
         /// $O(1)$
-        pub fn query(&self) -> M::M {
+        pub fn query(&self) -> A::M {
             self.sum.clone()
         }
 
@@ -120,11 +122,11 @@ mod priority_sum_impl {
                     if let Some(q) = self.d_out.pop() {
                         if p != q {
                             self.d_out.push(q);
-                            self.sum = M::op(&self.sum, &p.0);
+                            self.sum = self.abelian_group.op(&self.sum, &p.0);
                             self.in_v.push(p.0);
                         }
                     } else {
-                        self.sum = M::op(&self.sum, &p.0);
+                        self.sum = self.abelian_group.op(&self.sum, &p.0);
                         self.in_v.push(p.0);
                     }
                 }
@@ -134,11 +136,13 @@ mod priority_sum_impl {
                     if let Some(q) = self.d_in.pop() {
                         if p != q {
                             self.d_in.push(q);
-                            self.sum = M::op(&self.sum, &M::inv(&p));
+                            let p_inv = A::inv(&p);
+                            self.sum = self.abelian_group.op(&self.sum, &p_inv);
                             self.out_v.push(Reverse(p));
                         }
                     } else {
-                        self.sum = M::op(&self.sum, &M::inv(&p));
+                        let p_inv = A::inv(&p);
+                        self.sum = self.abelian_group.op(&self.sum, &p_inv);
                         self.out_v.push(Reverse(p));
                     }
                 }
@@ -167,7 +171,7 @@ fn test() {
 
     let k = 50;
     let mut v = Vec::new();
-    let mut ps = PrioritySum::<Addition<i64>>::new(k);
+    let mut ps = PrioritySum::<Addition<i64>>::new(k, Addition::default());
     for _ in 0..1000 {
         let ai = xorshift.rand_range(0..100000);
         v.push(ai);

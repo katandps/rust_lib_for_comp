@@ -13,7 +13,7 @@ mod bit_or_opration_impl {
     pub struct BitOrOperation<S>(PhantomData<fn() -> S>);
     impl<S: Clone + Debug + BitOr<Output = S> + PartialEq> Magma for BitOrOperation<S> {
         type M = S;
-        fn op(x: &Self::M, y: &Self::M) -> Self::M {
+        fn op(&mut self, x: &Self::M, y: &Self::M) -> Self::M {
             x.clone() | y.clone()
         }
     }

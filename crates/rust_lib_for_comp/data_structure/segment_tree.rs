@@ -9,51 +9,38 @@ use crate::range_traits::*;
 pub use segment_tree_impl::SegmentTree;
 #[codesnip::entry("segment-tree", include("algebra", "prelude", "range-traits"))]
 mod segment_tree_impl {
-    use super::{Index, Monoid, PointUpdate, RangeProduct, ToBounds};
+    use super::{Index, Monoid, PointUpdate, RangeProductMut, ToBounds};
 
     #[derive(Clone, Debug)]
     pub struct SegmentTree<M: Monoid, const REV: bool = false> {
         n: usize,
+        monoid: M,
         node: Vec<M::M>,
-    }
-    /// vを初期値としてセグメント木を生成する(完全二分木)
-    /// vの長さを要素数とする
-    /// ## 計算量
-    /// $O(N)$
-    impl<M: Monoid, const REV: bool> From<Vec<M::M>> for SegmentTree<M, REV> {
-        fn from(v: Vec<M::M>) -> Self {
-            let mut segtree = Self::new(v.len());
-            segtree.node[segtree.n..segtree.n + v.len()].clone_from_slice(&v);
-            for i in (1..segtree.n).rev() {
-                segtree.node[i] = Self::op(&segtree.node[i << 1], &segtree.node[i << 1 | 1]);
-            }
-            segtree
-        }
     }
 
     /// # 区間の総積
     /// ## 計算量
     /// $O(\log N)$
-    impl<M: Monoid, const REV: bool> RangeProduct<usize> for SegmentTree<M, REV> {
+    impl<M: Monoid, const REV: bool> RangeProductMut<usize> for SegmentTree<M, REV> {
         type Magma = M;
-        fn product<R: ToBounds<usize>>(&self, range: R) -> M::M {
+        fn product<R: ToBounds<usize>>(&mut self, range: R) -> M::M {
             let (mut l, mut r) = range.lr();
             l += self.n;
             r += self.n;
             let (mut sum_l, mut sum_r) = (M::unit(), M::unit());
             while l < r {
                 if l & 1 != 0 {
-                    sum_l = Self::op(&sum_l, &self.node[l]);
+                    sum_l = self.op(&sum_l, &self.node[l].clone());
                     l += 1;
                 }
                 if r & 1 != 0 {
                     r -= 1;
-                    sum_r = Self::op(&self.node[r], &sum_r);
+                    sum_r = self.op(&self.node[r].clone(), &sum_r);
                 }
                 l >>= 1;
                 r >>= 1;
             }
-            Self::op(&sum_l, &sum_r)
+            self.op(&sum_l, &sum_r)
         }
     }
 
@@ -66,7 +53,7 @@ mod segment_tree_impl {
             self.node[i] = value;
             i >>= 1;
             while i > 0 {
-                self.node[i] = Self::op(&self.node[i << 1], &self.node[i << 1 | 1]);
+                self.node[i] = self.op(&self.node[i << 1].clone(), &self.node[i << 1 | 1].clone());
                 i >>= 1;
             }
         }
@@ -74,21 +61,40 @@ mod segment_tree_impl {
 
     impl<M: Monoid, const REV: bool> SegmentTree<M, REV> {
         #[inline]
-        fn op(a: &M::M, b: &M::M) -> M::M {
+        fn op(&mut self, a: &M::M, b: &M::M) -> M::M {
             if REV {
-                M::op_rev(a, b)
+                self.monoid.op_rev(a, b)
             } else {
-                M::op(a, b)
+                self.monoid.op(a, b)
             }
         }
 
         /// vを初期値としてセグメント木を生成する
         /// vの長さを要素数とする
-        pub fn new(n: usize) -> Self {
+        pub fn new(n: usize, monoid: M) -> Self {
             let node = vec![M::unit(); n << 1];
-            let mut segtree = Self { n, node };
+            let mut segtree = Self { n, monoid, node };
             for i in (1..segtree.n).rev() {
-                segtree.node[i] = Self::op(&segtree.node[i << 1], &segtree.node[i << 1 | 1]);
+                segtree.node[i] = segtree.op(
+                    &segtree.node[i << 1].clone(),
+                    &segtree.node[i << 1 | 1].clone(),
+                );
+            }
+            segtree
+        }
+
+        /// vを初期値としてセグメント木を生成する
+        /// vの長さを要素数とする
+        /// ## 計算量
+        /// $O(N)$
+        pub fn build(v: Vec<M::M>, monoid: M) -> Self {
+            let mut segtree = Self::new(v.len(), monoid);
+            segtree.node[segtree.n..segtree.n + v.len()].clone_from_slice(&v);
+            for i in (1..segtree.n).rev() {
+                segtree.node[i] = segtree.op(
+                    &segtree.node[i << 1].clone(),
+                    &segtree.node[i << 1 | 1].clone(),
+                );
             }
             segtree
         }
@@ -121,27 +127,27 @@ mod segment_tree_impl {
         /// モノイド積に単調性がある必要がある
         /// ## 計算量
         /// $O(\log N)$
-        pub fn upper_bound<F: Fn(&M::M) -> bool>(&self, l: usize, f: F) -> Option<usize> {
+        pub fn upper_bound<F: Fn(&M::M) -> bool>(&mut self, l: usize, f: F) -> Option<usize> {
             if f(&M::unit()) {
                 return Some(l);
             }
             let top_nodes = self.top_nodes(l, self.n);
             let mut cur = M::unit();
             for mut top in top_nodes {
-                let t = Self::op(&cur, &self.node[top]);
+                let t = self.op(&cur, &self.node[top].clone());
                 if !f(&t) {
                     cur = t;
                 } else {
                     while top < self.n {
                         top <<= 1;
-                        let t = Self::op(&cur, &self.node[top]);
+                        let t = self.op(&cur, &self.node[top].clone());
                         if !f(&t) {
                             cur = t;
                             top += 1;
                         }
                     }
                     if !f(&cur) {
-                        cur = Self::op(&cur, &self.node[top]);
+                        cur = self.op(&cur, &self.node[top].clone());
                         top += 1;
                     }
                     assert!(f(&cur));
@@ -155,20 +161,20 @@ mod segment_tree_impl {
         /// モノイド積に単調性がある必要がある
         /// ## 計算量
         /// $O(\log N)$
-        pub fn lower_bound<F: Fn(&M::M) -> bool>(&self, r: usize, f: F) -> Option<usize> {
+        pub fn lower_bound<F: Fn(&M::M) -> bool>(&mut self, r: usize, f: F) -> Option<usize> {
             if f(&M::unit()) {
                 return Some(r);
             }
             let top_nodes = self.top_nodes(0, r);
             let mut cur = M::unit();
             for mut top in top_nodes.into_iter().rev() {
-                let t = Self::op(&self.node[top], &cur);
+                let t = self.op(&self.node[top].clone(), &cur);
                 if !f(&t) {
                     cur = t;
                 } else {
                     while top < self.n {
                         top <<= 1;
-                        let t = Self::op(&self.node[top], &cur);
+                        let t = self.op(&self.node[top].clone(), &cur);
                         if f(&t) {
                             top += 1;
                         } else {
@@ -202,7 +208,9 @@ mod test {
     #[test]
     fn test_non_commutative() {
         let v = (0..100).map(Sequence::new).collect::<Vec<_>>();
-        let segtree: SegmentTree<Addition<Sequence<i64>>> = SegmentTree::from(v.clone());
+        let monoid = Addition::default();
+        let mut segtree: SegmentTree<Addition<Sequence<i64>>> =
+            SegmentTree::build(v.clone(), monoid);
         for i in 0..v.len() {
             assert_eq!(v[i], segtree[i]);
         }
@@ -220,7 +228,9 @@ mod test {
     #[test]
     fn test_rev_non_commutative() {
         let v = (0..100).map(Sequence::new).collect::<Vec<_>>();
-        let segtree: SegmentTree<Addition<Sequence<i64>>, true> = SegmentTree::from(v.clone());
+        let monoid = Addition::default();
+        let mut segtree: SegmentTree<Addition<Sequence<i64>>, true> =
+            SegmentTree::build(v.clone(), monoid);
         for i in 0..v.len() {
             assert_eq!(v[i], segtree[i]);
         }
@@ -241,7 +251,9 @@ mod test {
     #[test]
     fn product_test() {
         let mut base = vec![3, 1, 4, 1, 5, 9, 2, 6, 5, 3];
-        let mut segtree: SegmentTree<Maximization<i64>> = SegmentTree::from(base.clone());
+        let mut monoid = Maximization::default();
+        let mut segtree: SegmentTree<Maximization<i64>> =
+            SegmentTree::build(base.clone(), monoid.clone());
 
         for i in 0..base.len() {
             assert_eq!(base[i], segtree[i]);
@@ -249,7 +261,7 @@ mod test {
 
         for l in 0..base.len() {
             for r in l + 1..base.len() {
-                let p = (l..r).fold(0, |x, i: usize| Maximization::op(&x, &base[i]));
+                let p = (l..r).fold(0, |x, i: usize| monoid.op(&x, &base[i]));
                 assert_eq!(p, segtree.product(l..r));
             }
         }
@@ -258,7 +270,7 @@ mod test {
         segtree.update_at(3, 8);
         for l in 0..base.len() {
             for r in l + 1..base.len() {
-                let p = (l..r).fold(0, |x, i: usize| Maximization::op(&x, &base[i]));
+                let p = (l..r).fold(0, |x, i: usize| monoid.op(&x, &base[i]));
                 assert_eq!(p, segtree.product(l..r));
             }
         }
@@ -268,7 +280,8 @@ mod test {
     fn binary_search_test() {
         let n = 200;
         let base = vec![1; n];
-        let segtree: SegmentTree<Addition<i32>> = SegmentTree::from(base.clone());
+        let monoid = Addition::default();
+        let mut segtree: SegmentTree<Addition<i32>> = SegmentTree::build(base.clone(), monoid);
 
         for l in 0..200 {
             for c in 0..200 {
@@ -290,7 +303,8 @@ mod test {
         // 不正な値を作ってしまい落ちることがあった
         let n = 524288;
         let base = vec![1_000_000_000_000; n];
-        let mut segtree: SegmentTree<Addition<i64>> = SegmentTree::from(base);
+        let monoid = Addition::default();
+        let mut segtree: SegmentTree<Addition<i64>> = SegmentTree::build(base, monoid);
         let q = 524288;
         for _ in 0..q {
             segtree.update_at(0, 1_000_000_000_000);

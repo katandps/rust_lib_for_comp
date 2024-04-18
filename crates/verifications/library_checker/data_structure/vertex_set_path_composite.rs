@@ -23,7 +23,12 @@ impl verify::Solver for VertexSetPathComposite {
         for (u, v) in reader.vec2::<usize, usize>(n - 1) {
             graph.add_edge(u, v, ());
         }
-        let mut hld = HLDecomposition::<Composition<ModInt<998_244_353>>>::build(&graph, 0, &af);
+        let mut hld = HLDecomposition::<Composition<ModInt<998_244_353>>>::build(
+            &graph,
+            0,
+            &af,
+            Composition::default(),
+        );
         for _ in 0..q {
             if 0 == reader.v::<usize>() {
                 let (p, c, d) = reader.v3::<usize, ModInt, ModInt>();

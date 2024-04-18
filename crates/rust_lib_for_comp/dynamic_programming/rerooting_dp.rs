@@ -7,6 +7,7 @@ use crate::graph::GraphTrait;
 pub struct RerootingDP<M: Monoid> {
     subtree: Vec<M::M>,
     dp: Vec<M::M>,
+    monoid: M,
 }
 
 impl<M: Monoid> RerootingDP<M> {
@@ -22,13 +23,18 @@ impl<M: Monoid> RerootingDP<M> {
         graph: &G,
         apply: fn(usize, usize, G::Weight, &M::M) -> M::M,
         leaf: fn(usize) -> M::M,
+        monoid: M,
     ) -> Vec<M::M> {
         let mut subtree = Vec::with_capacity(graph.size());
         for i in 0..graph.size() {
             subtree.push(leaf(i))
         }
         let dp = vec![M::unit(); graph.size()];
-        let mut reroot = Self { subtree, dp };
+        let mut reroot = Self {
+            subtree,
+            dp,
+            monoid,
+        };
 
         reroot.dfs1(0, 0, graph, apply);
         reroot.dfs2(0, 0, graph, &M::unit(), apply);
@@ -47,7 +53,7 @@ impl<M: Monoid> RerootingDP<M> {
                 continue;
             }
             self.dfs1(dst, src, graph, apply);
-            self.subtree[src] = M::op(
+            self.subtree[src] = self.monoid.op(
                 &self.subtree[src],
                 &apply(dst, src, val, &self.subtree[dst]),
             );

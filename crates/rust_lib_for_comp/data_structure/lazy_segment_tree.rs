@@ -114,14 +114,14 @@ mod lazy_segment_tree_impl {
 
     impl<M: MapMonoid> LazySegmentTree<M> {
         /// 0-indexedで配列の内容を詰めたセグメント木を生成する
-        pub fn from_slice((v, m): (&[<M::Mono as Magma>::M], M)) -> Self {
-            let mut segtree = Self::from_length((v.len() + 1, m));
+        pub fn build(v: &[<M::Mono as Magma>::M], m: M) -> Self {
+            let mut segtree = Self::new(v.len() + 1, m);
             segtree.node[segtree.n..segtree.n + v.len()].clone_from_slice(v);
             (0..segtree.n - 1).rev().for_each(|i| segtree.calc(i));
             segtree
         }
 
-        pub fn from_length((length, map): (usize, M)) -> Self {
+        pub fn new(length: usize, map: M) -> Self {
             let n = (length + 1).next_power_of_two();
             let log = n.trailing_zeros() as usize;
             let node = vec![M::unit(); 2 * n];
@@ -169,9 +169,6 @@ mod lazy_segment_tree_impl {
         }
 
         pub fn debug(&mut self) -> String {
-            (0..self.n).for_each(|i| {
-                self.get(i);
-            });
             (0..self.n).map(|i| format!("{:?}", self.get(i))).join(" ")
         }
     }
@@ -181,22 +178,13 @@ mod lazy_segment_tree_impl {
 mod test {
     use super::*;
     use crate::algebra::binary_operation::addition::Addition;
-    use crate::algebra::mapping::add_mapping::AddMapping;
-    use crate::element::section::Section;
     use crate::element::sequence::Sequence;
-
-    // これは毎回書く(モノイドとモノイドから作用付きモノイドを作る)
-    pub struct AddSum;
-    impl MapMonoid for AddSum {
-        type Mono = Addition<Section<i64>>;
-        type Map = AddMapping<i64, Section<i64>, Section<i64>>;
-    }
+    use crate::typical_problems::range_add_range_sum::AddSum;
 
     #[test]
     fn a() {
         let n = 5;
-        let m = AddSum;
-        let mut segtree = LazySegmentTree::<AddSum>::from_length((n, m));
+        let mut segtree = LazySegmentTree::<AddSum>::new(n, AddSum::default());
 
         for i in 1..n {
             assert_eq!(0, segtree.product(i - 1..i).value);
@@ -211,20 +199,26 @@ mod test {
         assert_eq!(7, segtree.product(0..3).value);
     }
 
-    struct RangeAddRangeSum;
+    #[derive(Clone, Debug, Default)]
+    struct RangeAddRangeSum {
+        map: Addition<Sequence<i64>>,
+        mono: Addition<Sequence<i64>>,
+    }
     impl MapMonoid for RangeAddRangeSum {
         type Mono = Addition<Sequence<i64>>;
         type Map = Addition<Sequence<i64>>;
-        fn apply(&self, f: &Sequence<i64>, value: &Sequence<i64>) -> Sequence<i64> {
-            value.clone() + f.clone()
+        fn map(&mut self) -> &mut Self::Map {
+            &mut self.map
+        }
+        fn monoid(&mut self) -> &mut Self::Mono {
+            &mut self.mono
         }
     }
 
     #[test]
     fn seq_test() {
         let n = 5;
-        let m = RangeAddRangeSum;
-        let mut segtree = LazySegmentTree::<RangeAddRangeSum>::from_length((n, m));
+        let mut segtree = LazySegmentTree::new(n, RangeAddRangeSum::default());
         segtree.update_range(2..4, Sequence::new(1));
         segtree.update_range(1..3, Sequence::new(2));
         segtree.update_range(3..5, Sequence::new(3));

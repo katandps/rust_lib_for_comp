@@ -13,7 +13,7 @@ mod overwrite_operation_mod {
     pub struct OverwriteOperation<S>(PhantomData<fn() -> S>);
     impl<S: Clone + Debug + PartialEq> Magma for OverwriteOperation<S> {
         type M = Option<S>;
-        fn op(x: &Self::M, y: &Self::M) -> Self::M {
+        fn op(&mut self, x: &Self::M, y: &Self::M) -> Self::M {
             match (x, y) {
                 (_, Some(y)) => Some(y.clone()),
                 (Some(x), _) => Some(x.clone()),
@@ -32,7 +32,7 @@ mod overwrite_operation_mod {
         type Mapping = S;
         type Domain = S;
         type Codomain = S;
-        fn apply(map: &Self::Mapping, _: &Self::Domain) -> Self::Codomain {
+        fn apply(&mut self, map: &Self::Mapping, _: &Self::Domain) -> Self::Codomain {
             map.clone()
         }
     }

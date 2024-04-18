@@ -15,7 +15,7 @@ impl verify::Solver for Dsl5B {
         let mut reader = ReadHelper::new(read);
         let n = reader.v::<usize>();
         let lr = reader.vec4::<usize, usize, usize, usize>(n);
-        let mut bit2d = BinaryIndexedTree2::<Addition<i64>>::new(1010, 1010);
+        let mut bit2d = BinaryIndexedTree2::new(1010, 1010, Addition::default());
         for (lx, ly, rx, ry) in lr {
             bit2d.add(lx + 1, ly + 1, 1);
             bit2d.add(lx + 1, ry + 1, -1);

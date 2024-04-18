@@ -15,7 +15,7 @@ mod minimization_impl {
     pub struct Minimization<S>(PhantomData<fn() -> S>);
     impl<S: Clone + Debug + PartialOrd> Magma for Minimization<S> {
         type M = S;
-        fn op(x: &Self::M, y: &Self::M) -> Self::M {
+        fn op(&mut self, x: &Self::M, y: &Self::M) -> Self::M {
             if x <= y {
                 x.clone()
             } else {
@@ -35,8 +35,8 @@ mod minimization_impl {
         type Mapping = S;
         type Domain = S;
         type Codomain = S;
-        fn apply(map: &Self::Mapping, a: &Self::Domain) -> Self::Codomain {
-            Self::op(map, a)
+        fn apply(&mut self, map: &Self::Mapping, a: &Self::Domain) -> Self::Codomain {
+            self.op(map, a)
         }
     }
 }

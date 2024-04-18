@@ -15,7 +15,7 @@ const KINDS: usize = 500_000;
 use rust_lib_for_comp::{
     algebra::binary_operation::addition::Addition,
     data_structure::binary_indexed_tree::BinaryIndexedTree,
-    range_traits::RangeProduct,
+    range_traits::RangeProductMut,
     util::{
         io_util::{ReadHelper, ReaderTrait},
         string_util::JoinTrait,
@@ -38,7 +38,7 @@ impl verify::Solver for ABC174F {
         (0..q).for_each(|i| queries.push(Reverse((lr[i].1, lr[i].0 - 1, i))));
         let mut ans = vec![0; q];
         let mut last_pos = vec![None; KINDS + 1]; // 最後に見つけた位置
-        let mut bit = BinaryIndexedTree::<Addition<i64>>::from(n);
+        let mut bit = BinaryIndexedTree::new(n, Addition::default());
         for i in 0..n {
             if let Some(j) = last_pos[a[i]] {
                 bit.add(j, -1);

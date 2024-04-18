@@ -9,7 +9,7 @@ use crate::data_structure::sparse_table::SparseTable;
 use crate::element::int_with_index::IntWithIndex;
 use crate::graph::GraphTrait;
 use crate::prelude::*;
-use crate::range_traits::RangeProduct;
+use crate::range_traits::RangeProductMut;
 
 #[codesnip::entry("lowest-common-ancestor")]
 pub use lca_impl::LowestCommonAncestor;
@@ -25,7 +25,7 @@ pub use lca_impl::LowestCommonAncestor;
 )]
 mod lca_impl {
     use super::{
-        swap, EulerTour, GraphTrait, IntWithIndex, Minimization, RangeProduct, SparseTable,
+        swap, EulerTour, GraphTrait, IntWithIndex, Minimization, RangeProductMut, SparseTable,
     };
 
     pub struct LowestCommonAncestor {
@@ -41,10 +41,11 @@ mod lca_impl {
         /// $O(N\log N)$
         pub fn new<G: GraphTrait>(g: &G, root: usize) -> Self {
             let tour = EulerTour::new(g, root);
-            let depth = SparseTable::<Minimization<IntWithIndex<u32, u32>>>::from(
+            let depth = SparseTable::build(
                 &(0..tour.tour.len())
                     .map(|i| IntWithIndex::from((i as u32, tour.depth[tour.tour[i]] as u32)))
                     .collect::<Vec<_>>()[..],
+                Minimization::default(),
             );
             Self { tour, depth }
         }
@@ -57,7 +58,7 @@ mod lca_impl {
         ///
         /// ## 計算量
         /// $O(1)$
-        pub fn query(&self, u: usize, v: usize) -> usize {
+        pub fn query(&mut self, u: usize, v: usize) -> usize {
             let (mut l, mut r) = (self.tour.time_in[u], self.tour.time_out[v]);
             if l > r {
                 swap(&mut l, &mut r)
@@ -69,7 +70,7 @@ mod lca_impl {
         ///
         /// ## 計算量
         /// $O(パスの長さ)$
-        pub fn path(&self, mut u: usize, mut v: usize) -> Vec<usize> {
+        pub fn path(&mut self, mut u: usize, mut v: usize) -> Vec<usize> {
             let lca = self.query(u, v);
             let mut left = Vec::new();
             while u != lca {
@@ -90,7 +91,7 @@ mod lca_impl {
         /// # 2頂点$u$,$v$間の距離
         /// ## 計算量
         /// $O(1)$
-        pub fn dist(&self, u: usize, v: usize) -> usize {
+        pub fn dist(&mut self, u: usize, v: usize) -> usize {
             let lca = self.query(u, v);
             self.tour.depth[u] + self.tour.depth[v] - 2 * self.tour.depth[lca]
         }
@@ -98,7 +99,7 @@ mod lca_impl {
         /// # $u$,$v$を結ぶパス上に頂点$a$が存在するかどうか
         /// ## 計算量
         /// $O(1)$
-        pub fn on_path(&self, u: usize, v: usize, a: usize) -> bool {
+        pub fn on_path(&mut self, u: usize, v: usize, a: usize) -> bool {
             self.dist(u, a) + self.dist(a, v) == self.dist(u, v)
         }
 
@@ -114,7 +115,7 @@ mod lca_impl {
         ///
         /// ## verify
         /// [典型90 035](https://atcoder.jp/contests/typical90/submissions/29216435)
-        pub fn auxiliary_tree(&self, vs: &mut Vec<usize>) -> Vec<(usize, usize)> {
+        pub fn auxiliary_tree(&mut self, vs: &mut Vec<usize>) -> Vec<(usize, usize)> {
             vs.sort_by_key(|v| self.tour.time_in[*v]);
             let mut stack = vec![vs[0]];
             let mut edges = Vec::new();
@@ -165,7 +166,7 @@ mod test {
         graph.add_edge(3, 7, ());
         graph.add_edge(4, 8, ());
 
-        let lca = LowestCommonAncestor::new(&graph, 0);
+        let mut lca = LowestCommonAncestor::new(&graph, 0);
 
         assert_eq!(0, lca.query(1, 5));
         assert_eq!(2, lca.query(2, 5));
@@ -187,7 +188,7 @@ mod test {
         for i in 0..999 {
             graph.add_edge(i, i + 1, ());
         }
-        let lca = LowestCommonAncestor::new(&graph, 0);
+        let mut lca = LowestCommonAncestor::new(&graph, 0);
         for i in 0..1000 {
             for j in 0..1000 {
                 assert_eq!(std::cmp::min(i, j), lca.query(i, j))
@@ -218,7 +219,7 @@ mod test {
         graph.add_edge(9, 12, ());
         graph.add_edge(10, 11, ());
 
-        let lca = LowestCommonAncestor::new(&graph, 0);
+        let mut lca = LowestCommonAncestor::new(&graph, 0);
 
         let mut vs = vec![1, 5, 8, 11];
         let mut edges = lca.auxiliary_tree(&mut vs);

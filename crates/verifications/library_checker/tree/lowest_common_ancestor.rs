@@ -16,7 +16,7 @@ impl verify::Solver for LowestCommonAncestorSolver {
         for i in 1..n {
             graph.add_edge(i, reader.v(), ());
         }
-        let lca = LowestCommonAncestor::new(&graph, 0);
+        let mut lca = LowestCommonAncestor::new(&graph, 0);
         for _ in 0..q {
             let (u, v) = reader.v2::<usize, usize>();
             writeln!(write, "{}", lca.query(u, v)).ok();

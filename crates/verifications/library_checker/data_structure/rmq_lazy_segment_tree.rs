@@ -7,10 +7,20 @@ use rust_lib_for_comp::{
 };
 use verify::{LibraryChecker, Solver};
 
-struct MinMin;
+#[derive(Clone, Debug, Default)]
+struct MinMin {
+    map: Minimization<i64>,
+    mono: Minimization<i64>,
+}
 impl MapMonoid for MinMin {
     type Mono = Minimization<i64>;
     type Map = Minimization<i64>;
+    fn map(&mut self) -> &mut Self::Map {
+        &mut self.map
+    }
+    fn monoid(&mut self) -> &mut Self::Mono {
+        &mut self.mono
+    }
 }
 
 #[derive(LibraryChecker)]
@@ -22,7 +32,7 @@ impl verify::Solver for StaticRmqLazySegmentTree {
         let mut reader = ReadHelper::new(read);
         let (n, q) = reader.v2::<usize, usize>();
         let a = reader.vec::<i64>(n);
-        let mut segtree = LazySegmentTree::from_slice((&a[..], MinMin));
+        let mut segtree = LazySegmentTree::build(&a[..], MinMin::default());
         for _ in 0..q {
             let (l, r) = reader.v2::<usize, usize>();
             writeln!(write, "{}", segtree.product(l..r)).ok();

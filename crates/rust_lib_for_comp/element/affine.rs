@@ -51,7 +51,7 @@ mod affine_impl {
 
     impl<T: CanComposite, M> Magma for Composition<T, M> {
         type M = Affine<T>;
-        fn op(x: &Affine<T>, y: &Affine<T>) -> Self::M {
+        fn op(&mut self, x: &Affine<T>, y: &Affine<T>) -> Self::M {
             Affine::op(x, y)
         }
     }
@@ -70,7 +70,7 @@ mod affine_impl {
         type Mapping = Affine<T>;
         type Domain = M;
         type Codomain = M;
-        fn apply(map: &Affine<T>, value: &M) -> M {
+        fn apply(&mut self, map: &Affine<T>, value: &M) -> M {
             map.apply(value.clone())
         }
     }
@@ -80,7 +80,8 @@ mod affine_impl {
 fn test() {
     let a = Affine::new(3, 2);
     let one = Composition::<i32>::unit();
-    assert_eq!(Composition::<i32>::op(&a, &one), a);
+    let mut composition = Composition::<i32>::default();
+    assert_eq!(composition.op(&a, &one), a);
     let b = Affine::new(5, 5);
-    assert_eq!(Composition::<i32>::op(&a, &b), Affine::new(15, 15));
+    assert_eq!(composition.op(&a, &b), Affine::new(15, 15));
 }

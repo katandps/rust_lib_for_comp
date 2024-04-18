@@ -1,6 +1,6 @@
 use rust_lib_for_comp::{
     algebra::binary_operation::minimization::Minimization,
-    data_structure::segment_tree::SegmentTree, range_traits::RangeProduct, util::io_util::*,
+    data_structure::segment_tree::SegmentTree, range_traits::RangeProductMut, util::io_util::*,
 };
 use verify::{LibraryChecker, Solver};
 
@@ -13,7 +13,7 @@ impl verify::Solver for StaticRmqSegmentTree {
         let mut reader = ReadHelper::new(read);
         let (n, q) = reader.v2::<usize, usize>();
         let a = reader.vec::<i64>(n);
-        let segtree = SegmentTree::<Minimization<i64>>::from(a);
+        let mut segtree = SegmentTree::<Minimization<i64>>::build(a, Minimization::default());
         for _ in 0..q {
             let (l, r) = reader.v2::<usize, usize>();
             writeln!(write, "{}", segtree.product(l..r)).ok();

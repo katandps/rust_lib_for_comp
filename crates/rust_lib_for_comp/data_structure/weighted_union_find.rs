@@ -11,11 +11,12 @@ pub struct WeightedUnionFind<A: AbelianGroup> {
     parent: Vec<usize>,
     rank: Vec<usize>,
     weight_diff: Vec<A::M>,
+    abelian_group: A,
 }
 
 #[codesnip::entry("weighted-union-find", include("algebra"))]
 impl<A: AbelianGroup> WeightedUnionFind<A> {
-    pub fn new(n: usize) -> Self {
+    pub fn new(n: usize, abelian_group: A) -> Self {
         let parent = (0..n + 1).collect::<Vec<_>>();
         let rank = vec![0; n + 1];
         let weight_diff = vec![A::unit(); n + 1];
@@ -23,6 +24,7 @@ impl<A: AbelianGroup> WeightedUnionFind<A> {
             parent,
             rank,
             weight_diff,
+            abelian_group,
         }
     }
 
@@ -31,7 +33,9 @@ impl<A: AbelianGroup> WeightedUnionFind<A> {
             x
         } else {
             let r = self.root(self.parent[x]);
-            self.weight_diff[x] = A::op(&self.weight_diff[x], &self.weight_diff[self.parent[x]]);
+            self.weight_diff[x] = self
+                .abelian_group
+                .op(&self.weight_diff[x], &self.weight_diff[self.parent[x]]);
             self.parent[x] = r;
             self.parent[x]
         }
@@ -52,8 +56,9 @@ impl<A: AbelianGroup> WeightedUnionFind<A> {
 
     /// xとyがすでに併合されているとき、併合せずfalseを返す
     pub fn unite(&mut self, x: usize, y: usize, mut weight: A::M) -> bool {
-        weight = A::op(&weight, &self.weight(x));
-        weight = A::op(&weight, &A::inv(&self.weight(y)));
+        let (wx, wy) = (self.weight(x), self.weight(y));
+        weight = self.abelian_group.op(&weight, &wx);
+        weight = self.abelian_group.op(&weight, &A::inv(&wy));
         let (mut x, mut y) = (self.root(x), self.root(y));
         if x == y {
             return false;
@@ -72,7 +77,8 @@ impl<A: AbelianGroup> WeightedUnionFind<A> {
 
     pub fn diff(&mut self, x: usize, y: usize) -> A::M {
         assert_eq!(self.root(x), self.root(y));
-        A::op(&self.weight(y), &A::inv(&self.weight(x)))
+        let (wx, wy) = (self.weight(x), self.weight(y));
+        self.abelian_group.op(&wy, &A::inv(&wx))
     }
 }
 
@@ -80,7 +86,7 @@ impl<A: AbelianGroup> WeightedUnionFind<A> {
 fn test() {
     use crate::algebra::binary_operation::addition::Addition;
     let n = 5;
-    let mut wuf = WeightedUnionFind::<Addition<i64>>::new(n);
+    let mut wuf = WeightedUnionFind::<Addition<i64>>::new(n, Addition::default());
     wuf.unite(1, 2, 1);
     assert_eq!(1, wuf.diff(1, 2));
     wuf.unite(1, 3, 2);

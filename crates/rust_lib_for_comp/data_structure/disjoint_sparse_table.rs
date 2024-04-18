@@ -16,16 +16,17 @@ pub use disjoint_sparse_table_impl::DisjointSparseTable;
     include("algebra", "prelude", "range-traits", "string-util")
 )]
 mod disjoint_sparse_table_impl {
-    use super::{min, Debug, Display, Formatter, JoinTrait, RangeProduct, SemiGroup, ToBounds};
+    use super::{min, Display, JoinTrait, RangeProductMut, SemiGroup, ToBounds};
 
     pub struct DisjointSparseTable<S: SemiGroup> {
         pub len: usize,
         table: Vec<Vec<S::M>>,
         lookup: Vec<usize>,
+        semigroup: S,
     }
 
-    impl<S: SemiGroup> From<&[S::M]> for DisjointSparseTable<S> {
-        fn from(src: &[S::M]) -> Self {
+    impl<S: SemiGroup> DisjointSparseTable<S> {
+        pub fn build(src: &[S::M], mut semigroup: S) -> Self {
             let len = (src.len() + 1).next_power_of_two();
             let log = len.trailing_zeros() as usize;
             let mut table = vec![src.to_vec()];
@@ -39,7 +40,7 @@ mod disjoint_sparse_table_impl {
                     (j..t - 1).rev().for_each(|k| {
                         v[k] = v[k + 1]
                             .as_ref()
-                            .and_then(|vk| src.get(k).map(|sk| S::op(sk, vk)))
+                            .and_then(|vk| src.get(k).map(|sk| semigroup.op(sk, vk)))
                     });
                     if len <= t {
                         break;
@@ -49,7 +50,7 @@ mod disjoint_sparse_table_impl {
                     (t + 1..r).for_each(|k| {
                         v[k] = v[k - 1]
                             .as_ref()
-                            .and_then(|vk| src.get(k).map(|sk| S::op(vk, sk)))
+                            .and_then(|vk| src.get(k).map(|sk| semigroup.op(vk, sk)))
                     });
                     j += shift << 1;
                 }
@@ -61,16 +62,24 @@ mod disjoint_sparse_table_impl {
                 len: src.len(),
                 table,
                 lookup,
+                semigroup,
             }
+        }
+
+        pub fn into_string(mut self) -> String
+        where
+            S::M: Display,
+        {
+            (0..self.len).map(|i| self.product(i..=i)).join(" ")
         }
     }
 
     /// # 区間の総積
     /// ## 計算量
     /// $O(1)$
-    impl<S: SemiGroup> RangeProduct<usize> for DisjointSparseTable<S> {
+    impl<S: SemiGroup> RangeProductMut<usize> for DisjointSparseTable<S> {
         type Magma = S;
-        fn product<R: ToBounds<usize>>(&self, range: R) -> S::M {
+        fn product<R: ToBounds<usize>>(&mut self, range: R) -> S::M {
             let (l, mut r) = range.lr();
             assert!(l < r);
             // l..=rに変換
@@ -79,21 +88,8 @@ mod disjoint_sparse_table_impl {
                 self.table[0][l].clone()
             } else {
                 let p = self.lookup[l ^ r];
-                S::op(&self.table[p][l], &self.table[p][r])
+                self.semigroup.op(&self.table[p][l], &self.table[p][r])
             }
-        }
-    }
-
-    impl<B: SemiGroup> Debug for DisjointSparseTable<B>
-    where
-        B::M: Display,
-    {
-        fn fmt(&self, f: &mut Formatter) -> std::fmt::Result {
-            write!(
-                f,
-                "\n{}",
-                (0..self.len).map(|i| self.product(i..=i)).join(" ")
-            )
         }
     }
 }
@@ -103,11 +99,11 @@ fn test() {
     use crate::algebra::binary_operation::addition::Addition;
 
     let src = [1i64, 2, 4, 8, 16, 32, 64, 128, 256, 512];
-    let dst = DisjointSparseTable::<Addition<i64>>::from(&src[..]);
+    let mut dst = DisjointSparseTable::build(&src[..], Addition::default());
 
     for i in 0..src.len() {
         for j in i + 1..=src.len() {
-            let m = (i..j).fold(0, |x, i| Addition::op(&x, &src[i]));
+            let m = (i..j).fold(0, |x, i| x + src[i]);
             assert_eq!(m, dst.product(i..j), "{}..{}", i, j);
         }
     }

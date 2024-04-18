@@ -1,6 +1,6 @@
 use rust_lib_for_comp::{
     algebra::binary_operation::minimization::Minimization,
-    data_structure::sparse_table::SparseTable, range_traits::RangeProduct, util::io_util::*,
+    data_structure::sparse_table::SparseTable, range_traits::RangeProductMut, util::io_util::*,
 };
 use verify::{LibraryChecker, Solver};
 
@@ -13,7 +13,7 @@ impl verify::Solver for StaticRmqSparseTable {
         let mut reader = ReadHelper::new(read);
         let (n, q) = reader.v2::<usize, usize>();
         let a = reader.vec::<i64>(n);
-        let st = SparseTable::<Minimization<i64>>::from(&a[..]);
+        let mut st = SparseTable::<Minimization<i64>>::build(&a[..], Minimization::default());
         for _ in 0..q {
             let (l, r) = reader.v2::<usize, usize>();
             writeln!(write, "{}", st.product(l..r)).ok();

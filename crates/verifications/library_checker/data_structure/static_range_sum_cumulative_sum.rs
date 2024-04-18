@@ -1,6 +1,6 @@
 use rust_lib_for_comp::{
     algebra::binary_operation::addition::Addition, data_structure::cumulative_sum::CumulativeSum,
-    range_traits::RangeProduct, util::io_util::*,
+    range_traits::RangeProductMut, util::io_util::*,
 };
 use verify::{LibraryChecker, Solver};
 
@@ -13,7 +13,7 @@ impl verify::Solver for StaticRangeSumCumulativeSum {
         let mut reader = ReadHelper::new(read);
         let (n, q) = reader.v2::<usize, usize>();
         let a = reader.vec::<i64>(n);
-        let cm = a.into_iter().collect::<CumulativeSum<Addition<i64>>>();
+        let mut cm = CumulativeSum::build(a, Addition::default(), 0);
         for _ in 0..q {
             let (l, r) = reader.v2::<usize, usize>();
             writeln!(write, "{}", cm.product(l..r)).ok();
