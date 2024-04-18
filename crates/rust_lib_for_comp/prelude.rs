@@ -1,5 +1,5 @@
-//! # stdの一括import
-//! スニペット結合時に衝突しないように読み込んでおく
+//! # 一括import用
+//!
 
 #[codesnip::entry("prelude")]
 pub use std::{
@@ -22,3 +22,12 @@ pub use std::{
     },
     str::{from_utf8, FromStr},
 };
+
+/// # 各種Trait
+pub mod traits {
+    pub use crate::algebra::*;
+    pub use crate::algo::slice_bounds::*;
+    pub use crate::graph::GraphTrait;
+    pub use crate::range_traits::*;
+    pub use crate::util::string_util::*;
+}
