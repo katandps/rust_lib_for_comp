@@ -17,16 +17,15 @@ mod range_traits_impl {
     {
         #[inline]
         fn lr(&self) -> (T, T) {
-            use Bound::{Excluded, Included, Unbounded};
             let l = match self.start_bound() {
-                Unbounded => T::min_value(),
-                Included(&s) => s,
-                Excluded(&s) => s + T::one(),
+                Bound::Unbounded => T::min_value(),
+                Bound::Included(&s) => s,
+                Bound::Excluded(&s) => s + T::one(),
             };
             let r = match self.end_bound() {
-                Unbounded => T::max_value(),
-                Included(&e) => e + T::one(),
-                Excluded(&e) => e,
+                Bound::Unbounded => T::max_value(),
+                Bound::Included(&e) => e + T::one(),
+                Bound::Excluded(&e) => e,
             };
             (l, r)
         }
